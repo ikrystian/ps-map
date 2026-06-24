@@ -160,16 +160,19 @@ export function BasicTab({
                   <Label htmlFor="nazwa" className="text-zinc-300 font-medium">Nazwa wyświetlana *</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                      <User className="h-4 w-4" />
+                      <Lock className="h-4 w-4" />
                     </div>
                     <Input
                       id="nazwa"
                       value={formData.nazwa}
-                      onChange={(e) => handleInputChange("nazwa", e.target.value)}
-                      required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
+                      readOnly
+                      aria-readonly="true"
+                      className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl focus-visible:ring-0"
                     />
                   </div>
+                  <p className="text-xs text-zinc-500 font-light leading-relaxed">
+                    Aby zmienić wyświetlaną nazwę, skontaktuj się z administracją prostasprawa.
+                  </p>
                 </div>
 
               </div>

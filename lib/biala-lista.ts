@@ -77,6 +77,40 @@ export const COMPANY_DATA_FIELD_KEYS: (keyof CompanyDataFields)[] = [
 ]
 
 /**
+ * Pola danych firmy do faktury, które ekspert może edytować ręcznie
+ * w panelu (zakładka "Kontakt"). Pozostałe pola COMPANY_ to dane audytowe
+ * z weryfikacji w MF i nie podlegają ręcznej edycji.
+ */
+export const COMPANY_INVOICE_EDITABLE_KEYS: (keyof CompanyDataFields)[] = [
+  "COMPANY_name",
+  "COMPANY_nip",
+  "COMPANY_regon",
+  "COMPANY_krs",
+  "COMPANY_residenceAddress",
+  "COMPANY_workingAddress",
+]
+
+/**
+ * Wybiera wyłącznie edytowalne pola firmy do faktury z dowolnego obiektu
+ * (np. body żądania PUT), zwracając obiekt gotowy do zapisu w CompanyData.
+ */
+export function pickEditableCompanyDataFields(
+  source: Record<string, unknown> | null | undefined
+): Partial<Record<keyof CompanyDataFields, string | null>> {
+  const out: Partial<Record<keyof CompanyDataFields, string | null>> = {}
+  if (!source || typeof source !== "object") return out
+  for (const key of COMPANY_INVOICE_EDITABLE_KEYS) {
+    const value = (source as Record<string, unknown>)[key]
+    if (value === null) {
+      out[key] = null
+    } else if (typeof value === "string") {
+      out[key] = value.trim() === "" ? null : value
+    }
+  }
+  return out
+}
+
+/**
  * Wybiera wyłącznie znane klucze COMPANY_ z dowolnego obiektu (np. body żądania),
  * zwracając obiekt gotowy do zapisu w modelu CompanyData.
  */

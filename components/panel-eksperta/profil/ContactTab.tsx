@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Check, ChevronDown, Phone, MapPin, Globe, Share2, User, Mail } from "lucide-react"
+import { Check, ChevronDown, Phone, MapPin, Globe, Share2, User, Mail, Building2, FileText, Hash, Receipt, BadgeCheck } from "lucide-react"
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
@@ -41,16 +41,28 @@ interface ContactTabProps {
     linkInstagram: string
     linkTwitter: string
     linkTikTok: string
+    companyData?: {
+      COMPANY_name?: string | null
+      COMPANY_nip?: string | null
+      COMPANY_regon?: string | null
+      COMPANY_krs?: string | null
+      COMPANY_residenceAddress?: string | null
+      COMPANY_workingAddress?: string | null
+      COMPANY_statusVat?: string | null
+    } | null
   }
   handleInputChange: (field: string, value: any) => void
+  handleCompanyDataChange: (field: string, value: any) => void
   voivodeships: Voivodeship[]
 }
 
 export function ContactTab({
   formData,
   handleInputChange,
+  handleCompanyDataChange,
   voivodeships,
 }: ContactTabProps) {
+  const companyData = formData.companyData
   const [cities, setCities] = useState<any[]>([])
   const [locationOpen, setLocationOpen] = useState(false)
   const [locationSearch, setLocationSearch] = useState("")
@@ -102,6 +114,136 @@ export function ContactTab({
 
   return (
     <div className="space-y-6">
+      {/* Dane firmy do faktury — widoczne tylko gdy podano je przy rejestracji */}
+      {companyData && (
+        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+          <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
+          <CardHeader className="border-b border-border/10 pb-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
+                  <Receipt className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-white font-playfair">Dane firmy do faktury</CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm">
+                    Dane podane przy rejestracji — wykorzystywane do wystawiania faktur
+                  </CardDescription>
+                </div>
+              </div>
+              {companyData.COMPANY_statusVat && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  <BadgeCheck className="h-3.5 w-3.5" />
+                  VAT: {companyData.COMPANY_statusVat}
+                </span>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            <div className="grid sm:grid-cols-2 gap-4">
+              {/* Nazwa firmy */}
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor="COMPANY_name" className="text-zinc-300 font-medium text-xs">Nazwa firmy</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Building2 className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_name"
+                    value={companyData.COMPANY_name || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_name", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* NIP */}
+              <div className="grid gap-2">
+                <Label htmlFor="COMPANY_nip" className="text-zinc-300 font-medium text-xs">NIP</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Hash className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_nip"
+                    value={companyData.COMPANY_nip || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_nip", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* REGON */}
+              <div className="grid gap-2">
+                <Label htmlFor="COMPANY_regon" className="text-zinc-300 font-medium text-xs">REGON</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <Hash className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_regon"
+                    value={companyData.COMPANY_regon || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_regon", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* KRS */}
+              <div className="grid gap-2">
+                <Label htmlFor="COMPANY_krs" className="text-zinc-300 font-medium text-xs">KRS</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_krs"
+                    value={companyData.COMPANY_krs || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_krs", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* Adres siedziby */}
+              <div className="grid gap-2">
+                <Label htmlFor="COMPANY_residenceAddress" className="text-zinc-300 font-medium text-xs">Adres siedziby</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_residenceAddress"
+                    value={companyData.COMPANY_residenceAddress || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_residenceAddress", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+
+              {/* Adres prowadzenia działalności */}
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor="COMPANY_workingAddress" className="text-zinc-300 font-medium text-xs">Adres prowadzenia działalności</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <Input
+                    id="COMPANY_workingAddress"
+                    value={companyData.COMPANY_workingAddress || ""}
+                    onChange={(e) => handleCompanyDataChange("COMPANY_workingAddress", e.target.value)}
+                    className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                  />
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-zinc-500 font-light">
+              Zmiany zapisują się razem z profilem po kliknięciu „Zapisz profil".
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Rząd 1: Osoba kontaktowa oraz Dane teleadresowe */}
       <div className="grid grid-cols-1  gap-6 items-stretch">
         {/* Osoba kontaktowa */}
