@@ -41,6 +41,7 @@ interface BasicTabProps {
     oraMiasto: string
     oraWpis: string
     expertiseCategoryId: string
+    typInny: string
   }
   handleInputChange: (field: string, value: any) => void
   isUploading: boolean
@@ -68,43 +69,77 @@ export function BasicTab({
   const [selectedSubcatId, setSelectedSubcatId] = useState("")
 
   useEffect(() => {
-    if (!formData.expertiseCategoryId || !expertiseCategories || expertiseCategories.length === 0) return
+    if (!expertiseCategories || expertiseCategories.length === 0) return
 
-    let foundCatId = ""
-    let foundSubcatId = ""
+    // 1) Rozpoznaj kategorię po zapisanym expertiseCategoryId
+    if (formData.expertiseCategoryId) {
+      let foundCatId = ""
+      let foundSubcatId = ""
 
-    for (const cat of expertiseCategories) {
-      if (cat.id === formData.expertiseCategoryId) {
-        foundCatId = cat.id
-        break
-      }
-      if (cat.children) {
-        for (const sub of cat.children) {
-          if (sub.id === formData.expertiseCategoryId) {
-            foundCatId = cat.id
-            foundSubcatId = sub.id
-            break
-          }
-          if (sub.children) {
-            for (const leaf of sub.children) {
-              if (leaf.id === formData.expertiseCategoryId) {
-                foundCatId = cat.id
-                foundSubcatId = sub.id
-                break
+      for (const cat of expertiseCategories) {
+        if (cat.id === formData.expertiseCategoryId) {
+          foundCatId = cat.id
+          break
+        }
+        if (cat.children) {
+          for (const sub of cat.children) {
+            if (sub.id === formData.expertiseCategoryId) {
+              foundCatId = cat.id
+              foundSubcatId = sub.id
+              break
+            }
+            if (sub.children) {
+              for (const leaf of sub.children) {
+                if (leaf.id === formData.expertiseCategoryId) {
+                  foundCatId = cat.id
+                  foundSubcatId = sub.id
+                  break
+                }
               }
             }
+            if (foundCatId) break
           }
-          if (foundCatId) break
         }
+        if (foundCatId) break
       }
-      if (foundCatId) break
+
+      if (foundCatId) {
+        setSelectedCatId(foundCatId)
+        setSelectedSubcatId(foundSubcatId)
+      }
+      return
     }
 
-    if (foundCatId) {
-      setSelectedCatId(foundCatId)
-      setSelectedSubcatId(foundSubcatId)
+    // 2) Fallback: brak expertiseCategoryId, ale jest ścieżka rejestracyjna w typInny
+    //    (np. "Prawnicy > Adwokat" albo "Eksperci > Finanse > Doradca finansowy").
+    //    Odtwórz wybór po nazwach i uzupełnij expertiseCategoryId (samonaprawa danych).
+    if (formData.typInny) {
+      const segments = formData.typInny.split(">").map((s) => s.trim()).filter(Boolean)
+      if (segments.length >= 2) {
+        const cat = expertiseCategories.find((c) => c.nazwa === segments[0])
+        if (cat) {
+          let subId = ""
+          let leafId = ""
+          if (segments.length === 2) {
+            const leaf = (cat.children || []).find((ch: any) => ch.nazwa === segments[1])
+            if (leaf) leafId = leaf.id
+          } else {
+            const sub = (cat.children || []).find((s: any) => s.nazwa === segments[1])
+            if (sub) {
+              subId = sub.id
+              const leaf = (sub.children || []).find((l: any) => l.nazwa === segments[2])
+              if (leaf) leafId = leaf.id
+            }
+          }
+          if (leafId) {
+            setSelectedCatId(cat.id)
+            if (subId) setSelectedSubcatId(subId)
+            handleInputChange("expertiseCategoryId", leafId)
+          }
+        }
+      }
     }
-  }, [formData.expertiseCategoryId, expertiseCategories])
+  }, [formData.expertiseCategoryId, formData.typInny, expertiseCategories])
 
   const selectedCat = expertiseCategories?.find((c) => c.id === selectedCatId)
   const hasSubcategories = !!(

@@ -97,7 +97,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                       {/* Expert Portrait */}
                       <img
-                        src={getFirmImage(firm as LawFirm, index)}
+                        src={getFirmImage(firm as LawFirm, index) || "/background/4.png"}
                         alt={firm.nazwa}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />

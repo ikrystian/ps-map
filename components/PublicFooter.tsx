@@ -159,8 +159,8 @@ export default function PublicFooter() {
 
             <div className="flex items-center gap-2 text-xs md:text-sm font-light text-neutral-400">
               <Mail className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
-              <a href="mailto:biuro@prostasprawa.pl" className="hover:text-white transition-colors">
-                biuro@prostasprawa.pl
+              <a href="mailto:bok@prostasprawa.pl" className="hover:text-white transition-colors">
+                bok@prostasprawa.pl
               </a>
             </div>
 
