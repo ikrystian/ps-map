@@ -84,6 +84,28 @@ export default function PublicHeader({
   const [selectedExpertiseCategoryName, setSelectedExpertiseCategoryName] = useState("")
   const [expertiseOpen, setExpertiseOpen] = useState(false)
   const [menuPath, setMenuPath] = useState<string[]>([])
+  const [customLogo, setCustomLogo] = useState<string | null>(null)
+
+  // Fetch custom expert logo if authenticated as a law firm
+  useEffect(() => {
+    const fetchExpertLogo = async () => {
+      try {
+        const response = await fetch("/api/law-firms/me")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.logo) {
+            setCustomLogo(data.logo)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching expert logo:", error)
+      }
+    }
+
+    if (isAuthenticated && userRole === "LAW_FIRM") {
+      fetchExpertLogo()
+    }
+  }, [isAuthenticated, userRole, pathname])
 
   // Fetch categories on mount
   useEffect(() => {
@@ -764,7 +786,7 @@ export default function PublicHeader({
               <UserMenu
                 userRole={userRole}
                 userName={userName}
-                userImage={userImage}
+                userImage={customLogo || userImage}
                 punktySaldo={punktySaldo}
                 userId={userId}
                 showPoints={false}
