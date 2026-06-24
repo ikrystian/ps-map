@@ -1,23 +1,12 @@
 import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
-import { seedPackages } from './seed-packages'; // Importuj istniejący seeder pakietów
-import { seedAccountManagers } from './seeds/account-managers'; // Importuj seeder opiekunów
-import { seedBlogCategories } from './seeds/blog-categories'; // Importuj nowy seeder kategorii bloga
-import { seedBlogPosts } from './seeds/blog-posts'; // Importuj seeder postów bloga
+import { seedPackages } from './seed-packages';
 import { seedCategories } from './seeds/categories'
-import { seedEmailTemplates } from './seeds/email-templates'; // Importuj seeder szablonów emaili
-import { seedExpertiseCategories } from './seeds/expertise-categories'; // Drzewo kategorii rejestracji ekspertów
-import { seedHelpCenter } from './seeds/help-center'; // Importuj nowy seeder centrum pomocy
-import { seedHomepagePromotions } from './seeds/homepage-promotions'
-import { seedHomepageTestimonials } from './seeds/homepage-testimonials'
-import { seedPromotionConfigs, seedLawFirmPromotions } from './seeds/promotions'
-import { seedRelationalData } from './seeds/relational'; // NOWY: spójny, powiązany graf danych (użytkownicy, sprawy, oferty, ...)
-import { seedReviewReports } from './seeds/review-reports'; // Importuj seeder zgłoszeń opinii
+import { seedEmailTemplates } from './seeds/email-templates';
+import { seedExpertiseCategories } from './seeds/expertise-categories';
+import { seedPromotionConfigs } from './seeds/promotions'
 import { seedStaticPages } from './seeds/static-pages'
-import { seedTestUser } from './seeds/test-user'
 import { seedVoivodeships } from './seeds/voivodeships'
-import { seedDocuments } from './seeds/documents'
-import { seedAdvertisements } from './seeds/advertisements'
 
 async function main() {
   console.log('Start seeding...')
@@ -97,35 +86,20 @@ async function main() {
   await seedVoivodeships(prisma)               // upsert — zachowuje istniejące ID (powiązane z miastami)
   await seedCategories(prisma)
   await seedExpertiseCategories(prisma)        // drzewo kategorii rejestracji ekspertów (krok 1)
-  await seedBlogCategories(prisma)
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)
-  await seedHelpCenter(prisma)
-  await seedHomepageTestimonials(prisma)
-  await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
   // await seedAdvertisements(prisma)
 
-  // ==========================================================================
-  // SPÓJNY, POWIĄZANY GRAF DANYCH
-  // 1000 użytkowników, 2000 spraw, ~5000 ofert + zależne: negocjacje, opinie,
-  // powiadomienia, zamówienia, faktury, transakcje punktowe, czat, statystyki.
-  // ==========================================================================
-  await seedRelationalData(prisma)
+
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
-  await seedHomepagePromotions(prisma)
 
   // ==========================================================================
   // SEEDERY ZALEŻNE OD POWYŻSZEGO (czytają kancelarie/opinie/użytkowników z bazy)
   // ==========================================================================
-  await seedReviewReports(prisma)              // zgłoszenia istniejących opinii
-  await seedBlogPosts(prisma)                  // posty przypisane do istniejących kancelarii
 
-  await seedTestUser(prisma)                   // stałe konta testowe do logowania
   await seedStaticPages(prisma)
-  await seedLawFirmPromotions(prisma)          // Dodaj promocje dla każdego eksperta
-  await seedDocuments(prisma)                  // Dodaj dokumenty dla każdego eksperta
 
 
   // ==========================================================================
