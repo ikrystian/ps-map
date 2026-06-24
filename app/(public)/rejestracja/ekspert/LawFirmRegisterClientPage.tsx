@@ -59,7 +59,6 @@ const step6Schema = z.object({
 const step4Schema = z.object({
   // Dane firmy
   nazwa: z.string().min(3, "Nazwa profilu musi mieć co najmniej 3 znaki"),
-  nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
   regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
   krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
 
@@ -514,6 +513,7 @@ export default function LawFirmRegistrationPage() {
       // jeśli nie zostały jeszcze wpisane ręcznie.
       setFormData(prev => ({
         ...prev,
+        nip: data.data.nip,
         companyData: data.data,
       }))
     } catch (err) {

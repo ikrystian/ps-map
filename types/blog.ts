@@ -39,7 +39,6 @@ export interface BlogPost {
     id?: string;
     slug?: string;
     nazwa?: string;
-    nazwa?: string;
     logo?: string | null;
     miasto?: string;
     voivodeship?: any;

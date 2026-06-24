@@ -36,7 +36,6 @@ export interface Review {
   lawFirm?: {
     id: string
     nazwa: string
-    nazwa: string
     email?: string
     telefon?: string
     miasto?: string
