@@ -130,7 +130,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                       </h3>
 
                       {/* Location details */}
-                      <p className="text-[11px] font-semibold text-[#cda567] tracking-wider uppercase mt-1">
+                      <p className="text-[11px] font-semibold text-[#cda567] tracking-wider mt-1">
                         {firm.miasto}, {voivodeship}
                       </p>
                     </div>

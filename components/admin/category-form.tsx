@@ -455,7 +455,8 @@ export function CategoryForm({
                             value={field.value || ""}
                             onChange={field.onChange}
                             label=""
-                            description="Prześlij niestandardową ikonę"
+                            description="Prześlij niestandardową ikonę (np. plik SVG)"
+                            allowSvg
                           />
                         </FormControl>
                         <FormMessage />

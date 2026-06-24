@@ -104,28 +104,28 @@ async function main() {
   await seedHelpCenter(prisma)
   await seedHomepageTestimonials(prisma)
   await seedAccountManagers(prisma)            // potrzebni przed seedRelationalData (lawFirm.accountManagerId)
-  await seedAdvertisements(prisma)
+  // await seedAdvertisements(prisma)
 
   // ==========================================================================
   // SPÓJNY, POWIĄZANY GRAF DANYCH
   // 1000 użytkowników, 2000 spraw, ~5000 ofert + zależne: negocjacje, opinie,
   // powiadomienia, zamówienia, faktury, transakcje punktowe, czat, statystyki.
   // ==========================================================================
-  await seedRelationalData(prisma)
+  // await seedRelationalData(prisma)
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
-  await seedHomepagePromotions(prisma)
+  // await seedHomepagePromotions(prisma)
 
   // ==========================================================================
   // SEEDERY ZALEŻNE OD POWYŻSZEGO (czytają kancelarie/opinie/użytkowników z bazy)
   // ==========================================================================
-  await seedReviewReports(prisma)              // zgłoszenia istniejących opinii
-  await seedBlogPosts(prisma)                  // posty przypisane do istniejących kancelarii
+  // await seedReviewReports(prisma)              // zgłoszenia istniejących opinii
+  // await seedBlogPosts(prisma)                  // posty przypisane do istniejących kancelarii
 
-  await seedTestUser(prisma)                   // stałe konta testowe do logowania
-  await seedStaticPages(prisma)
-  await seedLawFirmPromotions(prisma)          // Dodaj promocje dla każdego eksperta
-  await seedDocuments(prisma)                  // Dodaj dokumenty dla każdego eksperta
+  // await seedTestUser(prisma)                   // stałe konta testowe do logowania
+  // await seedStaticPages(prisma)
+  // await seedLawFirmPromotions(prisma)          // Dodaj promocje dla każdego eksperta
+  // await seedDocuments(prisma)                  // Dodaj dokumenty dla każdego eksperta
 
 
   // ==========================================================================

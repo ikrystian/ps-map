@@ -20,6 +20,8 @@ interface ImageUploadProps {
   confirmDelete?: boolean
   confirmDeleteTitle?: string
   confirmDeleteDescription?: string
+  /** Zezwól na przesyłanie plików SVG (np. dla ikon wektorowych). */
+  allowSvg?: boolean
 }
 
 export function ImageUpload({
@@ -30,6 +32,7 @@ export function ImageUpload({
   confirmDelete = false,
   confirmDeleteTitle = "Usuń obrazek",
   confirmDeleteDescription = "Czy na pewno chcesz usunąć ten obrazek? Tej operacji nie można cofnąć.",
+  allowSvg = false,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isDragActive, setIsDragActive] = useState(false)
@@ -38,11 +41,16 @@ export function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uniqueId = useId()
 
+  const isSvgValue = /\.svg($|\?)/i.test(value || "")
+
   const uploadFile = async (file: File) => {
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
+    if (allowSvg) {
+      allowedTypes.push("image/svg+xml")
+    }
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP, GIF")
+      toast.error(`Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP, GIF${allowSvg ? ", SVG" : ""}`)
       return
     }
 
@@ -137,16 +145,29 @@ export function ImageUpload({
       {value ? (
         <div className="space-y-4">
           <div className="relative aspect-video w-full max-w-md rounded-lg overflow-hidden border">
-            <Image
-              src={value}
-              alt="Preview"
-              fill
-              className="object-cover"
-              onError={() => {
-                toast.error("Nie można załadować obrazka")
-                onChange("")
-              }}
-            />
+            {isSvgValue ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={value}
+                alt="Preview"
+                className="absolute inset-0 h-full w-full object-contain p-2"
+                onError={() => {
+                  toast.error("Nie można załadować obrazka")
+                  onChange("")
+                }}
+              />
+            ) : (
+              <Image
+                src={value}
+                alt="Preview"
+                fill
+                className="object-cover"
+                onError={() => {
+                  toast.error("Nie można załadować obrazka")
+                  onChange("")
+                }}
+              />
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -221,7 +242,7 @@ export function ImageUpload({
                       {isDragActive ? "Upuść plik tutaj" : "Kliknij lub przeciągnij plik, aby go wybrać"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      JPEG, PNG, WebP lub GIF (max 5MB)
+                      JPEG, PNG, WebP{allowSvg ? ", GIF lub SVG" : " lub GIF"} (max 5MB)
                     </p>
                   </div>
                 )}

@@ -61,6 +61,7 @@ export function MostConsultedCategories({
   // Filtrujemy zakładki po aktywnych ID z ustawień
   const activeTabs = useMemo(() => {
     let tabs = categories.filter((c) => consultedCategoryIds?.includes(c.id));
+    console.log(tabs)
     // Fallback if no configuration is found
     if (tabs.length === 0) {
       tabs = categories.slice(0, 6);
@@ -209,8 +210,8 @@ export function MostConsultedCategories({
                   }
                 }}
                 className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-[150px] md:w-auto md:shrink ${isActive
-                    ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
-                    : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
+                  ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
+                  : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
                   }`}
               >
                 <div className="mb-1 md:mb-4">
@@ -340,7 +341,7 @@ export function MostConsultedCategories({
                         <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5 line-clamp-1">
                           {getSubtitle(firm)}
                         </span>
-                        <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                        <h3 className="text-[19px] font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
                           <Link href={`/ekspert/${firm.slug}`}>
                             {firm.nazwa}
                           </Link>

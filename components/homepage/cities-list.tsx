@@ -54,7 +54,7 @@ export function CitiesList() {
     <section className="py-16 bg-card/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
             Znajdź usługi w swoim mieście
           </h2>
           <p className="text-xl text-muted-foreground">

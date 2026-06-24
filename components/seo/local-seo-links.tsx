@@ -190,11 +190,11 @@ export function LocalSeoLinks({
 
     const fixedLocation: Location | null = voivodeshipSlug
       ? (() => {
-          const v = voivodeships.find((x) => x.slug === voivodeshipSlug);
-          return v
-            ? { type: "voivodeship", nazwa: v.nazwa, slug: v.slug }
-            : null;
-        })()
+        const v = voivodeships.find((x) => x.slug === voivodeshipSlug);
+        return v
+          ? { type: "voivodeship", nazwa: v.nazwa, slug: v.slug }
+          : null;
+      })()
       : cityName
         ? { type: "city", nazwa: cityName }
         : null;
@@ -324,7 +324,7 @@ export function LocalSeoLinks({
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
             {headingTitle}
           </h2>
           <p className="text-xl text-muted-foreground">{headingSubtitle}</p>

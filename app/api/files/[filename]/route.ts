@@ -46,28 +46,38 @@ export async function GET(
       'xls': 'application/vnd.ms-excel',
       'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'txt': 'text/plain',
+      'svg': 'image/svg+xml',
     };
 
     if (ext && mimeTypes[ext]) {
       contentType = mimeTypes[ext];
     }
 
+    const isSvg = contentType === 'image/svg+xml';
+
     // Bezpieczeństwo serwowania:
     // - nosniff: przeglądarka nie zgaduje typu (blokuje sztuczki MIME-sniffing/XSS),
     // - inline tylko dla bezpiecznych obrazów; pozostałe wymuszają pobranie (attachment),
-    //   co zapobiega renderowaniu np. HTML/SVG w kontekście naszej domeny.
-    const disposition = isInlineSafeMime(contentType)
+    //   co zapobiega renderowaniu np. HTML w kontekście naszej domeny.
+    // - SVG serwujemy inline (żeby ikony renderowały się w <img>), ale neutralizujemy
+    //   wektor XSS restrykcyjnym CSP + sandbox: nawet bezpośrednie wejście na plik
+    //   nie wykona skryptów ani nie pobierze zasobów zewnętrznych.
+    const disposition = (isInlineSafeMime(contentType) || isSvg)
       ? 'inline'
       : `attachment; filename="${encodeURIComponent(filename)}"`;
 
-    return new Response(file, {
-      headers: {
-        'Content-Type': contentType,
-        'Content-Disposition': disposition,
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    });
+    const headers: Record<string, string> = {
+      'Content-Type': contentType,
+      'Content-Disposition': disposition,
+      'X-Content-Type-Options': 'nosniff',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    };
+
+    if (isSvg) {
+      headers['Content-Security-Policy'] = "default-src 'none'; style-src 'unsafe-inline'; sandbox";
+    }
+
+    return new Response(file, { headers });
   } catch (error) {
     console.error('Error serving file:', error);
     return NextResponse.json({ error: 'Failed to serve file' }, { status: 500 });

@@ -155,7 +155,7 @@ export default function TeamExpertsSection() {
             <Users className="mr-2 h-3.5 w-3.5 inline text-primary animate-pulse" />{" "}
             Nasi Eksperci
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-3xl font-playfair">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tight text-white max-w-3xl font-playfair">
             Poznaj naszych Specjalistów
           </h2>
           <p className="max-w-[750px] text-zinc-400 text-sm sm:text-base md:text-lg font-light leading-relaxed">

@@ -195,7 +195,7 @@ export function HowItWorksSection() {
                         transition={{ duration: 0.6, delay: 0.2 }}
                         className="relative flex justify-center items-center mt-12 lg:mt-0"
                     >
-                        <Image src={"/images/how-it-works.jpeg"} width={500} height={500} alt="Jak to działa" />
+                        <Image src={"/images/sekcja_jak_to_dziala.webp"} width={828} height={975} alt="Jak to działa" />
                     </motion.div>
                 </div>
             </div>

@@ -82,7 +82,7 @@ export default function LogoutSuccessPage() {
         {/* Left Column - Business Hero Image */}
         <div className="hidden md:block relative w-full h-full min-h-[450px]">
           <Image
-            src="/images/logout-hero.png"
+            src="/images/logout-hero.webp"
             alt="Prosta Sprawa Partner"
             fill
             sizes="(max-width: 768px) 0vw, 50vw"
