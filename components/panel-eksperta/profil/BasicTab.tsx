@@ -420,7 +420,7 @@ export function BasicTab({
                         ) : (
                           <>
                             <Upload className="mr-2 h-4 w-4 text-primary" />
-                            Zmień logo
+                            Zmień zdjęćie
                           </>
                         )}
                       </label>
@@ -432,7 +432,7 @@ export function BasicTab({
                         className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
                       >
                         <X className="mr-2 h-4 w-4" />
-                        Usuń logo
+                        Usuń zdjęcie
                       </Button>
                     </div>
                     <input
