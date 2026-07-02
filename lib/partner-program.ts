@@ -177,7 +177,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
         select: {
           id: true,
           nazwa: true,
-          nazwaFirmy: true,
+          nazwa: true,
           punktySaldo: true,
           stronaWww: true
         }
@@ -215,7 +215,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       if (existing) {
         results.details.push({
           lawFirmId: partner.lawFirmId,
-          lawFirmName: partner.lawFirm.nazwaFirmy,
+          lawFirmName: partner.lawFirm.nazwa,
           points: 0,
           success: false,
           error: 'Punkty już przyznane w tym miesiącu'
@@ -237,7 +237,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
         if (!verification.found) {
           results.details.push({
             lawFirmId: partner.lawFirmId,
-            lawFirmName: partner.lawFirm.nazwaFirmy,
+            lawFirmName: partner.lawFirm.nazwa,
             points: 0,
             success: false,
             error: 'Banner nie został znaleziony na stronie'
@@ -248,7 +248,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       } else {
         results.details.push({
           lawFirmId: partner.lawFirmId,
-          lawFirmName: partner.lawFirm.nazwaFirmy,
+          lawFirmName: partner.lawFirm.nazwa,
           points: 0,
           success: false,
           error: 'Brak adresu strony WWW'
@@ -286,7 +286,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       results.totalPointsAllocated += partner.monthlyPoints
       results.details.push({
         lawFirmId: partner.lawFirmId,
-        lawFirmName: partner.lawFirm.nazwaFirmy,
+        lawFirmName: partner.lawFirm.nazwa,
         points: partner.monthlyPoints,
         success: true
       })
@@ -295,7 +295,7 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       results.failed++
       results.details.push({
         lawFirmId: partner.lawFirmId,
-        lawFirmName: partner.lawFirm.nazwaFirmy,
+        lawFirmName: partner.lawFirm.nazwa,
         points: 0,
         success: false,
         error: error.message

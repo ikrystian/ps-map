@@ -58,8 +58,7 @@ const step6Schema = z.object({
 
 const step4Schema = z.object({
   // Dane firmy
-  nazwaFirmy: z.string().min(3, "Pełna nazwa firmy musi mieć co najmniej 3 znaki"),
-  nip: z.string().transform(v => v.replace(/[-\s]/g, "")).pipe(z.string().regex(/^\d{10}$/, "NIP musi składać się z 10 cyfr")),
+  nazwa: z.string().min(3, "Nazwa profilu musi mieć co najmniej 3 znaki"),
   regon: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{9}(\d{5})?$/, "REGON musi mieć 9 lub 14 cyfr").or(z.literal(""))).optional(),
   krs: z.string().transform(v => v ? v.replace(/[-\s]/g, "") : "").pipe(z.string().regex(/^\d{10}$/, "KRS musi mieć 10 cyfr").or(z.literal(""))).optional(),
 
@@ -97,6 +96,22 @@ const steps = [
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
+// Etykiety pól danych firmy z Wykazu podatników VAT (klucze z przedrostkiem COMPANY_).
+// Kolejność tablicy = kolejność wyświetlania danych jako tekst.
+const COMPANY_FIELD_LABELS: { key: string; label: string }[] = [
+  { key: "COMPANY_name", label: "Nazwa" },
+  { key: "COMPANY_nip", label: "NIP" },
+  { key: "COMPANY_regon", label: "REGON" },
+  { key: "COMPANY_krs", label: "KRS" },
+  { key: "COMPANY_statusVat", label: "Status VAT" },
+  { key: "COMPANY_workingAddress", label: "Adres działalności" },
+  { key: "COMPANY_residenceAddress", label: "Adres siedziby" },
+  { key: "COMPANY_registrationLegalDate", label: "Data rejestracji VAT" },
+  { key: "COMPANY_removalDate", label: "Data wykreślenia z VAT" },
+  { key: "COMPANY_requestId", label: "ID zapytania (MF)" },
+  { key: "COMPANY_requestDateTime", label: "Data weryfikacji" },
+]
+
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
   const { data: session } = useSession()
@@ -122,12 +137,15 @@ export default function LawFirmRegistrationPage() {
     typInny: "",
     expertiseCategoryId: "",
 
-    // Krok 2: Dane firmy
     nazwa: "",
-    nazwaFirmy: "",
     nip: "",
     regon: "",
     krs: "",
+
+    // Rejestracja "jako firma" – wyszukiwanie danych w CEIDG DataStore (COMPANY_)
+    rejestracjaJakoFirma: false,
+    companyNip: "",
+    companyData: null as Record<string, string | null> | null,
 
     // Krok 3: Dane kontaktowe
     imieKontakt: "",
@@ -162,6 +180,8 @@ export default function LawFirmRegistrationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLookingUpCompany, setIsLookingUpCompany] = useState(false)
+  const [companyLookupError, setCompanyLookupError] = useState("")
 
   const totalSteps = steps.length
 
@@ -466,6 +486,44 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
+  const handleCompanyLookup = async () => {
+    setCompanyLookupError("")
+    const nip = formData.companyNip.replace(/[-\s]/g, "")
+    if (!/^\d{10}$/.test(nip)) {
+      setCompanyLookupError("Podaj poprawny numer NIP (10 cyfr).")
+      return
+    }
+
+    setIsLookingUpCompany(true)
+    try {
+      const response = await fetch("/api/company-lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nip }),
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        setFormData(prev => ({ ...prev, companyData: null }))
+        setCompanyLookupError(data.error || "Nie udało się pobrać danych firmy.")
+        return
+      }
+
+      // Zapisz pobrane dane (pola COMPANY_) i pomocniczo uzupełnij nazwę/NIP profilu,
+      // jeśli nie zostały jeszcze wpisane ręcznie.
+      setFormData(prev => ({
+        ...prev,
+        nip: data.data.nip,
+        companyData: data.data,
+      }))
+    } catch (err) {
+      setFormData(prev => ({ ...prev, companyData: null }))
+      setCompanyLookupError("Wystąpił błąd podczas pobierania danych firmy.")
+    } finally {
+      setIsLookingUpCompany(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -493,8 +551,7 @@ export default function LawFirmRegistrationPage() {
           typ: formData.typ,
           typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
-          nazwa: formData.nazwaFirmy,
-          nazwaFirmy: formData.nazwaFirmy,
+          nazwa: formData.nazwa,
           nip: formData.nip,
           regon: formData.regon || null,
           krs: formData.krs || null,
@@ -513,6 +570,8 @@ export default function LawFirmRegistrationPage() {
           voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : [],
           categoriesIds: formData.categoriesIds,
           isSocialRegistration: !!session?.user,
+          // Dane firmy z CEIDG DataStore (tylko gdy rejestracja "jako firma")
+          companyData: formData.rejestracjaJakoFirma ? formData.companyData : null,
         }),
       })
 
@@ -700,8 +759,8 @@ export default function LawFirmRegistrationPage() {
 
       case 6:
         return (
-          <div className="space-y-6">
-            <div className="space-y-4">
+          <div className="space-y-0">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna specjalizacja *</Label>
                 <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
@@ -768,94 +827,116 @@ export default function LawFirmRegistrationPage() {
       case 4:
         return (
           <div className="space-y-8">
-            {/* Dane firmy */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold border-b pb-2">Dane firmy</h3>
               <div className="space-y-4">
 
-                {/* nazwaFirmy */}
+                {/* Wyświetlana nazwa */}
                 <div className="space-y-2">
-                  <Label htmlFor="nazwaFirmy" className={cn(fieldErrors.nazwaFirmy && "text-destructive")}>Pełna nazwa firmy (do faktur) *</Label>
+                  <Label htmlFor="nazwa" className={cn(fieldErrors.nazwa && "text-destructive")}>Nazwa wyświetlana</Label>
                   <Input
-                    id="nazwaFirmy"
+                    id="nazwa"
                     type="text"
-                    value={formData.nazwaFirmy}
+                    value={formData.nazwa}
                     onChange={(e) => {
-                      setFormData({ ...formData, nazwaFirmy: e.target.value })
-                      if (fieldErrors.nazwaFirmy) {
+                      setFormData({ ...formData, nazwa: e.target.value })
+                      if (fieldErrors.nazwa) {
                         const newErrors = { ...fieldErrors }
-                        delete newErrors.nazwaFirmy
+                        delete newErrors.nazwa
                         setFieldErrors(newErrors)
                       }
                     }}
-                    placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS"
-                    className={cn("h-11", fieldErrors.nazwaFirmy && "border-destructive")}
+                    placeholder="Pełna nazwa profilu"
+                    className={cn("h-11", fieldErrors.nazwa && "border-destructive")}
                   />
-                  {fieldErrors.nazwaFirmy && <p className="text-xs text-destructive">{fieldErrors.nazwaFirmy}</p>}
+                  {fieldErrors.nazwa && <p className="text-xs text-destructive">{fieldErrors.nazwa}</p>}
                 </div>
-                {/* nip, regon, krs */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              </div>
+            </div>
+
+            {/* Dane kontaktowe */}
+            <div className="space-y-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="nip" className={cn(fieldErrors.nip && "text-destructive")}>NIP *</Label>
+                    <Label htmlFor="imieKontakt" className={cn(fieldErrors.imieKontakt && "text-destructive")}>Imię *</Label>
                     <Input
-                      id="nip"
+                      id="imieKontakt"
                       type="text"
-                      placeholder="1234567890"
-                      value={formData.nip}
+                      value={formData.imieKontakt}
                       onChange={(e) => {
-                        setFormData({ ...formData, nip: e.target.value })
-                        if (fieldErrors.nip) {
+                        setFormData({ ...formData, imieKontakt: e.target.value })
+                        if (fieldErrors.imieKontakt) {
                           const newErrors = { ...fieldErrors }
-                          delete newErrors.nip
+                          delete newErrors.imieKontakt
                           setFieldErrors(newErrors)
                         }
                       }}
-                      className={cn("h-11", fieldErrors.nip && "border-destructive")}
+                      className={cn("h-11", fieldErrors.imieKontakt && "border-destructive")}
                     />
-                    {fieldErrors.nip && <p className="text-xs text-destructive">{fieldErrors.nip}</p>}
+                    {fieldErrors.imieKontakt && <p className="text-xs text-destructive">{fieldErrors.imieKontakt}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="regon" className={cn(fieldErrors.regon && "text-destructive")}>REGON</Label>
+                    <Label htmlFor="nazwiskoKontakt" className={cn(fieldErrors.nazwiskoKontakt && "text-destructive")}>Nazwisko *</Label>
                     <Input
-                      id="regon"
+                      id="nazwiskoKontakt"
                       type="text"
+                      value={formData.nazwiskoKontakt}
+                      onChange={(e) => {
+                        setFormData({ ...formData, nazwiskoKontakt: e.target.value })
+                        if (fieldErrors.nazwiskoKontakt) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.nazwiskoKontakt
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.nazwiskoKontakt && "border-destructive")}
+                    />
+                    {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
+                    <Input
+                      id="numerTelefonu"
+                      type="tel"
+                      value={formData.numerTelefonu}
+                      onChange={(e) => {
+                        setFormData({ ...formData, numerTelefonu: e.target.value })
+                        if (fieldErrors.numerTelefonu) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.numerTelefonu
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
+                    />
+                    {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="numerTelefonu2" className={cn(fieldErrors.numerTelefonu2 && "text-destructive")}>Telefon dodatkowy</Label>
+                    <Input
+                      id="numerTelefonu2"
+                      type="tel"
                       placeholder="Opcjonalnie"
-                      value={formData.regon}
+                      value={formData.numerTelefonu2}
                       onChange={(e) => {
-                        setFormData({ ...formData, regon: e.target.value })
-                        if (fieldErrors.regon) {
+                        setFormData({ ...formData, numerTelefonu2: e.target.value })
+                        if (fieldErrors.numerTelefonu2) {
                           const newErrors = { ...fieldErrors }
-                          delete newErrors.regon
+                          delete newErrors.numerTelefonu2
                           setFieldErrors(newErrors)
                         }
                       }}
-                      className={cn("h-11", fieldErrors.regon && "border-destructive")}
+                      className={cn("h-11", fieldErrors.numerTelefonu2 && "border-destructive")}
                     />
-                    {fieldErrors.regon && <p className="text-xs text-destructive">{fieldErrors.regon}</p>}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="krs" className={cn(fieldErrors.krs && "text-destructive")}>KRS</Label>
-                    <Input
-                      id="krs"
-                      type="text"
-                      placeholder="Dla spółek handlowych"
-                      value={formData.krs}
-                      onChange={(e) => {
-                        setFormData({ ...formData, krs: e.target.value })
-                        if (fieldErrors.krs) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.krs
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      className={cn("h-11", fieldErrors.krs && "border-destructive")}
-                    />
-                    {fieldErrors.krs && <p className="text-xs text-destructive">{fieldErrors.krs}</p>}
+                    {fieldErrors.numerTelefonu2 && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu2}</p>}
                   </div>
                 </div>
               </div>
             </div>
-
             {/* Dane adresowe */}
             <div className="space-y-4">
               <div className="space-y-4">
@@ -901,7 +982,7 @@ export default function LawFirmRegistrationPage() {
                           variant="outline"
                           role="combobox"
                           aria-expanded={locationOpen}
-                          className={cn("w-full justify-between h-11 font-normal text-left", fieldErrors.miasto && "border-destructive")}
+                          className={cn("w-full justify-between h-12 font-normal text-left", fieldErrors.miasto && "border-destructive")}
                           disabled={isLoading}
                         >
                           <span className="truncate">{formData.miasto || "Wybierz miasto..."}</span>
@@ -1010,93 +1091,120 @@ export default function LawFirmRegistrationPage() {
               </div>
             </div>
 
-            {/* Dane kontaktowe */}
+            {/* Typ rejestracji: osoba prywatna / firma */}
             <div className="space-y-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="imieKontakt" className={cn(fieldErrors.imieKontakt && "text-destructive")}>Imię *</Label>
-                    <Input
-                      id="imieKontakt"
-                      type="text"
-                      value={formData.imieKontakt}
-                      onChange={(e) => {
-                        setFormData({ ...formData, imieKontakt: e.target.value })
-                        if (fieldErrors.imieKontakt) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.imieKontakt
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      className={cn("h-11", fieldErrors.imieKontakt && "border-destructive")}
-                    />
-                    {fieldErrors.imieKontakt && <p className="text-xs text-destructive">{fieldErrors.imieKontakt}</p>}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div
+                  className={cn(
+                    "flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all",
+                    !formData.rejestracjaJakoFirma
+                      ? "bg-primary/5 border-primary shadow-sm"
+                      : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                  )}
+                  onClick={() => setFormData(prev => ({ ...prev, rejestracjaJakoFirma: false }))}
+                >
+                  <div className={cn(
+                    "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                    !formData.rejestracjaJakoFirma ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                  )}>
+                    {!formData.rejestracjaJakoFirma && <Check className="w-3 h-3" />}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="nazwiskoKontakt" className={cn(fieldErrors.nazwiskoKontakt && "text-destructive")}>Nazwisko *</Label>
-                    <Input
-                      id="nazwiskoKontakt"
-                      type="text"
-                      value={formData.nazwiskoKontakt}
-                      onChange={(e) => {
-                        setFormData({ ...formData, nazwiskoKontakt: e.target.value })
-                        if (fieldErrors.nazwiskoKontakt) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.nazwiskoKontakt
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      className={cn("h-11", fieldErrors.nazwiskoKontakt && "border-destructive")}
-                    />
-                    {fieldErrors.nazwiskoKontakt && <p className="text-xs text-destructive">{fieldErrors.nazwiskoKontakt}</p>}
-                  </div>
+                  <User className="w-5 h-5 text-muted-foreground shrink-0" />
+                  <span className={cn("text-sm font-medium", !formData.rejestracjaJakoFirma ? "text-primary" : "text-foreground")}>
+                    Osoba prywatna
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="numerTelefonu" className={cn(fieldErrors.numerTelefonu && "text-destructive")}>Telefon główny *</Label>
-                    <Input
-                      id="numerTelefonu"
-                      type="tel"
-                      value={formData.numerTelefonu}
-                      onChange={(e) => {
-                        setFormData({ ...formData, numerTelefonu: e.target.value })
-                        if (fieldErrors.numerTelefonu) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.numerTelefonu
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
-                    />
-                    {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
+                <div
+                  className={cn(
+                    "flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all",
+                    formData.rejestracjaJakoFirma
+                      ? "bg-primary/5 border-primary shadow-sm"
+                      : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+                  )}
+                  onClick={() => setFormData(prev => ({ ...prev, rejestracjaJakoFirma: true }))}
+                >
+                  <div className={cn(
+                    "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                    formData.rejestracjaJakoFirma ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                  )}>
+                    {formData.rejestracjaJakoFirma && <Check className="w-3 h-3" />}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="numerTelefonu2" className={cn(fieldErrors.numerTelefonu2 && "text-destructive")}>Telefon dodatkowy</Label>
-                    <Input
-                      id="numerTelefonu2"
-                      type="tel"
-                      placeholder="Opcjonalnie"
-                      value={formData.numerTelefonu2}
-                      onChange={(e) => {
-                        setFormData({ ...formData, numerTelefonu2: e.target.value })
-                        if (fieldErrors.numerTelefonu2) {
-                          const newErrors = { ...fieldErrors }
-                          delete newErrors.numerTelefonu2
-                          setFieldErrors(newErrors)
-                        }
-                      }}
-                      className={cn("h-11", fieldErrors.numerTelefonu2 && "border-destructive")}
-                    />
-                    {fieldErrors.numerTelefonu2 && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu2}</p>}
-                  </div>
+                  <Building2 className="w-5 h-5 text-muted-foreground shrink-0" />
+                  <span className={cn("text-sm font-medium", formData.rejestracjaJakoFirma ? "text-primary" : "text-foreground")}>
+                    Firma
+                  </span>
                 </div>
               </div>
+
+              {/* Wyszukiwanie danych firmy po NIP (CEIDG DataStore) */}
+              {formData.rejestracjaJakoFirma && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="space-y-3 bg-muted/40 p-4 rounded-xl border border-border/60"
+                >
+                  <p className="text-sm text-muted-foreground">
+                    Wpisz NIP firmy, aby automatycznie pobrać dane z Wykazu podatników VAT.
+                  </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyNip" className="hidden">COMPANY_NIP</Label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Input
+                        id="companyNip"
+                        type="text"
+                        placeholder="1234567890"
+                        value={formData.companyNip}
+                        onChange={(e) => {
+                          setFormData(prev => ({ ...prev, companyNip: e.target.value }))
+                          if (companyLookupError) setCompanyLookupError("")
+                        }}
+                        className="h-11"
+                        disabled={isLookingUpCompany}
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleCompanyLookup}
+                        disabled={isLookingUpCompany}
+                        className="h-11 whitespace-nowrap"
+                      >
+                        {isLookingUpCompany ? "Wyszukiwanie..." : "Wyszukaj dane firmy"}
+                      </Button>
+                    </div>
+                    {companyLookupError && (
+                      <p className="text-xs text-destructive">{companyLookupError}</p>
+                    )}
+                  </div>
+
+                  {/* Pobrane dane firmy wyświetlone jako tekst (pola COMPANY_) */}
+                  {formData.companyData && (
+                    <div className="space-y-2 pt-2 border-t border-border/60">
+                      <p className="text-sm font-semibold flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary" />
+                        Pobrane dane firmy
+                      </p>
+                      <dl className="grid grid-cols-1 gap-1 text-sm">
+                        {COMPANY_FIELD_LABELS.map(({ key, label }) => {
+                          const value = formData.companyData?.[key]
+                          if (!value) return null
+                          return (
+                            <div key={key} className="flex flex-col sm:flex-row sm:gap-2">
+                              <dt className="text-muted-foreground sm:w-56 shrink-0">{label}:</dt>
+                              <dd className="text-foreground font-medium break-words">{value}</dd>
+                            </div>
+                          )
+                        })}
+                      </dl>
+                    </div>
+                  )}
+                </motion.div>
+              )}
             </div>
+
 
             {/* Dane logowania i zgody */}
             <div className="space-y-4">
-              <div className="space-y-4">
+              <div className="space-y-">
                 {!session ? (
                   <>
                     <div className="space-y-2">
@@ -1216,7 +1324,7 @@ export default function LawFirmRegistrationPage() {
                         delete newErrors.zgodaRegulamin
                         setFieldErrors(newErrors)
                       }
-                    }}
+                    }} i
                   >
                     <div className={cn(
                       "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
@@ -1290,7 +1398,7 @@ export default function LawFirmRegistrationPage() {
       <Card className="border-none shadow-none bg-transparent">
         <CardHeader className="space-y-2 px-0 pt-0">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-3xl font-extrabold tracking-tight">Rejestracja</CardTitle>
+            <CardTitle className="text-3xl font-playfair tracking-tight">Rejestracja</CardTitle>
             <span className="text-xs font-light bg-primary/10 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
               Krok {currentStepIndex + 1} / {totalSteps}
             </span>

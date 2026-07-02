@@ -55,7 +55,7 @@ export async function getExpertsCatalog(
   if (query) {
     where.OR = [
       { nazwa: { contains: query } },
-      { nazwaFirmy: { contains: query } },
+      { nazwa: { contains: query } },
       { slowaKluczowe: { contains: query } },
       { user: { imie: { contains: query } } },
       { user: { nazwisko: { contains: query } } },
@@ -70,7 +70,7 @@ export async function getExpertsCatalog(
     select: {
       slug: true,
       nazwa: true,
-      nazwaFirmy: true,
+      nazwa: true,
       user: {
         select: {
           imie: true,
@@ -92,7 +92,7 @@ export async function getExpertsCatalog(
     return {
       imie: lf.user?.imie ?? null,
       nazwisko: lf.user?.nazwisko ?? null,
-      firma: lf.nazwaFirmy || lf.nazwa,
+      firma: lf.nazwa || lf.nazwa,
       glownaSpecjalizacja: lf.mainCategory?.nazwa ?? specjalizacje[0] ?? null,
       specjalizacje,
       miasto: lf.user?.miasto ?? null,

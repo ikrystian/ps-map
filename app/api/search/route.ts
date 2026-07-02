@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     if (query) {
       where.OR = [
         { nazwa: { contains: query } },
-        { nazwaFirmy: { contains: query } },
+        { nazwa: { contains: query } },
         { user: { miasto: { contains: query } } },
         { opis: { contains: query } },
       ]
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         id: true,
         slug: true,
         nazwa: true,
-        nazwaFirmy: true,
+        nazwa: true,
         logo: true,
         zdjecieGlowne: true,
         opis: true,
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         id: firm.id,
         slug: firm.slug,
         nazwa: firm.nazwa,
-        nazwaFirmy: firm.nazwaFirmy,
+        nazwa: firm.nazwa,
         logo: pokazAwatar ? firm.logo : null,
         zdjecieGlowne: firm.zdjecieGlowne,
         opis: firm.opis ? (firm.opis.length > 150 ? firm.opis.substring(0, 150) + "..." : firm.opis) : "",

@@ -59,7 +59,7 @@ interface LawFirmRankingData {
   id: string
   slug: string
   nazwa: string
-  nazwaFirmy: string
+  nazwa: string
   logo: string | null
   miasto: string
   zweryfikowana: boolean
@@ -101,7 +101,7 @@ interface GlobalOverride {
   lawFirm: {
     id: string
     nazwa: string
-    nazwaFirmy: string
+    nazwa: string
     logo: string | null
     miasto: string
   }
@@ -261,7 +261,7 @@ export default function AdminPozycjonowaniePage() {
   const filteredFirms = firms.filter((f) => {
     const matchesSearch =
       f.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.nazwaFirmy.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      f.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
       f.miasto.toLowerCase().includes(searchQuery.toLowerCase())
 
     const matchesVoivodeship = filterVoivodeship === "all" || f.voivodeship === filterVoivodeship
@@ -516,13 +516,13 @@ export default function AdminPozycjonowaniePage() {
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center flex-shrink-0">
                               {ov.lawFirm.logo ? (
-                                <img src={ov.lawFirm.logo} alt={ov.lawFirm.nazwaFirmy} className="w-full h-full object-cover" />
+                                <img src={ov.lawFirm.logo} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
                               ) : (
                                 <Award className="h-4 w-4 text-zinc-500" />
                               )}
                             </div>
                             <div>
-                              <div className="font-bold text-sm leading-snug">{ov.lawFirm.nazwaFirmy}</div>
+                              <div className="font-bold text-sm leading-snug">{ov.lawFirm.nazwa}</div>
                               <div className="text-xs text-muted-foreground">{ov.lawFirm.miasto}</div>
                             </div>
                           </div>
@@ -765,7 +765,7 @@ export default function AdminPozycjonowaniePage() {
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground font-medium">
-                                {firm.nazwaFirmy} • <span className="text-foreground">{firm.miasto}</span> ({firm.voivodeship})
+                                {firm.nazwa} • <span className="text-foreground">{firm.miasto}</span> ({firm.voivodeship})
                               </p>
                               <div className="flex flex-wrap gap-1 pt-1">
                                 {firm.categories.slice(0, 3).map((c) => (

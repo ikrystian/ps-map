@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { pickEditableCompanyDataFields } from "@/lib/biala-lista"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { hasActivePackage } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
@@ -32,6 +33,18 @@ export async function GET(
               select: {
                 ustawieniaOgloszenia: true,
                 urlop: true,
+              },
+            },
+            // Dane firmy do faktury podane przy rejestracji (przedrostek COMPANY_)
+            companyData: {
+              select: {
+                COMPANY_name: true,
+                COMPANY_nip: true,
+                COMPANY_regon: true,
+                COMPANY_krs: true,
+                COMPANY_residenceAddress: true,
+                COMPANY_workingAddress: true,
+                COMPANY_statusVat: true,
               },
             },
           },
@@ -159,6 +172,8 @@ export async function GET(
     const parsedLawFirm = {
       ...flattenLawFirmUser(lawFirm),
       userId: lawFirm.userId, // Include userId for chat functionality
+      // Dane firmy do faktury (null jeśli ekspert rejestrował się jako osoba prywatna)
+      companyData: lawFirm.user?.companyData ?? null,
       galeriaZdjec: lawFirm.galeriaZdjec && lawFirm.galeriaZdjec.trim() ? JSON.parse(lawFirm.galeriaZdjec) : [],
       slowaKluczowe: lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.trim() ? JSON.parse(lawFirm.slowaKluczowe) : [],
       godzinyOtwarcia: lawFirm.godzinyOtwarcia && lawFirm.godzinyOtwarcia.trim() ? JSON.parse(lawFirm.godzinyOtwarcia) : null,
@@ -214,7 +229,7 @@ export async function PUT(
 
     // Dane podstawowe
     // Note: slug is NOT directly updateable - it's only regenerated when nazwa changes
-    if (body.nazwa && body.nazwa !== existingLawFirm.nazwaFirmy) {
+    if (body.nazwa && body.nazwa !== existingLawFirm.nazwa) {
       updateData.nazwa = body.nazwa
       // Regenerate slug if nazwa changes
       const polishChars: Record<string, string> = {
@@ -238,7 +253,7 @@ export async function PUT(
       // If nazwa hasn't changed, still update it (for consistency)
       updateData.nazwa = body.nazwa
     }
-    if (body.nazwaFirmy) updateData.nazwaFirmy = body.nazwaFirmy
+    if (body.nazwa) updateData.nazwa = body.nazwa
     if (body.opis !== undefined) updateData.opis = body.opis
     if (body.logo !== undefined) updateData.logo = body.logo
     if (body.zdjecieGlowne !== undefined) updateData.zdjecieGlowne = body.zdjecieGlowne
@@ -338,6 +353,19 @@ export async function PUT(
         where: { id: existingLawFirm.userId },
         data: userUpdateData,
       })
+    }
+
+    // Aktualizuj edytowalne dane firmy do faktury (jeśli przekazano).
+    // updateMany nie rzuca błędem, gdy ekspert nie ma rekordu CompanyData
+    // (rejestracja jako osoba prywatna) — aktualizuje wtedy 0 wierszy.
+    if (body.companyData && typeof body.companyData === "object") {
+      const companyUpdate = pickEditableCompanyDataFields(body.companyData)
+      if (Object.keys(companyUpdate).length > 0) {
+        await prisma.companyData.updateMany({
+          where: { userId: existingLawFirm.userId },
+          data: companyUpdate,
+        })
+      }
     }
 
     // Aktualizuj eksperta

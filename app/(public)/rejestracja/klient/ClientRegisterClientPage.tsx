@@ -44,7 +44,7 @@ export default function ClientRegistrationPage() {
     zgodaNewsletter: false,
     zgodaMarketing: false,
     clientType: "INDIVIDUAL",
-    nazwaFirmy: "",
+    nazwa: "",
     nip: "",
     regon: "",
     krs: "",
@@ -363,8 +363,8 @@ export default function ClientRegistrationPage() {
           password: session?.user ? undefined : formData.password,
           isSocialRegistration: !!session?.user,
           role: "CLIENT",
-          name: formData.clientType === "BUSINESS" && formData.nazwaFirmy.trim()
-            ? formData.nazwaFirmy.trim()
+          name: formData.clientType === "BUSINESS" && formData.nazwa.trim()
+            ? formData.nazwa.trim()
             : `${formData.imie} ${formData.nazwisko}`,
           client: {
             clientType: formData.clientType,
@@ -374,7 +374,7 @@ export default function ClientRegistrationPage() {
             miasto: formData.miasto,
             kodPocztowy: formData.kodPocztowy || null,
             voivodeshipId: formData.voivodeshipId || null,
-            nazwaFirmy: formData.clientType === "BUSINESS" ? (formData.nazwaFirmy || null) : null,
+            nazwa: formData.clientType === "BUSINESS" ? (formData.nazwa || null) : null,
             nip: formData.clientType === "BUSINESS" ? (formData.nip || null) : null,
             regon: formData.clientType === "BUSINESS" ? (formData.regon || null) : null,
             krs: formData.clientType === "BUSINESS" ? (formData.krs || null) : null,
@@ -665,12 +665,12 @@ export default function ClientRegistrationPage() {
                   <h3 className="font-semibold text-sm">Dane firmy / organizacji (opcjonalnie)</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="nazwaFirmy">Nazwa firmy</Label>
+                      <Label htmlFor="nazwa">Nazwa firmy</Label>
                       <Input
-                        id="nazwaFirmy"
+                        id="nazwa"
                         placeholder="ACME Sp. z o.o."
-                        value={formData.nazwaFirmy}
-                        onChange={(e) => handleChange("nazwaFirmy", e.target.value)}
+                        value={formData.nazwa}
+                        onChange={(e) => handleChange("nazwa", e.target.value)}
                         disabled={isLoading}
                         className="h-11"
                       />

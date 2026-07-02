@@ -175,7 +175,7 @@ export async function PUT(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             logo: true,
           },
         },

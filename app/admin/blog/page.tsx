@@ -510,9 +510,9 @@ export default function AdminBlogPage() {
                       <div className="text-sm">
                         {post.lawFirm ? (
                           <>
-                            <div className="font-medium text-foreground">{post.lawFirm.nazwaFirmy}</div>
+                            <div className="font-medium text-foreground">{post.lawFirm.nazwa}</div>
                             <div className="text-muted-foreground text-xs">
-                              {post.lawFirm.nazwaFirmy}
+                              {post.lawFirm.nazwa}
                             </div>
                           </>
                         ) : (
@@ -640,7 +640,7 @@ export default function AdminBlogPage() {
             <div className="space-y-6">
               <DialogHeader>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <span className="font-semibold">{selectedPost.lawFirm ? selectedPost.lawFirm.nazwaFirmy : "Administracja"}</span>
+                  <span className="font-semibold">{selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Administracja"}</span>
                   <span>•</span>
                   <span>{formatDate(selectedPost.createdAt)}</span>
                 </div>
@@ -818,7 +818,7 @@ export default function AdminBlogPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Czy na pewno chcesz usunąć?</AlertDialogTitle>
             <AlertDialogDescription>
-              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot;{selectedPost?.lawFirm ? ` eksperta ${selectedPost.lawFirm.nazwaFirmy}` : ' (wpis administracji)'}?
+              Czy na pewno chcesz usunąć wpis &quot;{selectedPost?.tytul}&quot;{selectedPost?.lawFirm ? ` eksperta ${selectedPost.lawFirm.nazwa}` : ' (wpis administracji)'}?
               Ta operacja jest nieodwracalna.
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -97,7 +97,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                       {/* Expert Portrait */}
                       <img
-                        src={getFirmImage(firm as LawFirm, index)}
+                        src={getFirmImage(firm as LawFirm, index) || "/backgrounds/4.png"}
                         alt={firm.nazwa}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
@@ -118,7 +118,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                     {/* Content Section */}
                     <div className="pt-3 md:pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
                       {/* Profession Subtitle */}
-                      <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase mb-2 block">
+                      <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase block">
                         {profession}
                       </span>
 

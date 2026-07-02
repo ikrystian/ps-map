@@ -25,7 +25,7 @@ export async function createGoogleMeetLink(consultation: any) {
   const calendar = google.calendar({ version: "v3", auth: jwtClient })
 
   const event = {
-    summary: `Konsultacja prawna - ${consultation.lawFirm.nazwaFirmy}`,
+    summary: `Konsultacja prawna - ${consultation.lawFirm.nazwa}`,
     description: consultation.description,
     start: {
       dateTime: consultation.proposedDateTime,

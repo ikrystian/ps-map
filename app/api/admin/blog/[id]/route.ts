@@ -25,14 +25,14 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             slug: true,
           },
         },
@@ -71,7 +71,7 @@ export async function DELETE(
         lawFirm: {
           select: {
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           },
         },
       },
@@ -86,7 +86,7 @@ export async function DELETE(
     })
 
     return NextResponse.json({
-      message: `Wpis "${post.tytul}"${post.lawFirm ? ` eksperta "${post.lawFirm.nazwaFirmy}"` : ""} został usunięty`,
+      message: `Wpis "${post.tytul}"${post.lawFirm ? ` eksperta "${post.lawFirm.nazwa}"` : ""} został usunięty`,
     })
   } catch (error) {
     console.error("Error deleting blog post:", error)
@@ -220,14 +220,14 @@ export async function PATCH(
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             slug: true,
           },
         },

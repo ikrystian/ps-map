@@ -38,7 +38,7 @@ interface ClientData {
   nazwisko: string
   clientType: "INDIVIDUAL" | "BUSINESS"
   telefon?: string | null
-  nazwaFirmy?: string | null
+  nazwa?: string | null
   nip?: string | null
   adres?: string | null
   kodPocztowy?: string | null

@@ -13,7 +13,6 @@ export interface LawFirmBase {
   id: string
   slug: string
   nazwa: string
-  nazwaFirmy: string
   logo?: string | null
   zdjecieGlowne?: string | null
   numerTelefonu?: string | null
@@ -228,7 +227,6 @@ export interface LawFirmReference {
   id: string
   slug: string
   nazwa: string
-  nazwaFirmy: string
   logo?: string | null
 }
 

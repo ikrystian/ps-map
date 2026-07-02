@@ -26,7 +26,9 @@
       "Bash(node *)",
       "Bash(grep -cE '\\\\{$' /home/krystian/Projects/ps-map/prisma/ERD.md)",
       "Bash(cd *)",
-      "Bash(grep -iE '\\\\.\\(png|webp|jpg|jpeg\\)$')"
+      "Bash(grep -iE '\\\\.\\(png|webp|jpg|jpeg\\)$')",
+      "WebFetch(domain:dane.gov.pl)",
+      "Bash(echo \"=== lint exit: $? ===\")"
     ]
   }
 }

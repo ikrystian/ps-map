@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
           clientType,
           imie: clientData.imie,
           nazwisko: clientData.nazwisko,
-          nazwaFirmy: clientType === "BUSINESS" ? (clientData.nazwaFirmy || null) : null,
+          nazwa: clientType === "BUSINESS" ? (clientData.nazwa || null) : null,
           nip: clientType === "BUSINESS" ? (clientData.nip || null) : null,
           regon: clientType === "BUSINESS" ? (clientData.regon || null) : null,
           krs: clientType === "BUSINESS" ? (clientData.krs || null) : null,
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
 
       // Synchronizacja nazwy użytkownika
       const targetName = clientType === "BUSINESS"
-        ? (clientData.nazwaFirmy || `${clientData.imie} ${clientData.nazwisko}`)
+        ? (clientData.nazwa || `${clientData.imie} ${clientData.nazwisko}`)
         : `${clientData.imie} ${clientData.nazwisko}`
 
       await prisma.user.update({
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
       }
 
       const nip = userData.lawFirm.nip || `TEMP${Date.now()}`
-      const slug = userData.lawFirm.nazwaFirmy
+      const slug = userData.lawFirm.nazwa
         .toLowerCase()
         .replace(/[ąćęłńóśźż]/g, (char: string) => {
           const map: Record<string, string> = { ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z' }
@@ -271,8 +271,8 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           typ: userData.lawFirm.typ,
           typInny: userData.lawFirm.typInny || null,
-          nazwa: userData.lawFirm.nazwa || userData.lawFirm.nazwaFirmy,
-          nazwaFirmy: userData.lawFirm.nazwaFirmy,
+          nazwa: userData.lawFirm.nazwa || userData.lawFirm.nazwa,
+          nazwa: userData.lawFirm.nazwa,
           slug,
           nip, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,

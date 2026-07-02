@@ -14,25 +14,32 @@ export async function GET(
 
     const { id } = await params
 
-    // Get the user's law firm
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        lawFirm: {
-          select: { id: true }
-        }
-      },
-    })
+    const isAdmin = session.user.role === "ADMIN"
 
-    if (!user?.lawFirm) {
-      return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+    // Get the user's law firm (admins may fetch any invoice and have no law firm)
+    let lawFirmId: string | undefined
+    if (!isAdmin) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: {
+          lawFirm: {
+            select: { id: true }
+          }
+        },
+      })
+
+      if (!user?.lawFirm) {
+        return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+      }
+
+      lawFirmId = user.lawFirm.id
     }
 
     // Get the invoice with all related data
     const invoice = await prisma.invoice.findFirst({
       where: {
         id,
-        lawFirmId: user.lawFirm.id,
+        ...(lawFirmId ? { lawFirmId } : {}),
       },
       include: {
         order: {
@@ -49,7 +56,7 @@ export async function GET(
         lawFirm: {
           select: {
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             nip: true,
             user: {
               select: {

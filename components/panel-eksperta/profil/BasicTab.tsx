@@ -31,7 +31,6 @@ const RichTextEditor = dynamic(
 interface BasicTabProps {
   formData: {
     nazwa: string
-    nazwaFirmy: string
     opis: string
     logo: string
     zdjecieGlowne: string
@@ -42,6 +41,7 @@ interface BasicTabProps {
     oraMiasto: string
     oraWpis: string
     expertiseCategoryId: string
+    typInny: string
   }
   handleInputChange: (field: string, value: any) => void
   isUploading: boolean
@@ -69,43 +69,77 @@ export function BasicTab({
   const [selectedSubcatId, setSelectedSubcatId] = useState("")
 
   useEffect(() => {
-    if (!formData.expertiseCategoryId || !expertiseCategories || expertiseCategories.length === 0) return
+    if (!expertiseCategories || expertiseCategories.length === 0) return
 
-    let foundCatId = ""
-    let foundSubcatId = ""
+    // 1) Rozpoznaj kategorię po zapisanym expertiseCategoryId
+    if (formData.expertiseCategoryId) {
+      let foundCatId = ""
+      let foundSubcatId = ""
 
-    for (const cat of expertiseCategories) {
-      if (cat.id === formData.expertiseCategoryId) {
-        foundCatId = cat.id
-        break
-      }
-      if (cat.children) {
-        for (const sub of cat.children) {
-          if (sub.id === formData.expertiseCategoryId) {
-            foundCatId = cat.id
-            foundSubcatId = sub.id
-            break
-          }
-          if (sub.children) {
-            for (const leaf of sub.children) {
-              if (leaf.id === formData.expertiseCategoryId) {
-                foundCatId = cat.id
-                foundSubcatId = sub.id
-                break
+      for (const cat of expertiseCategories) {
+        if (cat.id === formData.expertiseCategoryId) {
+          foundCatId = cat.id
+          break
+        }
+        if (cat.children) {
+          for (const sub of cat.children) {
+            if (sub.id === formData.expertiseCategoryId) {
+              foundCatId = cat.id
+              foundSubcatId = sub.id
+              break
+            }
+            if (sub.children) {
+              for (const leaf of sub.children) {
+                if (leaf.id === formData.expertiseCategoryId) {
+                  foundCatId = cat.id
+                  foundSubcatId = sub.id
+                  break
+                }
               }
             }
+            if (foundCatId) break
           }
-          if (foundCatId) break
         }
+        if (foundCatId) break
       }
-      if (foundCatId) break
+
+      if (foundCatId) {
+        setSelectedCatId(foundCatId)
+        setSelectedSubcatId(foundSubcatId)
+      }
+      return
     }
 
-    if (foundCatId) {
-      setSelectedCatId(foundCatId)
-      setSelectedSubcatId(foundSubcatId)
+    // 2) Fallback: brak expertiseCategoryId, ale jest ścieżka rejestracyjna w typInny
+    //    (np. "Prawnicy > Adwokat" albo "Eksperci > Finanse > Doradca finansowy").
+    //    Odtwórz wybór po nazwach i uzupełnij expertiseCategoryId (samonaprawa danych).
+    if (formData.typInny) {
+      const segments = formData.typInny.split(">").map((s) => s.trim()).filter(Boolean)
+      if (segments.length >= 2) {
+        const cat = expertiseCategories.find((c) => c.nazwa === segments[0])
+        if (cat) {
+          let subId = ""
+          let leafId = ""
+          if (segments.length === 2) {
+            const leaf = (cat.children || []).find((ch: any) => ch.nazwa === segments[1])
+            if (leaf) leafId = leaf.id
+          } else {
+            const sub = (cat.children || []).find((s: any) => s.nazwa === segments[1])
+            if (sub) {
+              subId = sub.id
+              const leaf = (sub.children || []).find((l: any) => l.nazwa === segments[2])
+              if (leaf) leafId = leaf.id
+            }
+          }
+          if (leafId) {
+            setSelectedCatId(cat.id)
+            if (subId) setSelectedSubcatId(subId)
+            handleInputChange("expertiseCategoryId", leafId)
+          }
+        }
+      }
     }
-  }, [formData.expertiseCategoryId, expertiseCategories])
+  }, [formData.expertiseCategoryId, formData.typInny, expertiseCategories])
 
   const selectedCat = expertiseCategories?.find((c) => c.id === selectedCatId)
   const hasSubcategories = !!(
@@ -161,33 +195,21 @@ export function BasicTab({
                   <Label htmlFor="nazwa" className="text-zinc-300 font-medium">Nazwa wyświetlana *</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                      <User className="h-4 w-4" />
+                      <Lock className="h-4 w-4" />
                     </div>
                     <Input
                       id="nazwa"
                       value={formData.nazwa}
-                      onChange={(e) => handleInputChange("nazwa", e.target.value)}
-                      required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
+                      readOnly
+                      aria-readonly="true"
+                      className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl focus-visible:ring-0"
                     />
                   </div>
+                  <p className="text-xs text-zinc-500 font-light leading-relaxed">
+                    Aby zmienić wyświetlaną nazwę, skontaktuj się z administracją prostasprawa.
+                  </p>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="nazwaFirmy" className="text-zinc-300 font-medium">Nazwa firmy *</Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                      <Building className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="nazwaFirmy"
-                      value={formData.nazwaFirmy}
-                      onChange={(e) => handleInputChange("nazwaFirmy", e.target.value)}
-                      required
-                      className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary focus:ring-primary"
-                    />
-                  </div>
-                </div>
               </div>
 
               {/* Branża i specjalizacja */}
@@ -398,7 +420,7 @@ export function BasicTab({
                         ) : (
                           <>
                             <Upload className="mr-2 h-4 w-4 text-primary" />
-                            Zmień logo
+                            Zmień zdjęćie
                           </>
                         )}
                       </label>
@@ -410,7 +432,7 @@ export function BasicTab({
                         className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
                       >
                         <X className="mr-2 h-4 w-4" />
-                        Usuń logo
+                        Usuń zdjęcie
                       </Button>
                     </div>
                     <input

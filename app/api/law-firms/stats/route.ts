@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
     return Response.json({
       lawFirm: {
         id: lawFirm.id,
-        nazwa: lawFirm.nazwaFirmy,
+        nazwa: lawFirm.nazwa,
         wyswietleniaProfilu: lawFirm.wyswietleniaProfilu,
         zlozoneOferty: lawFirm.zlozoneOferty,
         wygraneOferty: lawFirm.wygraneOferty,

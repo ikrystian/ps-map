@@ -30,8 +30,6 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { nazwa: { contains: search } },
-        { nazwaFirmy: { contains: search } },
-        { nip: { contains: search } },
         { user: { imie: { contains: search } } },
         { user: { nazwisko: { contains: search } } },
       ]
@@ -130,7 +128,6 @@ export async function POST(request: NextRequest) {
       typInny,
       expertiseCategoryId,
       nazwa,
-      nazwaFirmy,
       nip,
       regon,
       krs,
@@ -162,7 +159,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!typ || !nazwa || !nazwaFirmy || !nip || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
+    if (!typ || !nazwa || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
         { status: 400 }
@@ -175,13 +172,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
-    // Validate NIP format (10 digits)
-    const nipRegex = /^\d{10}$/
-    if (!nipRegex.test(nip.replace(/[-\s]/g, ""))) {
-      return NextResponse.json(
-        { error: "NIP must be 10 digits" },
-        { status: 400 }
-      )
+    // Validate NIP format (10 digits) if provided
+    if (nip) {
+      const nipRegex = /^\d{10}$/
+      if (!nipRegex.test(nip.replace(/[-\s]/g, ""))) {
+        return NextResponse.json(
+          { error: "NIP must be 10 digits" },
+          { status: 400 }
+        )
+      }
     }
 
     // Check if email already exists
@@ -196,16 +195,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if NIP already exists
-    const existingLawFirm = await prisma.lawFirm.findUnique({
-      where: { nip: nip.replace(/[-\s]/g, "") },
-    })
+    // Check if NIP already exists (if provided)
+    if (nip) {
+      const existingLawFirm = await prisma.lawFirm.findUnique({
+        where: { nip: nip.replace(/[-\s]/g, "") },
+      })
 
-    if (existingLawFirm) {
-      return NextResponse.json(
-        { error: "Law firm with this NIP already exists" },
-        { status: 409 }
-      )
+      if (existingLawFirm) {
+        return NextResponse.json(
+          { error: "Law firm with this NIP already exists" },
+          { status: 409 }
+        )
+      }
     }
 
     // Check if voivodeship exists
@@ -244,7 +245,8 @@ export async function POST(request: NextRequest) {
       })
 
       // Create law firm
-      const cleanNip = nip.replace(/[-\s]/g, "")
+      const cleanNip = nip ? nip.replace(/[-\s]/g, "") : null
+      const suffix = cleanNip ? cleanNip.slice(-4) : Math.random().toString(36).substring(2, 6)
       const slug = nazwa
         .toLowerCase()
         .replace(/[ąćęłńóśźż]/g, (char: string) => {
@@ -253,7 +255,7 @@ export async function POST(request: NextRequest) {
         })
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '') + '-' + cleanNip.slice(-4)
+        .replace(/^-+|-+$/g, '') + '-' + suffix
 
       const lawFirm = await tx.lawFirm.create({
         data: {
@@ -262,9 +264,8 @@ export async function POST(request: NextRequest) {
           typInny: typ === "INNY" ? typInny : null,
           expertiseCategoryId: expertiseCategoryId || null,
           nazwa,
-          nazwaFirmy,
           slug,
-          nip: cleanNip,
+          nip: cleanNip || null,
           regon: regon || null,
           krs: krs || null,
           opis: opis || "",

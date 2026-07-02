@@ -49,12 +49,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           userId: booking.client.userId,
           typ: "KONSULTACJA_ZAAKCEPTOWANA",
           tytul: "Konsultacja zaakceptowana",
-          tresc: `${booking.lawFirm.nazwaFirmy} zaakceptowała Twoją prośbę o konsultację na dzień ${dateStr}. Link do spotkania pojawi się na 5 minut przed planowaną godziną.`,
+          tresc: `${booking.lawFirm.nazwa} zaakceptowała Twoją prośbę o konsultację na dzień ${dateStr}. Link do spotkania pojawi się na 5 minut przed planowaną godziną.`,
           linkUrl: "/panel-klienta/konsultacje",
           emailTemplateType: "KONSULTACJA_ZAAKCEPTOWANA",
           emailVariables: {
             '{klient}': booking.client.user.name || booking.client.user.email,
-            '{ekspert}': booking.lawFirm.nazwaFirmy,
+            '{ekspert}': booking.lawFirm.nazwa,
             '{termin}': dateStr,
             '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
           },
@@ -70,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           linkUrl: "/panel-eksperta/konsultacje",
           emailTemplateType: "KONSULTACJA_ZAAKCEPTOWANA_EKSPERT",
           emailVariables: {
-            '{ekspert}': booking.lawFirm.nazwaFirmy,
+            '{ekspert}': booking.lawFirm.nazwa,
             '{klient}': booking.client.user.name || booking.client.user.email,
             '{termin}': dateStr,
             '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
@@ -83,12 +83,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           userId: booking.client.userId,
           typ: "KONSULTACJA_ODRZUCONA",
           tytul: "Konsultacja odrzucona",
-          tresc: `${booking.lawFirm.nazwaFirmy} odrzuciła Twoją prośbę o konsultację`,
+          tresc: `${booking.lawFirm.nazwa} odrzuciła Twoją prośbę o konsultację`,
           linkUrl: "/panel-klienta/konsultacje",
           emailTemplateType: "KONSULTACJA_ODRZUCONA",
           emailVariables: {
             '{klient}': booking.client.user.name || booking.client.user.email,
-            '{ekspert}': booking.lawFirm.nazwaFirmy,
+            '{ekspert}': booking.lawFirm.nazwa,
             '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
           },
         })
@@ -104,12 +104,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           userId: booking.client.userId,
           typ: "KONSULTACJA_ZAPLACONA",
           tytul: "Płatność potwierdzona",
-          tresc: `${booking.lawFirm.nazwaFirmy} potwierdziła płatność za konsultację`,
+          tresc: `${booking.lawFirm.nazwa} potwierdziła płatność za konsultację`,
           linkUrl: "/panel-klienta/konsultacje",
           emailTemplateType: "KONSULTACJA_ZAPLACONA",
           emailVariables: {
             '{klient}': booking.client.user.name || booking.client.user.email,
-            '{ekspert}': booking.lawFirm.nazwaFirmy,
+            '{ekspert}': booking.lawFirm.nazwa,
             '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
           },
         })
@@ -176,7 +176,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
         linkUrl: "/panel-eksperta/konsultacje",
         emailTemplateType: "KONSULTACJA_ANULOWANA",
         emailVariables: {
-          '{odbiorca}': booking.lawFirm.nazwaFirmy,
+          '{odbiorca}': booking.lawFirm.nazwa,
           '{inicjator}': booking.client.user.name || booking.client.user.email,
           '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
         },
@@ -187,12 +187,12 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
         userId: booking.client.userId,
         typ: "KONSULTACJA_ANULOWANA",
         tytul: "Konsultacja anulowana",
-        tresc: `${booking.lawFirm.nazwaFirmy} anulowała konsultację`,
+        tresc: `${booking.lawFirm.nazwa} anulowała konsultację`,
         linkUrl: "/panel-klienta/konsultacje",
         emailTemplateType: "KONSULTACJA_ANULOWANA",
         emailVariables: {
           '{odbiorca}': booking.client.user.name || booking.client.user.email,
-          '{inicjator}': booking.lawFirm.nazwaFirmy,
+          '{inicjator}': booking.lawFirm.nazwa,
           '{linkDoPanelu}': `${process.env.URL || ''}/panel-klienta/konsultacje`,
         },
       })

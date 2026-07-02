@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { tytul: { contains: search } },
         { lawFirm: { nazwa: { contains: search } } },
-        { lawFirm: { nazwaFirmy: { contains: search } } },
+        { lawFirm: { nazwa: { contains: search } } },
       ]
     }
 
@@ -67,14 +67,14 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               nazwa: true,
-              nazwaFirmy: true,
+              nazwa: true,
             },
           },
           sponsoredLawFirm: {
             select: {
               id: true,
               nazwa: true,
-              nazwaFirmy: true,
+              nazwa: true,
               slug: true,
             },
           },
@@ -202,14 +202,14 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             slug: true,
           },
         },

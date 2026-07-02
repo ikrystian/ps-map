@@ -17,7 +17,6 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
@@ -29,7 +28,6 @@ import { motion } from "framer-motion"
 import {
   Calendar,
   CheckCircle2,
-  Image as ImageIcon,
   Info,
   Loader2,
   Lock,
@@ -38,11 +36,9 @@ import {
   Save,
   ShieldCheck,
   Trash2,
-  Upload,
   User,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
-import Image from "next/image"
 import { useEffect, useState } from "react"
 
 const formatDateTime = (dateString: string): string => {
@@ -111,15 +107,9 @@ const containerVariants = {
 }
 
 export default function LawFirmSettingsPage() {
-  const { data: session, update } = useSession()
+  const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(true)
-  const [isSavingUser, setIsSavingUser] = useState(false)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
-  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null)
-  const [showAvatarCropper, setShowAvatarCropper] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [isRemovingAvatar, setIsRemovingAvatar] = useState(false)
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
 
@@ -199,13 +189,6 @@ export default function LawFirmSettingsPage() {
     }
   }, [session])
 
-  const handleUserDataChange = (field: keyof UserData, value: string) => {
-    setUserData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
   const handleSettingChange = (field: keyof NotificationSettings, value: boolean) => {
     // Nie pozwól na wyłączenie obowiązkowych pól
     if ((field === "kontaktKlienci" || field === "kluczowe") && !value) {
@@ -219,170 +202,7 @@ export default function LawFirmSettingsPage() {
     }))
   }
 
-  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
 
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Nieprawidłowy typ pliku. Dozwolone: JPEG, PNG, WebP")
-      return
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
-      return
-    }
-
-    // Show cropper
-    setSelectedAvatarFile(file)
-    setShowAvatarCropper(true)
-  }
-
-  const handleAvatarCropComplete = async (croppedBlob: Blob) => {
-    setShowAvatarCropper(false)
-    setIsUploadingAvatar(true)
-
-    try {
-      const originalName = selectedAvatarFile?.name || "avatar.jpg"
-      const lastDot = originalName.lastIndexOf(".")
-      const baseName = lastDot === -1 ? originalName : originalName.slice(0, lastDot)
-      const mimeType = croppedBlob.type.split(";")[0]
-      const extension = mimeType === "image/jpeg" ? "jpg" : mimeType.split("/")[1] || "png"
-      const fileName = `${baseName}.${extension}`
-
-      const file = new File([croppedBlob], fileName, {
-        type: croppedBlob.type,
-      })
-
-      const formDataToSend = new FormData()
-      formDataToSend.append("file", file)
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataToSend,
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to upload avatar")
-      }
-
-      const data = await response.json()
-      const uploadUrl = data.url
-
-      if (!uploadUrl) {
-        throw new Error("No upload URL returned")
-      }
-
-      // Zaktualizuj dane użytkownika z nowym avatarem
-      const updateResponse = await fetch("/api/auth/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: userData.name,
-          image: uploadUrl,
-        }),
-      })
-
-      if (!updateResponse.ok) {
-        throw new Error("Failed to update avatar")
-      }
-
-      setUserData((prev) => ({ ...prev, image: uploadUrl }))
-
-      // Zaktualizuj sesję NextAuth z triggerem "update"
-      await update({
-        image: uploadUrl,
-      })
-
-      toast.success("Avatar został zaktualizowany")
-    } catch (error) {
-      console.error("Error uploading avatar:", error)
-      toast.error(error instanceof Error ? error.message : "Nie udało się przesłać avatara")
-    } finally {
-      setIsUploadingAvatar(false)
-      setSelectedAvatarFile(null)
-    }
-  }
-
-  const handleAvatarCropCancel = () => {
-    setShowAvatarCropper(false)
-    setSelectedAvatarFile(null)
-  }
-
-  const handleRemoveAvatar = async () => {
-    setIsRemovingAvatar(true)
-    try {
-      const response = await fetch("/api/auth/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: userData.name,
-          image: null,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to remove avatar")
-      }
-
-      setUserData((prev) => ({ ...prev, image: null }))
-
-      // Zaktualizuj sesję NextAuth z triggerem "update"
-      await update({
-        image: null,
-      })
-
-      toast.success("Avatar został usunięty")
-    } catch (error) {
-      console.error("Error removing avatar:", error)
-      toast.error("Nie udało się usunąć avatara")
-    } finally {
-      setIsRemovingAvatar(false)
-    }
-  }
-
-  const handleSaveUserData = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSavingUser(true)
-
-    try {
-      const response = await fetch("/api/auth/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: userData.name,
-          image: userData.image,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to update user data")
-      }
-
-      // Zaktualizuj sesję NextAuth z triggerem "update"
-      await update({
-        name: userData.name,
-        image: userData.image,
-      })
-
-      toast.success("Dane osobowe zostały zaktualizowane")
-    } catch (error) {
-      console.error("Error saving user data:", error)
-      toast.error("Nie udało się zapisać danych osobowych")
-    } finally {
-      setIsSavingUser(false)
-    }
-  }
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -481,111 +301,24 @@ export default function LawFirmSettingsPage() {
               <CardDescription className="text-zinc-400 text-xs">Uaktualnij podstawowe informacje o swojej tożsamości.</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <form onSubmit={handleSaveUserData} className="space-y-6">
-                {/* Avatar Upload */}
-                <div className="space-y-3">
-                  <Label className="text-xs font-semibold text-zinc-300">Zdjęcie profilowe (Avatar)</Label>
-                  <p className="text-xs text-muted-foreground font-light leading-relaxed">
-                    Avatar będzie wyświetlany w menu bocznym oraz w korespondencji z klientami. Zalecany rozmiar: 200x200px.
-                  </p>
-
-                  {userData.image ? (
-                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                      <div className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
-                        <Image
-                          src={userData.image}
-                          alt="Avatar"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2 w-full sm:w-auto">
-                        <label
-                          htmlFor="avatar-upload"
-                          className={cn(
-                            "inline-flex items-center justify-center rounded-xl text-sm font-semibold h-10 px-4 py-2 transition-all border border-border/50 text-white bg-background/50 hover:bg-zinc-800/30 cursor-pointer"
-                          )}
-                        >
-                          {isUploadingAvatar ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
-                              Przesyłanie...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="mr-2 h-4 w-4 text-primary" />
-                              Zmień avatar
-                            </>
-                          )}
-                        </label>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="w-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl h-10"
-                          onClick={() => setShowDeleteConfirm(true)}
-                          disabled={isUploadingAvatar || isRemovingAvatar}
-                        >
-                          <Trash2 className="mr-2 h-4.5 w-4.5" />
-                          Usuń avatar
-                        </Button>
-                      </div>
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                        className="hidden"
-                        onChange={handleAvatarFileSelect}
-                        disabled={isUploadingAvatar}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full">
-                      <label
-                        htmlFor="avatar-upload"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border/40 rounded-xl cursor-pointer hover:bg-primary/5 hover:border-primary/30 transition-all"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-                          {isUploadingAvatar ? (
-                            <>
-                              <Loader2 className="h-9 w-9 mb-2 text-primary animate-spin" />
-                              <p className="text-xs text-muted-foreground">Przesyłanie...</p>
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="h-9 w-9 mb-2 text-primary" />
-                              <p className="mb-1 text-xs text-zinc-300">
-                                <span className="font-semibold text-primary">Prześlij</span> avatar
-                              </p>
-                              <p className="text-sm text-zinc-500">
-                                PNG, JPG, WEBP (max 5MB)
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </label>
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                        className="hidden"
-                        onChange={handleAvatarFileSelect}
-                        disabled={isUploadingAvatar}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <Separator className="bg-border/20" />
-
+              <div className="space-y-6">
+                {/* Nazwa (Zablokowana edycja) */}
                 <div className="grid gap-2">
-                  <Label htmlFor="name" className="text-xs font-semibold text-zinc-300">Imię i nazwisko</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="name" className="text-xs font-semibold text-zinc-300">Nazwa</Label>
+                    <span className="text-[10px] text-amber-400/80 flex items-center gap-1 font-medium bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                      <Lock className="h-3 w-3" /> Tylko do odczytu
+                    </span>
+                  </div>
                   <Input
                     id="name"
                     value={userData.name || ""}
-                    onChange={(e) => handleUserDataChange("name", e.target.value)}
-                    placeholder="Wpisz swoje imię i nazwisko"
-                    className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
+                    readOnly
+                    className="h-11 bg-background/20 border-border/30 rounded-xl cursor-not-allowed text-zinc-400 text-sm select-none"
                   />
+                  <p className="text-xs text-zinc-500 font-light mt-0.5 leading-relaxed">
+                    Aby zmienić nazwę administratora konta, skontaktuj się z administratorem strony.
+                  </p>
                 </div>
 
                 {/* E-mail (Zablokowana edycja) */}
@@ -599,23 +332,7 @@ export default function LawFirmSettingsPage() {
                     <Lock className="h-4 w-4 text-zinc-500" />
                   </div>
                 </div>
-
-                <div className="flex justify-end pt-2">
-                  <Button
-                    type="submit"
-                    disabled={isSavingUser}
-                    variant="primary"
-                    className="h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
-                  >
-                    {isSavingUser ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4" />
-                    )}
-                    Zapisz dane osobowe
-                  </Button>
-                </div>
-              </form>
+              </div>
             </CardContent>
           </Card>
 
@@ -1190,26 +907,7 @@ export default function LawFirmSettingsPage() {
         </div>
       </div>
 
-      {selectedAvatarFile && (
-        <ImageCropper
-          image={selectedAvatarFile}
-          aspectRatio={1}
-          onCropComplete={handleAvatarCropComplete}
-          onCancel={handleAvatarCropCancel}
-          open={showAvatarCropper}
-        />
-      )}
 
-      <ConfirmDeleteDialog
-        open={showDeleteConfirm}
-        onOpenChange={setShowDeleteConfirm}
-        onConfirm={handleRemoveAvatar}
-        isPending={isRemovingAvatar}
-        title="Usuń zdjęcie profilowe"
-        description="Czy na pewno chcesz usunąć swoje zdjęcie profilowe? Tej operacji nie można cofnąć."
-        confirmText="Usuń"
-        cancelText="Anuluj"
-      />
 
       <ConfirmDeleteDialog
         open={showDeleteAccountConfirm}

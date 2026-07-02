@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
       description,
       payer: {
         email: order.lawFirm.user.email || "",
-        name: order.lawFirm.nazwaFirmy || "Ekspert",
+        name: order.lawFirm.nazwa || "Ekspert",
       },
       callbacks: {
         notification: {

@@ -22,7 +22,6 @@ import {
   Download,
   FileText,
   Loader2,
-  Send,
   XCircle,
   Coins,
   ShieldCheck
@@ -43,10 +42,6 @@ interface Invoice {
   buyerName: string
   buyerNIP: string
   pdfUrl: string | null
-  ksefStatus?: string | null
-  ksefNumber?: string | null
-  ksefReferenceNumber?: string | null
-  ksefDiagnostics?: string | null
   order: {
     orderNumber: string
     orderType: string
@@ -90,7 +85,6 @@ const itemVariants = {
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
-  const [syncingId, setSyncingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchInvoices()
@@ -106,26 +100,6 @@ export default function InvoicesPage() {
       toast.error("Nie udało się pobrać faktur")
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleSendToKsef = async (id: string) => {
-    setSyncingId(id)
-    try {
-      const response = await fetch(`/api/invoices/${id}/ksef`, {
-        method: "POST"
-      })
-      const result = await response.json()
-      if (response.ok && result.success) {
-        toast.success("Pomyślnie wysłano fakturę do KSeF")
-      } else {
-        toast.error(result.invoice?.ksefDiagnostics || result.error || "Błąd podczas wysyłania do KSeF")
-      }
-      fetchInvoices()
-    } catch (error) {
-      toast.error("Wystąpił błąd podczas wysyłania do KSeF")
-    } finally {
-      setSyncingId(null)
     }
   }
 
@@ -177,7 +151,7 @@ export default function InvoicesPage() {
       >
         <PageHeader
           title="Faktury VAT"
-          subtitle="Zarządzaj swoimi fakturami, sprawdzaj status płatności oraz wysyłaj dokumenty do KSeF."
+          subtitle="Zarządzaj swoimi fakturami oraz sprawdzaj status płatności."
         />
 
       </motion.div>
@@ -230,7 +204,6 @@ export default function InvoicesPage() {
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">VAT</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Kwota brutto</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
-                          <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-44">Status KSeF</TableHead>
                           <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -284,68 +257,6 @@ export default function InvoicesPage() {
                                   <StatusIcon className="h-3.5 w-3.5" />
                                   {statusInfo.label}
                                 </Badge>
-                              </TableCell>
-                              <TableCell className="py-4 px-6">
-                                {invoice.ksefStatus === "ACCEPTED" && (
-                                  <div className="space-y-1">
-                                    <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 rounded-md">
-                                      <CheckCircle2 className="h-3 w-3 text-success" />
-                                      Zaakceptowano
-                                    </Badge>
-                                    {invoice.ksefNumber && (
-                                      <div className="text-sm font-mono text-zinc-500 break-all max-w-[140px]" title={invoice.ksefNumber}>
-                                        {invoice.ksefNumber}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                {invoice.ksefStatus === "SENT" && (
-                                  <div className="space-y-1">
-                                    <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 rounded-md">
-                                      <Clock className="h-3 w-3 animate-pulse text-blue-400" />
-                                      Wysłano
-                                    </Badge>
-                                  </div>
-                                )}
-                                {invoice.ksefStatus === "PENDING" && (
-                                  <div className="space-y-1">
-                                    <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 rounded-md">
-                                      <Loader2 className="h-3 w-3 animate-spin text-warning" />
-                                      Przetwarzanie
-                                    </Badge>
-                                  </div>
-                                )}
-                                {invoice.ksefStatus === "FAILED" && (
-                                  <div className="space-y-1">
-                                    <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 rounded-md" title={invoice.ksefDiagnostics || "Błąd wysyłki"}>
-                                      <XCircle className="h-3 w-3" />
-                                      Błąd wysyłki
-                                    </Badge>
-                                    {invoice.ksefDiagnostics && (
-                                      <div className="text-sm text-error max-w-[140px] truncate" title={invoice.ksefDiagnostics}>
-                                        {invoice.ksefDiagnostics}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
-                                  <div className="mt-1">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-xs text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-lg px-2 py-1 h-7 flex items-center gap-1"
-                                      onClick={() => handleSendToKsef(invoice.id)}
-                                      disabled={syncingId === invoice.id}
-                                    >
-                                      {syncingId === invoice.id ? (
-                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                      ) : (
-                                        <Send className="h-3 w-3" />
-                                      )}
-                                      {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
-                                    </Button>
-                                  </div>
-                                )}
                               </TableCell>
                               <TableCell className="py-4 px-6 text-right">
                                 <div className="flex items-center justify-end">
@@ -410,54 +321,7 @@ export default function InvoicesPage() {
                             </div>
                           </div>
 
-                          {/* KSeF Status on Mobile */}
-                          <div className="flex items-center justify-between border-t border-border/5 pt-2.5">
-                            <div>
-                              <span className="text-zinc-500 block font-light text-sm">Status KSeF</span>
-                              <div className="mt-1">
-                                {invoice.ksefStatus === "ACCEPTED" && (
-                                  <Badge className="bg-success/10 text-success border border-success/20 gap-1 py-0.5 px-2 text-sm">
-                                    <CheckCircle2 className="h-3 w-3" />
-                                    Zaakceptowano
-                                  </Badge>
-                                )}
-                                {invoice.ksefStatus === "SENT" && (
-                                  <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 gap-1 py-0.5 px-2 text-sm">
-                                    <Clock className="h-3 w-3 animate-pulse" />
-                                    Wysłano
-                                  </Badge>
-                                )}
-                                {invoice.ksefStatus === "PENDING" && (
-                                  <Badge className="bg-warning/10 text-warning border border-warning/20 gap-1 py-0.5 px-2 text-sm">
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                    Przetwarzanie
-                                  </Badge>
-                                )}
-                                {invoice.ksefStatus === "FAILED" && (
-                                  <Badge className="bg-error/10 text-error border border-error/30 gap-1 py-0.5 px-2 text-sm">
-                                    <XCircle className="h-3 w-3" />
-                                    Błąd wysyłki
-                                  </Badge>
-                                )}
-                                {(!invoice.ksefStatus || invoice.ksefStatus === "FAILED") && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-sm text-primary hover:text-primary-hover hover:bg-primary/10 border border-primary/20 rounded-md p-1 h-auto flex items-center gap-1"
-                                    onClick={() => handleSendToKsef(invoice.id)}
-                                    disabled={syncingId === invoice.id}
-                                  >
-                                    {syncingId === invoice.id ? (
-                                      <Loader2 className="h-3 w-3 animate-spin" />
-                                    ) : (
-                                      <Send className="h-3 w-3" />
-                                    )}
-                                    {invoice.ksefStatus === "FAILED" ? "Ponów" : "Wyślij"}
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-
+                          <div className="flex items-center justify-end border-t border-border/5 pt-2.5">
                             <Button
                               variant="outline"
                               size="sm"

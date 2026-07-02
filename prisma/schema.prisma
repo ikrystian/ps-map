@@ -52,6 +52,7 @@ model User {
   // Relacje
   client        Client?
   lawFirm       LawFirm?
+  companyData   CompanyData?  // Dane firmy pobrane z CEIDG DataStore (przedrostek COMPANY_)
   sentMessages  Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
@@ -153,7 +154,7 @@ model Client {
   // (numerTelefonu, adres, kodPocztowy, miasto, voivodeshipId)
 
   // Dane firmowe (tylko dla BUSINESS)
-  nazwaFirmy      String?
+  nazwa      String?
   nip             String?
   regon           String?
   krs             String?
@@ -192,9 +193,8 @@ model LawFirm {
 
   // Dane firmy
   nazwa                 String
-  nazwaFirmy            String
   slug                  String   @unique // URL-friendly slug
-  nip                   String   @unique
+  nip                   String?  @unique
   regon                 String?
   krs                   String?
 
@@ -337,6 +337,67 @@ enum SubscriptionPackage {
   STANDARD      // 880 zł/rok
   PREMIUM       // 1320 zł/rok
   BIZNES        // 1980 zł/rok
+}
+
+// ============================================================================
+// DANE FIRMY Z "WYKAZU PODATNIKÓW VAT" / BIAŁA LISTA (rejestracja "jako firma")
+// ----------------------------------------------------------------------------
+// Wszystkie pola pobierane z REST API Ministerstwa Finansów
+// (https://wl-api.mf.gov.pl/api/search/nip/{nip}?date=YYYY-MM-DD) mają przedrostek
+// COMPANY_. Usługa jest bezpłatna i NIE wymaga klucza. Są to NOWE, oddzielne
+// pola — celowo NIE łączone z istniejącymi kolumnami (nip/regon/nazwa w LawFirm).
+// Rekord jest przypisany do użytkownika (relacja 1:1 z User). Strukturę opisuje
+// też plik docs/company-data-structure.txt
+// ============================================================================
+
+model CompanyData {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // NIP użyty do wyszukania (parametr zapytania)
+  COMPANY_searchNip String?
+
+  // Dane podmiotu (result.subject)
+  COMPANY_name             String?  // pełna nazwa / imię i nazwisko
+  COMPANY_nip              String?
+  COMPANY_statusVat        String?  // "Czynny" / "Zwolniony" / null
+  COMPANY_regon            String?
+  COMPANY_pesel            String?
+  COMPANY_krs              String?
+  COMPANY_residenceAddress String?  // adres siedziby / zamieszkania
+  COMPANY_workingAddress   String?  // adres prowadzenia działalności
+
+  // Daty rejestracji / odmowy / przywrócenia / wykreślenia z rejestru VAT
+  COMPANY_registrationLegalDate   String?
+  COMPANY_registrationDenialBasis String?
+  COMPANY_registrationDenialDate  String?
+  COMPANY_restorationBasis        String?
+  COMPANY_restorationDate         String?
+  COMPANY_removalBasis            String?
+  COMPANY_removalDate             String?
+  COMPANY_exemptionSmeDate        String?
+
+  // Rachunki bankowe i flaga rachunków wirtualnych
+  COMPANY_accountNumbers    String?  // JSON: ["...", "..."]
+  COMPANY_hasVirtualAccounts String? // "true" / "false"
+
+  // Reprezentanci / pełnomocnicy / wspólnicy (JSON)
+  COMPANY_representatives  String?
+  COMPANY_authorizedClerks String?
+  COMPANY_partners         String?
+
+  // Identyfikator i czas zapytania (potwierdzenie weryfikacji w MF)
+  COMPANY_requestId       String?
+  COMPANY_requestDateTime String?
+
+  // Pełna, surowa odpowiedź (subject) z API w formacie JSON (audyt)
+  COMPANY_rawResponse String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // ============================================================================

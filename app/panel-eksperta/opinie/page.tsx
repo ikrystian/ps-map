@@ -868,10 +868,10 @@ export default function LawFirmReviewsPage() {
                                 {/* Logo ekspercie */}
                                 <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
                                   {lawFirm.logo ? (
-                                    <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwaFirmy} />
+                                    <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
                                   ) : null}
                                   <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
-                                    {(lawFirm.nazwaFirmy ?? lawFirm.nazwa ?? "?").substring(0, 2).toUpperCase()}
+                                    {(lawFirm.nazwa ?? lawFirm.nazwa ?? "?").substring(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
 
@@ -879,7 +879,7 @@ export default function LawFirmReviewsPage() {
                                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                                     <div className="flex items-center gap-1.5">
                                       <MessageSquare className="h-3.5 w-3.5 text-primary" />
-                                      <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwaFirmy})</p>
+                                      <p className="text-xs font-bold text-white">Odpowiedź eksperta ({lawFirm.nazwa})</p>
                                     </div>
                                     {review.dataOdpowiedzi && (
                                       <span className="text-xs font-semibold text-zinc-400">

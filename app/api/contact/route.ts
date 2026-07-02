@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       const lawFirm = await prisma.lawFirm.findUnique({
         where: { id: lawFirmId },
         select: {
-          nazwaFirmy: true,
+          nazwa: true,
           userId: true,
           user: {
             select: {
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       let emailData
       if (lawFirm.user?.email) {
         emailData = generateContactFormEmail(
-          lawFirm.nazwaFirmy,
+          lawFirm.nazwa,
           lawFirm.user?.email,
           imieNazwisko,
           email,

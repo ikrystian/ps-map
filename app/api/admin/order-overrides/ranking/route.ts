@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
         id: firm.id,
         slug: firm.slug,
         nazwa: firm.nazwa,
-        nazwaFirmy: firm.nazwaFirmy,
+        nazwa: firm.nazwa,
         logo: firm.logo,
         miasto: firm.user?.miasto || "",
         zweryfikowana: firm.zweryfikowana,
@@ -192,11 +192,11 @@ export async function GET(request: NextRequest) {
         activePromotions,
         override: activeOverride
           ? {
-              id: activeOverride.id,
-              position: activeOverride.position,
-              active: activeOverride.active,
-              notes: activeOverride.notes,
-            }
+            id: activeOverride.id,
+            position: activeOverride.position,
+            active: activeOverride.active,
+            notes: activeOverride.notes,
+          }
           : null,
         // Sort keys
         _sortTimestamp: sortTimestamp,
@@ -250,7 +250,7 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             nazwa: true,
-            nazwaFirmy: true,
+            nazwa: true,
             logo: true,
             user: {
               select: { miasto: true },

@@ -70,7 +70,6 @@ function LawFirmProfilePageContent() {
     slug: "",
     // Dane podstawowe
     nazwa: "",
-    nazwaFirmy: "",
     opis: "",
     logo: "",
     zdjecieGlowne: "",
@@ -144,6 +143,19 @@ function LawFirmProfilePageContent() {
     // Typ oferty
     typOferty: "WSZYSTKIE",
     expertiseCategoryId: "",
+    // Ścieżka specjalizacji wybrana przy rejestracji (np. "Prawnicy > Adwokat")
+    typInny: "",
+
+    // Dane firmy do faktury (COMPANY_*) — null gdy rejestracja jako osoba prywatna
+    companyData: null as null | {
+      COMPANY_name?: string | null
+      COMPANY_nip?: string | null
+      COMPANY_regon?: string | null
+      COMPANY_krs?: string | null
+      COMPANY_residenceAddress?: string | null
+      COMPANY_workingAddress?: string | null
+      COMPANY_statusVat?: string | null
+    },
   })
 
   useEffect(() => {
@@ -377,6 +389,13 @@ function LawFirmProfilePageContent() {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
+    }))
+  }
+
+  const handleCompanyDataChange = (field: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      companyData: prev.companyData ? { ...prev.companyData, [field]: value } : prev.companyData,
     }))
   }
 
@@ -663,6 +682,7 @@ function LawFirmProfilePageContent() {
               <ContactTab
                 formData={formData}
                 handleInputChange={handleInputChange}
+                handleCompanyDataChange={handleCompanyDataChange}
                 voivodeships={voivodeships}
               />
             </TabsContent>

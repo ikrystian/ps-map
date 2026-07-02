@@ -274,8 +274,7 @@ export async function PUT(
       lawFirmUpdateData.expertiseCategoryId = body.expertiseCategoryId || null
     }
     if (body.nazwa !== undefined) lawFirmUpdateData.nazwa = body.nazwa
-    if (body.nazwaFirmy !== undefined) lawFirmUpdateData.nazwaFirmy = body.nazwaFirmy
-    if (body.nip !== undefined) lawFirmUpdateData.nip = body.nip.replace(/[-\s]/g, "")
+    if (body.nip !== undefined) lawFirmUpdateData.nip = body.nip ? body.nip.replace(/[-\s]/g, "") : null
     if (body.regon !== undefined) lawFirmUpdateData.regon = body.regon
     if (body.krs !== undefined) lawFirmUpdateData.krs = body.krs
 

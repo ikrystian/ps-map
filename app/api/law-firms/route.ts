@@ -1,3 +1,4 @@
+import { pickCompanyDataFields } from "@/lib/biala-lista"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
@@ -7,8 +8,7 @@ import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { NextRequest, NextResponse } from "next/server"
 
-// Helper function to generate slug from name and NIP
-function generateSlug(nazwa: string, nip: string): string {
+function generateSlug(nazwa: string, nip?: string | null): string {
   const polishChars: Record<string, string> = {
     'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
     'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
@@ -30,8 +30,8 @@ function generateSlug(nazwa: string, nip: string): string {
     .replace(/^-+|-+$/g, '')
 
   // Add last 4 digits of NIP for uniqueness
-  const nipSuffix = nip.slice(-4)
-  return `${slug}-${nipSuffix}`
+  const suffix = nip ? nip.slice(-4) : Math.random().toString(36).substring(2, 6)
+  return `${slug}-${suffix}`
 }
 
 export async function GET(request: NextRequest) {
@@ -145,7 +145,6 @@ export async function GET(request: NextRequest) {
       andConditions.push({
         OR: [
           { nazwa: { contains: search } },
-          { nazwaFirmy: { contains: search } },
           { user: { miasto: { contains: search } } },
         ],
       })
@@ -318,7 +317,6 @@ export async function GET(request: NextRequest) {
           id: firm.id,
           slug: firm.slug,
           nazwa: firm.nazwa,
-          nazwaFirmy: firm.nazwaFirmy,
           logo: pokazAwatar ? firm.logo : null,
           zdjecieGlowne: firm.zdjecieGlowne,
           opis: firm.opis,
@@ -435,8 +433,6 @@ export async function POST(request: NextRequest) {
       'password',
       'typ',
       'nazwa',
-      'nazwaFirmy',
-      'nip',
       'imieKontakt',
       'nazwiskoKontakt',
       'numerTelefonu',
@@ -494,16 +490,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Sprawdź, czy NIP już istnieje
-    const existingNip = await prisma.lawFirm.findUnique({
-      where: { nip: body.nip },
-    })
+    // Sprawdź, czy NIP już istnieje (jeśli podano)
+    if (body.nip) {
+      const existingNip = await prisma.lawFirm.findUnique({
+        where: { nip: body.nip },
+      })
 
-    if (existingNip) {
-      return NextResponse.json(
-        { error: "Ekspert o takim numerze NIP już istnieje" },
-        { status: 409 }
-      )
+      if (existingNip) {
+        return NextResponse.json(
+          { error: "Ekspert o takim numerze NIP już istnieje" },
+          { status: 409 }
+        )
+      }
     }
 
     // Hash hasła
@@ -638,8 +636,7 @@ export async function POST(request: NextRequest) {
           typInny: body.typInny || null,
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
-          nazwaFirmy: body.nazwaFirmy,
-          nip: body.nip,
+          nip: body.nip || null,
           regon: body.regon || null,
           krs: body.krs || null,
           opis: body.opis || "",
@@ -655,6 +652,17 @@ export async function POST(request: NextRequest) {
           mainCategoryId: mainCategoryId,
         },
       })
+
+      // Zapisz dane firmy pobrane z CEIDG DataStore (przedrostek COMPANY_).
+      // Osobny model przypisany do użytkownika — pola NIE są łączone z nip/regon/nazwa.
+      const companyData = pickCompanyDataFields(body.companyData)
+      if (Object.keys(companyData).length > 0) {
+        await tx.companyData.upsert({
+          where: { userId: user.id },
+          create: { userId: user.id, ...companyData },
+          update: companyData,
+        })
+      }
 
       // Dodaj województwa działania
       if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds) && body.voivodeshipsIds.length > 0) {
@@ -787,7 +795,7 @@ export async function POST(request: NextRequest) {
               <tbody>
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; width: 40%; font-weight: 500;">Pełna nazwa firmy:</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px; font-weight: 600;">${body.nazwaFirmy || body.nazwa || ''}</td>
+                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px; font-weight: 600;">${body.nazwa || body.nazwa || ''}</td>
                 </tr>
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">NIP:</td>
@@ -855,7 +863,7 @@ Nowa rejestracja eksperta z landing page
 
 W witrynie Prostasprawa.pl zarejestrowano nowego eksperta. Poniżej znajdują się dane przesłane w formularzu:
 
-Pełna nazwa firmy: ${body.nazwaFirmy || body.nazwa || ''}
+Wyświetlana nazwa: ${body.nazwa || body.nazwa || ''}
 NIP: ${body.nip || ''}
 REGON: ${body.regon || 'Brak'}
 KRS: ${body.krs || 'Brak'}
@@ -876,7 +884,7 @@ Zgoda na dane: ${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}
 
         await sendEmail({
           to: 'krystian@bpcoders.pl',
-          subject: `Nowa rejestracja eksperta - ${body.nazwaFirmy || body.nazwa || ''}`,
+          subject: `Nowa rejestracja eksperta - ${body.nazwa || body.nazwa || ''}`,
           html: brandHtml,
           text: notificationText,
           templateType: 'NOWA_REJESTRACJA_BOK',

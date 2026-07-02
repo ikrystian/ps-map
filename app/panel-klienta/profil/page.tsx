@@ -54,7 +54,7 @@ const profileFormSchema = z.object({
   imie: z.string().min(2, "Imię musi mieć minimum 2 znaki"),
   nazwisko: z.string().min(2, "Nazwisko musi mieć minimum 2 znaki"),
   telefon: z.string().optional(),
-  nazwaFirmy: z.string().optional(),
+  nazwa: z.string().optional(),
   nip: z.string().optional(),
   regon: z.string().optional(),
   krs: z.string().optional(),
@@ -118,7 +118,7 @@ export default function ClientProfilePage() {
       imie: "",
       nazwisko: "",
       telefon: "",
-      nazwaFirmy: "",
+      nazwa: "",
       nip: "",
       regon: "",
       krs: "",
@@ -201,7 +201,7 @@ export default function ClientProfilePage() {
           imie: data.imie || "",
           nazwisko: data.nazwisko || "",
           telefon: data.telefon || "",
-          nazwaFirmy: data.nazwaFirmy || "",
+          nazwa: data.nazwa || "",
           nip: data.nip || "",
           regon: data.regon || "",
           krs: data.krs || "",
@@ -631,7 +631,7 @@ export default function ClientProfilePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
-                        name="nazwaFirmy"
+                        name="nazwa"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs font-semibold text-muted-foreground">Pełna nazwa firmy (opcjonalnie)</FormLabel>

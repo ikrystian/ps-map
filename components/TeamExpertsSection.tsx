@@ -27,7 +27,7 @@ interface Expert {
   id: string;
   slug: string;
   nazwa: string;
-  nazwaFirmy: string;
+  nazwa: string;
   opis: string | null;
   logo: string | null;
   zdjecieGlowne: string | null;
@@ -206,7 +206,7 @@ export default function TeamExpertsSection() {
               const imieNazwisko =
                 imie && nazwisko ? `${imie} ${nazwisko}` : null;
               const displayName =
-                imieNazwisko || expert.nazwaFirmy || expert.nazwa;
+                imieNazwisko || expert.nazwa || expert.nazwa;
               const roleName =
                 expert.mainCategory?.nazwa ||
                 expert.categories?.[0]?.category?.nazwa ||

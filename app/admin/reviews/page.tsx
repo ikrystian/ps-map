@@ -345,7 +345,7 @@ export default function AdminReviewsPage() {
                       <div className="text-sm">
                         <div className="font-medium">{review.lawFirm?.nazwa || "Brak"}</div>
                         <div className="text-muted-foreground text-xs">
-                          {review.lawFirm?.nazwaFirmy || ""}
+                          {review.lawFirm?.nazwa || ""}
                         </div>
                       </div>
                     </TableCell>

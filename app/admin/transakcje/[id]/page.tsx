@@ -345,7 +345,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
                           <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
                             <div className="col-span-2 border-b pb-1">
                               <span className="text-muted-foreground text-xs block">Nabywca</span>
-                              <span className="font-semibold text-foreground">{billing.nazwaFirmy || "—"}</span>
+                              <span className="font-semibold text-foreground">{billing.nazwa || "—"}</span>
                             </div>
                             {billing.nip && (
                               <div>
@@ -436,7 +436,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               <div>
                 <span className="text-muted-foreground block text-xs">Nazwa firmy</span>
                 <span className="font-semibold text-base block mt-0.5">
-                  {order.lawFirm.nazwaFirmy || order.lawFirm.nazwa || "—"}
+                  {order.lawFirm.nazwa || order.lawFirm.nazwa || "—"}
                 </span>
               </div>
 

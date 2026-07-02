@@ -10,7 +10,7 @@ interface PromotedLawFirmCardProps {
   lawFirm: {
     id: string
     nazwa: string
-    nazwaFirmy: string
+    nazwa: string
     logo?: string | null
     opis?: string | null
     miasto: string
@@ -64,13 +64,13 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
           {lawFirm.logo ? (
             <img
               src={lawFirm.logo}
-              alt={lawFirm.nazwaFirmy}
+              alt={lawFirm.nazwa}
               className={cn("w-16 h-16 rounded-lg object-cover border-2", logoBorderColor)}
             />
           ) : (
             <div className={cn("w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border-2", logoBorderColor)}>
               <span className="text-2xl font-bold text-muted-foreground">
-                {lawFirm.nazwaFirmy.charAt(0)}
+                {lawFirm.nazwa.charAt(0)}
               </span>
             </div>
           )}
@@ -78,12 +78,12 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
           {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <CardTitle className="text-lg truncate">{lawFirm.nazwaFirmy}</CardTitle>
+              <CardTitle className="text-lg truncate">{lawFirm.nazwa}</CardTitle>
               {lawFirm.zweryfikowana && (
                 <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            <CardDescription className="text-sm">{lawFirm.nazwaFirmy}</CardDescription>
+            <CardDescription className="text-sm">{lawFirm.nazwa}</CardDescription>
           </div>
         </div>
       </CardHeader>

@@ -155,7 +155,7 @@ export default function ImportEkspertow() {
         "typ": "SPOLKA_PARTNERSKA",                   // patrz "Dozwolone wartości"
         "typInny": null,                              // tylko gdy typ = "INNY"
         "nazwa": "Kancelaria Kowalski",               // WYMAGANE
-        "nazwaFirmy": "Kowalski i Wspólnicy Sp. P.",
+        "nazwa": "Kowalski i Wspólnicy Sp. P.",
         "nip": "1234567890",                          // unikalny (zalecane)
         "regon": "123456789",
         "krs": "0000123456",
@@ -295,7 +295,7 @@ export default function ImportEkspertow() {
             <h3 className="font-semibold mb-2">Dane firmy i rejestry:</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
               <li>lawFirm.typ, lawFirm.typInny - forma działalności</li>
-              <li>lawFirm.nazwaFirmy, lawFirm.nip, lawFirm.regon, lawFirm.krs</li>
+              <li>lawFirm.nazwa, lawFirm.nip, lawFirm.regon, lawFirm.krs</li>
               <li>lawFirm.oirpMiasto, lawFirm.oirpWpis, lawFirm.oirpStatus - wpis OIRP</li>
               <li>lawFirm.oraMiasto, lawFirm.oraWpis, lawFirm.oraStatus - wpis ORA</li>
               <li>lawFirm.zweryfikowana, lawFirm.aktywna - status konta</li>
