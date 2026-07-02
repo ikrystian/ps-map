@@ -282,111 +282,113 @@ export async function seedCategories(prisma: PrismaClient) {
   const dataPath = join(__dirname, "data", "categories.json");
   const categories = JSON.parse(readFileSync(dataPath, "utf-8"));
 
-  for (const category of categories) {
-    const slug = category.nazwa
-      .toLowerCase()
-      .replace(/ł/g, "l")
-      .replace(/ń/g, "n")
-      .replace(/ą/g, "a")
-      .replace(/ę/g, "e")
-      .replace(/ś/g, "s")
-      .replace(/ć/g, "c")
-      .replace(/ż/g, "z")
-      .replace(/ź/g, "z")
-      .replace(/ó/g, "o")
-      .replace(/[^a-z0-9]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
+  await prisma.$transaction(async (tx) => {
+    for (const category of categories) {
+      const slug = category.nazwa
+        .toLowerCase()
+        .replace(/ł/g, "l")
+        .replace(/ń/g, "n")
+        .replace(/ą/g, "a")
+        .replace(/ę/g, "e")
+        .replace(/ś/g, "s")
+        .replace(/ć/g, "c")
+        .replace(/ż/g, "z")
+        .replace(/ź/g, "z")
+        .replace(/ó/g, "o")
+        .replace(/[^a-z0-9]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 
-    const categoryData = generateCategoryData(category.nazwa, false, undefined, category.typ);
+      const categoryData = generateCategoryData(category.nazwa, false, undefined, category.typ);
 
-    // Create parent category
-    const parent = await prisma.category.upsert({
-      where: { slug: slug },
-      update: {
-        nazwa: category.nazwa,
-        typ: category.typ as any,
-        kolejnosc: category.kolejnosc,
-        aktywna: true,
-        ikona: category.ikona || null,
-        wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
-        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
-        backgroundImageUrl: category.backgroundImageUrl || null,
-        opis: category.opis || categoryData.opis,
-        opisDodatkowy: category.opisDodatkowy || categoryData.opisDodatkowy,
-        metaTitle: category.metaTitle || categoryData.metaTitle,
-        metaDescription: category.metaDescription || categoryData.metaDescription,
-      },
-      create: {
-        nazwa: category.nazwa,
-        slug: slug,
-        typ: category.typ as any,
-        kolejnosc: category.kolejnosc,
-        aktywna: true,
-        ikona: category.ikona || null,
-        wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
-        wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
-        backgroundImageUrl: category.backgroundImageUrl || null,
-        opis: category.opis || categoryData.opis,
-        opisDodatkowy: category.opisDodatkowy || categoryData.opisDodatkowy,
-        metaTitle: category.metaTitle || categoryData.metaTitle,
-        metaDescription: category.metaDescription || categoryData.metaDescription,
-      },
-    });
+      // Create parent category
+      const parent = await tx.category.upsert({
+        where: { slug: slug },
+        update: {
+          nazwa: category.nazwa,
+          typ: category.typ as any,
+          kolejnosc: category.kolejnosc,
+          aktywna: true,
+          ikona: category.ikona || null,
+          wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
+          wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
+          backgroundImageUrl: category.backgroundImageUrl || null,
+          opis: category.opis || categoryData.opis,
+          opisDodatkowy: category.opisDodatkowy || categoryData.opisDodatkowy,
+          metaTitle: category.metaTitle || categoryData.metaTitle,
+          metaDescription: category.metaDescription || categoryData.metaDescription,
+        },
+        create: {
+          nazwa: category.nazwa,
+          slug: slug,
+          typ: category.typ as any,
+          kolejnosc: category.kolejnosc,
+          aktywna: true,
+          ikona: category.ikona || null,
+          wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
+          wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
+          backgroundImageUrl: category.backgroundImageUrl || null,
+          opis: category.opis || categoryData.opis,
+          opisDodatkowy: category.opisDodatkowy || categoryData.opisDodatkowy,
+          metaTitle: category.metaTitle || categoryData.metaTitle,
+          metaDescription: category.metaDescription || categoryData.metaDescription,
+        },
+      });
 
-    // Create children categories
-    if (category.children && category.children.length > 0) {
-      for (const child of category.children) {
-        const childName = typeof child === "string" ? child : child.nazwa;
-        const childSlug = childName
-          .toLowerCase()
-          .replace(/ł/g, "l")
-          .replace(/ń/g, "n")
-          .replace(/ą/g, "a")
-          .replace(/ę/g, "e")
-          .replace(/ś/g, "s")
-          .replace(/ć/g, "c")
-          .replace(/ż/g, "z")
-          .replace(/ź/g, "z")
-          .replace(/ó/g, "o")
-          .replace(/[^a-z0-9]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-|-$/g, "");
+      // Create children categories
+      if (category.children && category.children.length > 0) {
+        for (const child of category.children) {
+          const childName = typeof child === "string" ? child : child.nazwa;
+          const childSlug = childName
+            .toLowerCase()
+            .replace(/ł/g, "l")
+            .replace(/ń/g, "n")
+            .replace(/ą/g, "a")
+            .replace(/ę/g, "e")
+            .replace(/ś/g, "s")
+            .replace(/ć/g, "c")
+            .replace(/ż/g, "z")
+            .replace(/ź/g, "z")
+            .replace(/ó/g, "o")
+            .replace(/[^a-z0-9]/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "");
 
-        const childData = generateCategoryData(childName, true, category.nazwa, category.typ);
+          const childData = generateCategoryData(childName, true, category.nazwa, category.typ);
 
-        const childOpis = typeof child === "string" ? childData.opis : (child.opis || childData.opis);
-        const childOpisDodatkowy = typeof child === "string" ? childData.opisDodatkowy : (child.opisDodatkowy || childData.opisDodatkowy);
-        const childMetaTitle = typeof child === "string" ? childData.metaTitle : (child.metaTitle || childData.metaTitle);
-        const childMetaDescription = typeof child === "string" ? childData.metaDescription : (child.metaDescription || childData.metaDescription);
+          const childOpis = typeof child === "string" ? childData.opis : (child.opis || childData.opis);
+          const childOpisDodatkowy = typeof child === "string" ? childData.opisDodatkowy : (child.opisDodatkowy || childData.opisDodatkowy);
+          const childMetaTitle = typeof child === "string" ? childData.metaTitle : (child.metaTitle || childData.metaTitle);
+          const childMetaDescription = typeof child === "string" ? childData.metaDescription : (child.metaDescription || childData.metaDescription);
 
-        await prisma.category.upsert({
-          where: { slug: childSlug },
-          update: {
-            nazwa: childName,
-            typ: category.typ as any,
-            parentId: parent.id,
-            aktywna: true,
-            opis: childOpis,
-            opisDodatkowy: childOpisDodatkowy,
-            metaTitle: childMetaTitle,
-            metaDescription: childMetaDescription,
-          },
-          create: {
-            nazwa: childName,
-            slug: childSlug,
-            typ: category.typ as any,
-            parentId: parent.id,
-            aktywna: true,
-            opis: childOpis,
-            opisDodatkowy: childOpisDodatkowy,
-            metaTitle: childMetaTitle,
-            metaDescription: childMetaDescription,
-          },
-        });
+          await tx.category.upsert({
+            where: { slug: childSlug },
+            update: {
+              nazwa: childName,
+              typ: category.typ as any,
+              parentId: parent.id,
+              aktywna: true,
+              opis: childOpis,
+              opisDodatkowy: childOpisDodatkowy,
+              metaTitle: childMetaTitle,
+              metaDescription: childMetaDescription,
+            },
+            create: {
+              nazwa: childName,
+              slug: childSlug,
+              typ: category.typ as any,
+              parentId: parent.id,
+              aktywna: true,
+              opis: childOpis,
+              opisDodatkowy: childOpisDodatkowy,
+              metaTitle: childMetaTitle,
+              metaDescription: childMetaDescription,
+            },
+          });
+        }
       }
     }
-  }
+  })
 
   console.log("Categories seeded successfully with rich content!");
 }

@@ -114,13 +114,15 @@ export async function seedPackages(prismaClient: PrismaClient) {
     },
   ]
 
-  for (const pkg of packages) {
-    await prismaClient.subscriptionPlan.upsert({
-      where: { typ: pkg.typ },
-      update: pkg,
-      create: pkg,
-    })
-  }
+  await prismaClient.$transaction(
+    packages.map((pkg) =>
+      prismaClient.subscriptionPlan.upsert({
+        where: { typ: pkg.typ },
+        update: pkg,
+        create: pkg,
+      })
+    )
+  )
 
   console.log('Subscription packages seeded successfully!')
 }

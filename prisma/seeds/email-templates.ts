@@ -16,34 +16,36 @@ export async function seedEmailTemplates(prisma: PrismaClient) {
     ...notificationTemplates,
   ]
 
-  for (const template of allTemplates) {
-    await prisma.emailTemplate.upsert({
-      where: {
-        typ: template.typ,
-      },
-      update: {
-        nazwa: template.nazwa,
-        temat: template.temat,
-        tresc: template.tresc,
-        trescHtml: template.trescHtml,
-        zmienne: JSON.stringify(template.zmienne),
-        opisZmiennych: JSON.stringify(template.opisZmiennych),
-        triggery: JSON.stringify(template.triggery),
-        aktywny: true,
-      },
-      create: {
-        typ: template.typ,
-        nazwa: template.nazwa,
-        temat: template.temat,
-        tresc: template.tresc,
-        trescHtml: template.trescHtml,
-        zmienne: JSON.stringify(template.zmienne),
-        opisZmiennych: JSON.stringify(template.opisZmiennych),
-        triggery: JSON.stringify(template.triggery),
-        aktywny: true,
-      },
-    })
-  }
+  await prisma.$transaction(
+    allTemplates.map((template) =>
+      prisma.emailTemplate.upsert({
+        where: {
+          typ: template.typ,
+        },
+        update: {
+          nazwa: template.nazwa,
+          temat: template.temat,
+          tresc: template.tresc,
+          trescHtml: template.trescHtml,
+          zmienne: JSON.stringify(template.zmienne),
+          opisZmiennych: JSON.stringify(template.opisZmiennych),
+          triggery: JSON.stringify(template.triggery),
+          aktywny: true,
+        },
+        create: {
+          typ: template.typ,
+          nazwa: template.nazwa,
+          temat: template.temat,
+          tresc: template.tresc,
+          trescHtml: template.trescHtml,
+          zmienne: JSON.stringify(template.zmienne),
+          opisZmiennych: JSON.stringify(template.opisZmiennych),
+          triggery: JSON.stringify(template.triggery),
+          aktywny: true,
+        },
+      })
+    )
+  )
 
   console.log('Email templates seeded successfully!')
 }

@@ -68,34 +68,36 @@ export async function seedPromotionConfigs(prisma: PrismaClient) {
     },
   ]
 
-  for (const config of promotionConfigs) {
-    await prisma.promotionConfig.upsert({
-      where: { type: config.type },
-      update: {
-        label: config.label,
-        description: config.description,
-        pointsPerDay: (config as any).pointsPerDay || null,
-        pointsPerWeek: (config as any).pointsPerWeek || null,
-        pointsPerMonth: (config as any).pointsPerMonth || null,
-        features: config.features,
-        icon: config.icon,
-        color: config.color,
-        kolejnosc: config.kolejnosc,
-      },
-      create: {
-        type: config.type,
-        label: config.label,
-        description: config.description,
-        pointsPerDay: (config as any).pointsPerDay || null,
-        pointsPerWeek: (config as any).pointsPerWeek || null,
-        pointsPerMonth: (config as any).pointsPerMonth || null,
-        features: config.features,
-        icon: config.icon,
-        color: config.color,
-        kolejnosc: config.kolejnosc,
-      },
-    })
-  }
+  await prisma.$transaction(
+    promotionConfigs.map((config) =>
+      prisma.promotionConfig.upsert({
+        where: { type: config.type },
+        update: {
+          label: config.label,
+          description: config.description,
+          pointsPerDay: (config as any).pointsPerDay || null,
+          pointsPerWeek: (config as any).pointsPerWeek || null,
+          pointsPerMonth: (config as any).pointsPerMonth || null,
+          features: config.features,
+          icon: config.icon,
+          color: config.color,
+          kolejnosc: config.kolejnosc,
+        },
+        create: {
+          type: config.type,
+          label: config.label,
+          description: config.description,
+          pointsPerDay: (config as any).pointsPerDay || null,
+          pointsPerWeek: (config as any).pointsPerWeek || null,
+          pointsPerMonth: (config as any).pointsPerMonth || null,
+          features: config.features,
+          icon: config.icon,
+          color: config.color,
+          kolejnosc: config.kolejnosc,
+        },
+      })
+    )
+  )
 
   console.log('Promotion configurations seeded successfully!')
 }

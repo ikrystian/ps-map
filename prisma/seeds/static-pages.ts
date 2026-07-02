@@ -1,10 +1,11 @@
 import { ModuleType, PrismaClient } from '@prisma/client'
 
-export async function seedStaticPages(prisma: PrismaClient) {
+export async function seedStaticPages(originalPrisma: PrismaClient) {
   console.log('Seeding static pages and modules...')
 
-  // 1. Create Modules
-  const regulaminModule = await prisma.module.create({
+  await originalPrisma.$transaction(async (prisma) => {
+    // 1. Create Modules
+    const regulaminModule = await prisma.module.create({
     data: {
       name: 'Regulamin - Zawartość główna',
       description: 'Domyślna treść regulaminu platformy Prosta Sprawa',
@@ -608,6 +609,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       moduleId: kontaktModule.id,
       order: 0
     }
+  })
   })
 
   console.log('✅ Static pages and modules seeded successfully!')
