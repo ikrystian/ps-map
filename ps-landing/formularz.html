@@ -96,27 +96,37 @@
                 <p class="step-indicator">Krok 3 z 3</p>
                 <h1 class="form-title">Uzupełnij dane<br>i załóż konto</h1>
 
-                <h3 class="form-section-heading">Dane firmy</h3>
+                <h3 class="form-section-heading">Dane profilu</h3>
                 <div class="form-group">
-                    <label class="form-label" for="nazwa">Pełna nazwa firmy (do faktur)</label>
+                    <label class="form-label" for="nazwa">Nazwa wyświetlana</label>
                     <input class="form-input" type="text" id="nazwa" name="nazwa"
-                        placeholder="Pełna nazwa zarejestrowana w CEIDG/KRS" required>
+                        placeholder="Pełna nazwa profilu" minlength="3" required>
                 </div>
-                <div class="form-row form-row-3">
+
+                <h3 class="form-section-heading">Dane kontaktowe</h3>
+                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="nip">NIP</label>
-                        <input class="form-input" type="text" id="nip" name="nip" placeholder="1234567890"
-                            inputmode="numeric" required>
+                        <label class="form-label" for="imieKontakt">Imię</label>
+                        <input class="form-input" type="text" id="imieKontakt" name="imieKontakt"
+                            placeholder="np. Jan" minlength="2" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="regon">REGON <span class="form-optional">(opcjonalnie)</span></label>
-                        <input class="form-input" type="text" id="regon" name="regon" placeholder="Opcjonalnie"
-                            inputmode="numeric">
+                        <label class="form-label" for="nazwiskoKontakt">Nazwisko</label>
+                        <input class="form-input" type="text" id="nazwiskoKontakt" name="nazwiskoKontakt"
+                            placeholder="np. Kowalski" minlength="2" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="numerTelefonu">Telefon główny</label>
+                        <input class="form-input" type="tel" id="numerTelefonu" name="numerTelefonu"
+                            placeholder="np. 790466488" minlength="9" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="krs">KRS <span class="form-optional">(opcjonalnie)</span></label>
-                        <input class="form-input" type="text" id="krs" name="krs" placeholder="Dla spółek"
-                            inputmode="numeric">
+                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy <span
+                                class="form-optional">(opcjonalnie)</span></label>
+                        <input class="form-input" type="tel" id="numerTelefonu2" name="numerTelefonu2"
+                            placeholder="Opcjonalnie">
                     </div>
                 </div>
 
@@ -124,13 +134,14 @@
                 <div class="form-group">
                     <label class="form-label" for="adres">Adres (ulica i numer)</label>
                     <input class="form-input" type="text" id="adres" name="adres" placeholder="np. ul. Warszawska 1/2"
-                        required>
+                        minlength="3" required>
                 </div>
                 <div class="form-row form-row-3">
                     <div class="form-group dropdown-container">
                         <label class="form-label" for="kodPocztowy">Kod pocztowy</label>
                         <input class="form-input" type="text" id="kodPocztowy" name="kodPocztowy"
-                            placeholder="np. 00-001" autocomplete="off" required>
+                            placeholder="np. 00-001" autocomplete="off" pattern="\d{2}-\d{3}"
+                            title="Wpisz poprawny kod pocztowy (np. 00-000)" required>
                         <div class="autocomplete-dropdown" id="kodPocztowyDropdown"></div>
                     </div>
                     <div class="form-group">
@@ -146,30 +157,40 @@
                     </div>
                 </div>
 
-                <h3 class="form-section-heading">Dane kontaktowe</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="imieKontakt">Imię</label>
-                        <input class="form-input" type="text" id="imieKontakt" name="imieKontakt"
-                            placeholder="np. Jan" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="nazwiskoKontakt">Nazwisko</label>
-                        <input class="form-input" type="text" id="nazwiskoKontakt" name="nazwiskoKontakt"
-                            placeholder="np. Kowalski" required>
-                    </div>
+                <h3 class="form-section-heading">Typ rejestracji</h3>
+                <div class="reg-type-toggle">
+                    <label class="reg-type-option selected">
+                        <input type="radio" name="regType" value="osoba" checked>
+                        <span class="reg-type-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        Osoba prywatna
+                    </label>
+                    <label class="reg-type-option">
+                        <input type="radio" name="regType" value="firma">
+                        <span class="reg-type-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        Firma
+                    </label>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="numerTelefonu">Telefon główny</label>
-                        <input class="form-input" type="tel" id="numerTelefonu" name="numerTelefonu"
-                            placeholder="np. 790466488" required>
+                <div class="company-lookup" id="companyLookup" style="display: none;">
+                    <p class="company-lookup-hint">Wpisz NIP firmy, aby automatycznie pobrać dane z Wykazu podatników
+                        VAT.</p>
+                    <div class="company-lookup-row">
+                        <input class="form-input" type="text" id="companyNip" placeholder="1234567890"
+                            inputmode="numeric" autocomplete="off">
+                        <button type="button" class="btn-form btn-lookup" id="companyLookupBtn">Wyszukaj dane
+                            firmy</button>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy <span
-                                class="form-optional">(opcjonalnie)</span></label>
-                        <input class="form-input" type="tel" id="numerTelefonu2" name="numerTelefonu2"
-                            placeholder="Opcjonalnie">
+                    <p class="form-error" id="companyLookupError"></p>
+                    <div class="company-data" id="companyData" style="display: none;">
+                        <p class="company-data-title">Pobrane dane firmy</p>
+                        <dl id="companyDataList"></dl>
                     </div>
                 </div>
 

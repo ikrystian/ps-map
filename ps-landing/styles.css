@@ -2103,10 +2103,152 @@ h3 {
     margin-top: 0;
 }
 
+/* Typ rejestracji: osoba prywatna / firma */
+.reg-type-toggle {
+    display: flex;
+    gap: 12px;
+}
+
+.reg-type-option {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #aaa;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.reg-type-option input {
+    display: none;
+}
+
+.reg-type-check {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(200, 168, 100, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.reg-type-check svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.reg-type-option.selected {
+    border-color: #0da192;
+    background: rgba(13, 161, 146, 0.08);
+    color: #e0ddd5;
+}
+
+.reg-type-option.selected .reg-type-check {
+    background: #0da192;
+    border-color: #0da192;
+}
+
+.reg-type-option.selected .reg-type-check svg {
+    opacity: 1;
+}
+
+/* Wyszukiwanie danych firmy po NIP (Wykaz podatników VAT) */
+.company-lookup {
+    margin-top: 16px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    text-align: left;
+}
+
+.company-lookup-hint {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+.company-lookup-row {
+    display: flex;
+    gap: 12px;
+}
+
+.company-lookup-row .form-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.btn-form.btn-lookup {
+    flex: 0 0 auto;
+    padding: 14px 24px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+}
+
+.company-data {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.company-data-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0da192;
+    margin-bottom: 10px;
+}
+
+.company-data dl {
+    display: grid;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.company-data-row {
+    display: flex;
+    gap: 8px;
+}
+
+.company-data dt {
+    flex: 0 0 180px;
+    color: #888;
+}
+
+.company-data dd {
+    color: #e0ddd5;
+    font-weight: 500;
+    word-break: break-word;
+}
+
 @media (max-width: 560px) {
 
     .form-row,
     .form-row-3 {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .reg-type-toggle {
+        flex-direction: column;
+    }
+
+    .company-lookup-row {
+        flex-direction: column;
+    }
+
+    .company-data-row {
         flex-direction: column;
         gap: 0;
     }

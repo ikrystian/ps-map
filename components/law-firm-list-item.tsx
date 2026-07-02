@@ -350,34 +350,36 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             </div>
 
             {/* Rating - Bottom Left */}
-            <div className="absolute bottom-2 left-2 z-10">
-              <div className="bg-[#058c80] text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
-                <span className="text-2xl font-bold  tracking-tight leading-none">
-                  {lawFirm.avgRating > 0
-                    ? lawFirm.avgRating.toFixed(1).replace(".", ",")
-                    : "5,0"}
-                </span>
-                <div className="flex flex-col justify-center">
-                  <div className="flex gap-0.5 mb-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={cn(
-                          "w-3 h-3 fill-current",
-                          i < Math.round(lawFirm.avgRating || 5)
-                            ? "text-amber-400"
-                            : "text-neutral-400/30",
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-neutral-200  leading-none font-light">
-                    {lawFirm.reviewCount || 11}{" "}
-                    {getOpinieText(lawFirm.reviewCount || 11)}
+            {lawFirm.reviewCount > 0 && (
+              <div className="absolute bottom-2 left-2 z-10">
+                <div className="bg-[#058c80] text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
+                  <span className="text-2xl font-bold  tracking-tight leading-none">
+                    {lawFirm.avgRating > 0
+                      ? lawFirm.avgRating.toFixed(1).replace(".", ",")
+                      : "5,0"}
                   </span>
+                  <div className="flex flex-col justify-center">
+                    <div className="flex gap-0.5 mb-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={cn(
+                            "w-3 h-3 fill-current",
+                            i < Math.round(lawFirm.avgRating || 5)
+                              ? "text-amber-400"
+                              : "text-neutral-400/30",
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-neutral-200  leading-none font-light">
+                      {lawFirm.reviewCount}{" "}
+                      {getOpinieText(lawFirm.reviewCount)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Package Image - Bottom Right */}
             {lawFirm.pakietObrazek && (

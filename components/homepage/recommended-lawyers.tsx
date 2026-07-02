@@ -22,6 +22,20 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRef, useState } from "react"
 
+const getOpinieText = (count: number) => {
+  if (count === 1) return "opinia";
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+  if (
+    lastDigit >= 2 &&
+    lastDigit <= 4 &&
+    (lastTwoDigits < 10 || lastTwoDigits >= 20)
+  ) {
+    return "opinie";
+  }
+  return "opinii";
+};
+
 interface RecommendedLawyersProps {
   recommendedData?: Record<string, LawFirm[]>
   lawFirms: LawFirm[]
@@ -239,23 +253,33 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
 
                       {/* Rating Badge Overlay - exact visual layout from mockup */}
-                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 p-2 rounded-xl border border-white/5">
-                        {/* Teal Box */}
-                        <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
-                          {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
-                        </div>
-                        {/* Star Rating & Review Count Stack */}
-                        <div className="flex flex-col justify-center">
-                          <div className="flex gap-0.5">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
-                            ))}
+                      {firm.reviewCount > 0 && (
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 p-2 rounded-xl border border-white/5">
+                          {/* Teal Box */}
+                          <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
+                            {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
                           </div>
-                          <span className="text-sm text-zinc-300 font-semibold mt-1">
-                            {firm.reviewCount || 11} opinii
-                          </span>
+                          {/* Star Rating & Review Count Stack */}
+                          <div className="flex flex-col justify-center">
+                            <div className="flex gap-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={cn(
+                                    "w-3.5 h-3.5",
+                                    i < Math.round(firm.avgRating || 5)
+                                      ? "fill-[#f59e0b] text-[#f59e0b]"
+                                      : "text-zinc-600 fill-none"
+                                  )}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-zinc-300 font-semibold mt-1">
+                              {firm.reviewCount} {getOpinieText(firm.reviewCount)}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
 
                     {/* Card Content and Metadata */}

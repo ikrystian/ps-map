@@ -145,6 +145,132 @@ if (kategoriaSelect) {
     specjalizacjaSelect.addEventListener("change", rebuildExpertiseLeaf);
 }
 
+// ===== Typ rejestracji (osoba prywatna / firma) + dane z Wykazu podatników VAT =====
+// Etykiety pól danych firmy (klucze z przedrostkiem COMPANY_) — kolejność tablicy
+// = kolejność wyświetlania. Zgodne z formularzem w aplikacji (/rejestracja/ekspert).
+const COMPANY_FIELD_LABELS = [
+    { key: "COMPANY_name", label: "Nazwa" },
+    { key: "COMPANY_nip", label: "NIP" },
+    { key: "COMPANY_regon", label: "REGON" },
+    { key: "COMPANY_krs", label: "KRS" },
+    { key: "COMPANY_statusVat", label: "Status VAT" },
+    { key: "COMPANY_workingAddress", label: "Adres działalności" },
+    { key: "COMPANY_residenceAddress", label: "Adres siedziby" },
+    { key: "COMPANY_registrationLegalDate", label: "Data rejestracji VAT" },
+    { key: "COMPANY_removalDate", label: "Data wykreślenia z VAT" },
+    { key: "COMPANY_requestId", label: "ID zapytania (MF)" },
+    { key: "COMPANY_requestDateTime", label: "Data weryfikacji" },
+];
+
+const regTypeOptions = document.querySelectorAll(".reg-type-option");
+const companyLookupBox = document.getElementById("companyLookup");
+const companyNipInput = document.getElementById("companyNip");
+const companyLookupBtn = document.getElementById("companyLookupBtn");
+const companyLookupError = document.getElementById("companyLookupError");
+const companyDataBox = document.getElementById("companyData");
+const companyDataList = document.getElementById("companyDataList");
+
+// Stan lookupu: NIP i dane firmy pobrane z /api/company-lookup
+let companyNip = "";
+let companyData = null;
+
+function isFirmaSelected() {
+    const checked = document.querySelector('input[name="regType"]:checked');
+    return checked && checked.value === "firma";
+}
+
+function onRegTypeChange() {
+    regTypeOptions.forEach((option) => {
+        const input = option.querySelector('input[name="regType"]');
+        option.classList.toggle("selected", !!input && input.checked);
+    });
+    if (companyLookupBox) {
+        companyLookupBox.style.display = isFirmaSelected() ? "" : "none";
+    }
+}
+
+function renderCompanyData() {
+    if (!companyDataBox || !companyDataList) return;
+    companyDataList.innerHTML = "";
+    if (!companyData) {
+        companyDataBox.style.display = "none";
+        return;
+    }
+    COMPANY_FIELD_LABELS.forEach(({ key, label }) => {
+        const value = companyData[key];
+        if (!value) return;
+        const row = document.createElement("div");
+        row.className = "company-data-row";
+        const dt = document.createElement("dt");
+        dt.textContent = label + ":";
+        const dd = document.createElement("dd");
+        dd.textContent = value;
+        row.appendChild(dt);
+        row.appendChild(dd);
+        companyDataList.appendChild(row);
+    });
+    companyDataBox.style.display = "";
+}
+
+async function handleCompanyLookup() {
+    if (companyLookupError) companyLookupError.textContent = "";
+    const nip = (companyNipInput?.value || "").replace(/[-\s]/g, "");
+    if (!/^\d{10}$/.test(nip)) {
+        if (companyLookupError) companyLookupError.textContent = "Podaj poprawny numer NIP (10 cyfr).";
+        return;
+    }
+
+    if (companyLookupBtn) {
+        companyLookupBtn.disabled = true;
+        companyLookupBtn.textContent = "Wyszukiwanie...";
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/company-lookup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nip }),
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            companyData = null;
+            renderCompanyData();
+            if (companyLookupError) {
+                companyLookupError.textContent = data.error || "Nie udało się pobrać danych firmy.";
+            }
+            return;
+        }
+
+        companyNip = data.data.nip || nip;
+        companyData = data.data;
+        renderCompanyData();
+    } catch (err) {
+        companyData = null;
+        renderCompanyData();
+        if (companyLookupError) {
+            companyLookupError.textContent = "Wystąpił błąd podczas pobierania danych firmy.";
+        }
+    } finally {
+        if (companyLookupBtn) {
+            companyLookupBtn.disabled = false;
+            companyLookupBtn.textContent = "Wyszukaj dane firmy";
+        }
+    }
+}
+
+document.querySelectorAll('input[name="regType"]').forEach((radio) => {
+    radio.addEventListener("change", onRegTypeChange);
+});
+if (companyLookupBtn) {
+    companyLookupBtn.addEventListener("click", handleCompanyLookup);
+}
+if (companyNipInput) {
+    companyNipInput.addEventListener("input", () => {
+        if (companyLookupError) companyLookupError.textContent = "";
+    });
+}
+
 // ===== Ładowanie danych słownikowych =====
 async function loadReferenceData() {
     try {
@@ -357,10 +483,11 @@ async function submitForm(e) {
         typInny: typInnyInput.value || null,
         expertiseCategoryId: expertiseCategoryIdInput.value || null,
         nazwa: document.getElementById("nazwa").value.trim(),
-        nazwa: document.getElementById("nazwa").value.trim(),
-        nip: document.getElementById("nip").value.replace(/[-\s]/g, ""),
-        regon: document.getElementById("regon").value.replace(/[-\s]/g, "") || null,
-        krs: document.getElementById("krs").value.replace(/[-\s]/g, "") || null,
+        // NIP pochodzi wyłącznie z lookupu Białej listy (rejestracja "jako firma");
+        // dla osoby prywatnej pozostaje null — tak jak w aplikacji.
+        nip: companyNip || null,
+        regon: null,
+        krs: null,
         imieKontakt: document.getElementById("imieKontakt").value.trim(),
         nazwiskoKontakt: document.getElementById("nazwiskoKontakt").value.trim(),
         numerTelefonu: document.getElementById("numerTelefonu").value.trim(),
@@ -376,6 +503,8 @@ async function submitForm(e) {
         voivodeshipsIds: voivodeshipId ? [voivodeshipId] : [],
         categoriesIds: categoryId ? [categoryId] : [],
         isSocialRegistration: false,
+        // Dane firmy z Wykazu podatników VAT (tylko gdy rejestracja "jako firma")
+        companyData: isFirmaSelected() ? companyData : null,
         // Pre-rejestracja z landing page: bez maila aktywacyjnego, konto od razu zweryfikowane.
         skipEmailVerification: true,
     };
