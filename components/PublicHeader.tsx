@@ -269,6 +269,28 @@ export default function PublicHeader({
   const firmoweCat = categories.filter(c => c.typ === 'SPRAWY_FIRMOWE')
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
 
+  // Rozdziela kategorie na kolumny mega menu, wyrównując je wg przybliżonej wysokości
+  // (nagłówek + widoczne podkategorie), z zachowaniem kolejności
+  const splitIntoColumns = (cats: CategoryWithChildren[], numCols: number) => {
+    const weight = (c: CategoryWithChildren) => 2 + Math.min(c.children?.length || 0, 5)
+    const total = cats.reduce((sum, c) => sum + weight(c), 0)
+    const cols: CategoryWithChildren[][] = Array.from({ length: numCols }, () => [])
+    let colIdx = 0
+    let acc = 0
+    for (const cat of cats) {
+      if (
+        colIdx < numCols - 1 &&
+        cols[colIdx].length > 0 &&
+        acc + weight(cat) / 2 > (total / numCols) * (colIdx + 1)
+      ) {
+        colIdx++
+      }
+      cols[colIdx].push(cat)
+      acc += weight(cat)
+    }
+    return cols.filter((col) => col.length > 0)
+  }
+
   const isFirmoweActive = firmoweCat.some(
     (category) =>
       pathname === `/kategorie/${category.slug}` ||
@@ -411,9 +433,17 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
-                    <div className="columns-1 sm:columns-2 md:columns-3 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
-                      {firmoweCat.map((category) => (
-                        <div key={category.id} className="mb-6">
+                    <div className="grid grid-cols-3">
+                      {splitIntoColumns(firmoweCat, 3).map((column, columnIndex) => (
+                        <div
+                          key={columnIndex}
+                          className={cn(
+                            "space-y-5 px-5 first:pl-0 last:pr-0",
+                            columnIndex > 0 && "border-l border-white/[0.08]"
+                          )}
+                        >
+                          {column.map((category) => (
+                            <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
                           <NavigationMenuLink asChild>
                             <Link
                               href={`/kategorie/${category.slug}`}
@@ -455,6 +485,8 @@ export default function PublicHeader({
                               ))}
                             </div>
                           )}
+                            </div>
+                          ))}
                         </div>
                       ))}
                     </div>
@@ -482,9 +514,17 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
-                    <div className="columns-1 sm:columns-2 md:columns-3 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
-                      {prywatneCat.map((category) => (
-                        <div key={category.id} className="mb-6">
+                    <div className="grid grid-cols-3">
+                      {splitIntoColumns(prywatneCat, 3).map((column, columnIndex) => (
+                        <div
+                          key={columnIndex}
+                          className={cn(
+                            "space-y-5 px-5 first:pl-0 last:pr-0",
+                            columnIndex > 0 && "border-l border-white/[0.08]"
+                          )}
+                        >
+                          {column.map((category) => (
+                            <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
                           <NavigationMenuLink asChild>
                             <Link
                               href={`/kategorie/${category.slug}`}
@@ -526,6 +566,8 @@ export default function PublicHeader({
                               ))}
                             </div>
                           )}
+                            </div>
+                          ))}
                         </div>
                       ))}
                     </div>
