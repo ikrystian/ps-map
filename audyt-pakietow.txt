@@ -1,0 +1,153 @@
+================================================================================
+AUDYT: PRZEŁOŻENIE PÓL PAKIETU Z /admin/pakiety NA DZIAŁANIE SYSTEMU
+Data audytu: 2026-07-02
+================================================================================
+
+PODSUMOWANIE
+------------
+Z 22 pól pakietu (model SubscriptionPlan):
+  - 12 działa w pełni (egzekwowane serwerowo),
+  - 3 działają tylko w interfejsie (można je obejść wywołując API bezpośrednio),
+  - 7 nie ma żadnego rzeczywistego wpływu na system — są wyłącznie opisem
+    marketingowym na stronie pakietu.
+
+Najpoważniejszy brak: limit "Dostęp do spraw" (dostepDoSpraw) nie jest nigdzie
+egzekwowany — ekspert z pakietem Podstawowym (limit 10) może składać oferty
+bez ograniczeń.
+
+ARCHITEKTURA
+------------
+Wartości z /admin/pakiety (model SubscriptionPlan) są doładowywane do danych
+eksperta przez attachPlanFeatures w lib/api-permissions.ts:116 i mają
+pierwszeństwo nad zaszytą na sztywno mapą fallbackową PACKAGE_PERMISSIONS
+w lib/permissions.ts:169. Frontend liczy te same uprawnienia przez hook
+usePermissions zasilany z /api/law-firms/me/permissions.
+
+Ta część jest zaprojektowana poprawnie — problem leży w tym, że wiele punktów
+egzekwowania nigdy nie zostało podłączonych.
+
+================================================================================
+1. POLA DZIAŁAJĄCE W PEŁNI (EGZEKWOWANE SERWEROWO)
+================================================================================
+
+cena1Miesiac / cena6Miesiecy / cena12Miesiecy
+  Cena liczona serwerowo przy zakupie, z proracją i obsługą pakietu darmowego
+  (app/api/law-firms/me/subscribe/route.ts:86).
+
+aktywny
+  Publiczne API planów filtruje nieaktywne; zakup nieaktywnego planu odrzucany
+  (subscribe/route.ts:46).
+
+isPrimary
+  Rejestracja automatycznie przypisuje pakiet oznaczony jako podstawowy
+  (app/api/auth/register/route.ts:228).
+
+punktyGratis
+  Naliczane przy aktywacji i w webhookach płatności tpay/PayU/P24 wraz
+  z zapisem PointTransaction.
+
+kategorieSpraw
+  Twardy limit w PUT /api/law-firm/categories (null = 999 / bez limitu).
+
+wojewodztwa, powiaty, miasta
+  Twardy limit w PUT /api/law-firm/area. Zastrzeżenie: limitowany jest tylko
+  poziom główny wybrany w ustawieniu geographicHierarchy, a przy "cała Polska"
+  limity nie obowiązują (celowe).
+
+liczbaTakow
+  Limit słów kluczowych w PUT /api/law-firms/[id]:324.
+
+statystykiAnalizy
+  Serwerowo requireFeature("canAccessStatistics") na /api/law-firms/stats
+  + blokada strony /panel-eksperta/statystyki.
+
+mozliwoscBloga
+  Serwerowo requireFeature("canAccessBlog") na wszystkich endpointach /api/blog
+  + blokada strony w panelu.
+
+skillLawFocus
+  Walidacja sumy udziałów procentowych = 100% i zapis percentage w kategoriach
+  (/api/law-firm/categories); flaga widoczna na profilu publicznym.
+
+wyswietlanieReklam
+  /api/ads zwraca hideBanner. UWAGA: semantyka odwrócona — true UKRYWA reklamy.
+
+obrazek
+  Wyświetlany jako pakietObrazek przy ekspertach na listach publicznych.
+
+================================================================================
+2. POLA DZIAŁAJĄCE TYLKO PO STRONIE KLIENTA
+   (do obejścia przez bezpośrednie wywołanie API)
+================================================================================
+
+powiadomieniaSprawy
+  Lista spraw jest przycinana w przeglądarce
+  (app/panel-eksperta/sprawy/page.tsx:362), ale GET /api/cases zwraca wszystko.
+  Dodatkowa pułapka semantyczna: wartość 0 oznacza BRAK LIMITU (ekspert widzi
+  wszystkie sprawy), więc pakiet z 0 daje paradoksalnie więcej niż pakiet z 12
+  — a 0 to domyślna wartość w formularzu dodawania pakietu.
+
+coverBaner
+  Blokada tylko w UI profilu
+  (components/panel-eksperta/profil/BasicTab.tsx:171);
+  PUT /api/law-firms/[id] zapisuje zdjecieGlowne bez sprawdzenia flagi.
+
+promowanieProfilu
+  Blokuje tylko stronę /panel-eksperta/promowanie;
+  POST /api/promotions sprawdza jedynie rolę LAW_FIRM, nie flagę pakietu.
+
+================================================================================
+3. POLA BEZ ŻADNEGO RZECZYWISTEGO DZIAŁANIA
+   (tylko opis na stronie pakietu)
+================================================================================
+
+dostepDoSpraw  *** NAJPOWAŻNIEJSZY BRAK ***
+  POST /api/offers nie sprawdza limitu aktywnych spraw w ogóle. Helpery, które
+  miały to robić (canSubmitOffer, requireLimit, canAddNewCase w
+  lib/api-permissions.ts i lib/permissions.ts), NIE SĄ NIGDZIE WYWOŁYWANE —
+  to martwy kod. Jedyny ślad to informacyjny licznik na dashboardzie panelu.
+  Co więcej, canSubmitOffer ma drugi błąd: nawet gdyby go podłączyć, nie
+  doładowuje wartości planu (attachPlanFeatures), więc użyłby sztywnej mapy
+  fallbackowej zamiast wartości ustawionej w adminie.
+
+priorytetWyszukiwanie
+  Żaden mechanizm wyszukiwania ani rankingu tego nie używa:
+  lib/ranking-score.ts nie uwzględnia pakietu, /api/law-firms i /api/search
+  nie boostują wyników.
+
+osobistyOpiekun
+  Liczba opiekunów z planu nigdzie nie działa; opiekun jest przypisywany
+  ręcznie przez admina (relacja lawFirm.accountManager) i widget pokazuje go
+  każdemu, kto go ma, niezależnie od pakietu.
+
+zalaczniki
+  Załączniki spraw są widoczne dla eksperta bez sprawdzania flagi; wynikowe
+  uprawnienie allowAttachments nie jest nigdzie konsumowane.
+
+specjalneOznaczenie
+  Nie jest wyświetlane na profilu publicznym (system odznak Badge/LawFirmBadge
+  jest całkowicie osobny).
+
+artykutySponsoro
+  Brak jakiejkolwiek funkcjonalności w kodzie.
+
+wsparcieMarketingowe
+  Brak jakiejkolwiek funkcjonalności w kodzie.
+
+================================================================================
+REKOMENDACJE (w kolejności wagi)
+================================================================================
+
+1. Podłączyć sprawdzenie limitu dostepDoSpraw w POST /api/offers
+   (naprawiając przy okazji canSubmitOffer, by ładował wartości planu).
+
+2. Przenieść limit powiadomieniaSprawy na serwer do GET /api/cases
+   i rozstrzygnąć semantykę wartości 0 (brak dostępu vs bez limitu).
+
+3. Dodać serwerowe sprawdzenia coverBaner (PUT profilu) i promowanieProfilu
+   (POST /api/promotions).
+
+4. Zdecydować, czy priorytetWyszukiwanie, zalaczniki, specjalneOznaczenie,
+   artykutySponsoro, wsparcieMarketingowe, osobistyOpiekun mają zostać
+   zaimplementowane, czy usunięte z formularza pakietu — obecnie obiecują
+   ekspertom funkcje, które nie istnieją.
