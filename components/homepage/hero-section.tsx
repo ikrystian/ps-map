@@ -4,6 +4,56 @@ import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 import { ArrowRight, ShieldCheck, Users } from "lucide-react"
+import { useEffect, useState } from "react"
+
+const TYPED_PHRASES = [
+  "problemy prawne",
+  "spory sądowe",
+  "sprawy spadkowe",
+  "kłopoty z umowami",
+  "spory z pracodawcą",
+  "sprawy rozwodowe",
+  "problemy firmowe",
+]
+
+function TypedPhrases() {
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [text, setText] = useState(TYPED_PHRASES[0])
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    const phrase = TYPED_PHRASES[phraseIndex]
+    // Pauza na pełnej frazie, szybkie kasowanie, spokojne wypisywanie
+    const delay = !isDeleting && text === phrase ? 2400 : isDeleting ? 40 : 90
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (text === phrase) {
+          setIsDeleting(true)
+        } else {
+          setText(phrase.slice(0, text.length + 1))
+        }
+      } else if (text.length > 0) {
+        setText(text.slice(0, -1))
+      } else {
+        setIsDeleting(false)
+        setPhraseIndex((phraseIndex + 1) % TYPED_PHRASES.length)
+      }
+    }, delay)
+
+    return () => clearTimeout(timeout)
+  }, [text, isDeleting, phraseIndex])
+
+  return (
+    <span className="italic font-bold text-white underline decoration-primary/50 underline-offset-8">
+      <span className="sr-only">{TYPED_PHRASES[0]}</span>
+      <span aria-hidden="true">
+        {text}
+        <span className="inline-block w-[3px] h-[0.85em] bg-primary/80 ml-1 align-baseline animate-pulse" />
+      </span>
+    </span>
+  )
+}
 
 export function HeroSection() {
   return (
@@ -49,7 +99,7 @@ export function HeroSection() {
             className="mb-12"
           >
             <h2 className="text-2xl md:text-4xl font-light mb-6 font-playfair text-neutral-200">
-              Rozwiązujemy Twoje <span className="italic font-bold text-white underline decoration-primary/50 underline-offset-8">problemy prawne</span> w kilku krokach.
+              Rozwiązujemy Twoje <TypedPhrases /> w kilku krokach.
             </h2>
             <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed ">
               Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników.
