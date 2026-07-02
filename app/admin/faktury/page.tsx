@@ -150,8 +150,9 @@ export default function AdminInvoicesPage() {
   }
 
   const handleDownload = (invoice: Invoice) => {
-    // Otwórz stronę do drukowania w nowym oknie
-    const printUrl = `/panel-eksperta/faktury/${invoice.id}/drukuj`
+    // Otwórz stronę do drukowania w nowym oknie (trasa admina — middleware
+    // blokuje adminowi /panel-eksperta/*)
+    const printUrl = `/admin/faktury/${invoice.id}/drukuj`
     window.open(printUrl, "_blank", "width=1000,height=800")
     toast.success(`Otwarto podgląd faktury ${invoice.invoiceNumber}`)
   }

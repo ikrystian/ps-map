@@ -100,6 +100,10 @@ export default function AdminLayout({
       : `Zarządzanie sekcją ${activeItem.name.toLowerCase()}`
     : "Zarządzanie systemem"
 
+  if (pathname?.endsWith("/drukuj")) {
+    return <>{children}</>
+  }
+
   return (
     <AdminTitleProvider defaultTitle={activeItem?.name} defaultSubtitle={defaultSubtitle}>
       <div className="flex h-screen bg-background-sec">

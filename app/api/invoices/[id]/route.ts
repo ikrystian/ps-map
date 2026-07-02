@@ -56,7 +56,6 @@ export async function GET(
         lawFirm: {
           select: {
             nazwa: true,
-            nazwa: true,
             nip: true,
             user: {
               select: {
