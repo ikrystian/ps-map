@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { Wrench, Award, Plus, X, Tag } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Wrench, Award, Plus, X, Tag, Scale } from "lucide-react"
 import Link from "next/link"
 import { Category } from "@/types"
 import { BorderBeam } from "@/components/ui/border-beam"
@@ -17,6 +18,8 @@ interface SpecializationTabProps {
     categoriesIds: string[]
     unikatowyOpisUslugi: string
     slowaKluczowe: string[]
+    bieglySadowy: boolean
+    bieglySadowyNazwaSadu: string
   }
   categories: Category[]
   limitSlowKluczowych: number
@@ -193,6 +196,47 @@ export function SpecializationTab({
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Biegły sądowy */}
+      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <CardHeader className="border-b border-border/10 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="bg-primary/10 p-2 rounded-xl text-primary">
+              <Scale className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl text-white font-playfair">Biegły sądowy</CardTitle>
+              <CardDescription className="text-zinc-400 text-sm">Wpis na listę biegłych sądowych pokażemy jako odznakę na Twojej wizytówce</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-6">
+          <div className="flex items-center justify-between gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+            <Label htmlFor="bieglySadowy" className="text-zinc-300 font-medium cursor-pointer">
+              Jestem wpisany/-a na listę biegłych sądowych
+            </Label>
+            <Switch
+              id="bieglySadowy"
+              checked={formData.bieglySadowy}
+              onCheckedChange={(val) => handleInputChange("bieglySadowy", val)}
+            />
+          </div>
+          {formData.bieglySadowy && (
+            <div className="grid gap-2">
+              <Label htmlFor="bieglySadowyNazwaSadu" className="text-zinc-300 font-medium">
+                Sąd, przy którym prowadzona jest lista (opcjonalnie)
+              </Label>
+              <Input
+                id="bieglySadowyNazwaSadu"
+                placeholder="np. Sąd Okręgowy w Warszawie"
+                value={formData.bieglySadowyNazwaSadu}
+                onChange={(e) => handleInputChange("bieglySadowyNazwaSadu", e.target.value)}
+                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -89,7 +89,7 @@ import type { Voivodeship, City, County } from "@/types"
 
 
 interface AreaData {
-  callaPolska: boolean
+  calaPolska: boolean
   onlineOnly: boolean
   selectedVoivodeships: string[]
   selectedCounties: string[]
@@ -247,7 +247,7 @@ export default function LawFirmServicesPage() {
   const [selectedCitiesObjects, setSelectedCitiesObjects] = useState<City[]>([])
   const [citiesDbOffset, setCitiesDbOffset] = useState<Record<string, number>>({})
   const [areaData, setAreaData] = useState<AreaData>({
-    callaPolska: false,
+    calaPolska: false,
     onlineOnly: false,
     selectedVoivodeships: [],
     selectedCounties: [],
@@ -337,7 +337,7 @@ export default function LawFirmServicesPage() {
         setSelectedCitiesObjects(selectedCitiesFull)
 
         setAreaData({
-          callaPolska: areaResData.callaPolska,
+          calaPolska: areaResData.calaPolska,
           onlineOnly: areaResData.onlineOnly,
           selectedVoivodeships: areaResData.voivodeships?.map((v: any) => v.id) || [],
           selectedCounties: areaResData.counties?.map((c: any) => c.id) || [],
@@ -615,7 +615,7 @@ export default function LawFirmServicesPage() {
       if (!catResponse.ok) throw new Error("Failed to save categories")
 
       const areaPayload: Record<string, unknown> = {
-        callaPolska: areaData.callaPolska,
+        calaPolska: areaData.calaPolska,
         onlineOnly: areaData.onlineOnly,
         voivodeshipsIds: areaData.selectedVoivodeships,
       }
@@ -1022,10 +1022,10 @@ export default function LawFirmServicesPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.callaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
-                  )} onClick={() => setAreaData(prev => ({ ...prev, callaPolska: !prev.callaPolska }))}>
+                    areaData.calaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
+                  )} onClick={() => setAreaData(prev => ({ ...prev, calaPolska: !prev.calaPolska }))}>
                     <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", areaData.callaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
+                      <div className={cn("p-2 rounded-lg", areaData.calaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
                         <Globe className="h-5 w-5" />
                       </div>
                       <div>
@@ -1033,7 +1033,7 @@ export default function LawFirmServicesPage() {
                         <p className="text-xs text-muted-foreground">Widoczność w każdym mieście</p>
                       </div>
                     </div>
-                    <Switch checked={areaData.callaPolska} onCheckedChange={(val) => setAreaData(prev => ({ ...prev, callaPolska: val }))} />
+                    <Switch checked={areaData.calaPolska} onCheckedChange={(val) => setAreaData(prev => ({ ...prev, calaPolska: val }))} />
                   </div>
 
                   <div className={cn(
@@ -1054,7 +1054,7 @@ export default function LawFirmServicesPage() {
                 </div>
               </div>
 
-              {!areaData.callaPolska && (
+              {!areaData.calaPolska && (
                 <div className="pt-4 border-t border-border/10">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                     <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
@@ -1290,7 +1290,7 @@ export default function LawFirmServicesPage() {
                   </div>
                 </div>
 
-                {areaData.callaPolska ? (
+                {areaData.calaPolska ? (
                   <div className="bg-primary/5 border border-primary/20 text-primary font-medium">
                     <Globe className="h-4 w-4 shrink-0" />
                     <span>Nielimitowany zasięg (Cała Polska)</span>

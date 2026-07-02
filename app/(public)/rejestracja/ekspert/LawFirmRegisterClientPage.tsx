@@ -160,7 +160,7 @@ export default function LawFirmRegistrationPage() {
 
     // Krok 5: Obszar działania
     voivodeshipsIds: [] as string[],
-    callaPolska: false,
+    calaPolska: false,
 
     // Krok 6: Specjalizacje
     categoriesIds: [] as string[],
@@ -566,7 +566,7 @@ export default function LawFirmRegistrationPage() {
           typOferty: formData.typOferty,
           zgodaRegulamin: formData.zgodaRegulamin,
           zgodaPrzetwarzanie: formData.zgodaPrzetwarzanie,
-          callaPolska: formData.callaPolska,
+          calaPolska: formData.calaPolska,
           voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : [],
           categoriesIds: formData.categoriesIds,
           isSocialRegistration: !!session?.user,

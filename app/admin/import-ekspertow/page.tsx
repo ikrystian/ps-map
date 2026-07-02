@@ -219,7 +219,7 @@ export default function ImportEkspertow() {
         "slowaKluczowe": ["prawo gospodarcze", "spółki", "kontrakty"],
 
         // --- Obszar i typ działania ---
-        "callaPolska": false,                         // obsługa całej Polski
+        "calaPolska": false,                         // obsługa całej Polski
         "onlineOnly": false,                          // tylko zdalnie
         "typOferty": "WSZYSTKIE",                     // patrz "Dozwolone wartości"
 
@@ -317,7 +317,7 @@ export default function ImportEkspertow() {
               <li>lawFirm.linkLinkedIn, linkFacebook, linkInstagram, linkTwitter, linkTikTok, stronaWww</li>
               <li>lawFirm.edukacja - tablica wpisów (uczelnia, wydzial, rokOd, rokDo)</li>
               <li>lawFirm.slowaKluczowe - tablica tagów do wyszukiwania</li>
-              <li>lawFirm.callaPolska, lawFirm.onlineOnly, lawFirm.typOferty - obszar i typ działania</li>
+              <li>lawFirm.calaPolska, lawFirm.onlineOnly, lawFirm.typOferty - obszar i typ działania</li>
             </ul>
           </div>
 

@@ -777,29 +777,50 @@ export default function ClientAddCasePage() {
                         Brak dostępnych kategorii
                       </div>
                     ) : (
-                      filteredCats.map((parent: any) => (
-                        <button
-                          key={parent.id}
-                          type="button"
-                          onClick={() => setSelectedParentIdForModal(parent.id)}
-                          className={cn(
-                            "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all",
-                            activeParentId === parent.id
-                              ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                              : "text-muted-foreground hover:text-white hover:bg-primary/15",
-                          )}
-                        >
-                          <span className="truncate">{parent.nazwa}</span>
-                          <ChevronRight
-                            className={cn(
-                              "h-3.5 w-3.5 shrink-0 opacity-70",
-                              activeParentId === parent.id
-                                ? "text-white"
-                                : "text-muted-foreground",
+                      // Grupowanie: kategorie prawne vs usługi ekspertów (flaga `ekspercka`)
+                      [
+                        {
+                          label: "Sprawy prawne",
+                          items: filteredCats.filter((c: any) => !c.ekspercka),
+                        },
+                        {
+                          label: "Usługi ekspertów",
+                          items: filteredCats.filter((c: any) => c.ekspercka),
+                        },
+                      ]
+                        .filter((group) => group.items.length > 0)
+                        .map((group, _, groups) => (
+                          <div key={group.label} className="space-y-1">
+                            {groups.length > 1 && (
+                              <div className="text-[10px] font-semibold text-muted-foreground/70 px-2.5 pt-2 uppercase tracking-wider">
+                                {group.label}
+                              </div>
                             )}
-                          />
-                        </button>
-                      ))
+                            {group.items.map((parent: any) => (
+                              <button
+                                key={parent.id}
+                                type="button"
+                                onClick={() => setSelectedParentIdForModal(parent.id)}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all",
+                                  activeParentId === parent.id
+                                    ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                                    : "text-muted-foreground hover:text-white hover:bg-primary/15",
+                                )}
+                              >
+                                <span className="truncate">{parent.nazwa}</span>
+                                <ChevronRight
+                                  className={cn(
+                                    "h-3.5 w-3.5 shrink-0 opacity-70",
+                                    activeParentId === parent.id
+                                      ? "text-white"
+                                      : "text-muted-foreground",
+                                  )}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        ))
                     )}
                   </div>
 

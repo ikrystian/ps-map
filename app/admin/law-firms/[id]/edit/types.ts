@@ -67,7 +67,7 @@ export const lawFirmSchema = z.object({
   slowaKluczowe: z.string().optional(),
 
   // Coverage area
-  callaPolska: z.boolean(),
+  calaPolska: z.boolean(),
   onlineOnly: z.boolean(),
 
   // Type and subscription

@@ -244,8 +244,12 @@ model LawFirm {
   expertiseCategoryId   String?
   expertiseCategory     ExpertiseCategory? @relation(fields: [expertiseCategoryId], references: [id])
 
+  // Status biegłego sądowego — odznaka na profilu, nie osobna kategoria
+  bieglySadowy          Boolean  @default(false)
+  bieglySadowyNazwaSadu String?  // np. "Sąd Okręgowy w Warszawie"
+
   // Obszar działania
-  callaPolska           Boolean  @default(false)
+  calaPolska            Boolean  @default(false)
   onlineOnly            Boolean  @default(false)
 
   // Typ oferty
@@ -504,6 +508,7 @@ model Category {
   metaDescription String?
 
   aktywna     Boolean  @default(true)
+  ekspercka   Boolean  @default(false) // Usługi ekspertów (grupowanie: Sprawy prawne / Usługi ekspertów)
   kolejnosc   Int      @default(0)
   wyswietlajNaGlownejPrywatne Boolean @default(false)
   wyswietlajNaGlownejFirmowe  Boolean @default(false)

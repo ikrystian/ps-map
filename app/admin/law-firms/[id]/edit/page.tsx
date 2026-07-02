@@ -161,7 +161,7 @@ export default function EditLawFirmPage() {
       oraStatus: false,
       unikatowyOpisUslugi: "",
       slowaKluczowe: "",
-      callaPolska: false,
+      calaPolska: false,
       onlineOnly: false,
       typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "",
@@ -442,7 +442,7 @@ export default function EditLawFirmPage() {
             oraStatus: lawFirm.oraStatus || false,
             unikatowyOpisUslugi: lawFirm.unikatowyOpisUslugi || "",
             slowaKluczowe: lawFirm.slowaKluczowe || "",
-            callaPolska: lawFirm.callaPolska || false,
+            calaPolska: lawFirm.calaPolska || false,
             onlineOnly: lawFirm.onlineOnly || false,
             typOferty: lawFirm.typOferty,
             pakietSubskrypcji: lawFirm.pakietSubskrypcji || "",
@@ -510,7 +510,7 @@ export default function EditLawFirmPage() {
         "kodPocztowy",
         "miasto",
         "voivodeshipId",
-        "callaPolska",
+        "calaPolska",
         "onlineOnly",
         "statusGodzinyOtwarcia",
         "godzinyOtwarcia",
@@ -979,7 +979,7 @@ export default function EditLawFirmPage() {
                           <div className="flex flex-col sm:flex-row gap-6">
                             <FormField
                               control={form.control}
-                              name="callaPolska"
+                              name="calaPolska"
                               render={({ field }) => (
                                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-lg flex-1 hover:bg-muted/30 transition-colors">
                                   <FormControl>

@@ -65,8 +65,10 @@ export interface LawFirm extends LawFirmWithLocation {
   strona?: string | null
   unikatowyOpisUslugi?: string | null
   slowaKluczowe?: string[] | any
-  callaPolska?: boolean
+  calaPolska?: boolean
   onlineOnly?: boolean
+  bieglySadowy?: boolean
+  bieglySadowyNazwaSadu?: string | null
   typOferty?: string | null
   punktySaldo?: number
   pakietSubskrypcji?: string | null

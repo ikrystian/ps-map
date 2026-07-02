@@ -96,7 +96,7 @@ export async function GET() {
     const limits = await getLimits(session.user.id)
 
     return NextResponse.json({
-      callaPolska: lawFirm.callaPolska,
+      calaPolska: lawFirm.calaPolska,
       onlineOnly: lawFirm.onlineOnly,
       voivodeships: lawFirm.voivodeships.map(v => v.voivodeship),
       counties: lawFirm.counties.map(c => c.county),
@@ -126,10 +126,10 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json()
-    const { callaPolska, onlineOnly, voivodeshipsIds, countiesIds, citiesIds } = body
+    const { calaPolska, onlineOnly, voivodeshipsIds, countiesIds, citiesIds } = body
 
     // Validate limits
-    if (!callaPolska) {
+    if (!calaPolska) {
       const limits = await getLimits(session.user.id)
 
       // Limit dotyczy poziomu głównego z ustawienia "Hierarchia geograficzna".
@@ -156,7 +156,7 @@ export async function PUT(request: Request) {
     await prisma.lawFirm.update({
       where: { id: lawFirm.id },
       data: {
-        callaPolska: !!callaPolska,
+        calaPolska: !!calaPolska,
         onlineOnly: !!onlineOnly,
       }
     })

@@ -94,7 +94,7 @@ const createLawFirmSchema = z.object({
   slowaKluczowe: z.string().optional(),
 
   // Coverage area
-  callaPolska: z.boolean(),
+  calaPolska: z.boolean(),
   onlineOnly: z.boolean(),
 
   // Type and subscription
@@ -179,7 +179,7 @@ export default function NewLawFirmPage() {
       oraStatus: false,
       unikatowyOpisUslugi: "",
       slowaKluczowe: "",
-      callaPolska: false,
+      calaPolska: false,
       onlineOnly: false,
       typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "",
@@ -1218,7 +1218,7 @@ export default function NewLawFirmPage() {
               <div className="flex gap-4">
                 <FormField
                   control={form.control}
-                  name="callaPolska"
+                  name="calaPolska"
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                       <FormControl>

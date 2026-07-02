@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import LawFirmRegisterClientPage from "./LawFirmRegisterClientPage"
 
 export const metadata: Metadata = {
-  title: "Rejestracja dla Eksperta i Prawników | Prosta Sprawa",
+  title: "Rejestracja dla Eksperta i Prawników",
   description: "Zarejestruj swój profil w portalu Prosta Sprawa. Zyskaj profil w wyszukiwarce i zacznij pozyskiwać wartościowych klientów.",
 }
 

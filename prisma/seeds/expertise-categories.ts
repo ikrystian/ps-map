@@ -28,11 +28,13 @@ const data = [
         kolejnosc: 1,
         specializations: [
           "Rzeczoznawca majątkowy",
+          "Rzeczoznawca budowlany",
           "Geodeta",
           "Inspektor nadzoru budowlanego",
           "Kierownik budowy",
           "Kosztorysant budowlany",
           "Audytor energetyczny",
+          "Pośrednik nieruchomości",
         ],
       },
       {
@@ -50,26 +52,33 @@ const data = [
           "Specjalista Compliance",
           "Specjalista ds. zamówień publicznych",
           "Doradca biznesowy",
+          "Specjalista ds. marketingu",
+          "Specjalista HR",
         ],
       },
       {
         nazwa: "Medycyna i opinie",
         kolejnosc: 4,
-        specializations: ["Psycholog", "Psycholog sądowy", "Lekarz biegły"],
+        specializations: [
+          "Psycholog",
+          "Psycholog sądowy",
+          "Lekarz orzecznik / biegły medyczny",
+          "Fizjoterapeuta / specjalista rehabilitacji",
+        ],
       },
-    ],
-  },
-  {
-    nazwa: "Biegli i rzeczoznawcy",
-    kolejnosc: 2,
-    specializations: [
-      "Biegły sądowy",
-      "Rzeczoznawca majątkowy",
-      "Rzeczoznawca samochodowy",
-      "Rzeczoznawca budowlany",
-      "Biegły księgowy",
-      "Biegły z zakresu informatyki",
-      "Biegły medyczny",
+      {
+        nazwa: "IT i technologie",
+        kolejnosc: 5,
+        specializations: [
+          "Specjalista IT / cyberbezpieczeństwa",
+          "Informatyk śledczy",
+        ],
+      },
+      {
+        nazwa: "Języki i tłumaczenia",
+        kolejnosc: 6,
+        specializations: ["Tłumacz przysięgły"],
+      },
     ],
   },
 ]

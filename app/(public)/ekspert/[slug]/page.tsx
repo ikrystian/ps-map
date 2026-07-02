@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!lawFirm) {
       return {
-        title: "Ekspert nie znaleziony | Prosta Sprawa",
+        title: "Ekspert nie znaleziony",
       }
     }
 
     const displayName = lawFirm.nazwa || lawFirm.nazwa
-    const title = `${displayName} - Ekspert ${lawFirm.user?.miasto ?? ""} | Prosta Sprawa`
+    const title = `${displayName} - Ekspert ${lawFirm.user?.miasto ?? ""}`
     const description = lawFirm.opis || `Profil ekspertów prawnych z firmy ${displayName} w mieście ${lawFirm.user?.miasto ?? ""}. Zobacz specjalizacje, opinie klientów oraz wolne terminy konsultacji.`
 
     return {
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   } catch (error) {
     console.error("Error generating metadata for expert profile:", error)
     return {
-      title: "Profil Eksperta | Prosta Sprawa",
+      title: "Profil Eksperta",
     }
   }
 }

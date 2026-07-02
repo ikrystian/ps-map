@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import WinWithUsClientPage from "./WinWithUsClientPage"
 
 export const metadata: Metadata = {
-  title: "Z Nami Wygrywasz - Nasza Misja | Prosta Sprawa",
+  title: "Z Nami Wygrywasz - Nasza Misja",
   description: "Dowiedz się, dlaczego warto powierzyć swoje sprawy ekspertom z platformy Prosta Sprawa. Nasze wartości i sukcesy klientów.",
 }
 

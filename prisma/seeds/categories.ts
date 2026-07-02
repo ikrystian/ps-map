@@ -88,7 +88,7 @@ const parentCategoryMeta: Record<string, CategoryMetaInput> = {
     korzysci: "zabezpieczysz kod źródłowy i innowacyjne rozwiązania oraz legalnie przeskalujesz swój produkt cyfrowy",
     akcja: "Nawiąż kontakt z prawnikiem specjalizującym się w prawie IT i nowych technologiach"
   },
-  "Dotacje i finansowanie zewnętrrzne": {
+  "Dotacje i finansowanie zewnętrzne": {
     synonimy: "pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej",
     typoweProblemy: "weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia",
     korzysci: "bezpiecznie pozyskasz i rozliczysz fundusze na rozwój bez ryzyka konieczności ich zwrotu",
@@ -233,11 +233,47 @@ const parentCategoryMeta: Record<string, CategoryMetaInput> = {
     korzysci: "skutecznie zaskarżysz niekorzystną decyzję urzędniczą i doprowadzisz do ponownego rozpatrzenia sprawy",
     akcja: "Zleć sporządzenie odwołania radcy prawnemu ds. prawa administracyjnego"
   },
-  "Prawo OZE": {
+  "Fotowoltaika i OZE": {
     synonimy: "prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła",
     typoweProblemy: "spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd'",
     korzysci: "odzyskasz pieniądze od nierzetelnych monterów i skutecznie wyegzekwujesz prawidłowe działanie instalacji",
     akcja: "Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych"
+  },
+  "Prawo drogowe": {
+    synonimy: "prawa drogowego, wypadków komunikacyjnych oraz spraw o wykroczenia i przestępstwa drogowe",
+    typoweProblemy: "odszkodowania z OC sprawcy, obrona w sprawach o jazdę po alkoholu, zatrzymane prawo jazdy oraz punkty karne",
+    korzysci: "odzyskasz pełne odszkodowanie po wypadku i skutecznie obronisz swoje prawo jazdy",
+    akcja: "Skontaktuj się z adwokatem specjalizującym się w prawie drogowym"
+  },
+  "Cudzoziemcy": {
+    synonimy: "legalizacji pobytu, zezwoleń na pracę oraz obywatelstwa polskiego",
+    typoweProblemy: "karty pobytu, zezwolenia na pracę, wizy oraz wnioski o obywatelstwo polskie",
+    korzysci: "zalegalizujesz pobyt i pracę w Polsce bez ryzyka odmowy z powodów formalnych",
+    akcja: "Skonsultuj się z prawnikiem ds. cudzoziemców lub tłumaczem przysięgłym"
+  },
+  "Prawo budowlane": {
+    synonimy: "prawa budowlanego, pozwoleń na budowę oraz sporów budowlanych",
+    typoweProblemy: "pozwolenia i zgłoszenia budowlane, legalizacja samowoli budowlanej oraz spory z wykonawcą lub deweloperem",
+    korzysci: "przeprowadzisz inwestycję zgodnie z przepisami i skutecznie dochodzisz roszczeń od nierzetelnych wykonawców",
+    akcja: "Skorzystaj z pomocy prawnika ds. prawa budowlanego"
+  },
+  "Wyceny i ekspertyzy": {
+    synonimy: "wycen nieruchomości, wycen szkód oraz opinii i ekspertyz do sądu",
+    typoweProblemy: "operaty szacunkowe, wyceny szkód i ruchomości oraz opinie na potrzeby sądu lub banku",
+    korzysci: "otrzymasz rzetelną wycenę honorowaną przez sądy, banki i urzędy",
+    akcja: "Skontaktuj się z rzeczoznawcą majątkowym"
+  },
+  "Architektura i projektowanie": {
+    synonimy: "projektowania domów i wnętrz, adaptacji projektów oraz nadzoru budowlanego",
+    typoweProblemy: "projekty domów i wnętrz, adaptacje projektów gotowych oraz nadzór budowlany i obowiązki kierownika budowy",
+    korzysci: "zrealizujesz budowę lub remont według profesjonalnego projektu i pod fachowym nadzorem",
+    akcja: "Nawiąż kontakt z architektem lub kierownikiem budowy"
+  },
+  "Finanse osobiste": {
+    synonimy: "finansów osobistych, kredytów hipotecznych oraz inwestowania i oszczędzania",
+    typoweProblemy: "wybór kredytu hipotecznego, budowa portfela inwestycyjnego oraz planowanie emerytalne",
+    korzysci: "podejmiesz świadome decyzje finansowe i zabezpieczysz przyszłość swoją i rodziny",
+    akcja: "Skonsultuj się z licencjonowanym doradcą finansowym"
   }
 };
 
@@ -284,7 +320,7 @@ export async function seedCategories(prisma: PrismaClient) {
 
   await prisma.$transaction(async (tx) => {
     for (const category of categories) {
-      const slug = category.nazwa
+      const slug = category.slug || category.nazwa
         .toLowerCase()
         .replace(/ł/g, "l")
         .replace(/ń/g, "n")
@@ -308,7 +344,8 @@ export async function seedCategories(prisma: PrismaClient) {
           nazwa: category.nazwa,
           typ: category.typ as any,
           kolejnosc: category.kolejnosc,
-          aktywna: true,
+          aktywna: category.aktywna !== false,
+          ekspercka: !!category.ekspercka,
           ikona: category.ikona || null,
           wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
           wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
@@ -323,7 +360,8 @@ export async function seedCategories(prisma: PrismaClient) {
           slug: slug,
           typ: category.typ as any,
           kolejnosc: category.kolejnosc,
-          aktywna: true,
+          aktywna: category.aktywna !== false,
+          ekspercka: !!category.ekspercka,
           ikona: category.ikona || null,
           wyswietlajNaGlownejPrywatne: !!category.wyswietlajNaGlownejPrywatne,
           wyswietlajNaGlownejFirmowe: !!category.wyswietlajNaGlownejFirmowe,
@@ -339,7 +377,7 @@ export async function seedCategories(prisma: PrismaClient) {
       if (category.children && category.children.length > 0) {
         for (const child of category.children) {
           const childName = typeof child === "string" ? child : child.nazwa;
-          const childSlug = childName
+          const childSlug = (typeof child !== "string" && child.slug) || childName
             .toLowerCase()
             .replace(/ł/g, "l")
             .replace(/ń/g, "n")
@@ -367,7 +405,7 @@ export async function seedCategories(prisma: PrismaClient) {
               nazwa: childName,
               typ: category.typ as any,
               parentId: parent.id,
-              aktywna: true,
+              aktywna: typeof child === "string" || child.aktywna !== false,
               opis: childOpis,
               opisDodatkowy: childOpisDodatkowy,
               metaTitle: childMetaTitle,
@@ -378,7 +416,7 @@ export async function seedCategories(prisma: PrismaClient) {
               slug: childSlug,
               typ: category.typ as any,
               parentId: parent.id,
-              aktywna: true,
+              aktywna: typeof child === "string" || child.aktywna !== false,
               opis: childOpis,
               opisDodatkowy: childOpisDodatkowy,
               metaTitle: childMetaTitle,

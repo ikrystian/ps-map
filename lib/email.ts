@@ -6,7 +6,7 @@
  * EMAIL_SERVER_PORT=587
  * EMAIL_SERVER_USER=your-email@gmail.com
  * EMAIL_SERVER_PASSWORD=your-app-password
- * EMAIL_FROM=noreply@prostaspawa.pl
+ * EMAIL_FROM=noreply@prostasprawa.pl
  */
 
 import { EmailLogStatus, EmailType } from '@prisma/client'
@@ -249,7 +249,7 @@ export function getBrandEmailLayout(
       finalHtml = finalHtml.replace('src="', `src="${domainUrl}`)
       // Podmień ikony w stopce na poprawne odnośniki
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${domainUrl}" class="footer-icon" aria-label="Website"`)
-      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostaspawa.pl" class="footer-icon" aria-label="Email"`)
+      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostasprawa.pl" class="footer-icon" aria-label="Email"`)
 
       // Dodaj preheader jeśli jest podany
       if (preheaderText) {
@@ -410,7 +410,7 @@ export function getBrandEmailLayout(
                               </td>
                               <!-- Envelope icon -->
                               <td style="padding: 0 10px;">
-                                <a href="mailto:kontakt@prostaspawa.pl" style="color: #a3a3a3; text-decoration: none;">
+                                <a href="mailto:kontakt@prostasprawa.pl" style="color: #a3a3a3; text-decoration: none;">
                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                     <polyline points="22,6 12,13 2,6"></polyline>

@@ -331,8 +331,12 @@ export async function PUT(
     }
 
     // Obszar działania
-    if (body.callaPolska !== undefined) updateData.callaPolska = body.callaPolska
+    if (body.calaPolska !== undefined) updateData.calaPolska = body.calaPolska
     if (body.onlineOnly !== undefined) updateData.onlineOnly = body.onlineOnly
+
+    // Status biegłego sądowego (odznaka na wizytówce)
+    if (body.bieglySadowy !== undefined) updateData.bieglySadowy = body.bieglySadowy
+    if (body.bieglySadowyNazwaSadu !== undefined) updateData.bieglySadowyNazwaSadu = body.bieglySadowyNazwaSadu || null
 
     // Subscription plan (can be updated by admin or when buying a package)
     if (body.pakietSubskrypcji !== undefined) updateData.pakietSubskrypcji = body.pakietSubskrypcji

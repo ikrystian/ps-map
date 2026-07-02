@@ -263,13 +263,13 @@ export default function CategoriesPage() {
           </div>
 
           <TabsContent value="all" className="mt-0 ring-offset-background focus-visible:outline-none">
-            <CategoryGrid categories={filteredCategories} />
+            <GroupedCategoryGrid categories={filteredCategories} />
           </TabsContent>
           <TabsContent value="private" className="mt-0 ring-offset-background focus-visible:outline-none">
-            <CategoryGrid categories={filteredCategories} />
+            <GroupedCategoryGrid categories={filteredCategories} />
           </TabsContent>
           <TabsContent value="business" className="mt-0 ring-offset-background focus-visible:outline-none">
-            <CategoryGrid categories={filteredCategories} />
+            <GroupedCategoryGrid categories={filteredCategories} />
           </TabsContent>
         </Tabs>
 
@@ -295,6 +295,37 @@ export default function CategoriesPage() {
         )}
       </div>
     </div >
+  )
+}
+
+// Grupowanie wewnątrz zakładki: kategorie prawne vs usługi ekspertów (flaga `ekspercka`)
+function GroupedCategoryGrid({ categories }: { categories: Category[] }) {
+  const legal = categories.filter((c) => !c.ekspercka)
+  const expert = categories.filter((c) => c.ekspercka)
+
+  if (expert.length === 0) {
+    return <CategoryGrid categories={legal} />
+  }
+
+  return (
+    <div className="space-y-12">
+      {legal.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-center gap-3">
+            <Scale className="h-5 w-5 text-primary" />
+            <h3 className="text-xl font-bold tracking-tight">Sprawy prawne</h3>
+          </div>
+          <CategoryGrid categories={legal} />
+        </section>
+      )}
+      <section>
+        <div className="mb-6 flex items-center gap-3">
+          <Users className="h-5 w-5 text-primary" />
+          <h3 className="text-xl font-bold tracking-tight">Usługi ekspertów</h3>
+        </div>
+        <CategoryGrid categories={expert} />
+      </section>
+    </div>
   )
 }
 

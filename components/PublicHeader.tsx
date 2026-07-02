@@ -411,7 +411,7 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
-                    <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
+                    <div className="columns-1 sm:columns-2 md:columns-3 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {firmoweCat.map((category) => (
                         <div key={category.id} className="mb-6">
                           <NavigationMenuLink asChild>
@@ -482,7 +482,7 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
-                    <div className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
+                    <div className="columns-1 sm:columns-2 md:columns-3 gap-x-8 gap-y-6 [column-fill:balance] [&>div]:break-inside-avoid">
                       {prywatneCat.map((category) => (
                         <div key={category.id} className="mb-6">
                           <NavigationMenuLink asChild>

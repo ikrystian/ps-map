@@ -27,18 +27,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!category) {
       return {
-        title: "Kategoria nie znaleziona | Prosta Sprawa",
+        title: "Kategoria nie znaleziona",
       }
     }
 
     return {
-      title: category.metaTitle || `${category.nazwa} - Eksperci i Pomoc Prawna | Prosta Sprawa`,
+      title: category.metaTitle || `${category.nazwa} - Eksperci i Pomoc Prawna`,
       description: category.metaDescription || category.opis || `Potrzebujesz pomocy prawnej w zakresie: ${category.nazwa}? Znajdź wykwalifikowanych adwokatów, radców prawnych i ekspertów.`,
     }
   } catch (error) {
     console.error("Error generating metadata for category:", error)
     return {
-      title: "Kategorie Spraw Prawnych | Prosta Sprawa",
+      title: "Kategorie Spraw Prawnych",
     }
   }
 }

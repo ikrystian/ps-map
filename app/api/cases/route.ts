@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         where: { userId: session.user.id },
         select: {
           id: true,
-          callaPolska: true,
+          calaPolska: true,
           voivodeships: { select: { voivodeshipId: true } },
           cities: { select: { cityId: true } },
           categories: { select: { categoryId: true } },
@@ -87,13 +87,13 @@ export async function GET(request: NextRequest) {
       const lawFirmCityIds = lawFirm.cities.map((c) => c.cityId)
 
       // Buduj filtr zakresu:
-      // - callaPolska=true: brak filtra lokalizacji, filtruj tylko po kategorii
-      // - callaPolska=false: AND(lokalizacja, kategoria)
+      // - calaPolska=true: brak filtra lokalizacji, filtruj tylko po kategorii
+      // - calaPolska=false: AND(lokalizacja, kategoria)
       //   lokalizacja = voivodeship OR city (z zakresu firmy)
       //   Jeśli firma nie ma skonfigurowanej lokalizacji lub kategorii, dana oś nie jest filtrowana
       const scopeConditions: any[] = []
 
-      if (lawFirm.callaPolska) {
+      if (lawFirm.calaPolska) {
         // Cała Polska – tylko filtr kategorii (jeśli zadeklarowane)
         if (lawFirmCategoryIds.length > 0) {
           scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
@@ -359,17 +359,17 @@ export async function POST(request: NextRequest) {
     await emitNewNotification(session.user.id, clientNotification)
 
     // Powiadom ekspertów o nowej sprawie – TYLKO te, którym ta sprawa pojawi się na liście:
-    // - callaPolska=true: pasuje do kategorii (lub brak kategorii → wszystkie)
-    // - callaPolska=false: AND(lokalizacja, kategoria)
+    // - calaPolska=true: pasuje do kategorii (lub brak kategorii → wszystkie)
+    // - calaPolska=false: AND(lokalizacja, kategoria)
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         aktywna: true,
         user: { deletedAt: null },
         AND: [
-          // Warunek lokalizacji: callaPolska LUB (voivodeship|city pasuje)
+          // Warunek lokalizacji: calaPolska LUB (voivodeship|city pasuje)
           {
             OR: [
-              { callaPolska: true },
+              { calaPolska: true },
               {
                 voivodeships: {
                   some: { voivodeshipId: newCase.voivodeshipId },
@@ -396,7 +396,7 @@ export async function POST(request: NextRequest) {
       select: {
         userId: true,
         nazwa: true,
-        callaPolska: true,
+        calaPolska: true,
         user: {
           select: { email: true },
         },

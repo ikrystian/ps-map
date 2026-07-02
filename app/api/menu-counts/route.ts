@@ -43,7 +43,7 @@ export async function GET() {
         where: { userId },
         select: {
           id: true,
-          callaPolska: true,
+          calaPolska: true,
           voivodeships: { select: { voivodeshipId: true } },
           cities: { select: { cityId: true } },
           categories: { select: { categoryId: true } },
@@ -61,7 +61,7 @@ export async function GET() {
 
       const scopeConditions: any[] = []
 
-      if (lawFirm.callaPolska) {
+      if (lawFirm.calaPolska) {
         if (lawFirmCategoryIds.length > 0) {
           scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
         }

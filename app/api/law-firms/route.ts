@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search")
     const type = searchParams.get("type")
     const expertiseCategoryId = searchParams.get("expertiseCategoryId")
+    const bieglySadowy = searchParams.get("bieglySadowy")
     const sortBy = searchParams.get("sortBy")
     const limit = parseInt(searchParams.get("limit") || "20")
     const offset = parseInt(searchParams.get("offset") || "0")
@@ -129,7 +130,7 @@ export async function GET(request: NextRequest) {
             },
           },
           {
-            callaPolska: true,
+            calaPolska: true,
           },
         ],
       })
@@ -139,6 +140,10 @@ export async function GET(request: NextRequest) {
       andConditions.push({
         user: { miasto: { contains: city } },
       })
+    }
+
+    if (bieglySadowy === "true") {
+      andConditions.push({ bieglySadowy: true })
     }
 
     if (search) {
@@ -329,8 +334,10 @@ export async function GET(request: NextRequest) {
           oirpStatus: firm.oirpStatus,
           oirpMiasto: firm.oirpMiasto,
           zweryfikowana: firm.zweryfikowana,
-          callaPolska: firm.callaPolska,
+          calaPolska: firm.calaPolska,
           onlineOnly: firm.onlineOnly,
+          bieglySadowy: firm.bieglySadowy,
+          bieglySadowyNazwaSadu: firm.bieglySadowyNazwaSadu,
           categories: firm.categories.map((c: any) => c.category),
           expertiseCategory: firm.expertiseCategory || null,
           avgRating: parseFloat(avgRating.toFixed(1)),
@@ -426,6 +433,14 @@ export async function POST(request: NextRequest) {
   let body: any = null
   try {
     body = await request.json()
+
+    // Pominięcie weryfikacji e-mail (pre-rejestracja z landing page) działa tylko,
+    // gdy środowisko jawnie na to pozwala. Na produkcji flaga z payloadu jest
+    // ignorowana — konto zawsze przechodzi weryfikację e-mail.
+    const skipEmailVerification =
+      body.skipEmailVerification === true &&
+      (process.env.ALLOW_SKIP_EMAIL_VERIFICATION === "true" || process.env.NODE_ENV !== "production")
+    body.skipEmailVerification = skipEmailVerification
 
     // Walidacja wymaganych pól
     const requiredFields = [
@@ -647,8 +662,10 @@ export async function POST(request: NextRequest) {
           dataPakietuDo: pkgEnd,
           zgodaRegulamin: body.zgodaRegulamin,
           zgodaPrzetwarzanie: body.zgodaPrzetwarzanie,
-          callaPolska: body.callaPolska || false,
+          calaPolska: body.calaPolska || body.callaPolska || false,
           onlineOnly: body.onlineOnly || false,
+          bieglySadowy: body.bieglySadowy || false,
+          bieglySadowyNazwaSadu: body.bieglySadowyNazwaSadu || null,
           mainCategoryId: mainCategoryId,
         },
       })

@@ -1115,7 +1115,7 @@ export default function LawFirmProfilePage() {
             })()}
 
             {/* Service Area Card */}
-            {((lawFirm.voivodeships && lawFirm.voivodeships.length > 0) || (lawFirm.cities && lawFirm.cities.length > 0) || lawFirm.callaPolska) && (
+            {((lawFirm.voivodeships && lawFirm.voivodeships.length > 0) || (lawFirm.cities && lawFirm.cities.length > 0) || lawFirm.calaPolska) && (
               <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
                 <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
                   <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -1124,7 +1124,7 @@ export default function LawFirmProfilePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
-                  {lawFirm.callaPolska ? (
+                  {lawFirm.calaPolska ? (
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-lg py-1 px-2.5">
                         <Globe className="h-3.5 w-3.5 mr-1.5" />
@@ -1167,6 +1167,15 @@ export default function LawFirmProfilePage() {
                       <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 rounded-lg py-1 px-2.5 font-semibold">
                         <Globe className="h-3.5 w-3.5 mr-1.5" />
                         Obsługa online
+                      </Badge>
+                    </div>
+                  )}
+                  {lawFirm.bieglySadowy && (
+                    <div className="pt-3 border-t border-border/30">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 rounded-lg py-1 px-2.5 font-semibold">
+                        <Award className="h-3.5 w-3.5 mr-1.5" />
+                        Biegły sądowy
+                        {lawFirm.bieglySadowyNazwaSadu ? ` — ${lawFirm.bieglySadowyNazwaSadu}` : ""}
                       </Badge>
                     </div>
                   )}

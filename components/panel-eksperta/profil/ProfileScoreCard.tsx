@@ -50,7 +50,7 @@ interface ProfileScoreData {
   linkInstagram: string
   linkTwitter: string
   linkTikTok: string
-  callaPolska: boolean
+  calaPolska: boolean
   onlineOnly: boolean
   voivodeshipsIds: string[]
   citiesIds: string[]
@@ -145,7 +145,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
     (formData.oraStatus && !!formData.oraMiasto?.trim() && !!formData.oraWpis?.trim())
 
   const areaFilled =
-    formData.callaPolska ||
+    formData.calaPolska ||
     formData.onlineOnly ||
     formData.voivodeshipsIds.length > 0 ||
     formData.citiesIds.length > 0

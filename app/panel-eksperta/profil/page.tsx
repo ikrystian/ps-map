@@ -127,8 +127,12 @@ function LawFirmProfilePageContent() {
     unikatowyOpisUslugi: "",
     slowaKluczowe: [] as string[],
 
+    // Biegły sądowy (odznaka na wizytówce)
+    bieglySadowy: false,
+    bieglySadowyNazwaSadu: "",
+
     // Obszar działania
-    callaPolska: false,
+    calaPolska: false,
     onlineOnly: false,
     voivodeshipsIds: [] as string[],
     citiesIds: [] as string[],
@@ -346,7 +350,7 @@ function LawFirmProfilePageContent() {
     setIsSaving(true)
 
     // Walidacja limitów obszaru działania
-    if (!formData.callaPolska) {
+    if (!formData.calaPolska) {
       if (formData.voivodeshipsIds.length > maxVoivodeships) {
         toast.error(`Przekroczono limit województw (${maxVoivodeships})`)
         setIsSaving(false)

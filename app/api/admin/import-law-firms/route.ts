@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
               oraStatus: lawFirmData.oraStatus || false,
               unikatowyOpisUslugi: lawFirmData.unikatowyOpisUslugi,
               slowaKluczowe: lawFirmData.slowaKluczowe ? JSON.stringify(lawFirmData.slowaKluczowe) : null,
-              callaPolska: lawFirmData.callaPolska || false,
+              calaPolska: lawFirmData.calaPolska || false,
               onlineOnly: lawFirmData.onlineOnly || false,
               typOferty: lawFirmData.typOferty || "WSZYSTKIE",
               pakietSubskrypcji: lawFirmData.pakietSubskrypcji || "PODSTAWOWY",

@@ -6,24 +6,22 @@
     "ikona": "ShieldCheck",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Dane osobowe** skupia specjalistów zajmujących się zagadnieniom z zakresu ochrony danych osobowych, RODO oraz bezpieczeństwa informacji. Rozumiemy, że wyzwania takie jak wdrożenie procedur RODO, audyty zgodności, opracowanie polityki prywatności oraz obsługę wycieków danych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz swoją firmę przed wysokimi karami administracyjnymi i zbudujesz zaufanie wśród klientów.",
+    "opis": "RODO w firmie: dokumentacja, naruszenia, kontrole UODO.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Dane osobowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z certyfikowanym inspektorem ochrony danych (IOD) lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Dane osobowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Dane osobowe? Sprawdź bazę ekspertów z obszaru ochrony danych osobowych, RODO oraz bezpieczeństwa informacji. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
     "children": [
       {
-        "nazwa": "RODO",
-        "opis": "Podkategoria **RODO** to integralna część obszaru **Dane osobowe**, powiązana z zagadnieniami obejmującymi ochrony danych osobowych, RODO oraz bezpieczeństwa informacji. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak wdrożenie procedur RODO, audyty zgodności, opracowanie polityki prywatności oraz obsługę wycieków danych w odniesieniu do rodo.",
-        "opisDodatkowy": "Koncentrując się na problematyce **RODO**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zabezpieczysz swoją firmę przed wysokimi karami administracyjnymi i zbudujesz zaufanie wśród klientów. Skonsultuj się z certyfikowanym inspektorem ochrony danych (IOD) lub radcą prawnym, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
-        "metaTitle": "RODO - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: RODO? Sprawdź porady prawne oraz ekspertów z dziedziny RODO w kategorii Dane osobowe."
+        "nazwa": "RODO i ochrona danych osobowych",
+        "slug": "rodo"
       },
       {
         "nazwa": "Ochrona danych osobowych",
         "opis": "Podkategoria **Ochrona danych osobowych** to integralna część obszaru **Dane osobowe**, powiązana z zagadnieniami obejmującymi ochrony danych osobowych, RODO oraz bezpieczeństwa informacji. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak wdrożenie procedur RODO, audyty zgodności, opracowanie polityki prywatności oraz obsługę wycieków danych w odniesieniu do ochrona danych osobowych.",
         "opisDodatkowy": "Koncentrując się na problematyce **Ochrona danych osobowych**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zabezpieczysz swoją firmę przed wysokimi karami administracyjnymi i zbudujesz zaufanie wśród klientów. Skonsultuj się z certyfikowanym inspektorem ochrony danych (IOD) lub radcą prawnym, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Ochrona danych osobowych - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Ochrona danych osobowych? Sprawdź porady prawne oraz ekspertów z dziedziny Ochrona danych osobowych w kategorii Dane osobowe."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Ochrona danych osobowych? Sprawdź porady prawne oraz ekspertów z dziedziny Ochrona danych osobowych w kategorii Dane osobowe.",
+        "aktywna": false
       }
     ]
   },
@@ -34,7 +32,7 @@
     "ikona": "Briefcase",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Działalność gospodarcza** skupia specjalistów zajmujących się zagadnieniom z zakresu prowadzenia jednoosobowej działalności gospodarczej (JDG) oraz spraw przedsiębiorców. Rozumiemy, że wyzwania takie jak rejestracja firmy, wybór formy opodatkowania, zawieszenie działalności oraz spory z kontrahentami mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu sprawnie przebrniesz przez procedury urzędowe i zapewnisz stabilność prawną swojemu biznesowi.",
+    "opis": "Założenie i bieżąca obsługa prawna jednoosobowej działalności gospodarczej.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Działalność gospodarcza**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady prawnej doświadczonego adwokata dla biznesu, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Działalność gospodarcza - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Działalność gospodarcza? Sprawdź bazę ekspertów z obszaru prowadzenia jednoosobowej działalności gospodarczej (JDG) oraz spraw przedsiębiorców. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -61,7 +59,7 @@
     "kolejnosc": 20,
     "ikona": "TreePine",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Ochrona środowiska** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa ochrony środowiska, gospodarki odpadami oraz pozwoleń emisyjnych. Rozumiemy, że wyzwania takie jak uzyskanie decyzji środowiskowych, raportowanie BDO, opłaty za korzystanie ze środowiska oraz kary administracyjne mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zapewnisz pełną zgodność firmy z rygorystycznymi normami ekologicznymi i unikniesz sankcji.",
+    "opis": "Regulacje środowiskowe, pozwolenia i gospodarowanie odpadami w firmie.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Ochrona środowiska**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż kontakt ze specjalistą od prawa ochrony środowiska, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Ochrona środowiska - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Ochrona środowiska? Sprawdź bazę ekspertów z obszaru prawa ochrony środowiska, gospodarki odpadami oraz pozwoleń emisyjnych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -89,7 +87,7 @@
     "ikona": "Receipt",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Podatki** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa podatkowego, optymalizacji podatkowej oraz rozliczeń firmowych. Rozumiemy, że wyzwania takie jak interpretacje podatkowe, podatek VAT i CIT, kontrole skarbowe oraz rozliczanie kosztów uzyskania przychodów mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zoptymalizujesz obciążenia podatkowe i zyskasz spokój w trakcie kontroli urzędowych.",
+    "opis": "Obowiązki podatkowe firmy, optymalizacja, ulgi i zwolnienia — wsparcie doradcy podatkowego.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Podatki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z licencjonowanym doradcą podatkowym lub adwokatem, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Podatki - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Podatki? Sprawdź bazę ekspertów z obszaru prawa podatkowego, optymalizacji podatkowej oraz rozliczeń firmowych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -117,7 +115,7 @@
     "ikona": "HardHat",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo pracy** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa pracy, relacji pracowniczych oraz ubezpieczeń społecznych (ZUS). Rozumiemy, że wyzwania takie jak przygotowanie umów o pracę, rozwiązywanie stosunku pracy, spory przed sądem pracy oraz BHP mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zbudujesz stabilne środowisko pracy i zminimalizujesz ryzyko kosztownych procesów z pracownikami.",
+    "opis": "Zatrudnianie (w tym cudzoziemców), umowy, ZUS i spory pracownicze od strony pracodawcy.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo pracy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się ze specjalistą ds. prawa pracy, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo pracy - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo pracy? Sprawdź bazę ekspertów z obszaru prawa pracy, relacji pracowniczych oraz ubezpieczeń społecznych (ZUS). Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -130,11 +128,7 @@
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Zatrudnienie i umowy? Sprawdź porady prawne oraz ekspertów z dziedziny Zatrudnienie i umowy w kategorii Prawo pracy."
       },
       {
-        "nazwa": "Spory pracownicze",
-        "opis": "Podkategoria **Spory pracownicze** to integralna część obszaru **Prawo pracy**, powiązana z zagadnieniami obejmującymi prawa pracy, relacji pracowniczych oraz ubezpieczeń społecznych (ZUS). Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak przygotowanie umów o pracę, rozwiązywanie stosunku pracy, spory przed sądem pracy oraz BHP w odniesieniu do spory pracownicze.",
-        "opisDodatkowy": "Koncentrując się na problematyce **Spory pracownicze**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zbudujesz stabilne środowisko pracy i zminimalizujesz ryzyko kosztownych procesów z pracownikami. Skontaktuj się ze specjalistą ds. prawa pracy, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
-        "metaTitle": "Spory pracownicze - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Spory pracownicze? Sprawdź porady prawne oraz ekspertów z dziedziny Spory pracownicze w kategorii Prawo pracy."
+        "nazwa": "Spory z pracownikami"
       },
       {
         "nazwa": "ZUS i składki",
@@ -148,8 +142,11 @@
         "opis": "Podkategoria **prawa pracownika** to integralna część obszaru **Prawo pracy**, powiązana z zagadnieniami obejmującymi prawa pracy, relacji pracowniczych oraz ubezpieczeń społecznych (ZUS). Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak przygotowanie umów o pracę, rozwiązywanie stosunku pracy, spory przed sądem pracy oraz BHP w odniesieniu do prawa pracownika.",
         "opisDodatkowy": "Koncentrując się na problematyce **prawa pracownika**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zbudujesz stabilne środowisko pracy i zminimalizujesz ryzyko kosztownych procesów z pracownikami. Skontaktuj się ze specjalistą ds. prawa pracy, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "prawa pracownika - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: prawa pracownika? Sprawdź porady prawne oraz ekspertów z dziedziny prawa pracownika w kategorii Prawo pracy."
-      }
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: prawa pracownika? Sprawdź porady prawne oraz ekspertów z dziedziny prawa pracownika w kategorii Prawo pracy.",
+        "aktywna": false,
+        "slug": "prawa-pracownika-firmowe"
+      },
+      "Zatrudnianie cudzoziemców"
     ]
   },
   {
@@ -158,7 +155,7 @@
     "kolejnosc": 11,
     "ikona": "FileText",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawa autorskie** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa autorskiego, własności intelektualnej oraz licencji. Rozumiemy, że wyzwania takie jak konstruowanie umów przeniesienia autorskich praw majątkowych, ochrona wizerunku oraz walka z plagiatem mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie zabezpieczysz swoje dzieła i projekty oraz zyskasz pełną kontrolę nad ich eksploatacją.",
+    "opis": "Ochrona utworów, licencje, umowy i reagowanie na naruszenia praw autorskich.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawa autorskie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy rzecznika patentowego lub prawnika od IP, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawa autorskie - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawa autorskie? Sprawdź bazę ekspertów z obszaru prawa autorskiego, własności intelektualnej oraz licencji. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -193,7 +190,7 @@
     "ikona": "AlertTriangle",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Przestępstwa skarbowe** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa karnego skarbowego, przestępstw podatkowych oraz karuzel VAT. Rozumiemy, że wyzwania takie jak odpowiedzialność karno-skarbowa członków zarządu, zarzuty o nierzetelne faktury oraz reprezentacja przed organami ścigania mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu otrzymasz natychmiastową obronę prawną i zminimalizujesz ryzyko osobistych sankcji karnych.",
+    "opis": "Kontrole skarbowe, spory z fiskusem, obrona w sprawach karnoskarbowych.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Przestępstwa skarbowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z adwokatem specjalizującym się w prawie karno-skarbowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Przestępstwa skarbowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Przestępstwa skarbowe? Sprawdź bazę ekspertów z obszaru prawa karnego skarbowego, przestępstw podatkowych oraz karuzel VAT. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -221,7 +218,7 @@
     "ikona": "Gavel",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Przetargi** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa zamówień publicznych (PZP), przetargów oraz odwołań do KIO. Rozumiemy, że wyzwania takie jak przygotowanie oferty przetargowej, wnoszenie odwołań do Krajowej Izby Odwoławczej oraz realizacja umów publicznych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zwiększysz swoje szanse na wygranie kontraktu publicznego i skutecznie odwołasz się od decyzji zamawiającego.",
+    "opis": "Zamówienia publiczne od startu w postępowaniu po odwołania do KIO.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Przetargi**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z ekspertem od zamówień publicznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Przetargi - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Przetargi? Sprawdź bazę ekspertów z obszaru prawa zamówień publicznych (PZP), przetargów oraz odwołań do KIO. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -256,7 +253,7 @@
     "ikona": "Building2",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Spółki** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa spółek handlowych, rejestracji w KRS oraz przekształceń ustrojowych. Rozumiemy, że wyzwania takie jak założenie spółki z o.o. lub akcyjnej, spory między wspólnikami, likwidacja podmiotu oraz odpowiedzialność zarządu mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu dobierzesz optymalną strukturę prawną dla swojego biznesu i zabezpieczysz majątek wspólników.",
+    "opis": "Zakładanie, przekształcenia i bieżąca obsługa spółek: umowy, uchwały, KRS.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Spółki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z doradztwa radcy prawnego specjalizującego się w spółkach, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Spółki - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Spółki? Sprawdź bazę ekspertów z obszaru prawa spółek handlowych, rejestracji w KRS oraz przekształceń ustrojowych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -283,7 +280,7 @@
     "kolejnosc": 3,
     "ikona": "FileSignature",
     "wyswietlajNaGlownejFirmowe": true,
-    "opis": "Kategoria **Umowy** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa kontraktowego, sporządzania umów handlowych oraz weryfikacji klauzul. Rozumiemy, że wyzwania takie jak redagowanie umów o współpracę, kar umownych, zabezpieczenie wykonania kontraktu oraz negocjacje warunków mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu wyeliminujesz ryzykowne zapisy (tzw. klauzule abuzywne) i zagwarantujesz sobie bezproblemową współpracę z partnerami.",
+    "opis": "Przygotowanie i weryfikacja umów: B2B, o pracę, zlecenia i dzieła.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Umowy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć analizę lub napisanie umowy doświadczonemu prawnikowi, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Umowy - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Umowy? Sprawdź bazę ekspertów z obszaru prawa kontraktowego, sporządzania umów handlowych oraz weryfikacji klauzul. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -301,7 +298,8 @@
         "opisDodatkowy": "Koncentrując się na problematyce **Umowy cywilnoprawne (zlecenie, dzieło)**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej wyeliminujesz ryzykowne zapisy (tzw. klauzule abuzywne) i zagwarantujesz sobie bezproblemową współpracę z partnerami. Zleć analizę lub napisanie umowy doświadczonemu prawnikowi, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Umowy cywilnoprawne (zlecenie, dzieło) - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Umowy cywilnoprawne (zlecenie, dzieło)? Sprawdź porady prawne oraz ekspertów z dziedziny Umowy cywilnoprawne (zlecenie, dzieło) w kategorii Umowy."
-      }
+      },
+      "Umowy handlowe B2B"
     ]
   },
   {
@@ -311,7 +309,7 @@
     "ikona": "Scale",
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Sprawy sądowe** skupia specjalistów zajmujących się zagadnieniom z zakresu postępowań sądowych, windykacji należności oraz procesów cywilnych i gospodarczych. Rozumiemy, że wyzwania takie jak dochodzenie roszczeń finansowych, reprezentacja przed sądami wszystkich instancji oraz egzekucja komornicza mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie odzyskasz należne pieniądze i zyskasz profesjonalną reprezentację na rozprawach.",
+    "opis": "Pozwy, windykacja należności, egzekucja i mediacje gospodarcze w imieniu firmy.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Sprawy sądowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z adwokatem procesowym lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Sprawy sądowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Sprawy sądowe? Sprawdź bazę ekspertów z obszaru postępowań sądowych, windykacji należności oraz procesów cywilnych i gospodarczych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -329,7 +327,8 @@
         "opisDodatkowy": "Koncentrując się na problematyce **Pozwy sądowe**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej skutecznie odzyskasz należne pieniądze i zyskasz profesjonalną reprezentację na rozprawach. Skontaktuj się z adwokatem procesowym lub radcą prawnym, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Pozwy sądowe - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Pozwy sądowe? Sprawdź porady prawne oraz ekspertów z dziedziny Pozwy sądowe w kategorii Sprawy sądowe."
-      }
+      },
+      "Mediacje gospodarcze"
     ]
   },
   {
@@ -338,7 +337,7 @@
     "kolejnosc": 21,
     "ikona": "Briefcase",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Inne kwestie firmowe** skupia specjalistów zajmujących się zagadnieniom z zakresu regulacji branżowych, compliance oraz międzynarodowych aspektów prowadzenia biznesu. Rozumiemy, że wyzwania takie jak uzyskiwanie koncesji i licencji, audyty zgodności (compliance) oraz dostosowanie działalności do nowych ustaw mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zapewnisz zgodność operacyjną firmy z najnowszymi, zmieniającymi się przepisami prawnymi.",
+    "opis": "Regulacje branżowe, sprawy międzynarodowe i tematy spoza pozostałych kategorii.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Inne kwestie firmowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z doradcą biznesowym lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Inne kwestie firmowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Inne kwestie firmowe? Sprawdź bazę ekspertów z obszaru regulacji branżowych, compliance oraz międzynarodowych aspektów prowadzenia biznesu. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -365,7 +364,7 @@
     "kolejnosc": 16,
     "ikona": "Cpu",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Technologie i innowacje** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa nowych technologii (IT), e-commerce oraz ochrony startupów. Rozumiemy, że wyzwania takie jak wdrażanie regulaminów SaaS, umowy wdrożeniowe IT, transfer technologii oraz ochrona baz danych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz kod źródłowy i innowacyjne rozwiązania oraz legalnie przeskalujesz swój produkt cyfrowy.",
+    "opis": "Bezpieczeństwo IT, transformacja cyfrowa i ochrona własności intelektualnej.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Technologie i innowacje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż kontakt z prawnikiem specjalizującym się w prawie IT i nowych technologiach, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Technologie i innowacje - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Technologie i innowacje? Sprawdź bazę ekspertów z obszaru prawa nowych technologii (IT), e-commerce oraz ochrony startupów. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -391,39 +390,40 @@
         "metaTitle": "Bezpieczeństwo IT - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Bezpieczeństwo IT? Sprawdź porady prawne oraz ekspertów z dziedziny Bezpieczeństwo IT w kategorii Technologie i innowacje."
       }
-    ]
+    ],
+    "ekspercka": true
   },
   {
-    "nazwa": "Dotacje i finansowanie zewnętrrzne",
+    "nazwa": "Dotacje i finansowanie zewnętrzne",
     "typ": "SPRAWY_FIRMOWE",
     "kolejnosc": 9,
     "ikona": "Coins",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Dotacje i finansowanie zewnętrrzne** skupia specjalistów zajmujących się zagadnieniom z zakresu pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Rozumiemy, że wyzwania takie jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu bezpiecznie pozyskasz i rozliczysz fundusze na rozwój bez ryzyka konieczności ich zwrotu.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Dotacje i finansowanie zewnętrrzne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
-    "metaTitle": "Dotacje i finansowanie zewnętrrzne - Pomoc Prawna, Porady i Kancelarie | ps-map",
-    "metaDescription": "Szukasz wsparcia w zakresie: Dotacje i finansowanie zewnętrrzne? Sprawdź bazę ekspertów z obszaru pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
+    "opis": "Dotacje unijne i wsparcie rządowe: wnioski, umowy, rozliczenia.",
+    "opisDodatkowy": "Wybierając pomoc w obszarze **Dotacje i finansowanie zewnętrzne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "metaTitle": "Dotacje i finansowanie zewnętrzne - Pomoc Prawna, Porady i Kancelarie | ps-map",
+    "metaDescription": "Szukasz wsparcia w zakresie: Dotacje i finansowanie zewnętrzne? Sprawdź bazę ekspertów z obszaru pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
     "children": [
       {
         "nazwa": "Dotacje unijne",
-        "opis": "Podkategoria **Dotacje unijne** to integralna część obszaru **Dotacje i finansowanie zewnętrrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do dotacje unijne.",
+        "opis": "Podkategoria **Dotacje unijne** to integralna część obszaru **Dotacje i finansowanie zewnętrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do dotacje unijne.",
         "opisDodatkowy": "Koncentrując się na problematyce **Dotacje unijne**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej bezpiecznie pozyskasz i rozliczysz fundusze na rozwój bez ryzyka konieczności ich zwrotu. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Dotacje unijne - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Dotacje unijne? Sprawdź porady prawne oraz ekspertów z dziedziny Dotacje unijne w kategorii Dotacje i finansowanie zewnętrrzne."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Dotacje unijne? Sprawdź porady prawne oraz ekspertów z dziedziny Dotacje unijne w kategorii Dotacje i finansowanie zewnętrzne."
       },
       {
         "nazwa": "Wsparcie rządowe",
-        "opis": "Podkategoria **Wsparcie rządowe** to integralna część obszaru **Dotacje i finansowanie zewnętrrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do wsparcie rządowe.",
+        "opis": "Podkategoria **Wsparcie rządowe** to integralna część obszaru **Dotacje i finansowanie zewnętrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do wsparcie rządowe.",
         "opisDodatkowy": "Koncentrując się na problematyce **Wsparcie rządowe**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej bezpiecznie pozyskasz i rozliczysz fundusze na rozwój bez ryzyka konieczności ich zwrotu. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Wsparcie rządowe - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wsparcie rządowe? Sprawdź porady prawne oraz ekspertów z dziedziny Wsparcie rządowe w kategorii Dotacje i finansowanie zewnętrrzne."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wsparcie rządowe? Sprawdź porady prawne oraz ekspertów z dziedziny Wsparcie rządowe w kategorii Dotacje i finansowanie zewnętrzne."
       },
       {
         "nazwa": "Proces aplikacyjny i rozliczenie",
-        "opis": "Podkategoria **Proces aplikacyjny i rozliczenie** to integralna część obszaru **Dotacje i finansowanie zewnętrrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do proces aplikacyjny i rozliczenie.",
+        "opis": "Podkategoria **Proces aplikacyjny i rozliczenie** to integralna część obszaru **Dotacje i finansowanie zewnętrzne**, powiązana z zagadnieniami obejmującymi pozyskiwania dotacji unijnych, funduszy rządowych oraz pomocy publicznej. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak weryfikacja kryteriów kwalifikowalności, rozliczanie dotacji, kontrole projektów oraz odwołania od odmowy wsparcia w odniesieniu do proces aplikacyjny i rozliczenie.",
         "opisDodatkowy": "Koncentrując się na problematyce **Proces aplikacyjny i rozliczenie**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej bezpiecznie pozyskasz i rozliczysz fundusze na rozwój bez ryzyka konieczności ich zwrotu. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Proces aplikacyjny i rozliczenie - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Proces aplikacyjny i rozliczenie? Sprawdź porady prawne oraz ekspertów z dziedziny Proces aplikacyjny i rozliczenie w kategorii Dotacje i finansowanie zewnętrrzne."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Proces aplikacyjny i rozliczenie? Sprawdź porady prawne oraz ekspertów z dziedziny Proces aplikacyjny i rozliczenie w kategorii Dotacje i finansowanie zewnętrzne."
       }
     ]
   },
@@ -433,7 +433,7 @@
     "kolejnosc": 13,
     "ikona": "LineChart",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Finanse i inwestycje** skupia specjalistów zajmujących się zagadnieniom z zakresu rynków finansowych, inwestycji kapitałowych oraz venture capital. Rozumiemy, że wyzwania takie jak umowy inwestycyjne (term sheet), badania due diligence, pozyskiwanie finansowania dłużnego oraz ochrona inwestorów mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zminimalizujesz ryzyko inwestycyjne i bezpiecznie przeprowadzisz transakcje kapitałowe.",
+    "opis": "Doradcy finansowi dla firm: pozyskiwanie kapitału, analiza ryzyka, zarządzanie finansami.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Finanse i inwestycje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem transakcyjnym lub doradcą finansowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Finanse i inwestycje - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Finanse i inwestycje? Sprawdź bazę ekspertów z obszaru rynków finansowych, inwestycji kapitałowych oraz venture capital. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -459,7 +459,8 @@
         "metaTitle": "Analiza ryzyka inwestycyjnego - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Analiza ryzyka inwestycyjnego? Sprawdź porady prawne oraz ekspertów z dziedziny Analiza ryzyka inwestycyjnego w kategorii Finanse i inwestycje."
       }
-    ]
+    ],
+    "ekspercka": true
   },
   {
     "nazwa": "Nieruchomości komercyjne",
@@ -467,7 +468,7 @@
     "kolejnosc": 14,
     "ikona": "Building",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Nieruchomości komercyjne** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa nieruchomości komercyjnych, najmu biur i magazynów oraz procesów budowlanych. Rozumiemy, że wyzwania takie jak negocjacje umów najmu komercyjnego, badanie stanu prawnego gruntu, pozwolenia na budowę oraz transakcje M&A mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz rentowność inwestycji w nieruchomości i wyeliminujesz ukryte wady prawne gruntów.",
+    "opis": "Zakup, najem i zarządzanie nieruchomościami firmowymi oraz inwestycje.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Nieruchomości komercyjne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z usług adwokata specjalizującego się w nieruchomościach komercyjnych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Nieruchomości komercyjne - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Nieruchomości komercyjne? Sprawdź bazę ekspertów z obszaru prawa nieruchomości komercyjnych, najmu biur i magazynów oraz procesów budowlanych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -477,7 +478,8 @@
         "opis": "Podkategoria **Wynajem i zakup** to integralna część obszaru **Nieruchomości komercyjne**, powiązana z zagadnieniami obejmującymi prawa nieruchomości komercyjnych, najmu biur i magazynów oraz procesów budowlanych. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak negocjacje umów najmu komercyjnego, badanie stanu prawnego gruntu, pozwolenia na budowę oraz transakcje M&A w odniesieniu do wynajem i zakup.",
         "opisDodatkowy": "Koncentrując się na problematyce **Wynajem i zakup**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zabezpieczysz rentowność inwestycji w nieruchomości i wyeliminujesz ukryte wady prawne gruntów. Skorzystaj z usług adwokata specjalizującego się w nieruchomościach komercyjnych, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Wynajem i zakup - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wynajem i zakup? Sprawdź porady prawne oraz ekspertów z dziedziny Wynajem i zakup w kategorii Nieruchomości komercyjne."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wynajem i zakup? Sprawdź porady prawne oraz ekspertów z dziedziny Wynajem i zakup w kategorii Nieruchomości komercyjne.",
+        "aktywna": false
       },
       {
         "nazwa": "Zarządzanie nieruchomościami",
@@ -508,7 +510,7 @@
     "kolejnosc": 15,
     "ikona": "Megaphone",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Marketing i reklama** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa reklamy, marketingu, nieuczciwej konkurencji oraz ochrony znaków towarowych. Rozumiemy, że wyzwania takie jak weryfikacja prawna kampanii reklamowych, naruszenia praw do marki w internecie oraz zasady loterii promocyjnych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu przeprowadzisz kampanie bez ryzyka kar od UOKiK i skutecznie ochronisz swoją markę przed konkurencją.",
+    "opis": "Eksperci od promocji: marketing internetowy, budowanie marki, zgodność reklam z prawem.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Marketing i reklama**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem ds. prawa reklamy i własności przemysłowej, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Marketing i reklama - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Marketing i reklama? Sprawdź bazę ekspertów z obszaru prawa reklamy, marketingu, nieuczciwej konkurencji oraz ochrony znaków towarowych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -527,7 +529,8 @@
         "metaTitle": "Zarządzanie marką - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Zarządzanie marką? Sprawdź porady prawne oraz ekspertów z dziedziny Zarządzanie marką w kategorii Marketing i reklama."
       }
-    ]
+    ],
+    "ekspercka": true
   },
   {
     "nazwa": "Zdrowie i bezpieczeństwo w pracy",
@@ -535,7 +538,7 @@
     "kolejnosc": 12,
     "ikona": "HeartPulse",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zdrowie i bezpieczeństwo w pracy** skupia specjalistów zajmujących się zagadnieniom z zakresu przepisów BHP, prawa medycyny pracy oraz wypadków przy pracy. Rozumiemy, że wyzwania takie jak odpowiedzialność za wypadki w zakładzie pracy, wdrożenie procedur BHP oraz kontrole Państwowej Inspekcji Pracy (PIP) mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu stworzysz bezpieczne środowisko pracy dla załogi i unikniesz dotkliwych kar ze strony organów kontrolnych.",
+    "opis": "Przepisy BHP, wypadki przy pracy i ochrona pracowników.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zdrowie i bezpieczeństwo w pracy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z doradztwa eksperta BHP lub prawnika ds. prawa pracy, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zdrowie i bezpieczeństwo w pracy - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zdrowie i bezpieczeństwo w pracy? Sprawdź bazę ekspertów z obszaru przepisów BHP, prawa medycyny pracy oraz wypadków przy pracy. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -562,7 +565,7 @@
     "kolejnosc": 17,
     "ikona": "Users",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zarządzanie zasobami ludzkimi** skupia specjalistów zajmujących się zagadnieniom z zakresu zarządzania personelem (HR), rekrutacji oraz systemów motywacyjnych. Rozumiemy, że wyzwania takie jak legalne zatrudnianie cudzoziemców, programy lojalnościowe, ochrona przed mobbingiem oraz dyskryminacją mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu wdrożysz zgodne z prawem procedury HR i skutecznie zabezpieczysz firmę przed oskarżeniami o mobbing.",
+    "opis": "Eksperci HR: rekrutacja, oceny pracownicze, szkolenia i rozwój zespołu.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zarządzanie zasobami ludzkimi**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się ze specjalistą ds. prawa HR i compliance, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zarządzanie zasobami ludzkimi - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zarządzanie zasobami ludzkimi? Sprawdź bazę ekspertów z obszaru zarządzania personelem (HR), rekrutacji oraz systemów motywacyjnych. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -581,7 +584,8 @@
         "metaTitle": "Ocena pracownika i rekrutacja - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Ocena pracownika i rekrutacja? Sprawdź porady prawne oraz ekspertów z dziedziny Ocena pracownika i rekrutacja w kategorii Zarządzanie zasobami ludzkimi."
       }
-    ]
+    ],
+    "ekspercka": true
   },
   {
     "nazwa": "Zarządzanie kryzysowe",
@@ -589,7 +593,7 @@
     "kolejnosc": 18,
     "ikona": "AlertTriangle",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zarządzanie kryzysowe** skupia specjalistów zajmujących się zagadnieniom z zakresu prawnych aspektów zarządzania kryzysem, restrukturyzacji i ochrony wizerunku. Rozumiemy, że wyzwania takie jak nagłe kontrole organów państwowych, spory wizerunkowe, przeciwdziałanie wrogim przejęciom oraz zabezpieczenie operacji mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zminimalizujesz straty finansowe i wizerunkowe podczas nieprzewidzianych kryzysów rynkowych.",
+    "opis": "Komunikacja kryzysowa i plany awaryjne dla firm w trudnych sytuacjach.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zarządzanie kryzysowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż współpracę z radcą prawnym ds. sytuacji kryzysowych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zarządzanie kryzysowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zarządzanie kryzysowe? Sprawdź bazę ekspertów z obszaru prawnych aspektów zarządzania kryzysem, restrukturyzacji i ochrony wizerunku. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -608,7 +612,8 @@
         "metaTitle": "Komunikacja w czasie kryzysu - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Komunikacja w czasie kryzysu? Sprawdź porady prawne oraz ekspertów z dziedziny Komunikacja w czasie kryzysu w kategorii Zarządzanie kryzysowe."
       }
-    ]
+    ],
+    "ekspercka": true
   },
   {
     "nazwa": "Odnawialne Źródła Energii (OZE)",
@@ -616,7 +621,7 @@
     "kolejnosc": 19,
     "ikona": "Sun",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Odnawialne Źródła Energii (OZE)** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa energetycznego, inwestycji w farmy wiatrowe i fotowoltaiczne (PV). Rozumiemy, że wyzwania takie jak uzyskanie warunków przyłączenia do sieci, umowy dzierżawy gruntu pod OZE oraz dotacje na ekologiczne źródła mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu przyspieszysz proces inwestycyjny w OZE i zabezpieczysz stabilne przychody ze sprzedaży zielonej energii.",
+    "opis": "Prawne aspekty inwestycji OZE: umowy instalacyjne, koncesje, eksploatacja.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Odnawialne Źródła Energii (OZE)**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z prawnikiem specjalizującym się w prawie energetycznym i OZE, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Odnawialne Źródła Energii (OZE) - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Odnawialne Źródła Energii (OZE)? Sprawdź bazę ekspertów z obszaru prawa energetycznego, inwestycji w farmy wiatrowe i fotowoltaiczne (PV). Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
@@ -633,7 +638,8 @@
         "opis": "Podkategoria **Wsparcie prawne w uzyskiwaniu dotacji** to integralna część obszaru **Odnawialne Źródła Energii (OZE)**, powiązana z zagadnieniami obejmującymi prawa energetycznego, inwestycji w farmy wiatrowe i fotowoltaiczne (PV). Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak uzyskanie warunków przyłączenia do sieci, umowy dzierżawy gruntu pod OZE oraz dotacje na ekologiczne źródła w odniesieniu do wsparcie prawne w uzyskiwaniu dotacji.",
         "opisDodatkowy": "Koncentrując się na problematyce **Wsparcie prawne w uzyskiwaniu dotacji**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej przyspieszysz proces inwestycyjny w OZE i zabezpieczysz stabilne przychody ze sprzedaży zielonej energii. Skontaktuj się z prawnikiem specjalizującym się w prawie energetycznym i OZE, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Wsparcie prawne w uzyskiwaniu dotacji - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wsparcie prawne w uzyskiwaniu dotacji? Sprawdź porady prawne oraz ekspertów z dziedziny Wsparcie prawne w uzyskiwaniu dotacji w kategorii Odnawialne Źródła Energii (OZE)."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Wsparcie prawne w uzyskiwaniu dotacji? Sprawdź porady prawne oraz ekspertów z dziedziny Wsparcie prawne w uzyskiwaniu dotacji w kategorii Odnawialne Źródła Energii (OZE).",
+        "aktywna": false
       },
       {
         "nazwa": "Prawne aspekty użytkowania",
@@ -650,17 +656,17 @@
     "kolejnosc": 22,
     "ikona": "TrendingDown",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo upadłościowe** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa upadłościowego, restrukturyzacji firm oraz oddłużania. Rozumiemy, że wyzwania takie jak ogłoszenie upadłości firmy, ochrona przed wierzycielami, przygotowana likwidacja (pre-pack) oraz postępowanie układowe mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu znajdziesz drogę wyjścia z zadłużenia, uchronisz zarząd przed odpowiedzialnością i uratujesz miejsca pracy.",
+    "opis": "Upadłość i restrukturyzacja firmy, likwidacja i sprzedaż majątku.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo upadłościowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy doradcy restrukturyzacyjnego lub syndyka, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo upadłościowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo upadłościowe? Sprawdź bazę ekspertów z obszaru prawa upadłościowego, restrukturyzacji firm oraz oddłużania. Kompleksowa pomoc prawna dla firm i przedsiębiorstw.",
     "children": [
       {
-        "nazwa": "Upadłośći",
-        "opis": "Podkategoria **Upadłośći** to integralna część obszaru **Prawo upadłościowe**, powiązana z zagadnieniami obejmującymi prawa upadłościowego, restrukturyzacji firm oraz oddłużania. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak ogłoszenie upadłości firmy, ochrona przed wierzycielami, przygotowana likwidacja (pre-pack) oraz postępowanie układowe w odniesieniu do upadłośći.",
-        "opisDodatkowy": "Koncentrując się na problematyce **Upadłośći**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej znajdziesz drogę wyjścia z zadłużenia, uchronisz zarząd przed odpowiedzialnością i uratujesz miejsca pracy. Skorzystaj z pomocy doradcy restrukturyzacyjnego lub syndyka, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
-        "metaTitle": "Upadłośći - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Upadłośći? Sprawdź porady prawne oraz ekspertów z dziedziny Upadłośći w kategorii Prawo upadłościowe."
+        "nazwa": "Upadłości",
+        "opis": "Podkategoria **Upadłości** to integralna część obszaru **Prawo upadłościowe**, powiązana z zagadnieniami obejmującymi prawa upadłościowego, restrukturyzacji firm oraz oddłużania. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak ogłoszenie upadłości firmy, ochrona przed wierzycielami, przygotowana likwidacja (pre-pack) oraz postępowanie układowe w odniesieniu do upadłości.",
+        "opisDodatkowy": "Koncentrując się na problematyce **Upadłości**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej znajdziesz drogę wyjścia z zadłużenia, uchronisz zarząd przed odpowiedzialnością i uratujesz miejsca pracy. Skorzystaj z pomocy doradcy restrukturyzacyjnego lub syndyka, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
+        "metaTitle": "Upadłości - Pomoc Prawna i Porady | ps-map",
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Upadłości? Sprawdź porady prawne oraz ekspertów z dziedziny Upadłości w kategorii Prawo upadłościowe."
       },
       {
         "nazwa": "Likwidacja (sprzedaż majątku)",
@@ -678,7 +684,7 @@
     "ikona": "CreditCard",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zobowiązania finansowe** skupia specjalistów zajmujących się zagadnieniom z zakresu upadłości konsumenckiej, oddłużania, kredytów oraz sporów z bankami. Rozumiemy, że wyzwania takie jak negocjacje z wierzycielami, reprezentacja w sprawach egzekucyjnych, unieważnienie kredytów frankowych oraz pożyczki prywatne mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu odzyskasz stabilność finansową, wstrzymasz egzekucję komorniczą i uwolnisz się od rosnących długów.",
+    "opis": "Pomoc przy długach, windykacji, egzekucji komorniczej oraz sporach o kredyty i pożyczki, w tym frankowe.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zobowiązania finansowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z prawnikiem ds. oddłużania lub upadłości, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zobowiązania finansowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zobowiązania finansowe? Sprawdź bazę ekspertów z obszaru upadłości konsumenckiej, oddłużania, kredytów oraz sporów z bankami. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -696,6 +702,14 @@
         "opisDodatkowy": "Koncentrując się na problematyce **Pożyczki i kredyty**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej odzyskasz stabilność finansową, wstrzymasz egzekucję komorniczą i uwolnisz się od rosnących długów. Skontaktuj się z prawnikiem ds. oddłużania lub upadłości, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Pożyczki i kredyty - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Pożyczki i kredyty? Sprawdź porady prawne oraz ekspertów z dziedziny Pożyczki i kredyty w kategorii Zobowiązania finansowe."
+      },
+      {
+        "nazwa": "Spory z bankami (kredyty frankowe, SKD)",
+        "slug": "spory-z-bankami",
+        "opis": "Podkategoria **Spory z bankami (kredyty frankowe, SKD)** obejmuje pomoc prawną w sporach z bankami i instytucjami pożyczkowymi. Wspieramy frankowiczów w sprawach o unieważnienie kredytów CHF, prowadzimy sprawy o sankcję kredytu darmowego (SKD) oraz spory o niedozwolone klauzule umowne i nieautoryzowane transakcje.",
+        "opisDodatkowy": "Dzięki fachowej opiece prawnej sprawdzisz swoją umowę kredytową, policzysz roszczenia i skutecznie będziesz ich dochodzić przed sądem. Skontaktuj się z prawnikiem specjalizującym się w sporach z bankami, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
+        "metaTitle": "Spory z bankami (kredyty frankowe, SKD) - Pomoc Prawna i Porady | ps-map",
+        "metaDescription": "Kredyt frankowy lub sankcja kredytu darmowego (SKD)? Sprawdź porady prawne oraz ekspertów od sporów z bankami w kategorii Zobowiązania finansowe."
       }
     ]
   },
@@ -706,7 +720,7 @@
     "ikona": "Users",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Rodzina** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa rodzinnego i opiekuńczego, rozwodów oraz podziału majątku. Rozumiemy, że wyzwania takie jak rozwód z orzekaniem o winie, ustalenie kontaktów z dziećmi, alimenty, podział majątku wspólnego oraz pozbawienie władzy rodzicielskiej mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz dobro swoich dzieci i przejdziesz przez proces rozwodowy z maksymalnym spokojem i ochroną interesów.",
+    "opis": "Rozwody, alimenty, opieka nad dziećmi, podział majątku — wsparcie prawnika w sprawach rodzinnych.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Rodzina**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj ze wsparcia doświadczonego adwokata rodzinnego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Rodzina - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Rodzina? Sprawdź bazę ekspertów z obszaru prawa rodzinnego i opiekuńczego, rozwodów oraz podziału majątku. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -741,7 +755,7 @@
     "ikona": "Home",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Majątek osobisty** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa spadkowego, darowizn, testamentów oraz ochrony własności. Rozumiemy, że wyzwania takie jak stwierdzenie nabycia spadku, zachowek, podział spadku, sporządzenie testamentu oraz odrzucenie długów spadkowych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz majątek na przyszłość i unikniesz wieloletnich sporów rodzinnych o spadek.",
+    "opis": "Spadki, testamenty, dziedziczenie i bezpieczne zarządzanie prywatnym majątkiem.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Majątek osobisty**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z notariuszem lub adwokatem spadkowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Majątek osobisty - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Majątek osobisty? Sprawdź bazę ekspertów z obszaru prawa spadkowego, darowizn, testamentów oraz ochrony własności. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -769,7 +783,7 @@
     "ikona": "Handshake",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Mediacje** skupia specjalistów zajmujących się zagadnieniom z zakresu polubownego rozwiązywania sporów, mediacji sądowych i pozasądowych. Rozumiemy, że wyzwania takie jak konflikty małżeńskie, spory sąsiedzkie, konflikty biznesowe oraz wypracowanie ugody przed wejściem na drogę sądową mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zaoszczędzisz czas i pieniądze, unikając stresującego i długotrwałego procesu w sądzie.",
+    "opis": "Polubowne rozwiązywanie sporów z pomocą mediatora, bez długiego procesu sądowego.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Mediacje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy licencjonowanego mediatora wpisanego na listę sądową, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Mediacje - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Mediacje? Sprawdź bazę ekspertów z obszaru polubownego rozwiązywania sporów, mediacji sądowych i pozasądowych. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -780,13 +794,6 @@
         "opisDodatkowy": "Koncentrując się na problematyce **Mediacje rodzinne**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zaoszczędzisz czas i pieniądze, unikając stresującego i długotrwałego procesu w sądzie. Skorzystaj z pomocy licencjonowanego mediatora wpisanego na listę sądową, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Mediacje rodzinne - Pomoc Prawna i Porady | ps-map",
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Mediacje rodzinne? Sprawdź porady prawne oraz ekspertów z dziedziny Mediacje rodzinne w kategorii Mediacje."
-      },
-      {
-        "nazwa": "Mediacje gospodarcze",
-        "opis": "Podkategoria **Mediacje gospodarcze** to integralna część obszaru **Mediacje**, powiązana z zagadnieniami obejmującymi polubownego rozwiązywania sporów, mediacji sądowych i pozasądowych. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak konflikty małżeńskie, spory sąsiedzkie, konflikty biznesowe oraz wypracowanie ugody przed wejściem na drogę sądową w odniesieniu do mediacje gospodarcze.",
-        "opisDodatkowy": "Koncentrując się na problematyce **Mediacje gospodarcze**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zaoszczędzisz czas i pieniądze, unikając stresującego i długotrwałego procesu w sądzie. Skorzystaj z pomocy licencjonowanego mediatora wpisanego na listę sądową, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
-        "metaTitle": "Mediacje gospodarcze - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Mediacje gospodarcze? Sprawdź porady prawne oraz ekspertów z dziedziny Mediacje gospodarcze w kategorii Mediacje."
       }
     ]
   },
@@ -797,7 +804,7 @@
     "ikona": "Home",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Nieruchomości** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa nieruchomości, zakupu i sprzedaży mieszkań oraz zasiedzenia. Rozumiemy, że wyzwania takie jak analiza ksiąg wieczystych, umowy deweloperskie, spory z sąsiadami, zniesienie współwłasności oraz ustanowienie służebności mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu dokonasz bezpiecznej transakcji zakupu mieszkania lub domu bez ryzyka ukrytych obciążeń prawnych.",
+    "opis": "Bezpieczny zakup, sprzedaż i wynajem mieszkania lub domu: umowy, księgi wieczyste, zadatki.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Nieruchomości**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć weryfikację transakcji prawnikowi ds. nieruchomości, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Nieruchomości - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Nieruchomości? Sprawdź bazę ekspertów z obszaru prawa nieruchomości, zakupu i sprzedaży mieszkań oraz zasiedzenia. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -824,7 +831,7 @@
     "kolejnosc": 10,
     "ikona": "Receipt",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Podatki osobiste** skupia specjalistów zajmujących się zagadnieniom z zakresu podatków dochodowych od osób fizycznych (PIT), darowizn i spadków. Rozumiemy, że wyzwania takie jak rozliczenie roczne PIT, podatki od sprzedaży nieruchomości przed upływem 5 lat oraz ulga termomodernizacyjna mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu złożysz bezbłędne deklaracje podatkowe i w pełni legalnie skorzystasz ze wszystkich dostępnych ulg.",
+    "opis": "Rozliczenia PIT, ulgi podatkowe i spory z urzędem skarbowym w sprawach prywatnych.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Podatki osobiste**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady doradcy podatkowego dla osób fizycznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Podatki osobiste - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Podatki osobiste? Sprawdź bazę ekspertów z obszaru podatków dochodowych od osób fizycznych (PIT), darowizn i spadków. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -851,7 +858,7 @@
     "kolejnosc": 9,
     "ikona": "Briefcase",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zatrudnienie** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa pracy z perspektywy pracownika, ochrony przed zwolnieniem i mobbingiem. Rozumiemy, że wyzwania takie jak nieuzasadnione wypowiedzenie umowy, niewypłacone nadgodziny, dyskryminacja w miejscu pracy oraz wypadki przy pracy mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie wyegzekwujesz swoje należności od pracodawcy i obronisz się przed bezprawnym zwolnieniem.",
+    "opis": "Prawa pracownika: zwolnienia, mobbing, zaległe wynagrodzenia i spory z pracodawcą.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zatrudnienie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z adwokatem specjalizującym się w prawach pracowniczych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zatrudnienie - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zatrudnienie? Sprawdź bazę ekspertów z obszaru prawa pracy z perspektywy pracownika, ochrony przed zwolnieniem i mobbingiem. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -879,7 +886,7 @@
     "ikona": "Shield",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Ubezpieczenia** skupia specjalistów zajmujących się zagadnieniom z zakresu dochodzenia odszkodowań od ubezpieczycieli oraz sporów o zadośćuczynienie. Rozumiemy, że wyzwania takie jak odmowa wypłaty odszkodowania (np. z OC/AC), zaniżona wycena szkody komunikacyjnej oraz spory z TU po zalaniu mieszkania mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu wywalczysz pełną kwotę odszkodowania pokrywającą rzeczywiste koszty naprawy lub leczenia.",
+    "opis": "Spory z ubezpieczycielem, zaniżone odszkodowania, odmowy wypłaty z polis majątkowych i na życie.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Ubezpieczenia**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy radcy prawnego ds. odszkodowań, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Ubezpieczenia - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Ubezpieczenia? Sprawdź bazę ekspertów z obszaru dochodzenia odszkodowań od ubezpieczycieli oraz sporów o zadośćuczynienie. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -907,7 +914,7 @@
     "ikona": "Gavel",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo karne** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa karnego, obrony w sprawach o przestępstwa i wykroczenia. Rozumiemy, że wyzwania takie jak jazda pod wpływem alkoholu, zatrzymanie przez policję, oszustwa, posiadanie substancji zakazanych oraz obrona w procesie karnym mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zyskasz profesjonalną obronę od pierwszych chwil postępowania przygotowawczego, co ma kluczowe znaczenie dla wyroku.",
+    "opis": "Pomoc obrońcy w sprawach o przestępstwa i wykroczenia: od przesłuchania, przez akt oskarżenia, po apelację.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo karne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się niezwłocznie z adwokatem karnistą, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo karne - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo karne? Sprawdź bazę ekspertów z obszaru prawa karnego, obrony w sprawach o przestępstwa i wykroczenia. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -935,7 +942,7 @@
     "ikona": "HeartPulse",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Zdrowie i wypadki** skupia specjalistów zajmujących się zagadnieniom z zakresu dochodzenia zadośćuczynienia za uszczerbek na zdrowiu oraz wypadki komunikacyjne. Rozumiemy, że wyzwania takie jak odszkodowanie po wypadku samochodowym, potrącenie pieszego, wypadek w rolnictwie oraz błędy w leczeniu powypadkowym mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu uzyskasz środki na kosztowne leczenie, rehabilitację i dostosowanie życia do nowych warunków po wypadku.",
+    "opis": "Odszkodowania i zadośćuczynienia po wypadkach oraz wsparcie w procesie rehabilitacji.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Zdrowie i wypadki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj ze wsparcia prawnika ds. szkód osobowych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Zdrowie i wypadki - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Zdrowie i wypadki? Sprawdź bazę ekspertów z obszaru dochodzenia zadośćuczynienia za uszczerbek na zdrowiu oraz wypadki komunikacyjne. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -963,7 +970,7 @@
     "ikona": "ShoppingBag",
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo konsumenckie** skupia specjalistów zajmujących się zagadnieniom z zakresu praw konsumenta, reklamacji towarów i usług oraz zwrotów towarów. Rozumiemy, że wyzwania takie jak odmowa uznania reklamacji wadliwego samochodu lub sprzętu AGD, nieuczciwe praktyki sklepów internetowych oraz odstąpienie od umowy mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie zwrócisz wadliwy produkt i odzyskasz pieniądze, powołując się na ustawowe prawa konsumenckie.",
+    "opis": "Reklamacje, zwroty, problemy z zakupami online i nieuczciwe umowy z usługodawcami.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo konsumenckie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z rzecznikiem praw konsumentów lub prawnikiem, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo konsumenckie - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo konsumenckie? Sprawdź bazę ekspertów z obszaru praw konsumenta, reklamacji towarów i usług oraz zwrotów towarów. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -997,7 +1004,7 @@
     "kolejnosc": 14,
     "ikona": "Stethoscope",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo medyczne** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa medycznego, błędów lekarskich oraz praw pacjenta. Rozumiemy, że wyzwania takie jak odszkodowanie za błąd w sztuce lekarskiej, zakażenia szpitalne, naruszenie intymności oraz brak należytej opieki mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu udowodnisz winę personelu medycznego i uzyskasz zadośćuczynienie finansowe za doznany uszczerbek.",
+    "opis": "Błędy medyczne, prawa pacjenta i odszkodowania za szkody powstałe podczas leczenia.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo medyczne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy radcy prawnego ds. błędów medycznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo medyczne - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo medyczne? Sprawdź bazę ekspertów z obszaru prawa medycznego, błędów lekarskich oraz praw pacjenta. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -1024,7 +1031,7 @@
     "kolejnosc": 13,
     "ikona": "Globe",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo cyfrowe i internetowe** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa w sieci, cyberbezpieczeństwa, nękania oraz praw autorskich online. Rozumiemy, że wyzwania takie jak kradzież tożsamości, hejt i zniesławienie w internetu, wyłudzenia pieniędzy na portalach ogłoszeniowych oraz prawo autorskie twórców internetowych mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie usuniesz zniesławiające treści z sieci, namierzysz sprawcę hejtu i zabezpieczysz swoje prawa.",
+    "opis": "Ochrona danych i wizerunku w sieci, problemy z subskrypcjami i umowami cyfrowymi.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo cyfrowe i internetowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem ds. nowych mediów i prawa internetowego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo cyfrowe i internetowe - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo cyfrowe i internetowe? Sprawdź bazę ekspertów z obszaru prawa w sieci, cyberbezpieczeństwa, nękania oraz praw autorskich online. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -1051,7 +1058,7 @@
     "kolejnosc": 16,
     "ikona": "KeyRound",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawa lokatora i najemcy** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa lokatorskiego, sporów z właścicielem nieruchomości oraz eksmisji. Rozumiemy, że wyzwania takie jak bezprawne zatrzymanie kaucji, drastyczne podwyżki czynszu, uciążliwi lokatorzy oraz umowy najmu okazjonalnego mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu zabezpieczysz swoje prawo do dachu nad głową i uregulujesz stosunki z właścicielem mieszkania zgodnie z ustawą.",
+    "opis": "Konflikty z wynajmującym, kaucje, eksmisje i problemy z wynajmem mieszkania.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawa lokatora i najemcy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady prawnej specjalisty ds. ochrony praw lokatorów, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawa lokatora i najemcy - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawa lokatora i najemcy? Sprawdź bazę ekspertów z obszaru prawa lokatorskiego, sporów z właścicielem nieruchomości oraz eksmisji. Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -1071,11 +1078,7 @@
         "metaDescription": "Potrzebujesz wsparcia w zakresie: Konflikty z wynajmującym? Sprawdź porady prawne oraz ekspertów z dziedziny Konflikty z wynajmującym w kategorii Prawa lokatora i najemcy."
       },
       {
-        "nazwa": "Umowy",
-        "opis": "Podkategoria **Umowy** to integralna część obszaru **Prawa lokatora i najemcy**, powiązana z zagadnieniami obejmującymi prawa lokatorskiego, sporów z właścicielem nieruchomości oraz eksmisji. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak bezprawne zatrzymanie kaucji, drastyczne podwyżki czynszu, uciążliwi lokatorzy oraz umowy najmu okazjonalnego w odniesieniu do umowy.",
-        "opisDodatkowy": "Koncentrując się na problematyce **Umowy**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej zabezpieczysz swoje prawo do dachu nad głową i uregulujesz stosunki z właścicielem mieszkania zgodnie z ustawą. Skorzystaj z porady prawnej specjalisty ds. ochrony praw lokatorów, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
-        "metaTitle": "Umowy - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Umowy? Sprawdź porady prawne oraz ekspertów z dziedziny Umowy w kategorii Prawa lokatora i najemcy."
+        "nazwa": "Umowy najmu"
       }
     ]
   },
@@ -1085,7 +1088,7 @@
     "kolejnosc": 15,
     "ikona": "Landmark",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo administracyjne** skupia specjalistów zajmujących się zagadnieniom z zakresu postępowań administracyjnych oraz sporów z urzędami (SKO, WSA). Rozumiemy, że wyzwania takie jak odmowa wydania warunków zabudowy, odwołania od decyzji ZUS, kary za wycinkę drzew oraz skargi do Wojewódzkiego Sądu Administracyjnego mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu skutecznie zaskarżysz niekorzystną decyzję urzędniczą i doprowadzisz do ponownego rozpatrzenia sprawy.",
+    "opis": "Odwołania od decyzji urzędów i reprezentacja w postępowaniach administracyjnych.",
     "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo administracyjne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć sporządzenie odwołania radcy prawnemu ds. prawa administracyjnego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
     "metaTitle": "Prawo administracyjne - Pomoc Prawna, Porady i Kancelarie | ps-map",
     "metaDescription": "Szukasz wsparcia w zakresie: Prawo administracyjne? Sprawdź bazę ekspertów z obszaru postępowań administracyjnych oraz sporów z urzędami (SKO, WSA). Kompleksowa pomoc prawna dla klientów indywidualnych.",
@@ -1107,37 +1110,119 @@
     ]
   },
   {
-    "nazwa": "Prawo OZE",
+    "nazwa": "Fotowoltaika i OZE",
     "typ": "SPRAWY_PRYWATNE",
     "kolejnosc": 11,
     "ikona": "Sun",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=600&q=80",
-    "opis": "Kategoria **Prawo OZE** skupia specjalistów zajmujących się zagadnieniom z zakresu prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Rozumiemy, że wyzwania takie jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' mogą wydawać się trudne. Dlatego zrzeszeni w naszym portalu eksperci oferują wsparcie, dzięki któremu odzyskasz pieniądze od nierzetelnych monterów i skutecznie wyegzekwujesz prawidłowe działanie instalacji.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo OZE**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
-    "metaTitle": "Prawo OZE - Pomoc Prawna, Porady i Kancelarie | ps-map",
-    "metaDescription": "Szukasz wsparcia w zakresie: Prawo OZE? Sprawdź bazę ekspertów z obszaru prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Kompleksowa pomoc prawna dla klientów indywidualnych.",
+    "opis": "Umowy na instalacje fotowoltaiczne, rozliczenia prosumenta i formalności środowiskowe.",
+    "opisDodatkowy": "Wybierając pomoc w obszarze **Fotowoltaika i OZE**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "metaTitle": "Fotowoltaika i OZE - Pomoc Prawna, Porady i Kancelarie | ps-map",
+    "metaDescription": "Szukasz wsparcia w zakresie: Fotowoltaika i OZE? Sprawdź bazę ekspertów z obszaru prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Kompleksowa pomoc prawna dla klientów indywidualnych.",
     "children": [
       {
         "nazwa": "Regulacje i licencjonowanie",
-        "opis": "Podkategoria **Regulacje i licencjonowanie** to integralna część obszaru **Prawo OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do regulacje i licencjonowanie.",
+        "opis": "Podkategoria **Regulacje i licencjonowanie** to integralna część obszaru **Fotowoltaika i OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do regulacje i licencjonowanie.",
         "opisDodatkowy": "Koncentrując się na problematyce **Regulacje i licencjonowanie**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej odzyskasz pieniądze od nierzetelnych monterów i skutecznie wyegzekwujesz prawidłowe działanie instalacji. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Regulacje i licencjonowanie - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Regulacje i licencjonowanie? Sprawdź porady prawne oraz ekspertów z dziedziny Regulacje i licencjonowanie w kategorii Prawo OZE."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Regulacje i licencjonowanie? Sprawdź porady prawne oraz ekspertów z dziedziny Regulacje i licencjonowanie w kategorii Fotowoltaika i OZE.",
+        "aktywna": false
       },
       {
         "nazwa": "Umowy i transakcje",
-        "opis": "Podkategoria **Umowy i transakcje** to integralna część obszaru **Prawo OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do umowy i transakcje.",
+        "opis": "Podkategoria **Umowy i transakcje** to integralna część obszaru **Fotowoltaika i OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do umowy i transakcje.",
         "opisDodatkowy": "Koncentrując się na problematyce **Umowy i transakcje**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej odzyskasz pieniądze od nierzetelnych monterów i skutecznie wyegzekwujesz prawidłowe działanie instalacji. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Umowy i transakcje - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Umowy i transakcje? Sprawdź porady prawne oraz ekspertów z dziedziny Umowy i transakcje w kategorii Prawo OZE."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Umowy i transakcje? Sprawdź porady prawne oraz ekspertów z dziedziny Umowy i transakcje w kategorii Fotowoltaika i OZE."
       },
       {
         "nazwa": "Kwestie środowiskowe, zezwolenia",
-        "opis": "Podkategoria **Kwestie środowiskowe, zezwolenia** to integralna część obszaru **Prawo OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do kwestie środowiskowe, zezwolenia.",
+        "opis": "Podkategoria **Kwestie środowiskowe, zezwolenia** to integralna część obszaru **Fotowoltaika i OZE**, powiązana z zagadnieniami obejmującymi prawa energetycznego dla osób fizycznych, instalacji fotowoltaicznych i pomp ciepła. Sprawy z tej dziedziny wymagają precyzyjnego poruszania się w gąszczu przepisów. Nasi specjaliści pomogą w takich kwestiach jak spory z instalatorami paneli PV, wadliwy montaż pompy ciepła, brak przyłączenia mikroinstalacji przez zakład energetyczny oraz dotacje 'Mój Prąd' w odniesieniu do kwestie środowiskowe, zezwolenia.",
         "opisDodatkowy": "Koncentrując się na problematyce **Kwestie środowiskowe, zezwolenia**, oferujemy kompleksowe wsparcie merytoryczne i praktyczne. Dzięki fachowej opiece prawnej odzyskasz pieniądze od nierzetelnych monterów i skutecznie wyegzekwujesz prawidłowe działanie instalacji. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, aby omówić szczegóły swojej sprawy i ustalić plan działania.",
         "metaTitle": "Kwestie środowiskowe, zezwolenia - Pomoc Prawna i Porady | ps-map",
-        "metaDescription": "Potrzebujesz wsparcia w zakresie: Kwestie środowiskowe, zezwolenia? Sprawdź porady prawne oraz ekspertów z dziedziny Kwestie środowiskowe, zezwolenia w kategorii Prawo OZE."
+        "metaDescription": "Potrzebujesz wsparcia w zakresie: Kwestie środowiskowe, zezwolenia? Sprawdź porady prawne oraz ekspertów z dziedziny Kwestie środowiskowe, zezwolenia w kategorii Fotowoltaika i OZE."
       }
+    ]
+  },
+  {
+    "nazwa": "Prawo drogowe",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 17,
+    "ikona": "Car",
+    "opis": "Wypadki i kolizje, odszkodowania z OC, jazda po alkoholu, zatrzymane prawo jazdy i punkty karne.",
+    "children": [
+      "Wypadki i kolizje drogowe",
+      "Jazda po alkoholu",
+      "Prawo jazdy i punkty karne"
+    ]
+  },
+  {
+    "nazwa": "Cudzoziemcy",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 18,
+    "ikona": "Globe",
+    "opis": "Legalizacja pobytu, zezwolenia na pracę i obywatelstwo — pomoc prawna dla cudzoziemców w Polsce.",
+    "children": [
+      "Legalizacja pobytu",
+      "Zezwolenia na pracę",
+      "Obywatelstwo polskie"
+    ]
+  },
+  {
+    "nazwa": "Prawo budowlane",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 19,
+    "ikona": "Hammer",
+    "opis": "Pozwolenia na budowę, samowola budowlana, spory z wykonawcą lub deweloperem.",
+    "children": [
+      "Pozwolenia i formalności budowlane",
+      "Samowola budowlana i legalizacja",
+      "Spory z wykonawcą i deweloperem"
+    ]
+  },
+  {
+    "nazwa": "Wyceny i ekspertyzy",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 20,
+    "ikona": "ClipboardCheck",
+    "ekspercka": true,
+    "opis": "Rzeczoznawcy majątkowi: operaty szacunkowe, wyceny szkód i opinie do sądu lub banku.",
+    "children": [
+      {
+        "nazwa": "Wycena nieruchomości (operat szacunkowy)",
+        "slug": "wycena-nieruchomosci"
+      },
+      "Wycena szkód i ruchomości",
+      "Opinie i ekspertyzy do sądu"
+    ]
+  },
+  {
+    "nazwa": "Architektura i projektowanie",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 21,
+    "ikona": "PencilRuler",
+    "ekspercka": true,
+    "opis": "Architekci: projekty domów i wnętrz, adaptacje projektów, nadzór budowlany.",
+    "children": [
+      "Projekty domów i wnętrz",
+      "Adaptacja projektu",
+      {
+        "nazwa": "Nadzór budowlany i kierownik budowy",
+        "slug": "nadzor-budowlany"
+      }
+    ]
+  },
+  {
+    "nazwa": "Finanse osobiste",
+    "typ": "SPRAWY_PRYWATNE",
+    "kolejnosc": 22,
+    "ikona": "Wallet",
+    "ekspercka": true,
+    "opis": "Doradcy finansowi dla osób prywatnych: kredyt hipoteczny, inwestowanie, oszczędzanie i emerytura.",
+    "children": [
+      "Kredyty hipoteczne i doradztwo kredytowe",
+      "Inwestowanie i oszczędzanie",
+      "Emerytura i zabezpieczenie przyszłości"
     ]
   }
 ]

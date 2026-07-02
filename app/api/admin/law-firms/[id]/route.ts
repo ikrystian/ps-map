@@ -326,7 +326,7 @@ export async function PUT(
     if (body.slowaKluczowe !== undefined) lawFirmUpdateData.slowaKluczowe = body.slowaKluczowe
 
     // Area
-    if (body.callaPolska !== undefined) lawFirmUpdateData.callaPolska = body.callaPolska
+    if (body.calaPolska !== undefined) lawFirmUpdateData.calaPolska = body.calaPolska
     if (body.onlineOnly !== undefined) lawFirmUpdateData.onlineOnly = body.onlineOnly
 
     // Offer type

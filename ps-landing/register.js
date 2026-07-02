@@ -1,8 +1,11 @@
 // ===== Rejestracja eksperta (formularz.html) =====
 // Tworzy konto eksperta bezpośrednio w głównej aplikacji (Next.js) bez maila
 // aktywacyjnego. Dane słownikowe (województwa, kategorie, specjalizacje, miasta)
-// pobierane są z tej samej aplikacji. Zmień API_BASE jeśli adres się zmieni.
-const API_BASE = "https://stage.prostasprawa.pl";
+// pobierane są z tej samej aplikacji.
+// Adres API nadpisujesz bez edycji tego pliku, ustawiając przed załadowaniem skryptu:
+//   <script>window.PS_API_BASE = "https://prostasprawa.pl"</script>
+// Przy wdrożeniu produkcyjnym ustaw PS_API_BASE na adres produkcyjny (nie zostawiaj stage!).
+const API_BASE = window.PS_API_BASE || "https://stage.prostasprawa.pl";
 
 // ===== Multi-step =====
 const formSteps = document.querySelectorAll(".form-step");
@@ -499,7 +502,7 @@ async function submitForm(e) {
         typOferty: "WSZYSTKIE",
         zgodaRegulamin: document.getElementById("zgodaRegulamin").checked,
         zgodaPrzetwarzanie: document.getElementById("zgodaPrzetwarzanie").checked,
-        callaPolska: false,
+        calaPolska: false,
         voivodeshipsIds: voivodeshipId ? [voivodeshipId] : [],
         categoriesIds: categoryId ? [categoryId] : [],
         isSocialRegistration: false,

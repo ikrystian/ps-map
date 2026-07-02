@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!post) {
       return {
-        title: "Artykuł nie znaleziony | Prosta Sprawa",
+        title: "Artykuł nie znaleziony",
       }
     }
 
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   } catch (error) {
     console.error("Error generating metadata for blog post:", error)
     return {
-      title: "Blog | Prosta Sprawa",
+      title: "Blog",
     }
   }
 }

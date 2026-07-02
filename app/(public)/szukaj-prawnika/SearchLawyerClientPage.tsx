@@ -99,6 +99,7 @@ export default function SearchLawyerPage() {
   const [minRating, setMinRating] = useState("all")
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
+  const [bieglySadowyOnly, setBieglySadowyOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
 
   // Geographic hierarchy
@@ -214,6 +215,7 @@ export default function SearchLawyerPage() {
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
+        if (bieglySadowyOnly) params.append("bieglySadowy", "true")
         if (selectedExpertiseCategory && selectedExpertiseCategory !== "all") {
           params.append("expertiseCategoryId", selectedExpertiseCategory)
         }
@@ -235,7 +237,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, sortBy, page, limit, selectedExpertiseCategory])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, bieglySadowyOnly, sortBy, page, limit, selectedExpertiseCategory])
 
   // Dynamic fetch and caching for cities
   useEffect(() => {
@@ -685,6 +687,17 @@ export default function SearchLawyerPage() {
                             Tylko zweryfikowane
                           </Label>
                         </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="bieglySadowyOnly"
+                            checked={bieglySadowyOnly}
+                            onCheckedChange={(checked) => setBieglySadowyOnly(checked as boolean)}
+                          />
+                          <Label htmlFor="bieglySadowyOnly" className="cursor-pointer text-sm font-normal">
+                            Biegły sądowy
+                          </Label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -838,6 +851,11 @@ export default function SearchLawyerPage() {
                               {firm.onlineOnly && (
                                 <Badge variant="outline" className="text-xs">
                                   Online
+                                </Badge>
+                              )}
+                              {firm.bieglySadowy && (
+                                <Badge variant="outline" className="text-xs">
+                                  Biegły sądowy
                                 </Badge>
                               )}
                               {(() => {

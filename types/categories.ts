@@ -25,6 +25,7 @@ export interface Category extends CategoryBase {
   opis?: string | null
   opisDodatkowy?: string | null
   aktywna: boolean
+  ekspercka?: boolean
   ikonaUrl?: string | null
   backgroundImageUrl?: string | null
   parentId?: string | null

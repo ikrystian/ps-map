@@ -22,6 +22,7 @@ export async function GET() {
             metaTitle: true,
             metaDescription: true,
             aktywna: true,
+            ekspercka: true,
             kolejnosc: true,
             wyswietlajNaGlownejPrywatne: true,
             wyswietlajNaGlownejFirmowe: true,
