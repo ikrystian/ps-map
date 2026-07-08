@@ -1,6 +1,5 @@
 import { getLegalPageContent } from "@/lib/legal-pages"
 import { Metadata } from "next"
-import { notFound } from "next/navigation"
 import RegulaminClientPage from "./RegulaminClientPage"
 
 // Treść jest edytowalna w panelu admina — strona musi renderować się na żądanie
@@ -13,8 +12,5 @@ export const metadata: Metadata = {
 
 export default async function RegulaminPage() {
   const content = await getLegalPageContent("regulamin")
-  if (!content) {
-    notFound()
-  }
   return <RegulaminClientPage content={content} />
 }
