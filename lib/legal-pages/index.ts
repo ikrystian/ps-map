@@ -1,18 +1,11 @@
 import { prisma } from "@/lib/prisma"
 
-import { POLITYKA_PRYWATNOSCI_DEFAULT } from "./polityka-prywatnosci-default"
-import { REGULAMIN_DEFAULT } from "./regulamin-default"
 import type { LegalPageContent, LegalPageSlug } from "./types"
 
 export type { LegalPageContent, LegalPageDefinition, LegalPageSection, LegalPageSlug } from "./types"
 
-export const LEGAL_PAGE_DEFAULTS: Record<LegalPageSlug, LegalPageContent> = {
-  "polityka-prywatnosci": POLITYKA_PRYWATNOSCI_DEFAULT,
-  "regulamin": REGULAMIN_DEFAULT,
-}
-
 export function isLegalPageSlug(slug: string): slug is LegalPageSlug {
-  return slug in LEGAL_PAGE_DEFAULTS
+  return slug === "polityka-prywatnosci" || slug === "regulamin"
 }
 
 // Treść jest przechowywana jako JSON w tabeli Settings pod tym kluczem
@@ -26,8 +19,7 @@ const cleanString = (value: unknown): string =>
  * Zwraca null, gdy struktura jest na tyle uszkodzona, że należy użyć domyślnej treści.
  */
 export function sanitizeLegalPageContent(
-  input: unknown,
-  defaults: LegalPageContent
+  input: unknown
 ): LegalPageContent | null {
   if (!input || typeof input !== "object") return null
   const data = input as Record<string, unknown>
@@ -62,8 +54,8 @@ export function sanitizeLegalPageContent(
   const lastUpdated = cleanString(data.lastUpdated)
 
   return {
-    heroTitle: cleanString(data.heroTitle) || defaults.heroTitle,
-    heroSubtitle: cleanString(data.heroSubtitle) || defaults.heroSubtitle,
+    heroTitle: cleanString(data.heroTitle),
+    heroSubtitle: cleanString(data.heroSubtitle),
     ...(lastUpdated ? { lastUpdated } : {}),
     definitions,
     sections,
@@ -74,18 +66,16 @@ export function sanitizeLegalPageContent(
  * Zwraca treść strony prawnej zapisaną przez administratora,
  * a jeśli jej nie ma (lub jest uszkodzona) — treść domyślną.
  */
-export async function getLegalPageContent(slug: LegalPageSlug): Promise<LegalPageContent> {
-  const defaults = LEGAL_PAGE_DEFAULTS[slug]
-
+export async function getLegalPageContent(slug: LegalPageSlug): Promise<LegalPageContent | null> {
   try {
     const setting = await prisma.settings.findUnique({
       where: { key: legalPageSettingsKey(slug) },
     })
-    if (!setting?.value) return defaults
+    if (!setting?.value) return null
 
-    return sanitizeLegalPageContent(JSON.parse(setting.value), defaults) ?? defaults
+    return sanitizeLegalPageContent(JSON.parse(setting.value))
   } catch (error) {
     console.error(`Error loading legal page content for "${slug}":`, error)
-    return defaults
+    return null
   }
 }

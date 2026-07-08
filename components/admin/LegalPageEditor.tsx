@@ -180,7 +180,7 @@ export default function LegalPageEditor({
   }
 
   const handleReset = async () => {
-    if (!confirm(`Przywrócić domyślną treść strony „${pageName}”? Zapisane zmiany zostaną utracone.`)) {
+    if (!confirm(`Czy na pewno chcesz usunąć treść strony „${pageName}”? Strona przestanie być wyświetlana publicznie.`)) {
       return
     }
 
@@ -193,10 +193,10 @@ export default function LegalPageEditor({
       const data = await response.json()
       applyContent(data.content)
       setIsCustomized(false)
-      toast.success("Przywrócono domyślną treść strony")
+      toast.success("Treść strony została usunięta")
     } catch (error) {
       console.error("Error resetting legal page content:", error)
-      toast.error("Błąd podczas przywracania domyślnej treści")
+      toast.error("Błąd podczas usuwania treści strony")
     } finally {
       setResetting(false)
     }
@@ -265,9 +265,9 @@ export default function LegalPageEditor({
           </Link>
           <div className="text-sm text-muted-foreground">
             {isCustomized ? (
-              <span>Wyświetlana jest treść zapisana w panelu</span>
+              <span>Treść jest opublikowana</span>
             ) : (
-              <span>Wyświetlana jest domyślna treść strony</span>
+              <span>Brak treści (strona nie jest wyświetlana publicznie)</span>
             )}
           </div>
         </div>
@@ -279,13 +279,13 @@ export default function LegalPageEditor({
             </Button>
           </a>
           {isCustomized && (
-            <Button variant="outline" onClick={handleReset} disabled={resetting || saving}>
+            <Button variant="outline" onClick={handleReset} disabled={resetting || saving} className="text-destructive hover:text-destructive">
               {resetting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <RotateCcw className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-2 h-4 w-4" />
               )}
-              Przywróć domyślną
+              Usuń treść strony
             </Button>
           )}
           <Button onClick={handleSave} disabled={saving || resetting}>

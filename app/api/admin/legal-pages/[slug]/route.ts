@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth"
 import {
-  LEGAL_PAGE_DEFAULTS,
   isLegalPageSlug,
   legalPageSettingsKey,
   sanitizeLegalPageContent,
@@ -30,23 +29,27 @@ export async function GET(
       return NextResponse.json({ error: "Page not found" }, { status: 404 })
     }
 
-    const defaults = LEGAL_PAGE_DEFAULTS[slug]
     const setting = await prisma.settings.findUnique({
       where: { key: legalPageSettingsKey(slug) },
     })
 
-    let content = defaults
+    let content = {
+      heroTitle: "",
+      heroSubtitle: "",
+      definitions: [],
+      sections: [],
+    }
     let isCustomized = false
 
     if (setting?.value) {
       try {
-        const sanitized = sanitizeLegalPageContent(JSON.parse(setting.value), defaults)
+        const sanitized = sanitizeLegalPageContent(JSON.parse(setting.value))
         if (sanitized) {
           content = sanitized
           isCustomized = true
         }
       } catch {
-        // Uszkodzony JSON w bazie — edytor dostanie treść domyślną
+        // Uszkodzony JSON w bazie — edytor dostanie treść pustą
       }
     }
 
@@ -75,7 +78,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const content = sanitizeLegalPageContent(body?.content, LEGAL_PAGE_DEFAULTS[slug])
+    const content = sanitizeLegalPageContent(body?.content)
 
     if (!content) {
       return NextResponse.json(
@@ -123,7 +126,15 @@ export async function DELETE(
       where: { key: legalPageSettingsKey(slug) },
     })
 
-    return NextResponse.json({ content: LEGAL_PAGE_DEFAULTS[slug], isCustomized: false })
+    return NextResponse.json({
+      content: {
+        heroTitle: "",
+        heroSubtitle: "",
+        definitions: [],
+        sections: [],
+      },
+      isCustomized: false,
+    })
   } catch (error) {
     console.error("Error resetting legal page content:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

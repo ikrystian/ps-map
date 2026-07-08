@@ -1,5 +1,6 @@
 import { getLegalPageContent } from "@/lib/legal-pages"
 import { Metadata } from "next"
+import { notFound } from "next/navigation"
 import PrivacyPolicyClientPage from "./PrivacyPolicyClientPage"
 
 // Treść jest edytowalna w panelu admina — strona musi renderować się na żądanie
@@ -12,5 +13,8 @@ export const metadata: Metadata = {
 
 export default async function PrivacyPolicyPage() {
   const content = await getLegalPageContent("polityka-prywatnosci")
+  if (!content) {
+    notFound()
+  }
   return <PrivacyPolicyClientPage content={content} />
 }
