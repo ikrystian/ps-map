@@ -139,7 +139,7 @@ bun run dev
 npm run dev
 ```
 
-Aplikacja zostanie uruchomiona pod adresem: **[http://localhost:3000](http://localhost:3000)**.
+Aplikacja zostanie uruchomiona pod adresem: **[http://localhost:4000](http://localhost:4000)**.
 
 ---
 

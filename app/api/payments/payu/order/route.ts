@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
             return Response.json({ error: "Order already paid" }, { status: 400 })
         }
 
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:4000"
         const notifyUrl = `${appUrl}/api/payments/payu/notify`
         const continueUrl = `${appUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
 

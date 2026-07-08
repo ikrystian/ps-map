@@ -272,7 +272,7 @@ export async function POST(
       updatedOffer.notification
     )
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
 
     // 1. Wyślij e-mail o akceptacji do ekspercie
     if (offer.lawFirm?.user?.email) {

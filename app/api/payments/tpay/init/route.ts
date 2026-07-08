@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       ? `Zakup punktów: ${order.pakietPunktow} (${order.liczbaPunktow} pkt)`
       : `Aktywacja subskrypcji pakietu`
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
     const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
     const urlError = `${baseUrl}/panel-eksperta/checkout/failure?orderId=${order.id}`
     const urlStatus = `${baseUrl}/api/payments/tpay/notify`

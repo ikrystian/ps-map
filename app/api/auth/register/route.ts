@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Wyślij e-mail powitalny dla klienta
-      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
       try {
         await sendEmailWithTemplate({
           to: user.email,
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Wyślij e-mail powitalny dla ekspertów
-      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
       try {
         await sendEmailWithTemplate({
           to: user.email,

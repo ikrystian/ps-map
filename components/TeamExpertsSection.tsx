@@ -206,7 +206,7 @@ export default function TeamExpertsSection() {
               const imieNazwisko =
                 imie && nazwisko ? `${imie} ${nazwisko}` : null;
               const displayName =
-                imieNazwisko || expert.nazwa || expert.nazwa;
+              expert.nazwa;
               const roleName =
                 expert.mainCategory?.nazwa ||
                 expert.categories?.[0]?.category?.nazwa ||

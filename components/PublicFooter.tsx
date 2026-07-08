@@ -165,10 +165,9 @@ export default function PublicFooter() {
             </div>
 
             <div className="text-xs text-neutral-400 font-light space-y-1 pt-1 leading-relaxed">
-              <p>Polska Grupa Identyfikacji Firm Sp. z o.o.</p>
-              <p>ul. Langiewicza 16/1, 25-118 Kielce</p>
-              <p>KRS: 0000768233, NIP: 9592020878,</p>
-              <p>REGON: 382403289</p>
+            Langiewicza 16/3 <br />
+            25-381 Kielce
+
             </div>
 
             <div className="flex items-center gap-2 text-xs md:text-sm font-semibold text-[#d7b56d] pt-2">

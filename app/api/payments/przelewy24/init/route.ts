@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const email = order.lawFirm.user.email || ""
     const description = `Zakup punktów: ${order.pakietPunktow} (${order.liczbaPunktow} pkt)`
 
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
     const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
     const urlStatus = `${baseUrl}/api/payments/przelewy24/notify`
 

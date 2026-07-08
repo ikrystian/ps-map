@@ -729,7 +729,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Generate verification URL
-      const baseUrl = process.env.NEXTAUTH_URL || 'https://ps.studio-ai.com.pl'
+      const baseUrl = process.env.NEXTAUTH_URL || 'https://stage.prostasprawa.pl'
       const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
       // Send verification email using database template

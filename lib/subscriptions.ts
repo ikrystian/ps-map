@@ -27,7 +27,7 @@ export async function checkExpiredSubscriptions(): Promise<number> {
     }
   })
 
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
   let processedCount = 0
 
   for (const lf of expiredLawFirms) {

@@ -398,7 +398,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Wyślij e-mail powiadomienie do klienta o nowej ofercie
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
     try {
       const caseWithClient = await prisma.case.findUnique({
         where: { id: caseId },

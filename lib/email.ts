@@ -336,7 +336,7 @@ export function getBrandEmailLayout(
                         </td>
                         <!-- Right side: Client Portal link -->
                         <td align="right" valign="middle" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 13px; font-weight: 600;">
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/panel-klienta" style="color: #00b49e; text-decoration: none;">Client Portal &rarr;</a>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/panel-klienta" style="color: #00b49e; text-decoration: none;">Client Portal &rarr;</a>
                         </td>
                       </tr>
                     </table>
@@ -380,11 +380,11 @@ export function getBrandEmailLayout(
                       <!-- Terms / Privacy / Cookies Links -->
                       <tr>
                         <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #a3a3a3; padding-bottom: 20px;">
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;"></a>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;"></a>
                           <span style="color: #404040;">&bull;</span>
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/privacy" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Privacy Policy</a>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/privacy" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Privacy Policy</a>
                           <span style="color: #404040;">&bull;</span>
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/cookies" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Cookie Settings</a>
+                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/cookies" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Cookie Settings</a>
                         </td>
                       </tr>
                       <!-- Copyright text -->
@@ -400,7 +400,7 @@ export function getBrandEmailLayout(
                             <tr>
                               <!-- Globe icon -->
                               <td style="padding: 0 10px;">
-                                <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}" style="color: #a3a3a3; text-decoration: none;">
+                                <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}" style="color: #a3a3a3; text-decoration: none;">
                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -1016,6 +1016,6 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
  * Generuje URL do wypisania się z newslettera
  */
 export function generateNewsletterUnsubscribeUrl(token: string): string {
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
   return `${baseUrl}/api/newsletter/unsubscribe?token=${token}`
 }
