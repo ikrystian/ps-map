@@ -6,12 +6,16 @@ import { NextRequest, NextResponse } from "next/server"
  * Potwierdza subskrypcję newslettera na podstawie tokenu
  */
 export async function GET(request: NextRequest) {
+  // Za reverse proxy request.url wskazuje na wewnętrzny adres (localhost),
+  // dlatego przekierowania budujemy na publicznym adresie z NEXTAUTH_URL
+  const baseUrl = process.env.NEXTAUTH_URL || request.url
+
   try {
     const { searchParams } = new URL(request.url)
     const token = searchParams.get("token")
 
     if (!token) {
-      return NextResponse.redirect(new URL('/newsletter/potwierdz?error=brak-tokenu', request.url))
+      return NextResponse.redirect(new URL('/newsletter/potwierdz?error=brak-tokenu', baseUrl))
     }
 
     // Znajdź subskrypcję po tokenie
@@ -20,7 +24,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!subscription) {
-      return NextResponse.redirect(new URL('/newsletter/potwierdz?error=nieprawidlowy-token', request.url))
+      return NextResponse.redirect(new URL('/newsletter/potwierdz?error=nieprawidlowy-token', baseUrl))
     }
 
     // Zaktualizuj subskrypcję - oznacz jako potwierdzoną i aktywną
@@ -34,9 +38,9 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.redirect(new URL('/newsletter/potwierdz?status=sukces', request.url))
+    return NextResponse.redirect(new URL('/newsletter/potwierdz?status=sukces', baseUrl))
   } catch (error) {
     console.error("Newsletter confirmation error:", error)
-    return NextResponse.redirect(new URL('/newsletter/potwierdz?error=blad-serwera', request.url))
+    return NextResponse.redirect(new URL('/newsletter/potwierdz?error=blad-serwera', baseUrl))
   }
 }

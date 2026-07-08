@@ -6,12 +6,16 @@ import { NextRequest, NextResponse } from "next/server"
  * Weryfikuje adres email użytkownika na podstawie tokenu
  */
 export async function GET(request: NextRequest) {
+  // Za reverse proxy request.url wskazuje na wewnętrzny adres (localhost),
+  // dlatego przekierowania budujemy na publicznym adresie z NEXTAUTH_URL
+  const baseUrl = process.env.NEXTAUTH_URL || request.url
+
   try {
     const { searchParams } = new URL(request.url)
     const token = searchParams.get("token")
 
     if (!token) {
-      return NextResponse.redirect(new URL('/weryfikacja-email?error=brak-tokenu', request.url))
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=brak-tokenu', baseUrl))
     }
 
     // Znajdź token weryfikacyjny
@@ -20,7 +24,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!verificationToken) {
-      return NextResponse.redirect(new URL('/weryfikacja-email?error=nieprawidlowy-token', request.url))
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=nieprawidlowy-token', baseUrl))
     }
 
     // Sprawdź czy token nie wygasł
@@ -30,7 +34,7 @@ export async function GET(request: NextRequest) {
         where: { token },
       })
 
-      return NextResponse.redirect(new URL('/weryfikacja-email?error=wygasly-token', request.url))
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=wygasly-token', baseUrl))
     }
 
     // Znajdź użytkownika po email (identifier)
@@ -39,7 +43,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.redirect(new URL('/weryfikacja-email?error=nie-znaleziono-uzytkownika', request.url))
+      return NextResponse.redirect(new URL('/weryfikacja-email?error=nie-znaleziono-uzytkownika', baseUrl))
     }
 
     // Sprawdź czy email nie został już zweryfikowany
@@ -49,7 +53,7 @@ export async function GET(request: NextRequest) {
         where: { token },
       })
 
-      return NextResponse.redirect(new URL('/weryfikacja-email?status=juz-zweryfikowany', request.url))
+      return NextResponse.redirect(new URL('/weryfikacja-email?status=juz-zweryfikowany', baseUrl))
     }
 
     // Zaktualizuj użytkownika - oznacz email jako zweryfikowany
@@ -63,9 +67,9 @@ export async function GET(request: NextRequest) {
       where: { token },
     })
 
-    return NextResponse.redirect(new URL('/weryfikacja-email?status=sukces', request.url))
+    return NextResponse.redirect(new URL('/weryfikacja-email?status=sukces', baseUrl))
   } catch (error) {
     console.error("Email verification error:", error)
-    return NextResponse.redirect(new URL('/weryfikacja-email?error=blad-serwera', request.url))
+    return NextResponse.redirect(new URL('/weryfikacja-email?error=blad-serwera', baseUrl))
   }
 }

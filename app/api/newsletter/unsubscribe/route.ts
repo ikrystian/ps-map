@@ -6,12 +6,16 @@ import { NextRequest, NextResponse } from "next/server"
  * Wypisuje z newslettera na podstawie tokenu
  */
 export async function GET(request: NextRequest) {
+  // Za reverse proxy request.url wskazuje na wewnętrzny adres (localhost),
+  // dlatego przekierowania budujemy na publicznym adresie z NEXTAUTH_URL
+  const baseUrl = process.env.NEXTAUTH_URL || request.url
+
   try {
     const { searchParams } = new URL(request.url)
     const token = searchParams.get("token")
 
     if (!token) {
-      return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=brak-tokenu', request.url))
+      return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=brak-tokenu', baseUrl))
     }
 
     // Znajdź subskrypcję po tokenie
@@ -20,12 +24,12 @@ export async function GET(request: NextRequest) {
     })
 
     if (!subscription) {
-      return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=nieprawidlowy-token', request.url))
+      return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=nieprawidlowy-token', baseUrl))
     }
 
     // Jeśli już jest nieaktywny, przekieruj z informacją
     if (!subscription.aktywny) {
-        return NextResponse.redirect(new URL('/newsletter/wypisz-sie?status=juz-wypisany', request.url))
+        return NextResponse.redirect(new URL('/newsletter/wypisz-sie?status=juz-wypisany', baseUrl))
     }
 
     // Zaktualizuj subskrypcję - oznacz jako nieaktywną
@@ -39,10 +43,10 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.redirect(new URL('/newsletter/wypisz-sie?status=sukces', request.url))
+    return NextResponse.redirect(new URL('/newsletter/wypisz-sie?status=sukces', baseUrl))
   } catch (error) {
     console.error("Newsletter unsubscription error:", error)
-    return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=blad-serwera', request.url))
+    return NextResponse.redirect(new URL('/newsletter/wypisz-sie?error=blad-serwera', baseUrl))
   }
 }
 
