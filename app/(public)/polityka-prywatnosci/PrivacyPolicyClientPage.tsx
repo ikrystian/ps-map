@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import type { LegalPageContent } from "@/lib/legal-pages/types"
 import { 
   Search, 
   FileText, 
@@ -24,195 +25,47 @@ import {
   Sparkles,
   Info,
   ExternalLink,
-  ShieldAlert,
-  ArrowRight
+  ShieldAlert
 } from "lucide-react"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 
-// Definitions of terms for Section I in an interactive dictionary structure
-const DEFINITIONS = [
-  { 
-    term: "Administrator danych", 
-    desc: "POLSKA GRUPA IDENTYFIKACJI FIRM SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ z siedzibą w Kielcach (25-381) przy ul. Gen. Mariana Langiewicza 16 lok. 3, KRS: 0000768210, NIP: 9592020678, REGON: 382401289. To podmiot decydujący o celach i sposobach przetwarzania danych osobowych." 
-  },
-  { 
-    term: "Dane osobowe", 
-    desc: "Wszelkie informacje o zidentyfikowanej lub możliwej do zidentyfikowania osobie fizycznej poprzez czynniki określające jej tożsamość fizyczną, psychiczną, ekonomiczną itp., w tym adres IP urządzenia, identyfikatory internetowe oraz pliki cookie." 
-  },
-  { 
-    term: "Polityka", 
-    desc: "Niniejsza Polityka prywatności serwisu internetowego oraz aplikacji mobilnej ProstaSprawa.pl." 
-  },
-  { 
-    term: "RODO", 
-    desc: "Rozporządzenie Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych oraz ustawa o ochronie danych osobowych z dnia 10 maja 2018 r." 
-  },
-  { 
-    term: "Serwis", 
-    desc: "Portal internetowy prowadzony przez Administratora pod adresem www.prostasprawa.pl oraz powiązana z nim aplikacja mobilna." 
-  },
-  { 
-    term: "Użytkownik", 
-    desc: "Każda osoba fizyczna, która odwiedza Serwis lub korzysta z co najmniej jednej usługi bądź funkcjonalności opisanej w Polityce." 
-  }
-]
+// Ikony rozdziałów pełnego dokumentu — dopasowywane po id rozdziału.
+// Treść (nagłówek, rozdziały, słownik pojęć) jest edytowalna w panelu admina
+// (Strony → Polityka prywatności) i przekazywana przez props `content`.
+const SECTION_ICONS: Record<string, ReactNode> = {
+  "definicje": <BookOpen className="w-5 h-5" />,
+  "postanowienia-ogolne": <ShieldCheck className="w-5 h-5" />,
+  "cel-zbierania-danych": <Target className="w-5 h-5" />,
+  "rodzaj-danych": <Database className="w-5 h-5" />,
+  "okres-przetwarzania": <Clock className="w-5 h-5" />,
+  "udostepnianie-danych": <Share2 className="w-5 h-5" />,
+  "prawa-uzytkownikow": <Scale className="w-5 h-5" />,
+  "pliki-cookies": <Cookie className="w-5 h-5" />,
+  "zautomatyzowane-decyzje": <Cpu className="w-5 h-5" />,
+  "bezpieczenstwo-danych": <Lock className="w-5 h-5" />,
+  "postanowienia-koncowe": <FileText className="w-5 h-5" />,
+}
 
-// The full text sections mapping for the privacy policy
-const SECTIONS = [
-  {
-    id: "definicje",
-    number: "I",
-    title: "Definicje",
-    icon: <BookOpen className="w-5 h-5" />,
-    paragraphs: [
-      "1. Administrator danych - Administratorem danych osobowych zbieranych poprzez Serwis jest POLSKA GRUPA IDENTYFIKACJI FIRM SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ z siedzibą w Kielcach (kod pocztowy: 25-381) przy ul. Gen. Mariana Langiewicza 16 lok. 3, wpisana do rejestru przedsiębiorców Krajowego Rejestru Sądowego pod numerem 0000768210, numer NIP: 9592020678, REGON: 382401289, której akta rejestrowe przechowywane są w Sądzie Rejonowym w Kielcach w X Wydziale Gospodarczym Krajowego Rejestru Sądowego (dalej: Administrator).",
-      "2. Dane osobowe – informacje o osobie fizycznej zidentyfikowanej lub możliwej do zidentyfikowania poprzez jeden bądź kilka szczególnych czynników określających fizyczną, fizjologiczną, genetyczną, psychiczną, ekonomiczną, kulturową lub społeczną tożsamość, w tym IP urządzenia, identyfikator internetowy oraz informacje gromadzone za pośrednictwem plików cookie oraz innej podobnej technologii.",
-      "3. Polityka – niniejsza Polityka prywatności.",
-      "4. RODO – rozporządzenie Parlamentu Europejskiego i Rady (UE) 2016/679 z 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (ogólne rozporządzenie o ochronie danych, dalej RODO) oraz ustawą o ochronie danych osobowych z dnia 10 maja 2018 r.",
-      "5. Serwis – serwis internetowy prowadzony przez Administratora pod adresem www.prostasprawa.pl, w tym aplikacja mobilna.",
-      "6. Użytkownik – każda osoba fizyczna odwiedzająca Serwis lub korzystająca z jednej albo kilku usług czy funkcjonalności opisanych w Polityce."
-    ]
-  },
-  {
-    id: "postanowienia-ogolne",
-    number: "II",
-    title: "Postanowienia ogólne",
-    icon: <ShieldCheck className="w-5 h-5" />,
-    paragraphs: [
-      "1. Polityka prywatności określa, jak zbierane, przetwarzane i przechowywane są dane osobowe Użytkowników niezbędne do świadczenia usług drogą elektroniczną za pośrednictwem serwisu internetowego www.prostasprawa.pl (dalej: Serwis).",
-      "2. Serwis zbiera wyłącznie dane osobowe niezbędne do świadczenia i rozwoju usług w nim oferowanych.",
-      "3. Dane osobowe zbierane za pośrednictwem Serwisu są przetwarzane zgodnie z RODO oraz ustawą o ochronie danych osobowych z dnia 10 maja 2018 r.",
-      "4. W związku z korzystaniem przez Użytkownika z Serwisu Administrator zbiera dane w zakresie niezbędnym do świadczenia poszczególnych oferowanych usług. Poniżej zostały opisane szczegółowe zasady oraz cele przetwarzania Danych osobowych gromadzonych podczas korzystania z Serwisu przez Użytkownika."
-    ]
-  },
-  {
-    id: "cel-zbierania-danych",
-    number: "III",
-    title: "Cel zbierania danych osobowych",
-    icon: <Target className="w-5 h-5" />,
-    paragraphs: [
-      "1. Dane osobowe wszystkich osób korzystających z Serwisu przetwarzane są przez Administratora w celu:",
-      "• rejestracji konta i weryfikacji tożsamości Użytkownika,",
-      "• umożliwienia logowania do Serwisu,",
-      "• realizacji umowy dotyczącej usługi i e-usług,",
-      "• komunikacji z Użytkownikiem (e-mail, formularz kontaktowy itp.),",
-      "• wysyłki newslettera (po wyrażeniu zgody Użytkownika na jego otrzymywanie),",
-      "• prowadzenia systemu komentarzy,",
-      "• świadczenia usług społecznościowych,",
-      "• promocji oferty Administratora,",
-      "• marketingu, remarketingu, afiliacji,",
-      "• personalizacji Serwisu dla Użytkowników,",
-      "• działań analitycznych i statystycznych,",
-      "• windykacji należności,",
-      "• ustalenia i dochodzenia roszczeń albo obrony przed nimi,",
-      "• publikacji przez Administratora w środkach masowej komunikacji wizerunku Użytkownika w związku z korzystaniem z usług świadczonych przez Administratora, w tym w formie nagrań wideo oraz fotografii, mających na celu informowanie o usługach Użytkownika, a także jego promocję.",
-      "2. Podstawy prawne przetwarzania Danych osobowych w Serwisie - art. 6 ust. 1 lit. b, c, d, e, f RODO.",
-      "3. Podanie danych jest dobrowolne, ale niezbędne do zawarcia umowy albo skorzystania z innych funkcjonalności Serwisu.",
-      "4. Wykonawca poprzez wykup stosownego pakietu i akceptacje Regulaminu wyraża zgodę na przetwarzanie danych osobowych w celach związanych z obsługą Użytkownika oraz świadczeniem usług, tj. zawarciem i wykonaniem umowy – zgoda konieczna do zawarcia i wykonania umowy."
-    ]
-  },
-  {
-    id: "rodzaj-danych",
-    number: "IV",
-    title: "Rodzaj przetwarzanych danych osobowych",
-    icon: <Database className="w-5 h-5" />,
-    paragraphs: [
-      "1. Administrator może przetwarzać dane osobowe Użytkownika: imię i nazwisko, data urodzenia, adres zamieszkania/siedziby, adres e-mail, numer telefonu, NIP."
-    ]
-  },
-  {
-    id: "okres-przetwarzania",
-    number: "V",
-    title: "Okres przetwarzania danych osobowych",
-    icon: <Clock className="w-5 h-5" />,
-    paragraphs: [
-      "1. Dane osobowe Użytkowników będą przetwarzane przez okres:",
-      "• gdy podstawą przetwarzania danych jest wykonanie umowy – do momentu przedawnienia roszczeń po jej wykonaniu,",
-      "• gdy podstawą przetwarzania danych jest zgoda – do momentu jej odwołania, a po odwołaniu zgody do przedawnienia roszczeń.",
-      "2. W obu przypadkach termin przedawnienia wynosi 6 lat, a dla roszczeń o świadczenia okresowe i roszczeń dotyczących prowadzenia działalności gospodarczej – 3 lata (jeśli przepis szczególny nie stanowi inaczej)."
-    ]
-  },
-  {
-    id: "udostepnianie-danych",
-    number: "VI",
-    title: "Udostępnianie danych osobowych",
-    icon: <Share2 className="w-5 h-5" />,
-    paragraphs: [
-      "1. Dane osobowe Użytkowników mogą być przekazywane: podmiotom powiązanym z Administratorem, jego podwykonawcom, jeżeli występują, oraz innym podmiotom współpracującym z Administratorem, w tym w szczególności dostawcom usług IT pozwalającym na prawidłowe korzystanie z Serwisu.",
-      "2. Dane osobowe Użytkowników nie będą przekazywane poza teren Europejskiego Obszaru Gospodarczego (EOG).",
-      "3. Poziom ochrony Danych osobowych poza Europejskim Obszarem Gospodarczym (EOG) różni się od tego zapewnianego przez prawo europejskie. Z tego powodu Administrator przekazuje Dane osobowe poza EOG tylko wtedy, gdy jest to konieczne, i z zapewnieniem odpowiedniego stopnia ochrony, przede wszystkim poprzez:",
-      "• stosowanie standardowych klauzul umownych wydanych przez Komisję Europejską lub zatwierdzonych przez Komisję Europejską;",
-      "• stosowanie wiążących reguł korporacyjnych zatwierdzonych przez właściwy organ nadzorczy;",
-      "• współpracę z podmiotami przetwarzającymi Dane osobowe w państwach, w odniesieniu do których została wydana stosowna decyzja Komisji Europejskiej dotycząca stwierdzenia zapewnienia odpowiedniego stopnia ochrony Danych osobowych;",
-      "• Administrator zawsze informuje o zamiarze przekazania Danych osobowych poza EOG na etapie ich zbierania."
-    ]
-  },
-  {
-    id: "prawa-uzytkownikow",
-    number: "VII",
-    title: "Prawa Użytkowników",
-    icon: <Scale className="w-5 h-5" />,
-    paragraphs: [
-      "1. Użytkownik Serwisu ma prawo do: dostępu do treści swoich danych osobowych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia, wniesienia sprzeciwu wobec przetwarzania, cofnięcia zgody w każdej chwili (co nie ma wpływu na zgodność z prawem przetwarzania dokonanego w oparciu o zgodę przed jej cofnięciem).",
-      "2. Zgłoszenie o wystąpieniu przez Użytkownika z uprawnieniem wynikającym z wymienionych praw należy przesłać na adres iod@prostasprawa.pl.",
-      "3. Administrator spełnia lub odmawia spełnienia żądania niezwłocznie – maksymalnie w ciągu miesiąca od jego otrzymania.",
-      "4. Użytkownik ma prawo złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych, jeśli uzna, że przetwarzanie narusza jego prawa i wolności (RODO)."
-    ]
-  },
-  {
-    id: "pliki-cookies",
-    number: "VIII",
-    title: "Pliki cookies",
-    icon: <Cookie className="w-5 h-5" />,
-    paragraphs: [
-      "1. Serwis zbiera informacje za pomocą plików cookies – sesyjnych, stałych i podmiotów zewnętrznych.",
-      "2. Zbieranie plików cookies wspiera poprawne świadczenie usług w Serwisie i służy celom statystycznym.",
-      "3. Użytkownik może określić zakres dostępu plików cookies do swojego urządzenia w ustawieniach przeglądarki.",
-      "4. Administrator w ramach Serwisu korzysta z plików cookie. Cele i zasady dotyczące korzystania z plików cookie znajdują się w Regulaminie Serwisu.",
-      "5. Dane związane z analizą ruchu sieciowego gromadzone za pośrednictwem plików cookies oraz podobnych technologii mogą być przechowywane do momentu wygaśnięcia pliku cookie. Niektóre pliki cookie nigdy nie wygasają, w związku z tym czas przechowywania danych będzie równoważny z czasem niezbędnym Administratorowi do zrealizowania celów związanych z gromadzeniem danych, jak zapewnienie bezpieczeństwa i analiza danych historycznych związanych z ruchem na stronie."
-    ]
-  },
-  {
-    id: "zautomatyzowane-decyzje",
-    number: "IX",
-    title: "Zautomatyzowane podejmowanie decyzji i profilowanie",
-    icon: <Cpu className="w-5 h-5" />,
-    paragraphs: [
-      "1. Dane Użytkowników nie mogą być przetwarzane w zautomatyzowany sposób tak, że na skutek tego mogłyby zapaść wobec nich jakiekolwiek decyzje.",
-      "2. Dane Użytkowników mogą być profilowane celem dostosowania treści i personalizacji oferty Serwisu po wyrażeniu przez nich zgody."
-    ]
-  },
-  {
-    id: "bezpieczenstwo-danych",
-    number: "X",
-    title: "Bezpieczeństwo Danych osobowych",
-    icon: <Lock className="w-5 h-5" />,
-    paragraphs: [
-      "1. Administrator na bieżąco prowadzi analizę ryzyka w celu zapewnienia, że Dane osobowe przetwarzane są przez niego w sposób bezpieczny – zapewniający przede wszystkim, że dostęp do danych mają jedynie osoby upoważnione i jedynie w zakresie, w jakim jest to niezbędne ze względu na wykonywane przez nie zadania. Administrator dba o to, by wszystkie operacje na Danych osobowych były rejestrowane i dokonywane jedynie przez uprawnionych pracowników i współpracowników.",
-      "2. Administrator podejmuje wszelkie niezbędne działania, by także jego podwykonawcy, o ile występują, i inne podmioty współpracujące dawały gwarancję stosowania odpowiednich środków bezpieczeństwa w każdym przypadku, gdy przetwarzają Dane osobowe na zlecenie Administratora."
-    ]
-  },
-  {
-    id: "postanowienia-koncowe",
-    number: "XI",
-    title: "Postanowienia końcowe",
-    icon: <FileText className="w-5 h-5" />,
-    paragraphs: [
-      "1. Administrator ma prawo do wprowadzenia zmian w Polityce prywatności, przy czym prawa Użytkowników nie zostaną ograniczone.",
-      "2. Informacja o wprowadzonych zmianach pojawi się w formie komunikatu dostępnego w Serwisie.",
-      "3. W sprawach nieuregulowanych w niniejszej Polityce prywatności obowiązują przepisy RODO i przepisy prawa polskiego."
-    ]
-  }
-]
+const DEFAULT_SECTION_ICON = <FileText className="w-5 h-5" />
 
-export default function PrivacyPolicyClientPage() {
+export default function PrivacyPolicyClientPage({ content }: { content: LegalPageContent }) {
   const [activeTab, setActiveTab] = useState<"tldr" | "full">("tldr")
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeSection, setActiveSection] = useState("definicje")
+  const [activeSection, setActiveSection] = useState(content.sections[0]?.id ?? "")
   const [copiedEmail, setCopiedEmail] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const sectionsRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
   const [openGlossaryIndex, setOpenGlossaryIndex] = useState<number | null>(null)
+
+  // Rozdziały z bazy + ikony przypisane po id (nowe rozdziały dostają ikonę domyślną)
+  const sections = useMemo(
+    () =>
+      content.sections.map(section => ({
+        ...section,
+        icon: SECTION_ICONS[section.id] ?? DEFAULT_SECTION_ICON,
+      })),
+    [content.sections]
+  )
 
   // Copy email to clipboard
   const handleCopyEmail = () => {
@@ -240,7 +93,7 @@ export default function PrivacyPolicyClientPage() {
       let currentSection = activeSection
       const offset = 180 // offset for fixed header + breathing room
 
-      for (const section of SECTIONS) {
+      for (const section of sections) {
         const el = sectionsRefs.current[section.id]
         if (el) {
           const rect = el.getBoundingClientRect()
@@ -255,7 +108,7 @@ export default function PrivacyPolicyClientPage() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [activeTab, activeSection])
+  }, [activeTab, activeSection, sections])
 
   const scrollToSection = (id: string) => {
     setActiveSection(id)
@@ -276,10 +129,10 @@ export default function PrivacyPolicyClientPage() {
 
   // Filter sections and paragraphs based on search query
   const filteredSections = useMemo(() => {
-    if (!searchQuery.trim()) return SECTIONS
+    if (!searchQuery.trim()) return sections
 
     const query = searchQuery.toLowerCase().trim()
-    return SECTIONS.map(section => {
+    return sections.map(section => {
       const titleMatches = section.title.toLowerCase().includes(query)
       const matchingParagraphs = section.paragraphs.filter(p => p.toLowerCase().includes(query))
       
@@ -292,15 +145,15 @@ export default function PrivacyPolicyClientPage() {
         }
       }
       return null
-    }).filter(Boolean) as (typeof SECTIONS[0] & { isFiltered?: boolean })[]
-  }, [searchQuery])
+    }).filter(Boolean) as (typeof sections[0] & { isFiltered?: boolean })[]
+  }, [searchQuery, sections])
 
   // Count search matches
   const matchCount = useMemo(() => {
     if (!searchQuery.trim()) return 0
     const query = searchQuery.toLowerCase().trim()
     let count = 0
-    SECTIONS.forEach(s => {
+    sections.forEach(s => {
       if (s.title.toLowerCase().includes(query)) count++
       s.paragraphs.forEach(p => {
         const regex = new RegExp(query, "gi")
@@ -309,7 +162,7 @@ export default function PrivacyPolicyClientPage() {
       })
     })
     return count
-  }, [searchQuery])
+  }, [searchQuery, sections])
 
   // Helper to highlight matching text
   const highlightText = (text: string, search: string) => {
@@ -360,10 +213,10 @@ export default function PrivacyPolicyClientPage() {
             />
           </div>
           <h1 className="font-playfair text-3xl sm:text-4xl lg:text-[44px] leading-tight text-white font-bold tracking-tight mt-3 print:text-black print:text-2xl">
-            Polityka Prywatności
+            {content.heroTitle}
           </h1>
           <p className="text-neutral-400 text-sm sm:text-base font-light mt-1 print:text-neutral-600">
-            Zasady przetwarzania i ochrony danych osobowych w serwisie ProstaSprawa.pl
+            {content.heroSubtitle}
           </p>
         </div>
       </div>
@@ -588,6 +441,7 @@ export default function PrivacyPolicyClientPage() {
             </div>
 
             {/* Glossary/Definitions Accordion */}
+            {content.definitions.length > 0 && (
             <div className="bg-[#1a1917]/50 border border-neutral-800/80 rounded-2xl p-6 sm:p-8 mt-12">
               <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
                 <Info className="w-5 h-5 text-teal-500" />
@@ -595,7 +449,7 @@ export default function PrivacyPolicyClientPage() {
               </h3>
               
               <div className="space-y-3">
-                {DEFINITIONS.map((def, idx) => {
+                {content.definitions.map((def, idx) => {
                   const isOpen = openGlossaryIndex === idx
                   return (
                     <div 
@@ -629,6 +483,7 @@ export default function PrivacyPolicyClientPage() {
                 })}
               </div>
             </div>
+            )}
 
             {/* DPO / IOD Spotlight Banner */}
             <div className="bg-[#1d1c1a]/95 border border-neutral-800/80 rounded-2xl p-6 sm:p-8 mt-12 flex flex-col lg:flex-row gap-8 items-center justify-between relative overflow-hidden">
@@ -683,7 +538,7 @@ export default function PrivacyPolicyClientPage() {
                   Spis treści
                 </h3>
                 <nav className="flex flex-col space-y-1">
-                  {SECTIONS.map((section) => (
+                  {sections.map((section) => (
                     <button
                       key={section.id}
                       onClick={() => scrollToSection(section.id)}
@@ -837,7 +692,9 @@ export default function PrivacyPolicyClientPage() {
 
               {/* Final Legal Footer info */}
               <div className="text-center text-xs text-neutral-500 pt-6 border-t border-neutral-900/60 print:text-neutral-500">
-                Ostatnia aktualizacja dokumentu: 22 czerwca 2026 r.<br />
+                {content.lastUpdated && (
+                  <>Ostatnia aktualizacja dokumentu: {content.lastUpdated}<br /></>
+                )}
                 Polityka Prywatności serwisu ProstaSprawa.pl jest chroniona prawem autorskim.
               </div>
             </main>

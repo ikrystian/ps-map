@@ -1,6 +1,6 @@
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
+import { motion } from "framer-motion"
 import Image from "next/image"
 import { useState } from "react"
 
@@ -31,8 +31,10 @@ import {
   MapPin,
   Megaphone,
   MessageSquare,
+  ScrollText,
   Settings,
   Shield,
+  ShieldCheck,
   Star,
   Tags,
   TrendingUp,
@@ -62,6 +64,8 @@ const navigation = [
   { name: "Typy działalności", href: "/admin/expertise-categories", icon: Briefcase },
   { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },
   { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
+  { name: "Polityka prywatności", href: "/admin/pages/polityka-prywatnosci", icon: ShieldCheck, isSubmenu: true },
+  { name: "Regulamin", href: "/admin/pages/regulamin", icon: ScrollText, isSubmenu: true },
   { name: "Moduły", href: "/admin/modules", icon: FileCode },
   { name: "Blog", href: "/admin/blog", icon: BookOpen },
   { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
@@ -84,15 +88,24 @@ export default function AdminLayout({
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  const activeItem = navigation.find(item => {
-    return pathname === item.href ||
-      (item.href !== "/admin" &&
-        item.href !== "/admin/transakcje" &&
-        pathname.startsWith(item.href)) ||
-      (item.href === "/admin/transakcje" &&
-        pathname.startsWith("/admin/transakcje") &&
-        !pathname.startsWith("/admin/transakcje/punkty"))
-  })
+  // Podstrony "Stron" z własnymi pozycjami w podmenu
+  const legalPagesRoutes = ["/admin/pages/polityka-prywatnosci", "/admin/pages/regulamin"]
+
+  const isNavItemActive = (href: string) => {
+    if (pathname === href) return true
+    if (href === "/admin") return false
+    if (href === "/admin/transakcje") {
+      return pathname.startsWith("/admin/transakcje") &&
+        !pathname.startsWith("/admin/transakcje/punkty")
+    }
+    if (href === "/admin/pages") {
+      return pathname.startsWith("/admin/pages") &&
+        !legalPagesRoutes.some(route => pathname.startsWith(route))
+    }
+    return pathname.startsWith(href)
+  }
+
+  const activeItem = navigation.find(item => isNavItemActive(item.href))
 
   const defaultSubtitle = activeItem
     ? activeItem.name === "Dashboard"
@@ -137,13 +150,7 @@ export default function AdminLayout({
               suppressHydrationWarning
             >
               {navigation.map((item, index) => {
-                const isActive = pathname === item.href ||
-                  (item.href !== "/admin" &&
-                    item.href !== "/admin/transakcje" &&
-                    pathname.startsWith(item.href)) ||
-                  (item.href === "/admin/transakcje" &&
-                    pathname.startsWith("/admin/transakcje") &&
-                    !pathname.startsWith("/admin/transakcje/punkty"))
+                const isActive = isNavItemActive(item.href)
 
                 return (
                   <Link
