@@ -69,6 +69,7 @@ const navigationGroups = [
     label: "Wizytówka",
     items: [
       { name: "Profil", href: "/panel-eksperta/profil", icon: User },
+      { name: "Podgląd profilu", href: "/ekspert/[slug]", icon: ExternalLink },
       { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: Wrench },
       { name: "Blog", href: "/panel-eksperta/blog", icon: BookOpen },
       { name: "Opinie", href: "/panel-eksperta/opinie", icon: Star },
@@ -280,21 +281,26 @@ export default function LawFirmPanelLayout({
           )}
           {group.items.map((item) => {
             const index = navigation.indexOf(item)
-            const isActive = pathname === item.href ||
-              (item.href !== "/panel-eksperta" && pathname.startsWith(item.href))
-            const isMessagesItem = item.href === "/panel-eksperta/wiadomosci"
+            const href = item.href.replace("[slug]", lawFirmSlug || "")
+            const isActive = pathname === href ||
+              (href !== "/panel-eksperta" && pathname.startsWith(href))
+            const isMessagesItem = href === "/panel-eksperta/wiadomosci"
             const showBadge = isMessagesItem && unreadCount > 0
 
-            const isSprawy = item.href === "/panel-eksperta/sprawy"
-            const isOferty = item.href === "/panel-eksperta/oferty"
-            const isKonsultacje = item.href === "/panel-eksperta/konsultacje"
+            const isSprawy = href === "/panel-eksperta/sprawy"
+            const isOferty = href === "/panel-eksperta/oferty"
+            const isKonsultacje = href === "/panel-eksperta/konsultacje"
             const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : undefined
             const showCountBadge = count !== undefined
+
+            const isProfilePreview = item.href.includes("[slug]")
 
             return (
               <Link
                 key={item.name}
-                href={item.href}
+                href={href}
+                target={isProfilePreview ? "_blank" : undefined}
+                rel={isProfilePreview ? "noopener noreferrer" : undefined}
                 className={cn(
                   "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
                   isActive

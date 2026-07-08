@@ -1,6 +1,7 @@
 "use client"
 import Image from "next/image"
 
+import { AddCaseButton } from "@/components/AddCaseButton"
 import { NotificationBell } from "@/components/NotificationBell"
 import { PanelFooter } from "@/components/PanelFooter"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -20,7 +21,6 @@ import {
   LogOut,
   Menu,
   MessageSquare,
-  Plus,
   UserCircle,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
@@ -333,11 +333,7 @@ export default function ClientPanelLayout({
 
           {/* Notifications and User menu */}
           <div className="flex items-center gap-3">
-            <Link href="/panel-klienta/sprawy/dodaj">
-
-
-              <Button variant="primary" size="sm" className="gap-1.5">Dodaj sprawę<Plus className="h-4 w-4" /></Button>
-            </Link>
+            <AddCaseButton href="/panel-klienta/sprawy/dodaj" />
 
             <NotificationBell />
             <UserMenu
