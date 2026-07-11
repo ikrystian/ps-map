@@ -14,7 +14,6 @@ import { CategoriesGrid } from "@/components/homepage/categories-grid";
 import { CitiesList } from "@/components/homepage/cities-list";
 import { VoivodeshipsList } from "@/components/homepage/voivodeships-list";
 import { ExpertCTA } from "@/components/homepage/expert-cta";
-import { ExpertsShowcase } from "@/components/homepage/experts-showcase";
 import { HeroSection } from "@/components/homepage/hero-section";
 import { HowItWorksSection } from "@/components/homepage/how-it-works-section";
 import { LatestArticles } from "@/components/homepage/latest-articles";
@@ -140,8 +139,6 @@ export default function HomePage() {
       {/* SECTION 8: New Experts */}
       <NewExperts newLawFirms={newLawFirms} />
 
-      {/* SECTION 8B: Experts Showcase — poziomy scroll (24 losowych ekspertów) */}
-      <ExpertsShowcase />
 
       {/* SECTION 9: How It Works */}
       <HowItWorksSection />

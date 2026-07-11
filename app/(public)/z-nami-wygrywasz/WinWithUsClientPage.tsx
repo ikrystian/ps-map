@@ -26,396 +26,352 @@ export default function WinWithUsClientPage() {
         </div>
       </div>
 
+      {/* Hero Section */}
       <section className="min-h-[calc(100vh-65px)] bg-[#121212] flex items-center justify-center py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Background glow effects to match the premium theme */}
         <div className="absolute top-1/4 left-1/10 w-[400px] h-[400px] bg-emerald-950/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/10 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[150px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-            
-            {/* Left Column: Title, Description, CTA Button */}
+
+            {/* Left Column */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="lg:col-span-6 xl:col-span-5 flex flex-col items-start text-left"
             >
-              {/* Title */}
-              <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl text-white font-light tracking-tight leading-tight mb-8">
-                Dlaczego <span className="font-bold">ProstaSprawa.pl</span>?
+              <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl text-white font-light tracking-tight leading-tight mb-6">
+                Z nami <span className="font-bold">wygrywasz</span>
               </h1>
 
-              {/* Description */}
-              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-10 max-w-xl">
-                Naszym głównym celem jest zwiększenie dostępności bezpłatnej pomocy
-                i informacji prawnej oraz promocja ekspertów z całej Polski. Pragniemy
-                aby za pośrednictwem serwisu prostasprawa.pl każdy mógł szybko
-                i bezproblemowo znaleźć odpowiedź na nurtujący go problem lub
-                prawnika, który zajmie się kompleksowo jego zagadnieniem.
+              <p className="text-[#0da192] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
+                Znajdź właściwego specjalistę bez obdzwaniania połowy miasta
               </p>
 
-              {/* CTA Button */}
+              <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-8 max-w-xl">
+                Masz problem i nie wiesz, do kogo się z nim zwrócić? Zwykle zaczyna się tak samo: wpisujesz
+                w wyszukiwarkę, szukasz na grupach w social mediach, otwierasz dziesięć zakładek, dzwonisz do
+                trzech prawników, w dwóch nikt nie odbiera. ProstaSprawa.pl skraca to do jednego kroku.
+                Opisujesz sprawę raz, a specjaliści sami się zgłaszają.
+              </p>
+
               <Link href="/logowanie">
-                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
+                <InteractiveHoverButton>Opisz swoją sprawę</InteractiveHoverButton>
               </Link>
             </motion.div>
 
-            {/* Right Column: Statistics / Benefits Section */}
-            <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-12 lg:gap-16">
-              
-              {/* Benefit Item 1 */}
+            {/* Right Column: Key value props */}
+            <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-10 lg:gap-12">
+
+              {/* How it works */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                 className="flex gap-6 items-start group"
               >
-                {/* Icon 1: Custom SVG matching Growth Chart & User */}
                 <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
-                  <svg
-                    width="56"
-                    height="56"
-                    viewBox="0 0 56 56"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-14 h-14 md:w-16 md:h-16"
-                  >
-                    {/* Bars of the chart */}
-                    <line x1="12" y1="40" x2="12" y2="28" />
-                    <line x1="20" y1="40" x2="20" y2="20" />
-                    <line x1="28" y1="40" x2="28" y2="14" />
-                    {/* Horizontal baseline */}
-                    <line x1="6" y1="40" x2="36" y2="40" />
-                    
-                    {/* Line graph line with arrow */}
-                    <path d="M12 24L20 16L28 10L38 15" />
-                    <path d="M32 10H38V16" />
-
-                    {/* Circular User Avatar Overlay */}
-                    <circle cx="43" cy="38" r="9" fill="#121212" className="fill-[#121212] group-hover:fill-[#1a1a1a] transition-colors duration-300" />
-                    <circle cx="43" cy="38" r="9" />
-                    <circle cx="43" cy="34" r="2.5" />
-                    <path d="M37 43C37 40.5 40 39.5 43 39.5C46 39.5 49 40.5 49 43" />
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                    className="w-14 h-14 md:w-16 md:h-16">
+                    <circle cx="22" cy="22" r="12" />
+                    <line x1="31" y1="31" x2="44" y2="44" />
+                    <circle cx="22" cy="18" r="3" />
+                    <path d="M15 26c0-4 3-5 7-5s7 1 7 5" />
                   </svg>
                 </div>
-
-                {/* Text Block 1 */}
                 <div className="flex-1 text-left">
-                  {/* Header */}
                   <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
-                    <span className="font-bold">18 mln</span> użytkowników
+                    <span className="font-bold">Jak to działa?</span>
                   </h3>
-                  {/* Highlight line */}
-                  <p className="text-neutral-200  text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
-                    miesięcznie odwiedza nasze serwisy.
-                  </p>
-                  {/* Paragraph */}
-                  <p className="text-neutral-400  text-sm sm:text-base leading-relaxed">
-                    Od ponad 10 lat aktywnie wpływamy na rynek usług prawnych w Polsce!
-                    Każdy nasz użytkownik może zostać Twoim klientem.
+                  <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mt-2">
+                    Opisujesz swój problem, wybierasz kategorię i lokalizację. Potem czekasz na oferty od
+                    specjalistów, którzy chcą się tą sprawą zająć. Możesz spokojnie porównać, co każdy proponuje,
+                    ile ma doświadczenia i ile to kosztuje — bez pośpiechu i bez presji.
                   </p>
                 </div>
               </motion.div>
 
-              {/* Benefit Item 2 */}
+              {/* Pay for real help */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
                 className="flex gap-6 items-start group"
               >
-                {/* Icon 2: Custom SVG matching Document & Search */}
                 <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
-                  <svg
-                    width="56"
-                    height="56"
-                    viewBox="0 0 56 56"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-14 h-14 md:w-16 md:h-16"
-                  >
-                    {/* Document container */}
-                    <rect x="10" y="8" width="30" height="40" rx="3" />
-                    {/* Text lines in document */}
-                    <line x1="16" y1="16" x2="30" y2="16" />
-                    <line x1="16" y1="24" x2="34" y2="24" />
-                    <line x1="16" y1="32" x2="26" y2="32" />
-                    <line x1="16" y1="40" x2="22" y2="40" />
-
-                    {/* Magnifying Glass Overlay */}
-                    <circle cx="43" cy="38" r="8" fill="#121212" className="fill-[#121212] group-hover:fill-[#1a1a1a] transition-colors duration-300" />
-                    <circle cx="43" cy="38" r="8" />
-                    <line x1="48.5" y1="43.5" x2="53" y2="48" />
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                    className="w-14 h-14 md:w-16 md:h-16">
+                    <circle cx="28" cy="28" r="18" />
+                    <path d="M28 18v20M23 22h7.5a4.5 4.5 0 0 1 0 9H25a4.5 4.5 0 0 0 0 9H33" />
                   </svg>
                 </div>
-
-                {/* Text Block 2 */}
                 <div className="flex-1 text-left">
-                  {/* Header */}
                   <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
-                    <span className="font-bold">Ponad 150 osób</span> dziennie
+                    <span className="font-bold">Płacisz</span> tylko za realną pomoc
                   </h3>
-                  {/* Highlight line */}
-                  <p className="text-neutral-200  text-sm sm:text-base font-medium mt-1 mb-2 leading-relaxed">
-                    szuka w naszym serwisie porady prawnej lub odpowiedniego
-                    Prawnika, który kompleksowo pokieruje daną kwestią.
+                  <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mt-2">
+                    Założenie konta nic nie kosztuje. Nie płacisz nam za rejestrację, nie dopłacasz żadnej
+                    prowizji — ani teraz, ani później. Rozliczasz się wprost z wybranym specjalistą za konkretną
+                    pomoc. Żadnych ukrytych opłat po drodze.
                   </p>
-                  {/* Paragraph */}
-                  <p className="text-neutral-400  text-sm sm:text-base leading-relaxed">
-                    Możliwość zadania bezpłatnego pytania oraz intuicyjna, prosta w obsłudze
-                    wyszukiwarka ułatwiają podjęcie świadomej decyzji, w wyborze
-                    odpowiedniej ścieżki działania.
+                </div>
+              </motion.div>
+
+              {/* Not only lawyers */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+                className="flex gap-6 items-start group"
+              >
+                <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                    className="w-14 h-14 md:w-16 md:h-16">
+                    <circle cx="20" cy="18" r="6" />
+                    <path d="M8 40c0-6 5-10 12-10s12 4 12 10" />
+                    <circle cx="38" cy="20" r="5" />
+                    <path d="M34 40c0-4 3-8 8-8s8 3 8 7" />
+                  </svg>
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
+                    Nie tylko <span className="font-bold">prawnicy</span>
+                  </h3>
+                  <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mt-2">
+                    Nie każda sprawa to od razu sąd i paragrafy. Znajdziesz tu też rzeczoznawców, doradców
+                    finansowych, księgowych, architektów i innych specjalistów. Jak jeden problem zahacza
+                    o kilka dziedzin — masz wszystkich w jednym miejscu.
                   </p>
                 </div>
               </motion.div>
 
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* New Section: Użytkowniku, dlaczego ProstaSprawa.pl? */}
+      {/* Section 2: Benefits Grid */}
       <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
-        {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-teal-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto w-full relative z-10 text-center">
-          
-          {/* Section Heading */}
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light leading-tight mb-20"
+            className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light leading-tight text-center mb-4"
           >
-            Użytkowniku, dlaczego <span className="font-bold">ProstaSprawa.pl</span>?
+            Dlaczego z nami <span className="font-bold">wygrywasz?</span>
           </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-neutral-400 text-sm sm:text-base text-center max-w-2xl mx-auto mb-16"
+          >
+            Bo zamiast obdzwaniać pół miasta, opisujesz sprawę raz i to specjaliści zgłaszają się do Ciebie.
+            Widzisz, z kim masz do czynienia, i wybierasz sam.
+          </motion.p>
 
-          {/* Two Columns Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 max-w-5xl mx-auto">
-            
-            {/* Column 1: Bezpłatne pytanie */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {/* Card 1 */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex flex-col items-center text-center group"
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
-              {/* Icon 1: Speech bubble with question mark */}
-              <div className="mb-6 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 64 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-16 h-16"
-                >
-                  <path d="M46 38c0 5.5-4.5 10-10 10H22l-8 8V48c-3.3 0-6-2.7-6-6V22c0-3.3 2.7-6 6-6h24c3.3 0 6 2.7 6 6v16z" />
-                  <path d="M48 24h4c3.3 0 6 2.7 6 6v16l-8-8H44" opacity="0.5" />
-                  <path d="M26 26c0-2 1.5-3.5 3-3.5s3 1.5 3 3.5c0 2-3 3-3 3" />
-                  <circle cx="29" cy="34" r="1.2" fill="currentColor" />
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 10h36v24H24l-10 8V34H8V10z" />
+                  <path d="M18 22l5 5 11-10" />
                 </svg>
               </div>
-
-              {/* Subheading */}
-              <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-4">
-                Bezpłatne pytanie
-              </h3>
-
-              {/* Paragraph */}
-              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-8 max-w-md">
-                Jako użytkownik serwisu prostasprawa.pl możesz w łatwy i szybki sposób uzyskać poradę prawną, bezpośrednio w swojej sprawie. Zadając anonimowo, bezpłatne pytanie, otrzymujesz informację prawną, odnoszącą się bezpośrednio do opisanej sytuacji.
-              </p>
-
-              {/* Button */}
-              <Link href="/logowanie">
-                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
-              </Link>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Konkret zamiast ogólników
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Nie znajdziesz tu darmowych porad rzucanych w powietrze. Specjalista, który odpowiada
+                  na Twoją sprawę, robi to świadomie i od razu proponuje konkretną współpracę — nie zdawkowe
+                  „to zależy". Dostajesz propozycję, na której da się coś zbudować.
+                </p>
+              </div>
             </motion.div>
 
-            {/* Column 2: Wyszukiwarka prawników */}
+            {/* Card 2 */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col items-center text-center group"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
-              {/* Icon 2: Lawyer with scales */}
-              <div className="mb-6 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 64 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-16 h-16"
-                >
-                  <circle cx="26" cy="18" r="6" />
-                  <path d="M20 18c0-3 3-4 6-4s6 1 6 4" />
-                  <path d="M12 48c0-5 4-9 9-9h10c5 0 9 4 9 9v4H12v-4z" />
-                  <path d="M26 39v6l-2-2z" />
-                  <path d="M21 39l5 4 5-4" />
-                  <path d="M48 26h12" />
-                  <path d="M54 18v26" />
-                  <path d="M54 44h4M54 44h-4" />
-                  <path d="M48 26l-2 8h4l-2-8z" />
-                  <path d="M46 34c0 1.5 1 2 2 2s2-.5 2-2" />
-                  <path d="M60 26l-2 8h4l-2-8z" />
-                  <path d="M58 34c0 1.5 1 2 2 2s2-.5 2-2" />
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M26 6L10 12v14c0 10 7 18 16 20 9-2 16-10 16-20V12L26 6z" />
+                  <circle cx="26" cy="22" r="4" />
+                  <path d="M18 36c0-4 4-7 8-7s8 3 8 7" />
                 </svg>
               </div>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Ty decydujesz, komu zaufasz
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Wybór należy do Ciebie. Zanim się zdecydujesz, sprawdzasz profil: doświadczenie,
+                  publikacje, zakres usług. Masz przed sobą to, czego potrzebujesz, żeby wybrać świadomie
+                  — nie w ciemno.
+                </p>
+              </div>
+            </motion.div>
 
-              {/* Subheading */}
-              <h3 className="font-playfair text-xl sm:text-2xl text-white font-normal mb-4">
-                Wyszukiwarka prawników
-              </h3>
+            {/* Card 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
+            >
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="6" y="8" width="40" height="36" rx="4" />
+                  <line x1="6" y1="18" x2="46" y2="18" />
+                  <rect x="12" y="24" width="12" height="12" rx="2" />
+                  <line x1="28" y1="26" x2="38" y2="26" />
+                  <line x1="28" y1="30" x2="36" y2="30" />
+                  <line x1="28" y1="34" x2="34" y2="34" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Wszystko w jednym miejscu
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Po założeniu konta dostajesz własny panel: czat ze specjalistą, szybkie dodawanie nowych
+                  spraw i pełna historia zgłoszeń. Komunikacja uporządkowana — bez szukania po mailach i SMS-ach.
+                </p>
+              </div>
+            </motion.div>
 
-              {/* Paragraph */}
-              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed mb-8 max-w-md">
-                Wolisz bezpośrednie rozwiązania? Skorzystaj z naszej wyszukiwarki i znajdź Prawnika z Twojej okolicy. W serwisie prostasprawa.pl zarejestrowani są Eksperci z całej Polski.
-              </p>
+            {/* Card 4 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
+            >
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="12" y="22" width="28" height="22" rx="3" />
+                  <path d="M18 22v-6a8 8 0 0 1 16 0v6" />
+                  <circle cx="26" cy="33" r="3" />
+                  <line x1="26" y1="36" x2="26" y2="40" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Twoje dane są chronione
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Twoje dane są ściśle chronione i przetwarzane tylko w naszym systemie.
+                  Żadne informacje nie trafiają na zewnątrz bez Twojej wiedzy i zgody.
+                </p>
+              </div>
+            </motion.div>
 
-              {/* Button */}
-              <Link href="/logowanie">
-                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
-              </Link>
+            {/* Card 5 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
+            >
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="6" y="18" width="40" height="28" rx="3" />
+                  <path d="M18 18v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4" />
+                  <line x1="6" y1="30" x2="46" y2="30" />
+                  <line x1="26" y1="26" x2="26" y2="34" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Eksperci z wielu dziedzin
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Prawnicy, rzeczoznawcy, doradcy finansowi, księgowi, architekci i inni. Gdy problem zahacza
+                  o kilka dziedzin — masz wszystkich w jednym miejscu i nie musisz szukać każdego z osobna.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Card 6 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
+            >
+              <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M32 6L16 28h14L20 46l20-24H26L32 6z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
+                  Pierwszy krok jest prosty
+                </h3>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  Opisujesz sprawę raz. Widzisz, z kim masz do czynienia, i wybierasz sam. Płacisz tylko
+                  za realną pomoc, bez żadnej prowizji. Dokładnie po to powstała ProstaSprawa.pl.
+                </p>
+              </div>
             </motion.div>
 
           </div>
 
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex justify-center mt-16"
+          >
+            <Link href="/logowanie">
+              <InteractiveHoverButton>Opisz swoją sprawę i sprawdź, kto się zgłosi</InteractiveHoverButton>
+            </Link>
+          </motion.div>
+
         </div>
       </section>
 
-      {/* Section 3: Prawniku, dlaczego warto współpracować z ProstaSprawa.pl? */}
+      {/* Section 3: Process */}
       <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
-        {/* Ambient glows to match premium theme */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-amber-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-            
-            {/* Left Column: Image with overlapping Gold Double Checkmark Logo */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="lg:col-span-5 flex justify-center relative"
-            >
-              <div className="relative w-full max-w-[420px]">
-                {/* Main Lawyer Image */}
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-neutral-800/80 aspect-square">
-                  <Image
-                    src="/images/lawyer_with_coffee.png"
-                    alt="Prawnik przy komputerze z kawą"
-                    fill
-                    sizes="(max-w-768px) 100vw, 420px"
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-
-                {/* Overlapping gold double checkmark logo container */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-28 sm:h-28 bg-[#1e1d1a]/95 border border-neutral-700/60 rounded-2xl shadow-2xl flex items-center justify-center p-5 z-20 backdrop-blur-sm"
-                >
-                  <svg
-                    viewBox="0 0 100 100"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-full h-full"
-                  >
-                    <defs>
-                      <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#d4af37" />
-                        <stop offset="50%" stopColor="#f3e5ab" />
-                        <stop offset="100%" stopColor="#aa7c11" />
-                      </linearGradient>
-                    </defs>
-                    {/* First checkmark */}
-                    <path
-                      d="M20 50 L40 70 L80 30"
-                      stroke="url(#gold-grad)"
-                      strokeWidth="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    {/* Second overlapping checkmark (offset) */}
-                    <path
-                      d="M32 58 L46 72 L76 42"
-                      stroke="url(#gold-grad)"
-                      strokeWidth="7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      opacity="0.8"
-                    />
-                  </svg>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Right Column: Text content */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="lg:col-span-7 flex flex-col items-start text-left"
-            >
-              {/* Heading */}
-              <h2 className="font-playfair text-3xl sm:text-4xl lg:text-[42px] text-white font-light leading-tight tracking-tight mb-4">
-                <span className="font-bold">Prawniku</span>, dlaczego warto współpracować z <span className="font-bold text-white">ProstaSprawa.pl</span>?
-              </h2>
-
-              {/* Tagline/Label */}
-              <p className="text-[#0da192]  text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">
-                BUDOWANIE MARKI
-              </p>
-
-              {/* Paragraph */}
-              <p className="text-neutral-400  text-sm sm:text-base leading-relaxed max-w-2xl">
-                W dzisiejszych czasach internet jest pierwszym miejscem, za pośrednictwem którego klienci wyszukują interesujące ich informacje czy usługi. Praktycznie każdą działalność człowieka, można już wykonać za pośrednictwem komputera czy smartfona. Nie można pominąć tego medium, jeśli chcemy aby informacja o prowadzonej działalności dotarła do usługobiorców. Obecność w Internecie nie jest już opcją- tylko koniecznością.
-              </p>
-            </motion.div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: Działanie serwisu: Serwis ProstaSprawa.pl pozwala uzyskać pomoc prawną w dwojaki sposób: */}
-      <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
-        {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-6xl mx-auto w-full relative z-10">
-          
-          {/* Section Heading */}
+
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -423,15 +379,13 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6 }}
             className="font-playfair text-3xl sm:text-4xl lg:text-[40px] text-white font-light text-center leading-tight mb-20 max-w-3xl mx-auto"
           >
-            <span className="text-sm  tracking-[0.25em] text-[#0da192] uppercase block mb-3">Działanie serwisu:</span>
-            Serwis ProstaSprawa.pl pozwala <br />
-            <span className="font-bold">uzyskać pomoc prawną</span> w dwojaki sposób:
+            <span className="text-sm tracking-[0.25em] text-[#0da192] uppercase block mb-3">Jak zacząć:</span>
+            Opisz swoją sprawę i&nbsp;zobacz, kto się do&nbsp;niej&nbsp;<span className="font-bold">zgłosi</span>
           </motion.h2>
 
-          {/* Cards Grid */}
           <div className="flex flex-col gap-16 max-w-5xl mx-auto mb-16">
-            
-            {/* Card 1: Zadaj pytanie */}
+
+            {/* Card 1: Zadaj pytanie przez platformę */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -439,32 +393,20 @@ export default function WinWithUsClientPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="relative bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 md:p-12 transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)]"
             >
-              {/* Overlapping Badge */}
               <div className="absolute -top-6 left-8 px-6 py-2 bg-[#111110] border border-neutral-800/80 rounded-xl flex items-center justify-center shadow-lg z-20">
                 <span className="font-playfair text-white font-bold text-3xl leading-none">01</span>
               </div>
 
-              {/* Title */}
               <h3 className="font-playfair text-xl sm:text-2xl text-neutral-200 font-normal text-center mb-16 mt-4">
-                Aby zadać pytanie za pośrednictwem ProstaSprawa.pl należy:
+                Aby zadać pytanie za pośrednictwem ProstaSprawa.pl, wystarczą trzy kroki:
               </h3>
 
-              {/* Steps Layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative">
-                
-                {/* Connecting Curved Dotted SVG Line (only visible on md+) */}
-                <svg
-                  viewBox="0 0 800 100"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block"
-                >
-                  <path
-                    d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
-                    stroke="#2a2926"
-                    strokeWidth="1.5"
-                    strokeDasharray="6 6"
-                  />
+
+                <svg viewBox="0 0 800 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block">
+                  <path d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
+                    stroke="#2a2926" strokeWidth="1.5" strokeDasharray="6 6" />
                   <circle cx="50" cy="40" r="4.5" fill="#fff" />
                   <g transform="translate(740, 27) scale(0.65)" fill="#666">
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -473,96 +415,75 @@ export default function WinWithUsClientPage() {
 
                 {/* Step 1 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    01
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">01</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* Envelope Icon with nested phone circle */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="4" y="10" width="32" height="22" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M4 12 L20 22 L36 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="28" cy="22" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      {/* Phone inside circle */}
-                      <path d="M26 20 C26 21.5 27 23 29 23" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                      <path d="M25.5 19.5 L26.5 20.5 L26 21 C26.5 21.5 27 22 27.5 21.5 L28 21 L29 22" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <rect x="7" y="5" width="22" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M12 11H24M12 17H22M12 23H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="30" cy="30" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M27.5 32.5l1-2.5 3-3a1 1 0 0 1 1.5 0l.7.7a1 1 0 0 1 0 1.5l-3 3-2.2.3z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Uzupełnić <br />
-                    adres e-mail
+                    Opisz<br />swoją sprawę
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    na podany adres przesyłana jest informacja o pojawieniu się nowej odpowiedzi, jednak sam adres e-mail nie jest podawany do publicznej wiadomości;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Zakładasz darmowe konto i w kilku zdaniach piszesz, z czym potrzebujesz pomocy. Wybierasz
+                    kategorię i lokalizację. Nie musisz znać przepisów — wystarczy napisać po ludzku.
                   </p>
                 </div>
 
                 {/* Step 2 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    02
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">02</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* Document Icon with nested phone circle */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="7" y="6" width="26" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M12 12 H28 M12 18 H22 M12 24 H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="28" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      {/* Phone inside circle */}
-                      <path d="M26 22 C26 23.5 27 25 29 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                      <path d="M25.5 21.5 L26.5 22.5 L26 23 C26.5 23.5 27 24 27.5 23.5 L28 23 L29 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <rect x="4" y="22" width="32" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M4 26h8l3 4h10l3-4h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M20 6v12M14 12l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Uzupełnić pole <br />
-                    "Zadaj pytanie"
+                    Odbierz oferty<br />od specjalistów
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    służy ono do określenia przedmiotu opisywanej sprawy;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Twoja sprawa trafia do specjalistów, których profil i doświadczenie do niej pasują.
+                    Ci, którzy chcą się nią zająć, sami się do Ciebie zgłaszają z konkretną propozycją.
                   </p>
                 </div>
 
                 {/* Step 3 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    03
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">03</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* User profile Icon with nested phone receiver */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <circle cx="20" cy="12" r="6" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M8 30 C8 24 13 22 20 22 C27 22 32 24 32 30" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="29" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      {/* Phone inside circle */}
-                      <path d="M27 22 C27 23.5 28 25 30 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                      <path d="M26.5 21.5 L27.5 22.5 L27 23 C27.5 23.5 28 24 28.5 23.5 L29 23 L30 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="16" cy="14" r="5" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M6 32c0-5 4-9 10-9s10 4 10 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="29" cy="22" r="8" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M25 22l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Uzupełnić pole <br />
-                    "Wyjaśnij sytuację"
+                    Wybierz<br />i działaj
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    tutaj pytający może zaprezentować kontekst opisywanej sytuacji w celu lepszego jej zobrazowania;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Porównujesz zgłoszenia: zakres pomocy, doświadczenie, cenę. Sprawdzasz profil każdego
+                    specjalisty i wybierasz tego, przy którym czujesz się najpewniej. Rozliczasz się z nim wprost.
                   </p>
                 </div>
 
               </div>
 
-              {/* Extra info text below columns */}
-              <p className="text-neutral-300 font-playfair text-sm sm:text-base italic text-center mt-12 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Osoba zadająca pytanie ma również możliwość wybrania kategorii, której ono dotyczy, jednak nie jest to krok obowiązkowy.
-              </p>
-
-              {/* Disclaimer / Warning */}
               <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
-                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
-                <p className="text-neutral-500  text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
-                  Tekst, który Użytkownik umieści w powyższych polach zostanie w całości opublikowany w serwisie - bez uprzedniej moderacji. Mając więc na uwadze bezpieczeństwo naszych użytkowników nie zalecamy podawania żadnych danych osobowych w tychże polach.
+                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Bezpłatnie</span>
+                <p className="text-neutral-500 text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                  Założenie konta i publikacja sprawy są całkowicie bezpłatne. Nie pobieramy żadnej prowizji —
+                  rozliczasz się wyłącznie z wybranym specjalistą, za konkretną pomoc, którą od niego dostajesz.
                 </p>
               </div>
             </motion.div>
 
-            {/* Card 2: Wyszukaj Prawnika */}
+            {/* Card 2: Bezpośredni kontakt z prawnikiem */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -570,32 +491,20 @@ export default function WinWithUsClientPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 md:p-12 transition-all duration-300 hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)]"
             >
-              {/* Overlapping Badge */}
               <div className="absolute -top-6 left-8 px-6 py-2 bg-[#111110] border border-neutral-800/80 rounded-xl flex items-center justify-center shadow-lg z-20">
                 <span className="font-playfair text-white font-bold text-3xl leading-none">02</span>
               </div>
 
-              {/* Title */}
               <h3 className="font-playfair text-xl sm:text-2xl text-neutral-200 font-normal text-center mb-16 mt-4">
-                Aby bezpośrednio skontaktować się z Prawnikiem należy:
+                Aby bezpośrednio skontaktować się z prawnikiem, wystarczą trzy kroki:
               </h3>
 
-              {/* Steps Layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative">
-                
-                {/* Connecting Curved Dotted SVG Line (only visible on md+) */}
-                <svg
-                  viewBox="0 0 800 100"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block"
-                >
-                  <path
-                    d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
-                    stroke="#2a2926"
-                    strokeWidth="1.5"
-                    strokeDasharray="6 6"
-                  />
+
+                <svg viewBox="0 0 800 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  className="absolute top-[35px] left-0 w-full h-20 pointer-events-none z-0 hidden md:block">
+                  <path d="M 50,40 C 200,0 250,80 400,40 C 550,0 600,80 750,40"
+                    stroke="#2a2926" strokeWidth="1.5" strokeDasharray="6 6" />
                   <circle cx="50" cy="40" r="4.5" fill="#fff" />
                   <g transform="translate(740, 27) scale(0.65)" fill="#666">
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -604,11 +513,8 @@ export default function WinWithUsClientPage() {
 
                 {/* Step 1 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    01
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">01</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* Search / Glass Icon */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
                       <circle cx="16" cy="16" r="8" stroke="currentColor" strokeWidth="1.5" />
                       <line x1="22" y1="22" x2="32" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -616,80 +522,66 @@ export default function WinWithUsClientPage() {
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Wyszukać <br />
-                    Eksperta
+                    Wybierz prawnika<br />z listy
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    skorzystaj z naszej wyszukiwarki lub rankingu na stronie głównej, filtrując według specjalizacji i lokalizacji;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Przeglądasz profile i zawężasz listę: specjalizacja, miasto, rodzaj sprawy. Nie musisz
+                    nikomu opisywać problemu z góry — po prostu wybierasz osobę, która pasuje Ci najbardziej.
                   </p>
                 </div>
 
                 {/* Step 2 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    02
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">02</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* Star / Profile review icon */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="8" y="6" width="24" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M12 12 H22 M12 18 H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <polygon points="16,24 18,28 22,28 19,30 20,34 16,32 12,34 13,30 10,28 14,28" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M6 8h28v18H22l-6 6V26H6V8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <line x1="12" y1="15" x2="28" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="12" y1="20" x2="22" y2="20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Zapoznać się <br />
-                    z profilem
+                    Napisz<br />wprost do niego
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    przeczytaj opinie innych klientów, sprawdź zakres oferowanej pomocy prawnej, cennik oraz dotychczasową aktywność;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Przy profilu masz przycisk kontaktu. Zakładasz darmowe konto, otwierasz czat i piszesz
+                    od razu do tej jednej, konkretnej osoby. Bez pośredników.
                   </p>
                 </div>
 
                 {/* Step 3 */}
                 <div className="flex flex-col items-center relative z-10">
-                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">
-                    03
-                  </div>
+                  <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">03</div>
                   <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    {/* Calendar / Telephone icon */}
                     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
                       <rect x="6" y="8" width="28" height="24" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M6 14 H34 M12 6 V10 M28 6 V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M6 14H34M12 6V10M28 6V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                       <circle cx="28" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      {/* Phone inside circle */}
-                      <path d="M26 22 C26 23.5 27 25 29 25" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                      <path d="M25.5 21.5 L26.5 22.5 L26 23 C26.5 23.5 27 24 27.5 23.5 L28 23 L29 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M25 24l2 2.5 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
-                    Nawiązać <br />
-                    kontakt
+                    Umówcie rozmowę<br />lub spotkanie
                   </h4>
-                  <p className="text-neutral-500  text-xs leading-relaxed text-center max-w-[240px]">
-                    zadzwoń pod wskazany numer telefonu, wyślij wiadomość bezpośrednią lub zarezerwuj dogodny termin konsultacji;
+                  <p className="text-neutral-500 text-xs leading-relaxed text-center max-w-[240px]">
+                    Prawnik odpisuje w czacie, a jak temat jest szerszy — ustalacie telefon albo spotkanie
+                    online. Warunki i cenę dogadujecie między sobą, bez prowizji dla platformy.
                   </p>
                 </div>
 
               </div>
 
-              {/* Extra info text below columns */}
-              <p className="text-neutral-300 font-playfair text-sm sm:text-base italic text-center mt-12 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Kontakt z Ekspertem jest całkowicie bezpłatny i nie wiąże się z żadnymi opłatami na rzecz serwisu.
-              </p>
-
-              {/* Disclaimer / Warning */}
               <div className="border-t border-neutral-800/40 pt-8 mt-12 flex flex-col items-center gap-3">
-                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Ważne!</span>
-                <p className="text-neutral-500  text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
-                  Warunki ewentualnej współpracy oraz wysokość honorarium są ustalane bezpośrednio pomiędzy Klientem a Prawnikiem. Serwis ProstaSprawa.pl nie pośredniczy w tych ustaleniach.
+                <span className="text-[#2b8265] font-playfair font-bold text-sm tracking-wider uppercase">Bez prowizji</span>
+                <p className="text-neutral-500 text-[11px] sm:text-xs leading-relaxed max-w-2xl text-center">
+                  Kontakt z ekspertem jest całkowicie bezpłatny i nie wiąże się z żadnymi opłatami na rzecz serwisu.
+                  Warunki współpracy i wysokość honorarium ustalasz bezpośrednio z wybraną osobą.
                 </p>
               </div>
             </motion.div>
 
           </div>
 
-          {/* Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -702,33 +594,132 @@ export default function WinWithUsClientPage() {
             </Link>
           </motion.div>
 
-          {/* Disclaimer Text */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="border-t border-neutral-900/60 pt-10 max-w-4xl mx-auto text-center flex flex-col gap-3"
-          >
-            <p className="text-neutral-500  text-xs leading-relaxed">
-              Wszystkie dostępne w serwisie ProstaSprawa.pl rodzaje promocji działalności prawniczej są zgodne z zasadami etyki zawodowej.
-            </p>
-            <p className="text-neutral-500  text-xs leading-relaxed">
-              Zniesienie ograniczenia terytorialnego pozwala Prawnikowi dzięki serwisowi prostasprawa.pl docierać ze swoimi usługami i wiedzą nie tylko do osób w swoim regionie, ale i z całej Polski.
-            </p>
-          </motion.div>
-
         </div>
       </section>
 
-      {/* Section 5: Ranking */}
-      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
-        {/* Subtle background glow */}
+      {/* Section 4: Online meetings */}
+      <section className="relative bg-[#181816] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-amber-500/5 to-emerald-500/5 blur-[120px] pointer-events-none" />
 
+        <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+
+            {/* Left: Image */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="lg:col-span-5 flex justify-center relative"
+            >
+              <div className="relative w-full max-w-[420px]">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-neutral-800/80 aspect-square">
+                  <Image
+                    src="/images/meet-expert.png"
+                    alt="Spotkanie online z ekspertem"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 420px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="absolute -bottom-6 -right-6 w-24 h-24 sm:w-28 sm:h-28 bg-[#1e1d1a]/95 border border-neutral-700/60 rounded-2xl shadow-2xl flex items-center justify-center p-5 z-20 backdrop-blur-sm"
+                >
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                    <defs>
+                      <linearGradient id="emerald-meet-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#0da192" />
+                        <stop offset="50%" stopColor="#2b8265" />
+                        <stop offset="100%" stopColor="#065f46" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="10" y="25" width="55" height="50" rx="8" stroke="url(#emerald-meet-grad)" strokeWidth="6" />
+                    <path d="M65 42l25-12v40L65 58V42z" stroke="url(#emerald-meet-grad)" strokeWidth="6" strokeLinejoin="round" />
+                  </svg>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Right: Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="lg:col-span-7 flex flex-col items-start text-left"
+            >
+              <p className="text-[#0da192] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-4">
+                Spotkania online
+              </p>
+
+              <h2 className="font-playfair text-3xl sm:text-4xl lg:text-[42px] text-white font-light leading-tight tracking-tight mb-6">
+                Ważne: spotkania online umówisz{" "}
+                <span className="font-bold">bezpośrednio na platformie</span>
+              </h2>
+
+              <div className="flex flex-col gap-5 text-neutral-400 text-sm sm:text-base leading-relaxed max-w-2xl mb-8">
+                <p>
+                  Nie musisz nic dogrywać przez telefon ani mailowo. Prawnik wpisuje w systemie swoje wolne
+                  terminy, a Ty wybierasz ten, który Ci pasuje, i rezerwujesz go od ręki. Po rezerwacji
+                  i opłaceniu terminu masz spotkanie ustawione — nie trzeba do tego wracać.
+                </p>
+                <p>
+                  Link do Google Meet generuje się automatycznie na 30 minut przed spotkaniem, więc nie
+                  musisz go szukać ani przepisywać. Przypomnienie dostajesz na maila i w swoim dashboardzie
+                  na koncie ProstaSprawa.pl.
+                </p>
+                <p className="text-neutral-300 font-medium">
+                  Wchodzisz, klikasz i rozmawiasz.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 mb-10">
+                {[
+                  "Wolne terminy widoczne bezpośrednio na profilu eksperta",
+                  "Rezerwacja od ręki — bez mailowania i telefonowania",
+                  "Link do Google Meet generuje się automatycznie",
+                  "Przypomnienie na maila i w panelu na koncie",
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.1 * i }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="9" cy="9" r="8" stroke="#2b8265" strokeWidth="1.5" />
+                        <path d="M5.5 9l2.5 2.5 5-5" stroke="#2b8265" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="text-neutral-300 text-sm">{item}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              <Link href="/logowanie">
+                <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>
+              </Link>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Final CTA */}
+      <section className="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-neutral-900/60 flex items-center justify-center">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
+
         <div className="max-w-4xl mx-auto w-full relative z-10">
-          
-          {/* Top Banner Image */}
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -738,15 +729,14 @@ export default function WinWithUsClientPage() {
           >
             <Image
               src="/images/lawyers_meeting.png"
-              alt="Spotkanie prawników"
+              alt="Zespół specjalistów ProstaSprawa.pl"
               fill
-              sizes="(max-w-1024px) 100vw, 896px"
+              sizes="(max-width: 1024px) 100vw, 896px"
               className="object-cover"
               priority
             />
           </motion.div>
 
-          {/* Heading */}
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -754,29 +744,32 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-playfair text-3xl sm:text-4xl text-white font-normal mb-8 text-left"
           >
-            Ranking
+            Dlaczego z nami wygrywasz?
           </motion.h2>
 
-          {/* Paragraphs */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col gap-6 text-neutral-400  text-sm sm:text-base leading-relaxed text-left mb-16"
+            className="flex flex-col gap-5 text-neutral-400 text-sm sm:text-base leading-relaxed text-left mb-16"
           >
             <p>
-              <span className="font-bold text-white">ProstaSprawa.pl</span> stawia na najlepszych! Jako serwis chcemy promować naszych najbardziej aktywnych użytkowników. W tym celu prowadzimy ranking ekspertów, uwzględniający ich działania w serwisie ProstaSprawa.pl.
+              Bo zamiast obdzwaniać pół miasta, opisujesz sprawę raz i to specjaliści zgłaszają się do Ciebie.
+              Widzisz, z kim masz do czynienia, i wybierasz sam.
             </p>
             <p>
-              Chcesz abyśmy promowali właśnie Ciebie? Wszystko jest w Twoich rękach. Twoje zaangażowanie i rzetelność pozwoli Ci na dotarcie do szerszego grona potencjalnych klientów. Wyższa pozycja w naszym rankingu to więcej wyświetleń Twojej wizytówki przez użytkowników serwisu i za profesjonalne przeglądarki. Naszych najlepszych prawników promujemy również na stronach zewnętrznych zaprzyjaźnionych serwisów za pośrednictwem dynamicznych widgetów.
+              Płacisz tylko za realną pomoc, bez żadnej prowizji. Masz dostęp nie tylko do prawników,
+              ale też do rzeczoznawców, doradców finansowych, księgowych, architektów i innych ekspertów
+              — wszystkich w jednym miejscu.
             </p>
             <p>
-              Pamiętaj - im bardziej aktywny jesteś, tym bardziej jesteś widoczny. Zacznij działać już dziś i nie zmarnuj swojej szansy.
+              <span className="font-bold text-white">Pierwszy krok do rozwiązania problemu</span> robi się
+              po prostu prosty. Dokładnie po to powstała{" "}
+              <span className="font-bold text-white">ProstaSprawa.pl</span>.
             </p>
           </motion.div>
 
-          {/* Bottom Bar: Text + CTA Button */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -784,8 +777,8 @@ export default function WinWithUsClientPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pt-8 border-t border-neutral-800/40"
           >
-            <p className=" text-sm sm:text-base font-semibold text-white max-w-md text-left">
-              Twoja widoczność w serwisie prostasprawa.pl zależy więc tylko od Ciebie.
+            <p className="text-sm sm:text-base font-semibold text-white max-w-md text-left">
+              Opisz swoją sprawę i&nbsp;zobacz, kto się do&nbsp;niej zgłosi.
             </p>
             <Link href="/logowanie">
               <InteractiveHoverButton>Załóż bezpłatne konto!</InteractiveHoverButton>

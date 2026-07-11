@@ -95,7 +95,7 @@ async function main() {
   // ==========================================================================
   // SEEDERY RELACYJNE (wymagają słowników powyżej)
   // ==========================================================================
-  await seedExperts(prisma)          // 300 realistycznych ekspertów @bpcoders.pl
+  //await seedExperts(prisma)          // 300 realistycznych ekspertów @bpcoders.pl
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
 
