@@ -7,7 +7,7 @@ import {
   FaTwitter as Twitter,
   FaYoutube as Youtube
 } from "react-icons/fa"
-import { Mail, Phone } from "lucide-react"
+import { Mail, Phone, Plus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, Fragment } from "react"
@@ -165,8 +165,8 @@ export default function PublicFooter() {
             </div>
 
             <div className="text-xs text-neutral-400 font-light space-y-1 pt-1 leading-relaxed">
-            Langiewicza 16/3 <br />
-            25-381 Kielce
+              Langiewicza 16/3 <br />
+              25-381 Kielce
 
             </div>
 
@@ -198,6 +198,17 @@ export default function PublicFooter() {
             </div>
           </div>
         )}
+
+        {/* Mobile-only: Dodaj sprawę CTA — mirrors desktop navbar button */}
+        <div className="mt-8 pt-6 border-t border-neutral-900">
+          <Link
+            href="/panel-klienta/dodaj-sprawe"
+            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 hover:bg-amber-500/15 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Dodaj sprawę
+          </Link>
+        </div>
 
         {/* Sub-footer bottom bar */}
         <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">

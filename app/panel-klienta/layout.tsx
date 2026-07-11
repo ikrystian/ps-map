@@ -327,8 +327,6 @@ export default function ClientPanelLayout({
                 </SheetContent>
               </Sheet>
             )}
-
-
           </div>
 
           {/* Notifications and User menu */}

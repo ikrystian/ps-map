@@ -46,7 +46,7 @@ export function VoivodeshipsList() {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {voivodeships.map((v) => (
               <Button
                 key={v.id}
