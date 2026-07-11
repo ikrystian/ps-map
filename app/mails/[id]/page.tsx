@@ -27,7 +27,14 @@ export default async function MailDetailPage({
   params: Promise<{ id: string }>
 }) {
   const nodeEnv = process.env.NODE_ENV as string
-  if (nodeEnv !== "development" && nodeEnv !== "stage") {
+  const isDev = nodeEnv !== "production" && nodeEnv !== "stage"
+
+  const setting = await prisma.settings.findUnique({
+    where: { key: "emailLogToMails" },
+  })
+  const shouldLogToMails = setting ? setting.value === "true" : isDev
+
+  if (!shouldLogToMails) {
     notFound()
   }
 
