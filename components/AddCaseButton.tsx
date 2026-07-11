@@ -19,7 +19,6 @@ export function AddCaseButton({ href, className, labelClassName }: AddCaseButton
         transition={{ duration: 0.15 }}
         className="relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 cursor-pointer select-none transition-colors"
       >
-        <span className="text-base leading-none">+</span>
         <span className={cn(labelClassName)}>Dodaj sprawę</span>
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"

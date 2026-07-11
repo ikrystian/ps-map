@@ -844,9 +844,9 @@ export default function PublicHeader({
                 />
               </div>
             ) : (
-              <div className="hidden md:flex items-center gap-4">
-                <AddCaseButton href="/panel-klienta/dodaj-sprawe" className="hidden lg:flex" />
-                <Link href="/logowanie">
+              <div className="flex items-center gap-4">
+                <AddCaseButton href="/panel-klienta/dodaj-sprawe" className="flex" />
+                <Link href="/logowanie" className="hidden md:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
               </div>
