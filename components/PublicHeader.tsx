@@ -36,6 +36,7 @@ interface PublicHeaderProps {
   userImage?: string | null
   punktySaldo?: number
   userId?: string
+  showCategoryCounts?: boolean
 }
 
 
@@ -50,7 +51,8 @@ export default function PublicHeader({
   userName = null,
   userImage = null,
   punktySaldo = 0,
-  userId
+  userId,
+  showCategoryCounts = false
 }: PublicHeaderProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -454,7 +456,7 @@ export default function PublicHeader({
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
-                                  {category._count?.lawFirms !== undefined && (
+                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
                                     <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
                                       {category._count.lawFirms}
                                     </span>
@@ -476,7 +478,7 @@ export default function PublicHeader({
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
-                                        {child._count?.lawFirms !== undefined && (
+                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
                                           <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
                                             ({child._count.lawFirms})
                                           </span>
@@ -535,7 +537,7 @@ export default function PublicHeader({
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
-                                  {category._count?.lawFirms !== undefined && (
+                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
                                     <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
                                       {category._count.lawFirms}
                                     </span>
@@ -557,7 +559,7 @@ export default function PublicHeader({
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
-                                        {child._count?.lawFirms !== undefined && (
+                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
                                           <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
                                             ({child._count.lawFirms})
                                           </span>
@@ -923,7 +925,7 @@ export default function PublicHeader({
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
-                                  {category._count?.lawFirms !== undefined && (
+                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
                                     <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-450 font-semibold border border-neutral-700">
                                       {category._count.lawFirms}
                                     </span>
@@ -942,7 +944,7 @@ export default function PublicHeader({
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
-                                        {child._count?.lawFirms !== undefined && (
+                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
                                           <span className="text-sm text-neutral-500 font-medium">
                                             ({child._count.lawFirms})
                                           </span>
@@ -983,7 +985,7 @@ export default function PublicHeader({
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
-                                  {category._count?.lawFirms !== undefined && (
+                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
                                     <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-semibold border border-neutral-700">
                                       {category._count.lawFirms}
                                     </span>
@@ -1002,7 +1004,7 @@ export default function PublicHeader({
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
-                                        {child._count?.lawFirms !== undefined && (
+                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
                                           <span className="text-sm text-neutral-500 font-medium">
                                             ({child._count.lawFirms})
                                           </span>
