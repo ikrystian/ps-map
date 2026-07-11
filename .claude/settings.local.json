@@ -28,7 +28,8 @@
       "Bash(cd *)",
       "Bash(grep -iE '\\\\.\\(png|webp|jpg|jpeg\\)$')",
       "WebFetch(domain:dane.gov.pl)",
-      "Bash(echo \"=== lint exit: $? ===\")"
+      "Bash(echo \"=== lint exit: $? ===\")",
+      "Bash(echo \"exit code filtered: $?\")"
     ]
   }
 }

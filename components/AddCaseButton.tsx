@@ -7,17 +7,22 @@ import Link from "next/link"
 interface AddCaseButtonProps {
   href: string
   className?: string
+  innerClassName?: string
   labelClassName?: string
+  onClick?: () => void
 }
 
-export function AddCaseButton({ href, className, labelClassName }: AddCaseButtonProps) {
+export function AddCaseButton({ href, className, innerClassName, labelClassName, onClick }: AddCaseButtonProps) {
   return (
-    <Link href={href} className={className}>
+    <Link href={href} className={className} onClick={onClick}>
       <motion.div
         whileHover={{ scale: 1.04, backgroundColor: "rgba(217, 119, 6, 0.18)" }}
         whileTap={{ scale: 0.97 }}
         transition={{ duration: 0.15 }}
-        className="relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 cursor-pointer select-none transition-colors"
+        className={cn(
+          "relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 cursor-pointer select-none transition-colors",
+          innerClassName
+        )}
       >
         <span className={cn(labelClassName)}>Dodaj sprawę</span>
         <motion.div

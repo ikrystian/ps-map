@@ -435,7 +435,7 @@ export default function PublicHeader({
                   Sprawy firmowe
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-3">
                       {splitIntoColumns(firmoweCat, 3).map((column, columnIndex) => (
                         <div
@@ -516,7 +516,7 @@ export default function PublicHeader({
                   Sprawy prywatne
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121]">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-3">
                       {splitIntoColumns(prywatneCat, 3).map((column, columnIndex) => (
                         <div
@@ -598,7 +598,7 @@ export default function PublicHeader({
                   Blog
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[700px] xl:w-[1000px] p-6 bg-[#212121] text-white">
+                  <div className="w-[700px] xl:w-[1000px] p-6 bg-[#212121] text-white max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                       {/* Left Column: Categories and Topics */}
                       <div className="md:col-span-7 xl:col-span-5 flex flex-col justify-between">
@@ -1089,11 +1089,12 @@ export default function PublicHeader({
                   {/* Mobile Actions Footer */}
                   {!isAuthenticated && (
                     <div className="p-6 border-t border-neutral-800 bg-[#101010] flex flex-col gap-3">
-                      <Link href="/panel-klienta/dodaj-sprawe" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                        <Button className="w-full cursor-pointer border-neutral-700 hover:bg-neutral-850 text-neutral-200 h-11" variant="outline" size="lg">
-                          Dodaj sprawę
-                        </Button>
-                      </Link>
+                      <AddCaseButton
+                        href="/panel-klienta/dodaj-sprawe"
+                        className="w-full"
+                        innerClassName="w-full h-11 justify-center text-base"
+                        onClick={() => setMobileMenuOpen(false)}
+                      />
                       <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
                         <Button className="w-full cursor-pointer bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 border-0" size="lg">
                           Zaloguj się

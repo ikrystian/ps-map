@@ -25,8 +25,18 @@ const GoldCheck = () => (
   </svg>
 )
 
+const defaultSocialLinks = {
+  facebook: "https://facebook.com",
+  twitter: "https://twitter.com",
+  linkedin: "https://linkedin.com",
+  youtube: "https://youtube.com",
+  instagram: "https://instagram.com",
+}
+
 export default function PublicFooter() {
   const [blogCategories, setBlogCategories] = useState<{ id: string; nazwa: string; slug: string }[]>([])
+  const [copyrightText, setCopyrightText] = useState("2026 © ProstaSprawa.pl")
+  const [socialLinks, setSocialLinks] = useState(defaultSocialLinks)
 
   useEffect(() => {
     const fetchBlogCategories = async () => {
@@ -42,6 +52,39 @@ export default function PublicFooter() {
     }
     fetchBlogCategories()
   }, [])
+
+  useEffect(() => {
+    const fetchFooterSettings = async () => {
+      try {
+        const response = await fetch("/api/settings")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.footerCopyrightText !== undefined) {
+            setCopyrightText(data.footerCopyrightText)
+          }
+          // Pusty string oznacza celowo ukrytą ikonę, brak klucza — wartość domyślną
+          setSocialLinks(prev => ({
+            facebook: data.footerSocialFacebook ?? prev.facebook,
+            twitter: data.footerSocialTwitter ?? prev.twitter,
+            linkedin: data.footerSocialLinkedin ?? prev.linkedin,
+            youtube: data.footerSocialYoutube ?? prev.youtube,
+            instagram: data.footerSocialInstagram ?? prev.instagram,
+          }))
+        }
+      } catch (error) {
+        console.error("Error fetching footer settings:", error)
+      }
+    }
+    fetchFooterSettings()
+  }, [])
+
+  const socialIcons = [
+    { key: "facebook", href: socialLinks.facebook, Icon: Facebook },
+    { key: "twitter", href: socialLinks.twitter, Icon: Twitter },
+    { key: "linkedin", href: socialLinks.linkedin, Icon: Linkedin },
+    { key: "youtube", href: socialLinks.youtube, Icon: Youtube },
+    { key: "instagram", href: socialLinks.instagram, Icon: Instagram },
+  ]
 
   return (
     <footer id="public-footer" className="relative overflow-hidden shadow-lg bg-[#141414] text-neutral-300 border-t border-neutral-900">
@@ -202,49 +245,22 @@ export default function PublicFooter() {
         {/* Sub-footer bottom bar */}
         <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
           <p className="font-light">
-            2026 © ProstaSprawa.pl
+            {copyrightText}
           </p>
           <div className="flex items-center gap-4">
-            <Link
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-white transition-colors"
-            >
-              <Facebook className="h-4 w-4" />
-            </Link>
-            <Link
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-white transition-colors"
-            >
-              <Twitter className="h-4 w-4" />
-            </Link>
-            <Link
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-white transition-colors"
-            >
-              <Linkedin className="h-4 w-4" />
-            </Link>
-            <Link
-              href="https://youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-white transition-colors"
-            >
-              <Youtube className="h-4 w-4" />
-            </Link>
-            <Link
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-white transition-colors"
-            >
-              <Instagram className="h-4 w-4" />
-            </Link>
+            {socialIcons
+              .filter(({ href }) => href)
+              .map(({ key, href, Icon }) => (
+                <Link
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-neutral-500 hover:text-white transition-colors"
+                >
+                  <Icon className="h-4 w-4" />
+                </Link>
+              ))}
           </div>
         </div>
 

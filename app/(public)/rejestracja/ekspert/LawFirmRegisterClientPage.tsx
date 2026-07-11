@@ -757,7 +757,59 @@ export default function LawFirmRegistrationPage() {
         )
       }
 
-      case 6:
+      case 6: {
+        const mainCategories = categories
+          .filter((cat) => !cat.parentId)
+          .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
+        const businessCategories = mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE")
+        const privateCategories = mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE")
+
+        const renderCategoryCard = (cat: Category) => {
+          const isSelected = formData.categoriesIds.includes(cat.id)
+          return (
+            <div
+              key={cat.id}
+              className={cn(
+                "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                isSelected
+                  ? "bg-primary/5 border-primary shadow-sm"
+                  : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
+              )}
+              onClick={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  categoriesIds: [cat.id]
+                }))
+                if (fieldErrors.categoriesIds) {
+                  const newErrors = { ...fieldErrors }
+                  delete newErrors.categoriesIds
+                  setFieldErrors(newErrors)
+                }
+              }}
+            >
+              <div className="flex items-center space-x-4">
+                <div className={cn(
+                  "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
+                  isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                )}>
+                  {isSelected && <Check className="w-4 h-4" />}
+                </div>
+                <span className={cn(
+                  "text-sm font-medium transition-colors",
+                  isSelected ? "text-primary" : "text-foreground"
+                )}>
+                  {cat.nazwa}
+                </span>
+              </div>
+              {isSelected && (
+                <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
+                  Wybrano
+                </div>
+              )}
+            </div>
+          )
+        }
+
         return (
           <div className="space-y-0">
             <div className="space-y-2">
@@ -769,60 +821,35 @@ export default function LawFirmRegistrationPage() {
                 Zaznacz główną dziedzinę prawa, w której się specjalizujesz.
                 Pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
-              <div className={cn("grid grid-cols-1 gap-3 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
-                {categories
-                  .filter((cat) => !cat.parentId)
-                  .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
-                  .map((cat) => {
-                    const isSelected = formData.categoriesIds.includes(cat.id)
-                    return (
-                      <div
-                        key={cat.id}
-                        className={cn(
-                          "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                          isSelected
-                            ? "bg-primary/5 border-primary shadow-sm"
-                            : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
-                        )}
-                        onClick={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            categoriesIds: [cat.id]
-                          }))
-                          if (fieldErrors.categoriesIds) {
-                            const newErrors = { ...fieldErrors }
-                            delete newErrors.categoriesIds
-                            setFieldErrors(newErrors)
-                          }
-                        }}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className={cn(
-                            "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                            isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-                          )}>
-                            {isSelected && <Check className="w-4 h-4" />}
-                          </div>
-                          <span className={cn(
-                            "text-sm font-medium transition-colors",
-                            isSelected ? "text-primary" : "text-foreground"
-                          )}>
-                            {cat.nazwa}
-                          </span>
-                        </div>
-                        {isSelected && (
-                          <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
-                            Wybrano
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
+              <div className={cn("space-y-6 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
+                {businessCategories.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-muted-foreground" />
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Specjalizacje firmowe</h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {businessCategories.map(renderCategoryCard)}
+                    </div>
+                  </div>
+                )}
+                {privateCategories.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Specjalizacje prywatne</h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {privateCategories.map(renderCategoryCard)}
+                    </div>
+                  </div>
+                )}
               </div>
               {fieldErrors.categoriesIds && <p className="text-xs text-destructive">{fieldErrors.categoriesIds}</p>}
             </div>
           </div>
         )
+      }
 
       case 4:
         return (
@@ -1324,7 +1351,7 @@ export default function LawFirmRegistrationPage() {
                         delete newErrors.zgodaRegulamin
                         setFieldErrors(newErrors)
                       }
-                    }} i
+                    }}
                   >
                     <div className={cn(
                       "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",

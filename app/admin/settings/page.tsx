@@ -176,6 +176,30 @@ interface Settings {
     value: string
     description: string | null
   }
+  footerCopyrightText?: {
+    value: string
+    description: string | null
+  }
+  footerSocialFacebook?: {
+    value: string
+    description: string | null
+  }
+  footerSocialTwitter?: {
+    value: string
+    description: string | null
+  }
+  footerSocialLinkedin?: {
+    value: string
+    description: string | null
+  }
+  footerSocialYoutube?: {
+    value: string
+    description: string | null
+  }
+  footerSocialInstagram?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -219,6 +243,14 @@ export default function AdminSettingsPage() {
   const [emailFrom, setEmailFrom] = useState("")
   const [emailFromName, setEmailFromName] = useState("")
   const [emailLogToMails, setEmailLogToMails] = useState("false")
+
+  // Stopka — dolny pasek
+  const [footerCopyrightText, setFooterCopyrightText] = useState("2026 © ProstaSprawa.pl")
+  const [footerSocialFacebook, setFooterSocialFacebook] = useState("https://facebook.com")
+  const [footerSocialTwitter, setFooterSocialTwitter] = useState("https://twitter.com")
+  const [footerSocialLinkedin, setFooterSocialLinkedin] = useState("https://linkedin.com")
+  const [footerSocialYoutube, setFooterSocialYoutube] = useState("https://youtube.com")
+  const [footerSocialInstagram, setFooterSocialInstagram] = useState("https://instagram.com")
 
   // Homepage Categories
   const [homepageConsultedCategories, setHomepageConsultedCategories] = useState<string[]>([])
@@ -286,6 +318,14 @@ export default function AdminSettingsPage() {
         setEmailLogToMails(data.emailLogToMails?.value || "false")
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
+
+        // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
+        setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
+        setFooterSocialFacebook(data.footerSocialFacebook?.value ?? "https://facebook.com")
+        setFooterSocialTwitter(data.footerSocialTwitter?.value ?? "https://twitter.com")
+        setFooterSocialLinkedin(data.footerSocialLinkedin?.value ?? "https://linkedin.com")
+        setFooterSocialYoutube(data.footerSocialYoutube?.value ?? "https://youtube.com")
+        setFooterSocialInstagram(data.footerSocialInstagram?.value ?? "https://instagram.com")
 
         try {
           const parsed = JSON.parse(data.homepageConsultedCategories?.value || "[]")
@@ -548,6 +588,30 @@ export default function AdminSettingsPage() {
             promoteConsultedImmediately: {
               value: promoteConsultedImmediately,
               description: "Tryb testowy: promocje 'Najczęściej konsultowane kategorie' są aktywowane natychmiast (od teraz) zamiast od pierwszego dnia kolejnego miesiąca",
+            },
+            footerCopyrightText: {
+              value: footerCopyrightText,
+              description: "Tekst copyright wyświetlany w dolnym pasku stopki",
+            },
+            footerSocialFacebook: {
+              value: footerSocialFacebook,
+              description: "Adres URL profilu Facebook w dolnym pasku stopki (pusty = ukryta ikona)",
+            },
+            footerSocialTwitter: {
+              value: footerSocialTwitter,
+              description: "Adres URL profilu Twitter/X w dolnym pasku stopki (pusty = ukryta ikona)",
+            },
+            footerSocialLinkedin: {
+              value: footerSocialLinkedin,
+              description: "Adres URL profilu LinkedIn w dolnym pasku stopki (pusty = ukryta ikona)",
+            },
+            footerSocialYoutube: {
+              value: footerSocialYoutube,
+              description: "Adres URL kanału YouTube w dolnym pasku stopki (pusty = ukryta ikona)",
+            },
+            footerSocialInstagram: {
+              value: footerSocialInstagram,
+              description: "Adres URL profilu Instagram w dolnym pasku stopki (pusty = ukryta ikona)",
             },
           },
         }),
@@ -1109,6 +1173,88 @@ export default function AdminSettingsPage() {
                   checked={showChatAssistant === "true"}
                   onCheckedChange={(checked) => setShowChatAssistant(checked ? "true" : "false")}
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stopka — dolny pasek */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Stopka — dolny pasek</CardTitle>
+              <CardDescription>
+                Tekst copyright oraz linki do mediów społecznościowych wyświetlane w dolnym pasku stopki na stronach publicznych. Pozostaw adres URL pusty, aby ukryć daną ikonę.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="footerCopyrightText">Tekst copyright</Label>
+                <Input
+                  id="footerCopyrightText"
+                  type="text"
+                  value={footerCopyrightText}
+                  onChange={(e) => setFooterCopyrightText(e.target.value)}
+                  placeholder="2026 © ProstaSprawa.pl"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Tekst wyświetlany po lewej stronie dolnego paska stopki
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="footerSocialFacebook">Facebook</Label>
+                  <Input
+                    id="footerSocialFacebook"
+                    type="url"
+                    value={footerSocialFacebook}
+                    onChange={(e) => setFooterSocialFacebook(e.target.value)}
+                    placeholder="https://facebook.com/prostasprawa"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="footerSocialTwitter">Twitter / X</Label>
+                  <Input
+                    id="footerSocialTwitter"
+                    type="url"
+                    value={footerSocialTwitter}
+                    onChange={(e) => setFooterSocialTwitter(e.target.value)}
+                    placeholder="https://twitter.com/prostasprawa"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="footerSocialLinkedin">LinkedIn</Label>
+                  <Input
+                    id="footerSocialLinkedin"
+                    type="url"
+                    value={footerSocialLinkedin}
+                    onChange={(e) => setFooterSocialLinkedin(e.target.value)}
+                    placeholder="https://linkedin.com/company/prostasprawa"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="footerSocialYoutube">YouTube</Label>
+                  <Input
+                    id="footerSocialYoutube"
+                    type="url"
+                    value={footerSocialYoutube}
+                    onChange={(e) => setFooterSocialYoutube(e.target.value)}
+                    placeholder="https://youtube.com/@prostasprawa"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="footerSocialInstagram">Instagram</Label>
+                  <Input
+                    id="footerSocialInstagram"
+                    type="url"
+                    value={footerSocialInstagram}
+                    onChange={(e) => setFooterSocialInstagram(e.target.value)}
+                    placeholder="https://instagram.com/prostasprawa"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
