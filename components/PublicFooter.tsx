@@ -199,21 +199,10 @@ export default function PublicFooter() {
           </div>
         )}
 
-        {/* Mobile-only: Dodaj sprawę CTA — mirrors desktop navbar button */}
-        <div className="mt-8 pt-6 border-t border-neutral-900">
-          <Link
-            href="/panel-klienta/dodaj-sprawe"
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 hover:bg-amber-500/15 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            Dodaj sprawę
-          </Link>
-        </div>
-
         {/* Sub-footer bottom bar */}
         <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
           <p className="font-light">
-            2024 © ProstaSprawa.pl
+            2026 © ProstaSprawa.pl
           </p>
           <div className="flex items-center gap-4">
             <Link
