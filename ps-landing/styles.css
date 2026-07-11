@@ -1837,6 +1837,14 @@ h3 {
     line-height: 1.3;
 }
 
+.form-step-desc {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: -32px 0 32px;
+    text-align: left;
+}
+
 .form-group {
     margin-bottom: 24px;
     text-align: left;
@@ -1898,6 +1906,15 @@ h3 {
 .form-select option {
     background: #1a1a1a;
     color: #e0ddd5;
+}
+
+.form-select optgroup {
+    background: #1a1a1a;
+    color: #888;
+    font-style: normal;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* Autocomplete Dropdown */

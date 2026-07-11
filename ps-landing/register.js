@@ -297,15 +297,26 @@ async function loadReferenceData() {
 
         if (cRes.ok && glownaSpecjalizacjaSelect) {
             const categories = await cRes.json();
-            categories
+            const mainCategories = categories
                 .filter((cat) => !cat.parentId)
-                .sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"))
-                .forEach((cat) => {
+                .sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"));
+            // Grupowanie jak w aplikacji (/rejestracja/ekspert): najpierw firmowe, potem prywatne.
+            const categoryGroups = [
+                { label: "Specjalizacje firmowe", items: mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE") },
+                { label: "Specjalizacje prywatne", items: mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE") },
+            ];
+            categoryGroups.forEach(({ label, items }) => {
+                if (items.length === 0) return;
+                const group = document.createElement("optgroup");
+                group.label = label;
+                items.forEach((cat) => {
                     const opt = document.createElement("option");
                     opt.value = cat.id;
                     opt.textContent = cat.nazwa;
-                    glownaSpecjalizacjaSelect.appendChild(opt);
+                    group.appendChild(opt);
                 });
+                glownaSpecjalizacjaSelect.appendChild(group);
+            });
         }
 
         if (eRes.ok && kategoriaSelect) {
