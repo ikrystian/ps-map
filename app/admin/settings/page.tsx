@@ -160,6 +160,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  emailLogToMails?: {
+    value: string
+    description: string | null
+  }
   homepageConsultedCategories?: {
     value: string
     description: string | null
@@ -214,6 +218,7 @@ export default function AdminSettingsPage() {
   const [emailServerPassword, setEmailServerPassword] = useState("")
   const [emailFrom, setEmailFrom] = useState("")
   const [emailFromName, setEmailFromName] = useState("")
+  const [emailLogToMails, setEmailLogToMails] = useState("false")
 
   // Homepage Categories
   const [homepageConsultedCategories, setHomepageConsultedCategories] = useState<string[]>([])
@@ -278,6 +283,7 @@ export default function AdminSettingsPage() {
         setEmailServerPassword(data.emailServerPassword?.value || "")
         setEmailFrom(data.emailFrom?.value || "")
         setEmailFromName(data.emailFromName?.value || "")
+        setEmailLogToMails(data.emailLogToMails?.value || "false")
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
 
@@ -530,6 +536,10 @@ export default function AdminSettingsPage() {
             emailFromName: {
               value: emailFromName,
               description: "Wyświetlana nazwa nadawcy (pojawia się zamiast adresu email w kliencie pocztowym)",
+            },
+            emailLogToMails: {
+              value: emailLogToMails,
+              description: "Czy przekierowywać wszystkie e-maile do logów (/mails) zamiast wysyłać przez SMTP",
             },
             homepageConsultedCategories: {
               value: JSON.stringify(homepageConsultedCategories),
@@ -1286,6 +1296,22 @@ export default function AdminSettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-cyan-500/20 bg-cyan-500/[0.03] p-4 hover:bg-cyan-500/[0.06] transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="emailLogToMails" className="text-base font-semibold">
+                    Tryb podglądu (logowanie do /mails)
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu, system zamiast wysyłać wiadomości e-mail przez SMTP będzie zapisywał je w bazie danych (podgląd pod adresem <a href="/mails" target="_blank" rel="noopener noreferrer" className="underline text-cyan-600 hover:text-cyan-800 dark:text-cyan-400 dark:hover:text-cyan-300 font-semibold">/mails</a>).
+                  </p>
+                </div>
+                <Switch
+                  id="emailLogToMails"
+                  checked={emailLogToMails === "true"}
+                  onCheckedChange={(checked) => setEmailLogToMails(checked ? "true" : "false")}
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-2">
                   <Label htmlFor="emailServerHost">Host SMTP</Label>

@@ -116,6 +116,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
             'emailServerPassword',
             'emailFrom',
             'emailFromName',
+            'emailLogToMails',
           ],
         },
       },
@@ -137,13 +138,15 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const smtpConfigured = !!(host && user && pass && from)
     const nodeEnv = process.env.NODE_ENV as string
     const isDev = nodeEnv !== 'production' && nodeEnv !== 'stage'
+    const emailLogToMailsSetting = settingsMap.get('emailLogToMails')
+    const shouldLogToMails = emailLogToMailsSetting ? emailLogToMailsSetting === 'true' : isDev
 
-    // Na środowisku deweloperskim NIE wysyłamy prawdziwych maili.
-    // Zamiast tego logujemy je do konsoli oraz do bazy (EmailLog),
+    // Jeżeli włączona jest opcja podglądu (lub domyślnie w trybie dev),
+    // NIE wysyłamy prawdziwych maili. Zamiast tego logujemy je do konsoli oraz do bazy (EmailLog),
     // skąd można je podejrzeć na publicznej stronie /mails.
-    if (isDev) {
+    if (shouldLogToMails) {
       console.log('='.repeat(80))
-      console.log('📧 EMAIL (tryb deweloperski - nie wysyłam, tylko loguję)')
+      console.log('📧 EMAIL (tryb podglądu - nie wysyłam, tylko loguję)')
       console.log('='.repeat(80))
       console.log(`To: ${to}`)
       console.log(`Subject: ${subject}`)
@@ -152,8 +155,8 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
       console.log('='.repeat(80))
 
       smtpLog = smtpConfigured
-        ? 'Tryb deweloperski: pominięto wysyłkę SMTP. Email zapisany do logów (podgląd na /mails).'
-        : 'Tryb deweloperski: SMTP nie skonfigurowany. Email zapisany do logów (podgląd na /mails).'
+        ? 'Włączony tryb podglądu: pominięto wysyłkę SMTP. Email zapisany do logów (podgląd na /mails).'
+        : 'Włączony tryb podglądu: SMTP nie skonfigurowany. Email zapisany do logów (podgląd na /mails).'
       status = EmailLogStatus.SUCCESS
       return true
     }

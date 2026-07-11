@@ -227,6 +227,14 @@ export async function GET(request: NextRequest) {
         description: "Wyświetlana nazwa nadawcy (pojawia się zamiast adresu email w kliencie pocztowym)",
       }
     }
+    if (!settingsObject.emailLogToMails) {
+      const nodeEnv = process.env.NODE_ENV as string
+      const isDevEnv = nodeEnv !== "production" && nodeEnv !== "stage"
+      settingsObject.emailLogToMails = {
+        value: isDevEnv ? "true" : "false",
+        description: "Czy przekierowywać wszystkie e-maile do logów (/mails) zamiast wysyłać przez SMTP",
+      }
+    }
 
 
     return NextResponse.json(settingsObject, { status: 200 })
