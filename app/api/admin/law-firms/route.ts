@@ -69,6 +69,7 @@ export async function GET(request: NextRequest) {
               id: true,
               email: true,
               status: true,
+              emailVerified: true,
               createdAt: true,
               lastLogin: true,
               ...USER_CONTACT_SELECT,

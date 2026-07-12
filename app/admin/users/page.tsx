@@ -224,6 +224,17 @@ export default function AdminUsersPage() {
     return statusMap[status] || status
   }
 
+  // Effective status badge: an ACTIVE account with no confirmed email cannot
+  // actually log in, so surface that instead of a misleading "Active" badge.
+  const getEffectiveStatusBadge = (
+    user: User
+  ): { label: string; variant: "default" | "primary" | "secondary" | "destructive" | "outline" } => {
+    if (user.status === "ACTIVE" && !user.emailVerified) {
+      return { label: "Email niepotwierdzony", variant: "outline" }
+    }
+    return { label: formatStatus(user.status), variant: getStatusBadgeVariant(user.status) }
+  }
+
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pl-PL", {
@@ -377,8 +388,8 @@ export default function AdminUsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getStatusBadgeVariant(user.status)}>
-                        {formatStatus(user.status)}
+                      <Badge variant={getEffectiveStatusBadge(user).variant}>
+                        {getEffectiveStatusBadge(user).label}
                       </Badge>
                     </TableCell>
                     <TableCell>

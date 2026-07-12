@@ -191,6 +191,7 @@ export interface LawFirm extends LawFirmWithLocation {
     email: string
     name?: string | null
     status?: string
+    emailVerified?: string | Date | null
     createdAt?: string | Date
   }
   // Publiczny e-mail kontaktowy (opcjonalny — obecnie nieeksponowany przez API)

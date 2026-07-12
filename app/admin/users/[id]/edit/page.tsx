@@ -1,5 +1,6 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -102,6 +103,7 @@ interface UserData {
   email: string
   role: "CLIENT" | "LAW_FIRM" | "ADMIN"
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED" | "PENDING"
+  emailVerified?: string | Date | null
   image?: string | null
   client?: {
     id: string
@@ -126,6 +128,8 @@ export default function EditUserPage() {
   const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false)
+  const [isResendingVerification, setIsResendingVerification] = useState(false)
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
@@ -307,6 +311,50 @@ export default function EditUserPage() {
   const handleRemoveImage = () => {
     form.setValue("image", "")
     toast.success("Zdjęcie zostało usunięte")
+  }
+
+  // Manually mark the user's email as verified
+  const handleVerifyEmail = async () => {
+    if (!userData) return
+    setIsVerifyingEmail(true)
+    try {
+      const response = await fetch(`/api/admin/users/${userData.id}/verify-email`, {
+        method: "POST",
+      })
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Nie udało się zweryfikować adresu e-mail")
+      }
+      const data = await response.json()
+      setUserData((prev) => (prev ? { ...prev, emailVerified: data.emailVerified } : prev))
+      toast.success("E-mail został oznaczony jako zweryfikowany")
+    } catch (error) {
+      console.error("Error verifying email:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się zweryfikować adresu e-mail")
+    } finally {
+      setIsVerifyingEmail(false)
+    }
+  }
+
+  // Resend the verification email
+  const handleResendVerification = async () => {
+    if (!userData) return
+    setIsResendingVerification(true)
+    try {
+      const response = await fetch(`/api/admin/users/${userData.id}/resend-verification`, {
+        method: "POST",
+      })
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Nie udało się wysłać e-maila weryfikacyjnego")
+      }
+      toast.success("E-mail weryfikacyjny został wysłany ponownie")
+    } catch (error) {
+      console.error("Error resending verification email:", error)
+      toast.error(error instanceof Error ? error.message : "Nie udało się wysłać e-maila weryfikacyjnego")
+    } finally {
+      setIsResendingVerification(false)
+    }
   }
 
   // Update user
@@ -611,6 +659,50 @@ export default function EditUserPage() {
                         </FormItem>
                       )}
                     />
+                  </div>
+                  <div>
+                    <FormLabel>Weryfikacja e-mail</FormLabel>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      {userData?.emailVerified ? (
+                        <Badge variant="default">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Potwierdzony ({new Date(userData.emailVerified).toLocaleDateString("pl-PL")})
+                        </Badge>
+                      ) : (
+                        <>
+                          <Badge variant="outline">
+                            <AlertCircle className="h-3 w-3 mr-1" />
+                            Niepotwierdzony — użytkownik nie może się zalogować
+                          </Badge>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleVerifyEmail}
+                            disabled={isVerifyingEmail}
+                          >
+                            {isVerifyingEmail ? (
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            ) : (
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                            )}
+                            Oznacz jako zweryfikowany
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleResendVerification}
+                            disabled={isResendingVerification}
+                          >
+                            {isResendingVerification ? (
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            ) : null}
+                            Wyślij ponownie e-mail weryfikacyjny
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

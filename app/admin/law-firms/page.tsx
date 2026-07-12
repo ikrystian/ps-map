@@ -363,6 +363,12 @@ export default function AdminLawFirmsPage() {
                         ) : (
                           <Badge variant="destructive" className="text-xs">Nieaktywna</Badge>
                         )}
+                        {!lawFirm.user?.emailVerified && (
+                          <Badge variant="outline" className="text-xs">
+                            <XCircle className="h-3 w-3 mr-1" />
+                            E-mail niepotwierdzony
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

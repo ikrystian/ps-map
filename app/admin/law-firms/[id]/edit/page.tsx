@@ -1,5 +1,6 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -91,6 +92,7 @@ export default function EditLawFirmPage() {
   const [loading, setLoading] = useState(true)
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettings | null>(null)
   const [userId, setUserId] = useState<string>("")
+  const [userEmailVerified, setUserEmailVerified] = useState<string | Date | null>(null)
   const [statistics, setStatistics] = useState({
     wyswietleniaProfilu: 0,
     zlozoneOferty: 0,
@@ -467,6 +469,7 @@ export default function EditLawFirmPage() {
           })
 
           setUserId(lawFirm.user.id)
+          setUserEmailVerified(lawFirm.user.emailVerified ?? null)
 
           try {
             const settingsResponse = await fetch(`/api/admin/users/${lawFirm.user.id}/notification-settings`)
@@ -1333,6 +1336,23 @@ export default function EditLawFirmPage() {
                               </FormItem>
                             )}
                           />
+
+                          <div>
+                            <FormLabel>Weryfikacja e-mail</FormLabel>
+                            <div className="mt-2">
+                              {userEmailVerified ? (
+                                <Badge variant="default">
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  Potwierdzony ({new Date(userEmailVerified).toLocaleDateString("pl-PL")})
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline">
+                                  <AlertCircle className="h-3 w-3 mr-1" />
+                                  Niepotwierdzony — użytkownik nie może się zalogować
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
 
