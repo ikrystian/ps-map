@@ -29,7 +29,9 @@
       "Bash(grep -iE '\\\\.\\(png|webp|jpg|jpeg\\)$')",
       "WebFetch(domain:dane.gov.pl)",
       "Bash(echo \"=== lint exit: $? ===\")",
-      "Bash(echo \"exit code filtered: $?\")"
+      "Bash(echo \"exit code filtered: $?\")",
+      "Bash(lsof -i :3000 -sTCP:LISTEN -t)",
+      "Skill(run)"
     ]
   }
 }

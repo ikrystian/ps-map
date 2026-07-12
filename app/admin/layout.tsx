@@ -46,38 +46,85 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Użytkownicy", href: "/admin/users", icon: Users },
-  { name: "Eksperci", href: "/admin/law-firms", icon: Building2 },
-  { name: "Import ekspertów", href: "/admin/import-ekspertow", icon: Upload },
-  { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
-  { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
-  { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
-  { name: "Transakcje punktami", href: "/admin/transakcje/punkty", icon: Coins, isSubmenu: true },
-  { name: "Faktury", href: "/admin/faktury", icon: FileText },
-  { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
-  { name: "Pozycjonowanie", href: "/admin/pozycjonowanie", icon: ArrowUpDown },
-  { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
-  { name: "Opinie", href: "/admin/reviews", icon: Star },
-  { name: "Opinie główne", href: "/admin/testimonials", icon: MessageSquare },
-  { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
-  { name: "Typy działalności", href: "/admin/expertise-categories", icon: Briefcase },
-  { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },
-  { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
-  { name: "Polityka prywatności", href: "/admin/pages/polityka-prywatnosci", icon: ShieldCheck, isSubmenu: true },
-  { name: "Regulamin", href: "/admin/pages/regulamin", icon: ScrollText, isSubmenu: true },
-  { name: "Moduły", href: "/admin/modules", icon: FileCode },
-  { name: "Blog", href: "/admin/blog", icon: BookOpen },
-  { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags },
-  { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
-  { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
-  { name: "Powiadomienia", href: "/admin/notifications", icon: Bell },
-  { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
-  { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
-  { name: "Ustawienia", href: "/admin/settings", icon: Settings },
-  { name: "Pakiety", href: "/admin/pakiety", icon: Shield },
-  { name: "Ordery", href: "/admin/badges", icon: Star }
+  {
+    title: "Główne",
+    items: [
+      { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: "Użytkownicy i eksperci",
+    items: [
+      { name: "Użytkownicy", href: "/admin/users", icon: Users },
+      { name: "Eksperci", href: "/admin/law-firms", icon: Building2 },
+      { name: "Import ekspertów", href: "/admin/import-ekspertow", icon: Upload, isSubmenu: true },
+      { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
+      { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
+    ],
+  },
+  {
+    title: "Finanse",
+    items: [
+      { name: "Transakcje", href: "/admin/transakcje", icon: CreditCard },
+      { name: "Transakcje punktami", href: "/admin/transakcje/punkty", icon: Coins, isSubmenu: true },
+      { name: "Faktury", href: "/admin/faktury", icon: FileText },
+      { name: "Pakiety", href: "/admin/pakiety", icon: Shield },
+    ],
+  },
+  {
+    title: "Marketing i promocja",
+    items: [
+      { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
+      { name: "Pozycjonowanie", href: "/admin/pozycjonowanie", icon: ArrowUpDown },
+      { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
+    ],
+  },
+  {
+    title: "Opinie i reputacja",
+    items: [
+      { name: "Opinie", href: "/admin/reviews", icon: Star },
+      { name: "Opinie główne", href: "/admin/testimonials", icon: MessageSquare },
+      { name: "Ordery", href: "/admin/badges", icon: Star },
+    ],
+  },
+  {
+    title: "Struktura danych",
+    items: [
+      { name: "Kategorie", href: "/admin/categories", icon: FolderTree },
+      { name: "Typy działalności", href: "/admin/expertise-categories", icon: Briefcase },
+      { name: "Lokalizacje", href: "/admin/locations", icon: MapPin },
+    ],
+  },
+  {
+    title: "Treści",
+    items: [
+      { name: "Strony", href: "/admin/pages", icon: LayoutTemplate },
+      { name: "Polityka prywatności", href: "/admin/pages/polityka-prywatnosci", icon: ShieldCheck, isSubmenu: true },
+      { name: "Regulamin", href: "/admin/pages/regulamin", icon: ScrollText, isSubmenu: true },
+      { name: "Moduły", href: "/admin/modules", icon: FileCode },
+      { name: "Blog", href: "/admin/blog", icon: BookOpen },
+      { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags, isSubmenu: true },
+      { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
+    ],
+  },
+  {
+    title: "Komunikacja",
+    items: [
+      { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
+      { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
+      { name: "Powiadomienia", href: "/admin/notifications", icon: Bell },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
+      { name: "Ustawienia", href: "/admin/settings", icon: Settings },
+    ],
+  },
 ]
+
+const flatNavigation = navigation.flatMap(group => group.items)
 
 export default function AdminLayout({
   children,
@@ -105,7 +152,7 @@ export default function AdminLayout({
     return pathname.startsWith(href)
   }
 
-  const activeItem = navigation.find(item => isNavItemActive(item.href))
+  const activeItem = flatNavigation.find(item => isNavItemActive(item.href))
 
   const defaultSubtitle = activeItem
     ? activeItem.name === "Dashboard"
@@ -149,54 +196,67 @@ export default function AdminLayout({
               onMouseLeave={() => setHoveredIndex(null)}
               suppressHydrationWarning
             >
-              {navigation.map((item, index) => {
-                const isActive = isNavItemActive(item.href)
+              {navigation.map((group, groupIndex) => (
+                <div key={group.title}>
+                  {groupIndex > 0 && (
+                    <div className={cn("border-t border-border/60", isCollapsed ? "my-2 mx-2" : "my-2 mx-1")} />
+                  )}
+                  {!isCollapsed && (
+                    <p className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                      {group.title}
+                    </p>
+                  )}
+                  {group.items.map((item) => {
+                    const index = flatNavigation.indexOf(item)
+                    const isActive = isNavItemActive(item.href)
 
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    className={cn(
-                      "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 outline-none",
-                      isActive
-                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                        : "text-muted-foreground hover:text-white",
-                      isCollapsed && "justify-center",
-                      item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
-                    )}
-                    title={isCollapsed ? item.name : undefined}
-                  >
-                    {/* Sliding/Fading Hover Background Pill */}
-
-                    <div className="flex items-center justify-center flex-shrink-0" suppressHydrationWarning>
-                      <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
-                    </div>
-
-                    {/* Text label with elegant fade-slide */}
-                    {!isCollapsed && (
-                      <motion.span
-                        animate={{
-                          x: hoveredIndex === index && !isActive ? 4 : 0,
-                          fontWeight: isActive ? 600 : 500,
-                        }}
-                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        className={cn(
+                          "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 outline-none",
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                            : "text-muted-foreground hover:text-white",
+                          isCollapsed && "justify-center",
+                          item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
+                        )}
+                        title={isCollapsed ? item.name : undefined}
                       >
-                        {item.name}
-                      </motion.span>
-                    )}
+                        {/* Sliding/Fading Hover Background Pill */}
 
-                    {/* Active accent dot for extra polish */}
-                    {isActive && !isCollapsed && (
-                      <motion.span
-                        layoutId="admin-sidebar-active-indicator"
-                        className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
-                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                      />
-                    )}
-                  </Link>
-                )
-              })}
+                        <div className="flex items-center justify-center flex-shrink-0" suppressHydrationWarning>
+                          <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
+                        </div>
+
+                        {/* Text label with elegant fade-slide */}
+                        {!isCollapsed && (
+                          <motion.span
+                            animate={{
+                              x: hoveredIndex === index && !isActive ? 4 : 0,
+                              fontWeight: isActive ? 600 : 500,
+                            }}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                          >
+                            {item.name}
+                          </motion.span>
+                        )}
+
+                        {/* Active accent dot for extra polish */}
+                        {isActive && !isCollapsed && (
+                          <motion.span
+                            layoutId="admin-sidebar-active-indicator"
+                            className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary-foreground/80"
+                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                          />
+                        )}
+                      </Link>
+                    )
+                  })}
+                </div>
+              ))}
             </nav>
           </div>
         </aside>
