@@ -43,6 +43,6 @@ jobs:
 
       - name: Send webhook with commits
         run: |
-          curl -X POST "https://omarchy-2.tail01dfc7.ts.net/webhool/workflow" \
+          curl -X POST "https://ps.sandbox-ai.pl/api/webhook/workflow" \
             -H "Content-Type: application/json" \
             --data @commits.json
