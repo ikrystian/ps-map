@@ -436,8 +436,8 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
-                    <div className="grid grid-cols-3">
-                      {splitIntoColumns(firmoweCat, 3).map((column, columnIndex) => (
+                    <div className="grid grid-cols-4">
+                      {splitIntoColumns(firmoweCat, 4).map((column, columnIndex) => (
                         <div
                           key={columnIndex}
                           className={cn(
@@ -517,8 +517,8 @@ export default function PublicHeader({
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
-                    <div className="grid grid-cols-3">
-                      {splitIntoColumns(prywatneCat, 3).map((column, columnIndex) => (
+                    <div className="grid grid-cols-4">
+                      {splitIntoColumns(prywatneCat, 4).map((column, columnIndex) => (
                         <div
                           key={columnIndex}
                           className={cn(

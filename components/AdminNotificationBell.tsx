@@ -20,7 +20,6 @@ import { useEffect, useRef, useState } from "react"
 interface LawFirm {
   id: string
   nazwa: string
-  nazwa: string
 }
 
 interface Order {

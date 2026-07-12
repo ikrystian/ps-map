@@ -5,6 +5,23 @@ import Image from "next/image"
 import Link from "next/link"
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import {
+  HowItWorksIcon,
+  PayForRealHelpIcon,
+  NotOnlyLawyersIcon,
+  ConcreteHelpIcon,
+  TrustDecisionIcon,
+  AllInOnePlaceIcon,
+  SecuredDataIcon,
+  MultiDisciplinaryIcon,
+  SimpleStartIcon,
+  DescribeCaseIcon,
+  ReceiveOffersIcon,
+  ChooseAndActIcon,
+  SearchLawyerIcon,
+  DirectWriteIcon,
+  ScheduleMeetingIcon
+} from "@/components/ui/win-with-us-icons"
 
 export default function WinWithUsClientPage() {
   return (
@@ -72,14 +89,7 @@ export default function WinWithUsClientPage() {
                 className="flex gap-6 items-start group"
               >
                 <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
-                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                    className="w-14 h-14 md:w-16 md:h-16">
-                    <circle cx="22" cy="22" r="12" />
-                    <line x1="31" y1="31" x2="44" y2="44" />
-                    <circle cx="22" cy="18" r="3" />
-                    <path d="M15 26c0-4 3-5 7-5s7 1 7 5" />
-                  </svg>
+                  <HowItWorksIcon className="w-14 h-14 md:w-16 md:h-16" />
                 </div>
                 <div className="flex-1 text-left">
                   <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
@@ -101,12 +111,7 @@ export default function WinWithUsClientPage() {
                 className="flex gap-6 items-start group"
               >
                 <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
-                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                    className="w-14 h-14 md:w-16 md:h-16">
-                    <circle cx="28" cy="28" r="18" />
-                    <path d="M28 18v20M23 22h7.5a4.5 4.5 0 0 1 0 9H25a4.5 4.5 0 0 0 0 9H33" />
-                  </svg>
+                  <PayForRealHelpIcon className="w-14 h-14 md:w-16 md:h-16" />
                 </div>
                 <div className="flex-1 text-left">
                   <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
@@ -128,14 +133,7 @@ export default function WinWithUsClientPage() {
                 className="flex gap-6 items-start group"
               >
                 <div className="flex-shrink-0 text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300 pt-1">
-                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                    className="w-14 h-14 md:w-16 md:h-16">
-                    <circle cx="20" cy="18" r="6" />
-                    <path d="M8 40c0-6 5-10 12-10s12 4 12 10" />
-                    <circle cx="38" cy="20" r="5" />
-                    <path d="M34 40c0-4 3-8 8-8s8 3 8 7" />
-                  </svg>
+                  <NotOnlyLawyersIcon className="w-14 h-14 md:w-16 md:h-16" />
                 </div>
                 <div className="flex-1 text-left">
                   <h3 className="font-playfair text-xl sm:text-2xl text-white font-light leading-snug">
@@ -191,11 +189,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8 10h36v24H24l-10 8V34H8V10z" />
-                  <path d="M18 22l5 5 11-10" />
-                </svg>
+                <ConcreteHelpIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -218,12 +212,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M26 6L10 12v14c0 10 7 18 16 20 9-2 16-10 16-20V12L26 6z" />
-                  <circle cx="26" cy="22" r="4" />
-                  <path d="M18 36c0-4 4-7 8-7s8 3 8 7" />
-                </svg>
+                <TrustDecisionIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -246,15 +235,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="6" y="8" width="40" height="36" rx="4" />
-                  <line x1="6" y1="18" x2="46" y2="18" />
-                  <rect x="12" y="24" width="12" height="12" rx="2" />
-                  <line x1="28" y1="26" x2="38" y2="26" />
-                  <line x1="28" y1="30" x2="36" y2="30" />
-                  <line x1="28" y1="34" x2="34" y2="34" />
-                </svg>
+                <AllInOnePlaceIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -276,13 +257,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="12" y="22" width="28" height="22" rx="3" />
-                  <path d="M18 22v-6a8 8 0 0 1 16 0v6" />
-                  <circle cx="26" cy="33" r="3" />
-                  <line x1="26" y1="36" x2="26" y2="40" />
-                </svg>
+                <SecuredDataIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -304,13 +279,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="6" y="18" width="40" height="28" rx="3" />
-                  <path d="M18 18v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4" />
-                  <line x1="6" y1="30" x2="46" y2="30" />
-                  <line x1="26" y1="26" x2="26" y2="34" />
-                </svg>
+                <MultiDisciplinaryIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -332,10 +301,7 @@ export default function WinWithUsClientPage() {
               className="bg-[#1a1916] border border-neutral-800/80 rounded-3xl p-8 flex flex-col gap-5 group hover:border-emerald-600/30 hover:shadow-[0_15px_30px_rgba(27,99,73,0.05)] transition-all duration-300"
             >
               <div className="text-[#2b8265] group-hover:text-emerald-400 transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M32 6L16 28h14L20 46l20-24H26L32 6z" />
-                </svg>
+                <SimpleStartIcon />
               </div>
               <div>
                 <h3 className="font-playfair text-lg sm:text-xl text-white font-normal mb-3">
@@ -416,13 +382,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 1 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">01</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="7" y="5" width="22" height="28" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M12 11H24M12 17H22M12 23H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="30" cy="30" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M27.5 32.5l1-2.5 3-3a1 1 0 0 1 1.5 0l.7.7a1 1 0 0 1 0 1.5l-3 3-2.2.3z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <DescribeCaseIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Opisz<br />swoją sprawę
@@ -436,12 +397,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 2 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">02</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="4" y="22" width="32" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M4 26h8l3 4h10l3-4h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M20 6v12M14 12l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <ReceiveOffersIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Odbierz oferty<br />od specjalistów
@@ -455,13 +412,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 3 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">03</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <circle cx="16" cy="14" r="5" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M6 32c0-5 4-9 10-9s10 4 10 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="29" cy="22" r="8" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M25 22l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <ChooseAndActIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Wybierz<br />i działaj
@@ -514,12 +466,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 1 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">01</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <circle cx="16" cy="16" r="8" stroke="currentColor" strokeWidth="1.5" />
-                      <line x1="22" y1="22" x2="32" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="28" cy="28" r="5" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <SearchLawyerIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Wybierz prawnika<br />z listy
@@ -533,12 +481,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 2 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">02</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <path d="M6 8h28v18H22l-6 6V26H6V8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <line x1="12" y1="15" x2="28" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="12" y1="20" x2="22" y2="20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <DirectWriteIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Napisz<br />wprost do niego
@@ -552,13 +496,8 @@ export default function WinWithUsClientPage() {
                 {/* Step 3 */}
                 <div className="flex flex-col items-center relative z-10">
                   <div className="absolute -top-12 text-neutral-800/10 font-playfair font-bold text-[100px] pointer-events-none select-none">03</div>
-                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-5 shadow-lg flex items-center justify-center w-20 h-20 relative z-10 transition-transform duration-300 hover:scale-105">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#2b8265]">
-                      <rect x="6" y="8" width="28" height="24" rx="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M6 14H34M12 6V10M28 6V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="28" cy="24" r="7" fill="#1e1d1a" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M25 24l2 2.5 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <div className="mb-6 bg-[#1e1d1a] border border-neutral-800/80 rounded-2xl p-4 shadow-lg flex items-center justify-center w-24 h-24 relative z-10 transition-transform duration-300 hover:scale-105 text-[#2b8265] hover:text-emerald-400">
+                    <ScheduleMeetingIcon />
                   </div>
                   <h4 className="text-white font-playfair text-lg font-normal mb-3 text-center leading-snug">
                     Umówcie rozmowę<br />lub spotkanie

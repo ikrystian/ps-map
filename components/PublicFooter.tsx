@@ -141,7 +141,7 @@ export default function PublicFooter() {
                   Kontakt
                 </Link>
               </li>
-              <Link href="/Regulamin" className=" hover:text-[#d7b56d] transition-colors flex items-center">
+              <Link href="/regulamin" className=" hover:text-[#d7b56d] transition-colors flex items-center">
 
                 <span>Regulamin</span>
               </Link>
