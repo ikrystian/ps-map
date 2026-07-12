@@ -16,8 +16,6 @@ import {
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
@@ -26,9 +24,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
 import {
   Building,
-  Check,
-  ChevronDown,
   Image as ImageIcon,
+  Info,
   Loader2,
   Lock,
   Mail,
@@ -45,9 +42,6 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
-// Client-side cache for city searches to avoid redundant api queries
-const clientCitiesCache: Record<string, any[]> = {}
 
 const profileFormSchema = z.object({
   clientType: z.enum(["INDIVIDUAL", "BUSINESS"]),
@@ -106,11 +100,6 @@ export default function ClientProfilePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isRemovingAvatar, setIsRemovingAvatar] = useState(false)
 
-  const [cities, setCities] = useState<any[]>([])
-  const [locationOpen, setLocationOpen] = useState(false)
-  const [locationSearch, setLocationSearch] = useState("")
-  const [isLoadingCities, setIsLoadingCities] = useState(false)
-
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -134,58 +123,6 @@ export default function ClientProfilePage() {
   useEffect(() => {
     fetchData()
   }, [])
-
-  // Dynamic fetch and caching for cities and postal codes
-  useEffect(() => {
-    const query = locationSearch.trim().toLowerCase()
-    if (query.length < 2) {
-      setCities([])
-      setIsLoadingCities(false)
-      return
-    }
-
-    if (clientCitiesCache[query]) {
-      setCities(clientCitiesCache[query])
-      setIsLoadingCities(false)
-      return
-    }
-
-    setIsLoadingCities(true)
-    const controller = new AbortController()
-    const timeoutId = setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/cities?search=${encodeURIComponent(query)}`, {
-          signal: controller.signal,
-        })
-        if (response.ok) {
-          const data = await response.json()
-          if (Array.isArray(data)) {
-            clientCitiesCache[query] = data
-            setCities(data)
-          }
-        }
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
-          console.error("Error fetching cities:", error)
-        }
-      } finally {
-        setIsLoadingCities(false)
-      }
-    }, 300)
-
-    return () => {
-      clearTimeout(timeoutId)
-      controller.abort()
-    }
-  }, [locationSearch])
-
-  // Reset location search when popover closes
-  useEffect(() => {
-    if (!locationOpen) {
-      setLocationSearch("")
-      setCities([])
-    }
-  }, [locationOpen])
 
   const fetchData = async () => {
     try {
@@ -431,7 +368,7 @@ export default function ClientProfilePage() {
                 <CardContent className="flex flex-col items-center">
                   {clientData?.user.image ? (
                     <div className="w-full flex flex-col items-center gap-4">
-                      <div className="relative h-28 w-28 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
+                      <div className="relative h-48 w-48 rounded-full overflow-hidden border-2 border-border/50 bg-card/50 ring-4 ring-primary/10 shrink-0">
                         <Image
                           src={clientData.user.image}
                           alt="Avatar"
@@ -513,7 +450,7 @@ export default function ClientProfilePage() {
                 <CardHeader>
                   <CardTitle className="font-playfair text-white text-base">Typ konta</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs">
-                    Wybierz czy korzystasz z serwisu prywatnie czy firmowo.
+                    Informacja o tym, czy korzystasz z serwisu prywatnie czy firmowo.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -522,36 +459,26 @@ export default function ClientProfilePage() {
                     name="clientType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormControl>
-                          <div className="flex flex-col gap-2 p-1 bg-background-sec/50 rounded-lg w-full border border-border/40">
-                            <button
-                              type="button"
-                              className={cn(
-                                "py-2.5 px-4 rounded-lg text-xs font-semibold transition-all duration-200 text-left flex items-center justify-between",
-                                field.value === "INDIVIDUAL"
-                                  ? "bg-primary text-primary-foreground shadow-md"
-                                  : "text-muted-foreground hover:text-white hover:bg-background-sec/20"
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center justify-between py-2.5 px-4 rounded-lg text-xs font-semibold bg-background-sec/50 border border-border/40 text-white">
+                            <span className="flex items-center gap-2">
+                              {field.value === "BUSINESS" ? (
+                                <Building className="h-4 w-4 text-primary" />
+                              ) : (
+                                <User className="h-4 w-4 text-primary" />
                               )}
-                              onClick={() => field.onChange("INDIVIDUAL")}
-                            >
-                              <span>Osoba Prywatna</span>
-                              {field.value === "INDIVIDUAL" && <Check className="h-4 w-4" />}
-                            </button>
-                            <button
-                              type="button"
-                              className={cn(
-                                "py-2.5 px-4 rounded-lg text-xs font-semibold transition-all duration-200 text-left flex items-center justify-between",
-                                field.value === "BUSINESS"
-                                  ? "bg-primary text-primary-foreground shadow-md"
-                                  : "text-muted-foreground hover:text-white hover:bg-background-sec/20"
-                              )}
-                              onClick={() => field.onChange("BUSINESS")}
-                            >
-                              <span>Firma / Organizacja</span>
-                              {field.value === "BUSINESS" && <Check className="h-4 w-4" />}
-                            </button>
+                              {field.value === "BUSINESS" ? "Firma / Organizacja" : "Osoba Prywatna"}
+                            </span>
+                            <Lock className="h-4 w-4 text-muted-foreground" />
                           </div>
-                        </FormControl>
+                          <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                            <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                              Zmiana typu konta nie jest możliwa z poziomu profilu. Jeżeli chcesz
+                              zmienić typ konta, skontaktuj się z administracją serwisu.
+                            </p>
+                          </div>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -802,7 +729,7 @@ export default function ClientProfilePage() {
                     <MapPin className="h-5 w-5 text-primary" />
                     Adres korespondencyjny
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground text-xs">Uzupełnij swój adres zamieszkania lub siedziby.</CardDescription>
+                  <CardDescription className="text-muted-foreground text-xs">Uzupełnij swój adres zamieszkania.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -849,80 +776,13 @@ export default function ClientProfilePage() {
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
                           <FormLabel className="text-xs font-semibold text-muted-foreground">Miasto</FormLabel>
-                          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className="h-11 w-full bg-background-sec/20 border-border/30 rounded-lg text-white text-sm font-normal text-left justify-between"
-                                >
-                                  <span className="truncate">{field.value || "Wybierz miasto..."}</span>
-                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-0" align="start">
-                              <Command shouldFilter={false}>
-                                <CommandInput
-                                  placeholder="Wyszukaj miasto..."
-                                  value={locationSearch}
-                                  onValueChange={setLocationSearch}
-                                />
-                                <CommandList className="max-h-60 overflow-y-auto">
-                                  {isLoadingCities && (
-                                    <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
-                                  )}
-                                  {!isLoadingCities && locationSearch.trim().length < 2 && (
-                                    <div className="text-neutral-400 py-3 text-center text-xs px-3">
-                                      Wpisz co najmniej 2 znaki...
-                                    </div>
-                                  )}
-                                  {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                                    <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
-                                  )}
-                                  <CommandGroup>
-                                    {cities.map((city) => {
-                                      const matchedPostal = city.postalCodes?.find((p: any) =>
-                                        p.code.toLowerCase().includes(locationSearch.trim().toLowerCase())
-                                      )
-                                      const displayValue = matchedPostal
-                                        ? `${city.nazwa} (${matchedPostal.code})`
-                                        : city.nazwa
-
-                                      return (
-                                        <CommandItem
-                                          key={city.id}
-                                          value={city.nazwa}
-                                          onSelect={() => {
-                                            field.onChange(city.nazwa)
-                                            const selectedPostalCode = matchedPostal?.code || city.postalCodes?.[0]?.code || ""
-                                            form.setValue("kodPocztowy", selectedPostalCode)
-                                            form.setValue("voivodeshipId", city.voivodeshipId)
-                                            setLocationOpen(false)
-                                          }}
-                                          className="text-white cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-lg data-[selected=true]:bg-background-sec"
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <Check
-                                              className={cn(
-                                                "h-4 w-4 text-primary",
-                                                field.value === city.nazwa ? "opacity-100" : "opacity-0"
-                                              )}
-                                            />
-                                            <span>{displayValue}</span>
-                                          </div>
-                                          <span className="text-xs text-muted-foreground ml-2 text-right">
-                                            {city.voivodeship?.nazwa}
-                                          </span>
-                                        </CommandItem>
-                                      )
-                                    })}
-                                  </CommandGroup>
-                                </CommandList>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
+                          <FormControl>
+                            <Input
+                              placeholder="Wpisz miasto"
+                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white"
+                              {...field}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

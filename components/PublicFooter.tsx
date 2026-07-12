@@ -11,6 +11,7 @@ import { Mail, Phone, Plus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, Fragment } from "react"
+import { openCookiePreferences } from "@/components/CookieConsent"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (
@@ -244,9 +245,18 @@ export default function PublicFooter() {
 
         {/* Sub-footer bottom bar */}
         <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
-          <p className="font-light">
-            {copyrightText}
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <p className="font-light">
+              {copyrightText}
+            </p>
+            <button
+              type="button"
+              onClick={openCookiePreferences}
+              className="font-light hover:text-[#d7b56d] transition-colors"
+            >
+              Ustawienia cookies
+            </button>
+          </div>
           <div className="flex items-center gap-4">
             {socialIcons
               .filter(({ href }) => href)

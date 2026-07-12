@@ -1270,3 +1270,23 @@ a .bg-card {
     grid-area: tenth;
   }
 }
+
+/* ===== Cookie consent (vanilla-cookieconsent) – dopasowanie do złotego motywu ===== */
+#cc-main {
+  /* Akcent zgodny z kolorystyką marki (złoto) */
+  --cc-btn-primary-bg: #d7b56d;
+  --cc-btn-primary-border-color: #d7b56d;
+  --cc-btn-primary-hover-bg: #c5a35c;
+  --cc-btn-primary-hover-border-color: #c5a35c;
+  --cc-btn-primary-color: #141414;
+  --cc-btn-primary-hover-color: #141414;
+  --cc-toggle-on-bg: #d7b56d;
+  --cc-toggle-readonly-bg: #4a4a4a;
+  --cc-link-color: #d7b56d;
+  --cc-cookie-category-block-bg-hover: #1f1f1f;
+}
+
+#cc-main a,
+#cc-main a:hover {
+  color: #d7b56d;
+}

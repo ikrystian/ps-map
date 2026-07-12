@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { ChatAssistant } from "@/components/ChatAssistant";
+import CookieConsentBanner from "@/components/CookieConsent";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -94,7 +95,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="pl" suppressHydrationWarning className="dark">
+    <html lang="pl" suppressHydrationWarning className="dark cc--darkmode">
       <body
         className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased font-poppins`}
         suppressHydrationWarning
@@ -115,6 +116,7 @@ export default async function RootLayout({
           <Toaster />
           <Sonner />
           {showChat && <ChatAssistant />}
+          <CookieConsentBanner />
         </Providers>
       </body>
     </html>
