@@ -44,6 +44,6 @@ jobs:
 
       - name: Send webhook with commits
         run: |
-          curl -X POST "https://nexus.sandbox-ai.pl/api/github-webhook" \
+          curl -X POST "https://nexus.sandbox-ai.pl/api/webhook-commit" \
             -H "Content-Type: application/json" \
             --data @commits.json
