@@ -30,6 +30,7 @@ jobs:
           commit_urls = [c.get("url") for c in commits if c.get("url")]
 
           payload = {
+          "projectId": "cmrcp4y0s0005m6sq891qby5r",
               "repository": os.environ.get("GITHUB_REPOSITORY", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", ""),
               "pusher": os.environ.get("GITHUB_ACTOR", ""),
@@ -43,6 +44,6 @@ jobs:
 
       - name: Send webhook with commits
         run: |
-          curl -X POST "https://nexus.sandbox-ai.pl/api/webhook/workflow" \
+          curl -X POST "https://nexus.sandbox-ai.pl/api/github-webhook" \
             -H "Content-Type: application/json" \
             --data @commits.json
