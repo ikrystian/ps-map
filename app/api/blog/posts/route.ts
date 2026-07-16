@@ -14,9 +14,17 @@ export async function GET(request: NextRequest) {
     const sponsored = searchParams.get("sponsored")
     const skip = (page - 1) * limit
 
-    // Buduj warunki filtrowania
+    // Buduj warunki filtrowania (ukryj wpisy zaplanowane na przyszłość)
     const where: any = {
       opublikowany: true,
+      AND: [
+        {
+          OR: [
+            { dataPublikacji: null },
+            { dataPublikacji: { lte: new Date() } },
+          ],
+        },
+      ],
     }
 
     if (sponsored === "true") {

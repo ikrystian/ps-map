@@ -539,9 +539,15 @@ export default function AdminBlogPage() {
                           className="text-xs cursor-pointer font-normal"
                         >
                           {post.opublikowany ? (
-                            <Badge variant="default" className="bg-emerald-500 hover:bg-emerald-600">
-                              Opublikowany
-                            </Badge>
+                            post.dataPublikacji && new Date(post.dataPublikacji) > new Date() ? (
+                              <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">
+                                Zaplanowany
+                              </Badge>
+                            ) : (
+                              <Badge variant="default" className="bg-emerald-500 hover:bg-emerald-600">
+                                Opublikowany
+                              </Badge>
+                            )
                           ) : (
                             <Badge variant="secondary">Szkic</Badge>
                           )}

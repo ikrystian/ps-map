@@ -10,7 +10,7 @@ export function ExpertCTA() {
       className="relative overflow-hidden w-full bg-black py-6 md:py-20 xl:py-24"
       id="expert-cta"
       style={{
-        backgroundImage: "url('/images/meet-expert.png')",
+        backgroundImage: "url('/meet-expert_popr.webp')",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "right center",
         backgroundSize: "cover",

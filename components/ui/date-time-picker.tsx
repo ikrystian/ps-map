@@ -64,6 +64,8 @@ interface DateTimePickerProps {
   className?: string
   placeholder?: string
   disabled?: boolean
+  timeLabel?: string
+  minDate?: Date // dni przed tą datą są zablokowane w kalendarzu
 }
 
 export function DateTimePicker({
@@ -73,6 +75,8 @@ export function DateTimePicker({
   className,
   placeholder = "Wybierz datę i godzinę",
   disabled = false,
+  timeLabel = "Godzina rozpoczęcia:",
+  minDate,
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false)
 
@@ -173,13 +177,14 @@ export function DateTimePicker({
               onSelect={handleDateSelect}
               locale={pl}
               showOutsideDays
+              disabled={minDate ? { before: minDate } : undefined}
               className="p-3"
             />
           </div>
           <div className="flex items-center justify-between border-t border-border pt-3 px-1">
             <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
               <Clock className="h-4 w-4 text-primary" />
-              <span>Godzina rozpoczęcia:</span>
+              <span>{timeLabel}</span>
             </div>
             <div className="flex items-center gap-1">
               <Select value={hour} onValueChange={handleHourChange} disabled={!date}>

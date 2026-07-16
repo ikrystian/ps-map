@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -31,6 +31,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { motion, AnimatePresence } from "framer-motion"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
@@ -52,6 +53,8 @@ const postFormSchema = z.object({
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   opublikowany: z.boolean(),
+  zaplanowany: z.boolean().default(false),
+  dataPublikacji: z.string().optional(),
   isSponsored: z.boolean().default(false),
   sponsoredLawFirmId: z.string().optional(),
 })
@@ -68,7 +71,27 @@ const postSchema = postFormSchema.refine((data) => {
 }, {
   message: "Musisz wybrać eksperta/eksperta dla wpisu sponsorowanego",
   path: ["sponsoredLawFirmId"],
+}).refine((data) => {
+  if (data.zaplanowany && !data.dataPublikacji) {
+    return false
+  }
+  return true
+}, {
+  message: "Podaj datę i godzinę publikacji",
+  path: ["dataPublikacji"],
 })
+
+// Rozbija jednolinijkowy HTML na linie między sąsiadującymi tagami — czytelniejsza edycja kodu.
+// Wstawione znaki nowej linii to zwykłe białe znaki, ignorowane przy konwersji do bloków edytora.
+const formatHTMLForEditing = (html: string) => html.replace(/></g, ">\n<")
+
+// Formatuje datę do wartości akceptowanej przez input[type=datetime-local] (czas lokalny)
+const toDatetimeLocal = (value: string | Date) => {
+  const date = new Date(value)
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16)
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -109,6 +132,9 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
 
+  // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
+  const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
+
   const router = useRouter()
 
   const form = useForm<PostFormValues>({
@@ -122,6 +148,8 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
       metaTitle: "",
       metaDescription: "",
       opublikowany: false,
+      zaplanowany: false,
+      dataPublikacji: "",
       isSponsored: false,
       sponsoredLawFirmId: "",
     },
@@ -188,6 +216,13 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
           }
         }
 
+        // Wpis z przyszłą datą publikacji traktujemy jako zaplanowany
+        const isScheduled = Boolean(
+          post.opublikowany &&
+          post.dataPublikacji &&
+          new Date(post.dataPublikacji) > new Date()
+        )
+
         form.reset({
           tytul: post.tytul || "",
           tresc: post.tresc || "",
@@ -196,7 +231,9 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
           tagi: parsedTagi,
           metaTitle: post.metaTitle || "",
           metaDescription: post.metaDescription || "",
-          opublikowany: post.opublikowany || false,
+          opublikowany: isScheduled ? false : (post.opublikowany || false),
+          zaplanowany: isScheduled,
+          dataPublikacji: isScheduled ? toDatetimeLocal(post.dataPublikacji) : "",
           isSponsored: post.isSponsored || false,
           sponsoredLawFirmId: post.sponsoredLawFirmId || "",
         })
@@ -234,6 +271,10 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
           tagi: values.tagi,
           metaTitle: values.metaTitle || null,
           metaDescription: values.metaDescription || null,
+          opublikowany: values.opublikowany || values.zaplanowany,
+          dataPublikacji: values.zaplanowany && values.dataPublikacji
+            ? new Date(values.dataPublikacji).toISOString()
+            : null,
           sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
         }),
       })
@@ -241,6 +282,8 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
       if (response.ok) {
         if (postId) {
           toast.success("Artykuł został zaktualizowany")
+        } else if (values.zaplanowany) {
+          toast.success("Publikacja artykułu została zaplanowana")
         } else {
           toast.success(values.opublikowany ? "Artykuł został opublikowany" : "Szkic został zapisany")
         }
@@ -367,17 +410,59 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                       name="tresc"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold">Treść artykułu *</FormLabel>
-                          <FormControl>
-                            <div className="rounded-xl overflow-hidden border bg-background focus-within:border-primary transition-all [&_.ql-toolbar]:bg-muted/50 [&_.ql-toolbar]:border-b [&_.ql-container]:border-none [&_.ql-editor]:min-h-[400px]">
-                              <RichTextEditor
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Napisz treść artykułu..."
-                                minHeight="400px"
-                              />
+                          <div className="flex items-center justify-between">
+                            <FormLabel className="text-xs font-semibold">Treść artykułu *</FormLabel>
+                            <div className="flex items-center gap-0.5 rounded-lg border bg-muted/30 p-0.5">
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant={editorMode === "visual" ? "secondary" : "ghost"}
+                                className="h-7 px-2.5 text-xs"
+                                onClick={() => setEditorMode("visual")}
+                              >
+                                <Eye className="h-3.5 w-3.5 mr-1.5" />
+                                Wizualny
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant={editorMode === "html" ? "secondary" : "ghost"}
+                                className="h-7 px-2.5 text-xs"
+                                onClick={() => {
+                                  field.onChange(formatHTMLForEditing(field.value))
+                                  setEditorMode("html")
+                                }}
+                              >
+                                <Code className="h-3.5 w-3.5 mr-1.5" />
+                                HTML
+                              </Button>
                             </div>
+                          </div>
+                          <FormControl>
+                            {editorMode === "visual" ? (
+                              <div className="rounded-xl overflow-hidden border bg-background focus-within:border-primary transition-all [&_.ql-toolbar]:bg-muted/50 [&_.ql-toolbar]:border-b [&_.ql-container]:border-none [&_.ql-editor]:min-h-[400px]">
+                                <RichTextEditor
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Napisz treść artykułu..."
+                                  minHeight="400px"
+                                />
+                              </div>
+                            ) : (
+                              <Textarea
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                placeholder="<p>Treść artykułu w HTML...</p>"
+                                className="min-h-[400px] font-mono text-xs leading-relaxed"
+                                spellCheck={false}
+                              />
+                            )}
                           </FormControl>
+                          {editorMode === "html" && (
+                            <FormDescription className="text-xs text-muted-foreground">
+                              Po powrocie do trybu wizualnego niestandardowe znaczniki HTML mogą zostać uproszczone do bloków obsługiwanych przez edytor.
+                            </FormDescription>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )}
@@ -689,7 +774,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                         : "Wybierz czy chcesz od razu opublikować wpis czy zapisać go jako wersję roboczą."}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 space-y-4">
                     <FormField
                       control={form.control}
                       name="opublikowany"
@@ -706,12 +791,81 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                           <FormControl>
                             <Switch
                               checked={field.value}
-                              onCheckedChange={field.onChange}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked)
+                                if (checked) {
+                                  form.setValue("zaplanowany", false)
+                                  form.setValue("dataPublikacji", "")
+                                }
+                              }}
                             />
                           </FormControl>
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="zaplanowany"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-sm font-semibold flex items-center gap-2">
+                              <CalendarClock className="h-4 w-4 text-primary" />
+                              Zaplanuj publikację
+                            </FormLabel>
+                            <FormDescription className="text-xs text-muted-foreground max-w-sm">
+                              Artykuł zostanie automatycznie opublikowany w wybranym terminie.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked)
+                                if (checked) {
+                                  form.setValue("opublikowany", false)
+                                } else {
+                                  form.setValue("dataPublikacji", "")
+                                }
+                              }}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {form.watch("zaplanowany") && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="overflow-hidden"
+                      >
+                        <FormField
+                          control={form.control}
+                          name="dataPublikacji"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs font-semibold">Data i godzina publikacji *</FormLabel>
+                              <FormControl>
+                                <DateTimePicker
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  minDate={new Date()}
+                                  timeLabel="Godzina publikacji:"
+                                  placeholder="Wybierz datę i godzinę publikacji"
+                                  className="[&_button]:h-11"
+                                />
+                              </FormControl>
+                              <FormDescription className="text-xs text-muted-foreground">
+                                Do tego czasu wpis pozostanie ukryty na blogu portalu.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </motion.div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -756,9 +910,11 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                     <Save className="mr-2 h-4 w-4" />
                     {postId
                       ? "Zapisz zmiany"
-                      : form.watch("opublikowany")
-                        ? "Opublikuj artykuł"
-                        : "Zapisz jako szkic"}
+                      : form.watch("zaplanowany")
+                        ? "Zaplanuj publikację"
+                        : form.watch("opublikowany")
+                          ? "Opublikuj artykuł"
+                          : "Zapisz jako szkic"}
                   </>
                 )}
               </Button>

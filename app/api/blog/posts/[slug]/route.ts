@@ -65,8 +65,8 @@ export async function GET(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    // Sprawdź czy wpis jest opublikowany
-    if (!post.opublikowany) {
+    // Sprawdź czy wpis jest opublikowany (zaplanowane wpisy są ukryte do czasu publikacji)
+    if (!post.opublikowany || (post.dataPublikacji && post.dataPublikacji > new Date())) {
       return NextResponse.json({ error: "Wpis nie jest dostępny" }, { status: 404 })
     }
 

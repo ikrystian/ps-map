@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
       metaTitle,
       metaDescription,
       opublikowany,
+      dataPublikacji,
       isSponsored,
       sponsoredLawFirmId,
     } = body
@@ -146,6 +147,15 @@ export async function POST(request: NextRequest) {
     if (!tytul || !tresc) {
       return NextResponse.json(
         { error: "Tytuł i treść są wymagane" },
+        { status: 400 }
+      )
+    }
+
+    // Walidacja zaplanowanej daty publikacji
+    const scheduledDate = dataPublikacji ? new Date(dataPublikacji) : null
+    if (scheduledDate && isNaN(scheduledDate.getTime())) {
+      return NextResponse.json(
+        { error: "Nieprawidłowa data publikacji" },
         { status: 400 }
       )
     }
@@ -192,7 +202,8 @@ export async function POST(request: NextRequest) {
         metaTitle: metaTitle || null,
         metaDescription: metaDescription || null,
         opublikowany: opublikowany || false,
-        dataPublikacji: opublikowany ? new Date() : null,
+        // Przyszła data = publikacja zaplanowana (wpis stanie się widoczny po jej nadejściu)
+        dataPublikacji: opublikowany ? (scheduledDate ?? new Date()) : null,
         isSponsored: isSponsored || false,
         sponsoredLawFirmId: isSponsored ? (sponsoredLawFirmId || null) : null,
       },

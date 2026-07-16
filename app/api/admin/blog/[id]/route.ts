@@ -122,6 +122,7 @@ export async function PATCH(
       metaTitle,
       metaDescription,
       opublikowany,
+      dataPublikacji,
       isSponsored,
       sponsoredLawFirmId,
     } = body
@@ -191,11 +192,26 @@ export async function PATCH(
     }
 
     if (opublikowany !== undefined) {
+      const scheduledDate = dataPublikacji ? new Date(dataPublikacji) : null
+      if (scheduledDate && isNaN(scheduledDate.getTime())) {
+        return NextResponse.json(
+          { error: "Nieprawidłowa data publikacji" },
+          { status: 400 }
+        )
+      }
+
       data.opublikowany = opublikowany
-      if (opublikowany && !existingPost.opublikowany) {
-        data.dataPublikacji = new Date()
-      } else if (!opublikowany) {
+      if (!opublikowany) {
         data.dataPublikacji = null
+      } else if (scheduledDate) {
+        // Przyszła data = publikacja zaplanowana (wpis stanie się widoczny po jej nadejściu)
+        data.dataPublikacji = scheduledDate
+      } else if (
+        !existingPost.opublikowany ||
+        (existingPost.dataPublikacji && existingPost.dataPublikacji > new Date())
+      ) {
+        // Pierwsza publikacja lub zmiana z zaplanowanej na natychmiastową
+        data.dataPublikacji = new Date()
       }
     }
 
