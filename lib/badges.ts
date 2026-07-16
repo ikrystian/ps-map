@@ -42,6 +42,9 @@ export async function checkAndAwardBadges(lawFirmId: string) {
             case "PROFILE_VIEWS":
                 if (lawFirm.wyswietleniaProfilu >= badge.threshold) conditionMet = true
                 break
+            case "MANUAL":
+                // Manual badges are only awarded manually by admins
+                break;
         }
 
         if (conditionMet) {

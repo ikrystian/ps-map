@@ -376,7 +376,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                 </Link>
 
                 {/* Email */}
-                <a href="mailto:pomoc@prosta-sprawa.pl" className="group">
+                <a href="mailto:kontakt@prostasprawa.pl" className="group">
                   <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-zinc-950/20 hover:bg-secondary/5 hover:border-secondary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 group-hover:bg-secondary/20 transition-all mb-4">
                       <Mail className="h-6 w-6" />
@@ -388,7 +388,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                       </p>
                     </div>
                     <Button variant="link" className="text-secondary hover:text-secondary-hover text-xs font-semibold gap-1 mt-4 p-0">
-                      pomoc@prosta-sprawa.pl
+                      kontakt@prostasprawa.pl
                     </Button>
                   </div>
                 </a>
@@ -406,7 +406,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                       </p>
                     </div>
                     <Button variant="link" className="text-primary hover:text-primary-hover text-xs font-semibold gap-1 mt-4 p-0">
-                      +48 123 456 789
+                      +48 534 888 555
                     </Button>
                   </div>
                 </a>

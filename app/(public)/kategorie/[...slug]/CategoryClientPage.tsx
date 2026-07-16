@@ -29,6 +29,7 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronUp,
   Clock,
   Filter,
   Grid3x3,
@@ -137,6 +138,8 @@ export default function CategoryClientPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
   const [total, setTotal] = useState(0)
+  const [isDescExpanded, setIsDescExpanded] = useState(false)
+  const hasLongDescription = ((category?.opis?.length || 0) + (category?.opisDodatkowy?.length || 0)) > 400
 
   // Geographic hierarchy
   const [geographicHierarchy, setGeographicHierarchy] = useState<"voivodeships" | "counties" | "cities">("cities")
@@ -998,19 +1001,81 @@ export default function CategoryClientPage() {
 
         {/* Sekcja opisu kategorii (nad stopką) */}
         {category && (category.opis || category.opisDodatkowy) && (
-          <div className="mt-16 pt-10 border-t border-neutral-900/60 container text-left">
-            {category.opis && (
-              <div
-                className="text-white text-base md:text-lg leading-relaxed whitespace-pre-line mb-6 font-medium"
-                dangerouslySetInnerHTML={{ __html: category.opis }}
-              />
-            )}
-            {category.opisDodatkowy && (
-              <div
-                className="text-neutral-300 text-sm md:text-base leading-relaxed whitespace-pre-line"
-                dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
-              />
-            )}
+          <div className="mt-20 pt-12 border-t border-neutral-900/60 container text-left" id="category-desc-footer">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#121211] via-[#0c0c0b]/90 to-[#0e0e0d] border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+              {/* Decorative Background Glows */}
+              <div className="absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
+              <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-teal-500/5 blur-[100px] pointer-events-none" />
+
+              {/* Section Header */}
+              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-neutral-800/40 relative z-10">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-teal-500/10 flex items-center justify-center border border-primary/20 shadow-inner">
+                  <Scale className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-playfair text-xl md:text-2xl font-bold text-white tracking-tight">
+                    O kategorii: {category.nazwa}
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Szczegółowe informacje prawne i porady ekspertów
+                  </p>
+                </div>
+              </div>
+
+              {/* Description Content wrapper with Expand/Collapse */}
+              <div className="relative z-10">
+                <div
+                  className={cn(
+                    "relative transition-all duration-500 ease-in-out overflow-hidden",
+                    hasLongDescription && !isDescExpanded ? "max-h-[300px]" : "max-h-[5000px]"
+                  )}
+                >
+                  <div className="space-y-6 prose prose-sm md:prose-base dark:prose-invert max-w-none whitespace-pre-line text-left">
+                    {category.opis && (
+                      <div
+                        className="text-white text-base md:text-lg leading-relaxed font-medium prose-p:text-white prose-headings:text-white"
+                        dangerouslySetInnerHTML={{ __html: category.opis }}
+                      />
+                    )}
+                    {category.opisDodatkowy && (
+                      <div
+                        className="text-neutral-300 text-sm md:text-base leading-relaxed prose-p:text-neutral-300 prose-headings:text-neutral-200"
+                        dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Gradient Fade Overlay for collapsed state */}
+                  {hasLongDescription && !isDescExpanded && (
+                    <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#0c0c0b] via-[#0c0c0b]/80 to-transparent pointer-events-none" />
+                  )}
+                </div>
+
+                {/* Show More / Show Less Button */}
+                {hasLongDescription && (
+                  <div className="mt-8 flex justify-center border-t border-neutral-800/30 pt-6">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsDescExpanded(!isDescExpanded)}
+                      className="border-neutral-800 bg-[#0f0f0e]/60 hover:bg-neutral-800 text-neutral-350 hover:text-white rounded-xl px-6 py-5 transition-all text-sm font-medium gap-2 shadow-md hover:shadow-primary/5"
+                    >
+                      {isDescExpanded ? (
+                        <>
+                          Zwiń opis
+                          <ChevronUp className="w-4 h-4 text-primary" />
+                        </>
+                      ) : (
+                        <>
+                          Rozwiń pełny opis
+                          <ChevronDown className="w-4 h-4 text-primary" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>

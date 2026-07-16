@@ -33,7 +33,8 @@ const badgeSchema = z.object({
         "REVIEWS_COUNT",
         "BLOG_POSTS_COUNT",
         "OFFERS_SUBMITTED",
-        "PROFILE_VIEWS"
+        "PROFILE_VIEWS",
+        "MANUAL"
     ]),
     threshold: z.coerce.number().min(0, "Próg musi być liczbą nieujemną"),
 })
@@ -159,6 +160,7 @@ export default function CreateBadgePage() {
                                                 <SelectItem value="BLOG_POSTS_COUNT">Wpisy na blogu</SelectItem>
                                                 <SelectItem value="OFFERS_SUBMITTED">Złożone oferty</SelectItem>
                                                 <SelectItem value="PROFILE_VIEWS">Wyświetlenia profilu</SelectItem>
+                                                <SelectItem value="MANUAL">Manualnie przypisywany</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

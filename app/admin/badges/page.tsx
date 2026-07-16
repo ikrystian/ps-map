@@ -14,6 +14,16 @@ import Image from "next/image"
 import Link from "next/link"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 
+const conditionLabels: Record<string, string> = {
+    YEARS_IN_SERVICE: "Lata w serwisie",
+    WON_CASES: "Wygrane sprawy",
+    REVIEWS_COUNT: "Liczba opinii",
+    BLOG_POSTS_COUNT: "Wpisy na blogu",
+    OFFERS_SUBMITTED: "Złożone oferty",
+    PROFILE_VIEWS: "Wyświetlenia profilu",
+    MANUAL: "Manualny (ręczny)",
+}
+
 export default async function BadgesPage() {
     const badges = await db.badge.findMany({
         orderBy: {
@@ -70,7 +80,9 @@ export default async function BadgesPage() {
                                     <div className="text-sm text-muted-foreground">{badge.description}</div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline">{badge.conditionType}</Badge>
+                                    <Badge variant="outline">
+                                        {conditionLabels[badge.conditionType] || badge.conditionType}
+                                    </Badge>
                                 </TableCell>
                                 <TableCell>{badge.threshold}</TableCell>
                                 <TableCell className="text-right">

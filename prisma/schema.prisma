@@ -2164,6 +2164,7 @@ enum BadgeConditionType {
   BLOG_POSTS_COUNT
   OFFERS_SUBMITTED
   PROFILE_VIEWS
+  MANUAL
 }
 
 // ============================================================================
