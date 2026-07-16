@@ -82,9 +82,6 @@ export default function UserMenu({
         <AvatarImage src={image || undefined} alt={alt} />
         <AvatarFallback>{getInitials()}</AvatarFallback>
       </Avatar>
-      {userName && (
-        <span className="text-sm font-medium hidden sm:block">{userName.split(" ")[0]}</span>
-      )}
       <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
     </DropdownMenuTrigger>
   )

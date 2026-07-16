@@ -17,6 +17,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
+import { NotificationBell } from "@/components/NotificationBell"
+import { MessagesBell } from "@/components/MessagesBell"
 import { cn } from "@/lib/utils"
 import type { CategoryWithChildren } from "@/types/categories"
 import type { BlogCategory } from "@/types"
@@ -835,6 +837,12 @@ export default function PublicHeader({
                     className="flex"
                     labelClassName="lg:flex"
                   />
+                )}
+                {(userRole === "CLIENT" || userRole === "LAW_FIRM") && (
+                  <>
+                    <MessagesBell />
+                    <NotificationBell />
+                  </>
                 )}
                 <UserMenu
                   userRole={userRole}
