@@ -246,11 +246,14 @@ export default function ContactClientPage() {
                   <h2 className="font-playfair text-2xl text-white">Polska Grupa Identyfikacji Firm Sp. z o.o.</h2>
                 </div>
                 <p className="text-neutral-400 text-sm leading-relaxed">
-                  ProstaSprawa.pl
-                  <br />
                   ul. Langiewicza 16/3
                   <br />
-                  25-381 Kielce
+                  25-381 Kielce<br />
+                  KRS: 0000768210<br />
+
+                  NIP: 9592020678<br />
+                  REGON: 382401289
+                  <br />
                 </p>
                 <a
                   href="https://maps.google.com/maps?q=Langiewicza+16/3+25-381+Kielce"

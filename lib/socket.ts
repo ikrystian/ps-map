@@ -98,6 +98,10 @@ export function initSocket(httpServer: HttpServer): SocketIOServer {
     serveClient: false,
     pingInterval: 25000,
     pingTimeout: 20000,
+    // Nie niszcz cudzych połączeń upgrade — na tym samym serwerze HTTP działa
+    // też websocket HMR Next.js (/_next/webpack-hmr); domyślne destroyUpgrade:true
+    // zabijało go co sekundę, powodując ciągłe reconnecty i wolne ładowanie stron
+    destroyUpgrade: false,
   })
 
   // Autoryzacja połączenia na podstawie cookie sesji next-auth
