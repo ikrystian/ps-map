@@ -2,6 +2,7 @@
 import Image from "next/image"
 
 import { AddCaseButton } from "@/components/AddCaseButton"
+import { MessageNotificationSound } from "@/components/MessageNotificationSound"
 import { NotificationBell } from "@/components/NotificationBell"
 import { PanelFooter } from "@/components/PanelFooter"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -274,6 +275,8 @@ export default function ClientPanelLayout({
 
   return (
     <div className="flex h-screen bg-background-sec">
+      {/* Dźwięk powiadomień o nowych wiadomościach (globalnie w całym panelu) */}
+      <MessageNotificationSound />
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
         "hidden md:block transition-all duration-300 ease-in-out bg-card",

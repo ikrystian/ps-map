@@ -13,6 +13,7 @@ import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
 import { BusinessPackageWelcomeModal } from "@/components/law-firm/BusinessPackageWelcomeModal"
+import { MessageNotificationSound } from "@/components/MessageNotificationSound"
 import { NotificationBell } from "@/components/NotificationBell"
 import { PanelFooter } from "@/components/PanelFooter"
 import { ExpiredPackageModal } from "@/components/permissions"
@@ -428,6 +429,8 @@ export default function LawFirmPanelLayout({
 
   return (
     <div className="flex h-screen bg-background-sec">
+      {/* Dźwięk powiadomień o nowych wiadomościach (globalnie w całym panelu) */}
+      <MessageNotificationSound />
       {/* Desktop Sidebar - hidden on mobile */}
       <aside className={cn(
         "hidden md:block border-border transition-all duration-300 ease-in-out bg-card",
@@ -507,7 +510,10 @@ export default function LawFirmPanelLayout({
         <main className="flex-1 overflow-y-auto">
           <div className="container mx-auto p-4 sm:p-6 pb-0 sm:pb-0">
             {children}
-            <PanelFooter className="mt-6" />
+            {/* Footer (z paskiem partnerów) ukryty na wiadomościach — czat ma zajmować cały ekran */}
+            {pathname !== "/panel-eksperta/wiadomosci" && (
+              <PanelFooter className="mt-6" />
+            )}
           </div>
         </main>
       </div>

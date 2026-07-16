@@ -8,7 +8,7 @@ import { requestNotificationPermission } from "@/lib/browser-notifications"
 import type { Conversation } from "@/types/conversations"
 import { Loader2, MessageCircle } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { EnhancedChatArea } from "./EnhancedChatArea"
 import { EnhancedConversationList } from "./EnhancedConversationList"
 
@@ -20,9 +20,6 @@ export function EnhancedMessengerLayout() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [lastFetchTime, setLastFetchTime] = useState<Date>(new Date())
-
-  // Ustawienie "Dźwięk powiadomień na czacie" – decyduje czy odtwarzać dźwięk
-  const soundEnabledRef = useRef(true)
 
   // Pobierz wszystkie konwersacje
   const fetchAllConversations = useCallback(async (silent = true) => {
@@ -71,17 +68,11 @@ export function EnhancedMessengerLayout() {
       // Refresh conversations when real-time update detected
       fetchAllConversations(true)
     }, [fetchAllConversations]),
-    onNewMessage: useCallback((data: any) => {
-      // Push przeglądarkowy wyświetla globalnie NotificationBell (zdarzenie notification:new).
-      // Tutaj odśwież listę konwersacji i odtwórz dźwięk.
+    onNewMessage: useCallback(() => {
+      // Push przeglądarkowy wyświetla globalnie NotificationBell (zdarzenie notification:new),
+      // dźwięk odtwarza globalnie MessageNotificationSound w layoucie panelu.
+      // Tutaj tylko odśwież listę konwersacji.
       fetchAllConversations(true)
-      // Play sound (tylko jeśli użytkownik włączył dźwięk powiadomień)
-      if (soundEnabledRef.current) {
-        const audio = new Audio("/sounds/notification.mp3")
-        audio.play().catch(() => {
-          // Ignore errors if sound can't play
-        })
-      }
     }, [fetchAllConversations]),
     enabled: !!session?.user,
   })
@@ -92,25 +83,6 @@ export function EnhancedMessengerLayout() {
       fetchAllConversations(false)
     }
   }, [session, fetchAllConversations])
-
-  // Pobierz ustawienie dźwięku powiadomień
-  useEffect(() => {
-    if (!session?.user) return
-    let active = true
-    fetch("/api/notification-settings")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((settings) => {
-        if (active && settings) {
-          soundEnabledRef.current = !!settings.powiadomienieDzwiekowe
-        }
-      })
-      .catch(() => {
-        // W razie błędu zostaw wartość domyślną
-      })
-    return () => {
-      active = false
-    }
-  }, [session?.user])
 
   // Request notification permission
   useEffect(() => {

@@ -1,5 +1,6 @@
 "use client"
 
+import { Fragment, useEffect, useState } from "react"
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
@@ -11,51 +12,74 @@ interface PanelFooterProps {
   id?: string
 }
 
+type PartnerLogo = {
+  id: string
+  name: string
+  imageUrl: string
+  linkUrl: string | null
+}
+
 export function PanelFooter({ className = "", id }: PanelFooterProps) {
+  const [logos, setLogos] = useState<PartnerLogo[]>([])
+
+  useEffect(() => {
+    const fetchLogos = async () => {
+      try {
+        const res = await fetch("/api/partner-logos")
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data)) {
+            setLogos(data)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching partner logos:", error)
+      }
+    }
+
+    fetchLogos()
+  }, [])
+
   return (
     <div className={className} id={id}>
       {/* Partners banner */}
-      <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
-        <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
+      {logos.length > 0 && (
+        <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
+          <span className="text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
-          {/* IdentyfikacjaFirm */}
-          <a
-            href="https://identyfikacjafirm.pl"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
-          >
-            <div className="flex flex-col items-start leading-none">
-              <span className="text-md font-bold text-white tracking-tight">
-                Identyfikacja<span className="font-extrabold text-zinc-300">Firm</span>
-              </span>
-            </div>
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+            {logos.map((logo, idx) => {
+              const image = (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={logo.imageUrl}
+                  alt={logo.name}
+                  title={logo.name}
+                  className="h-8 w-auto max-w-[140px] object-contain"
+                />
+              )
 
-          {/* Divider between partners */}
-          <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />
-
-          {/* 4Connection */}
-          <a
-            href="https://4connection.pl"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
-          >
-            <span className="text-md font-bold text-white tracking-tight">
-              4<span className="font-semibold text-zinc-300">Connection</span>
-            </span>
-          </a>
-          <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />
-
-          <a href="https://bpcoders.pl" target="_blank" rel="noopener noreferrer">
-            <span className="text-md font-bold text-white tracking-tight">
-              BP<span className="font-semibold text-zinc-300">Coders</span>
-            </span>
-          </a>
+              return (
+                <Fragment key={logo.id}>
+                  {idx > 0 && <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />}
+                  {logo.linkUrl ? (
+                    <a
+                      href={logo.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center transition-opacity hover:opacity-80"
+                    >
+                      {image}
+                    </a>
+                  ) : (
+                    <div className="flex items-center">{image}</div>
+                  )}
+                </Fragment>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Separator line */}
       <div className="border-t border-zinc-800/40 my-3 max-w-3xl mx-auto" />

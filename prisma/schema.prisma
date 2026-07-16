@@ -2259,6 +2259,24 @@ model HomepageTestimonial {
 }
 
 // ============================================================================
+// LOGOTYPY PARTNERÓW (BELKA W PANELACH)
+// ============================================================================
+
+model PartnerLogo {
+  id        String   @id @default(uuid())
+  name      String   // Nazwa partnera (alt logotypu)
+  imageUrl  String   // URL logotypu
+  linkUrl   String?  // Adres, do którego kieruje logotyp
+  active    Boolean  @default(true)
+  order     Int      @default(0) // do sortowania
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@index([order])
+}
+
+// ============================================================================
 // RĘCZNE NADPISANIA POZYCJI W RANKINGU
 // ============================================================================
 

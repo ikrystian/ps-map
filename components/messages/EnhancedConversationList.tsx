@@ -332,7 +332,7 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="active"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "active" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
@@ -346,7 +346,7 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="archived"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "archived" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
@@ -360,7 +360,7 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="deleted"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-sm tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
               activeTab === "deleted" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >

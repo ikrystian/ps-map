@@ -1,6 +1,7 @@
 "use client"
 
 import { LoginHistory } from "@/components/auth"
+import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -220,6 +221,13 @@ export default function LawFirmSettingsPage() {
       if (!response.ok) {
         throw new Error("Failed to update settings")
       }
+
+      // Powiadom globalny odtwarzacz dźwięku o zmianie ustawień (bez przeładowania)
+      window.dispatchEvent(
+        new CustomEvent(NOTIFICATION_SETTINGS_CHANGED_EVENT, {
+          detail: { powiadomienieDzwiekowe: notificationSettings.powiadomienieDzwiekowe },
+        })
+      )
 
       toast.success("Ustawienia zostały zaktualizowane")
     } catch (error) {

@@ -138,6 +138,12 @@ export default function UserMenu({
                 Konto
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/panel-klienta/moje-konto" className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-3">
+                <Settings className="h-4 w-4 text-muted-foreground" />
+                Ustawienia
+              </Link>
+            </DropdownMenuItem>
           </div>
 
           <DropdownMenuSeparator />

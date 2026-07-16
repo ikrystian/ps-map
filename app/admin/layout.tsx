@@ -24,6 +24,7 @@ import {
   FileCode,
   FileText,
   FolderTree,
+  Handshake,
   HelpCircle,
   LayoutDashboard,
   LayoutTemplate,
@@ -77,6 +78,7 @@ const navigation = [
       { name: "Promocje", href: "/admin/promocje", icon: TrendingUp },
       { name: "Pozycjonowanie", href: "/admin/pozycjonowanie", icon: ArrowUpDown },
       { name: "Reklamy", href: "/admin/reklamy", icon: Megaphone },
+      { name: "Partnerzy", href: "/admin/partnerzy", icon: Handshake },
     ],
   },
   {
