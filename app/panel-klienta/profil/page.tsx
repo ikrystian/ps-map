@@ -41,6 +41,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { FaFacebook } from "react-icons/fa"
 import * as z from "zod"
 
 const profileFormSchema = z.object({
@@ -99,6 +100,9 @@ export default function ClientProfilePage() {
   const [showAvatarCropper, setShowAvatarCropper] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isRemovingAvatar, setIsRemovingAvatar] = useState(false)
+  const [connectedProviders, setConnectedProviders] = useState<string[]>([])
+  const [hasPassword, setHasPassword] = useState(true)
+  const [isDisconnectingFacebook, setIsDisconnectingFacebook] = useState(false)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -123,6 +127,25 @@ export default function ClientProfilePage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  // Obsługa powrotu z procesu łączenia konta z Facebookiem
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const fbLink = params.get("fb_link")
+    if (!fbLink) return
+
+    if (fbLink === "success") {
+      toast.success("Konto zostało połączone z Facebookiem. Możesz teraz logować się przez Facebooka.")
+    } else if (fbLink === "cancelled") {
+      toast.info("Łączenie z Facebookiem zostało anulowane")
+    } else if (fbLink === "in_use") {
+      toast.error("To konto Facebook jest już połączone z innym kontem w serwisie")
+    } else {
+      toast.error("Nie udało się połączyć konta z Facebookiem. Spróbuj ponownie.")
+    }
+
+    router.replace("/panel-klienta/profil", { scroll: false })
+  }, [router])
 
   const fetchData = async () => {
     try {
@@ -156,6 +179,14 @@ export default function ClientProfilePage() {
       if (voivodeshipsResponse.ok) {
         const data = await voivodeshipsResponse.json()
         setVoivodeships(data)
+      }
+
+      // Pobierz połączone konta społecznościowe
+      const accountsResponse = await fetch("/api/account/linked-providers")
+      if (accountsResponse.ok) {
+        const data = await accountsResponse.json()
+        setConnectedProviders(data.providers || [])
+        setHasPassword(data.hasPassword !== false)
       }
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -293,6 +324,35 @@ export default function ClientProfilePage() {
       toast.error("Nie udało się usunąć avatara")
     } finally {
       setIsRemovingAvatar(false)
+    }
+  }
+
+  const isFacebookConnected = connectedProviders.includes("facebook")
+
+  const handleConnectFacebook = () => {
+    // Pełne przekierowanie do przepływu OAuth (poza routerem Next.js)
+    window.location.href = "/api/account/link/facebook"
+  }
+
+  const handleDisconnectFacebook = async () => {
+    setIsDisconnectingFacebook(true)
+    try {
+      const response = await fetch("/api/account/linked-providers?provider=facebook", {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        setConnectedProviders((prev) => prev.filter((p) => p !== "facebook"))
+        toast.success("Konto Facebook zostało odłączone")
+      } else {
+        const error = await response.json()
+        toast.error(error.error || "Nie udało się odłączyć konta Facebook")
+      }
+    } catch (error) {
+      console.error("Error disconnecting Facebook:", error)
+      toast.error("Wystąpił błąd podczas odłączania konta")
+    } finally {
+      setIsDisconnectingFacebook(false)
     }
   }
 
@@ -483,6 +543,69 @@ export default function ClientProfilePage() {
                       </FormItem>
                     )}
                   />
+                </CardContent>
+              </Card>
+
+              {/* Połączone konta */}
+              <Card variant="glass">
+                <CardHeader>
+                  <CardTitle className="font-playfair text-white text-base">Połączone konta</CardTitle>
+                  <CardDescription className="text-muted-foreground text-xs">
+                    Połącz konto z Facebookiem, aby logować się jednym kliknięciem.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1877F2]/15">
+                        <FaFacebook className="h-5 w-5 text-[#1877F2]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-white">Facebook</p>
+                        <p className={cn(
+                          "text-sm truncate",
+                          isFacebookConnected ? "text-success" : "text-muted-foreground"
+                        )}>
+                          {isFacebookConnected ? "Połączono" : "Nie połączono"}
+                        </p>
+                      </div>
+                    </div>
+                    {isFacebookConnected ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="shrink-0 text-error hover:text-error hover:bg-error/10"
+                        onClick={handleDisconnectFacebook}
+                        disabled={isDisconnectingFacebook || (!hasPassword && connectedProviders.length <= 1)}
+                      >
+                        {isDisconnectingFacebook ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Odłącz"
+                        )}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="shrink-0"
+                        onClick={handleConnectFacebook}
+                      >
+                        Połącz
+                      </Button>
+                    )}
+                  </div>
+                  {isFacebookConnected && !hasPassword && connectedProviders.length <= 1 && (
+                    <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Nie możesz odłączyć Facebooka, ponieważ jest to Twoja jedyna metoda
+                        logowania. Najpierw ustaw hasło do konta.
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 

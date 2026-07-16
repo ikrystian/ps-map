@@ -724,7 +724,7 @@ export function EnhancedChatArea({
       <div
         ref={messagesContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin bg-zinc-950/20"
+        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin bg-zinc-950/20 md:max-h-[calc(100vh-250px)]"
       >
         {isLoadingMore && (
           <div className="flex justify-center py-2">
