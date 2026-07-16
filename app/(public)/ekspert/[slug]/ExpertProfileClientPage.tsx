@@ -825,13 +825,19 @@ export default function LawFirmProfilePage() {
                 </Button>
               ) : (
                 <Button
-                  asChild
-                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20"
+                  onClick={() => {
+                    setShowContactForm(true);
+                    setTimeout(() => {
+                      const element = document.getElementById("contact-form");
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 100);
+                  }}
+                  className="h-11 rounded-xl bg-gradient-to-r from-primary to-[#12c2b1] hover:from-[#12c2b1] hover:to-primary text-primary-foreground font-semibold px-6 shadow-md shadow-primary/10 hover:shadow-[0_0_20px_rgba(13,161,146,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 border border-primary/20 cursor-pointer"
                 >
-                  <a href="#contact-form">
-                    <MessageSquare className="h-4 w-4" />
-                    Skontaktuj się
-                  </a>
+                  <MessageSquare className="h-4 w-4" />
+                  Skontaktuj się
                 </Button>
               )}
             </div>
@@ -1210,7 +1216,7 @@ export default function LawFirmProfilePage() {
             </Card>
 
             {/* Contact Form Card */}
-            <Card id="contact-form" className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+            <Card id="contact-form" className="scroll-mt-24 border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
               <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
                   <Send className="h-5 w-5 text-primary/80" />
