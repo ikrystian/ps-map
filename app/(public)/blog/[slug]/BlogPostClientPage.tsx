@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { BlogPost } from '@/types/blog';
 
 
@@ -127,6 +127,36 @@ export default function BlogPostPage() {
     ? Math.ceil(post.tresc.replace(/<[^>]*>/g, "").split(/\s+/).length / 200)
     : 0;
 
+  // Ścieżka kategorii (od najwyższego poziomu do kategorii wpisu)
+  const categoryPath = post.category
+    ? [post.category.parent?.parent, post.category.parent, post.category].filter(
+        (cat): cat is NonNullable<typeof post.category> => Boolean(cat)
+      )
+    : [];
+
+  const categoryBreadcrumbs = categoryPath.map((cat, index) => (
+    <Fragment key={cat.id ?? index}>
+      {index > 0 && <span className="text-neutral-600 text-xs">/</span>}
+      {cat.slug ? (
+        <Link href={`/blog?category=${cat.slug}`}>
+          <Badge
+            variant="secondary"
+            className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5 cursor-pointer"
+          >
+            {cat.nazwa}
+          </Badge>
+        </Link>
+      ) : (
+        <Badge
+          variant="secondary"
+          className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold px-2.5 py-0.5"
+        >
+          {cat.nazwa}
+        </Badge>
+      )}
+    </Fragment>
+  ));
+
   return (
     <div className="min-h-screen bg-background-sec text-neutral-100 selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
       {/* Reading progress bar */}
@@ -163,14 +193,7 @@ export default function BlogPostPage() {
                   Blog
                 </Link>
                 <span className="text-neutral-600 text-xs">/</span>
-                {post.category && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
-                  >
-                    {post.category.nazwa}
-                  </Badge>
-                )}
+                {categoryBreadcrumbs}
                 {post.isSponsored && (
                   <Badge
                     variant="secondary"
@@ -262,14 +285,7 @@ export default function BlogPostPage() {
                   Blog
                 </Link>
                 <span className="text-neutral-600 text-xs">/</span>
-                {post.category && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5"
-                  >
-                    {post.category.nazwa}
-                  </Badge>
-                )}
+                {categoryBreadcrumbs}
                 {post.isSponsored && (
                   <Badge
                     variant="secondary"

@@ -8,10 +8,19 @@ export interface BlogCategory {
   slug: string
   opis?: string | null
   aktywna?: boolean
+  parentId?: string | null
+  parent?: {
+    id: string
+    nazwa: string
+    slug: string
+    parentId?: string | null
+  } | null
+  children?: BlogCategory[]
   createdAt?: string | Date
   updatedAt?: string | Date
   _count?: {
     blogPosts: number
+    children?: number
   }
 }
 
@@ -33,6 +42,16 @@ export interface BlogPost {
     id?: string;
     nazwa: string;
     slug?: string;
+    parent?: {
+      id?: string;
+      nazwa: string;
+      slug?: string;
+      parent?: {
+        id?: string;
+        nazwa: string;
+        slug?: string;
+      } | null;
+    } | null;
   } | null;
   lawFirmId?: string | null;
   lawFirm?: {

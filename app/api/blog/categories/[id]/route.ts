@@ -14,9 +14,18 @@ export async function GET(
     const category = await prisma.blogCategory.findUnique({
       where: { id },
       include: {
+        parent: {
+          select: {
+            id: true,
+            nazwa: true,
+            slug: true,
+            parentId: true,
+          },
+        },
         _count: {
           select: {
             blogPosts: true,
+            children: true,
           },
         },
       },
@@ -47,7 +56,7 @@ export async function PUT(
 
     const { id } = await params
     const body = await request.json()
-    const { nazwa, slug: customSlug, opis, aktywna } = body
+    const { nazwa, slug: customSlug, opis, aktywna, parentId } = body
 
     if (!nazwa) {
       return NextResponse.json(
@@ -82,6 +91,45 @@ export async function PUT(
       }
     }
 
+    // Walidacja kategorii nadrzędnej (zapobiega cyklom w hierarchii)
+    const newParentId = parentId !== undefined ? parentId || null : existingCategory.parentId
+
+    if (newParentId) {
+      if (newParentId === id) {
+        return NextResponse.json(
+          { error: "Kategoria nie może być swoją własną kategorią nadrzędną" },
+          { status: 400 }
+        )
+      }
+
+      const parentCategory = await prisma.blogCategory.findUnique({
+        where: { id: newParentId },
+      })
+
+      if (!parentCategory) {
+        return NextResponse.json(
+          { error: "Kategoria nadrzędna nie istnieje" },
+          { status: 400 }
+        )
+      }
+
+      // Sprawdź czy nowy rodzic nie jest potomkiem edytowanej kategorii
+      let ancestorId: string | null = parentCategory.parentId
+      while (ancestorId) {
+        if (ancestorId === id) {
+          return NextResponse.json(
+            { error: "Nie można ustawić podkategorii jako kategorii nadrzędnej" },
+            { status: 400 }
+          )
+        }
+        const ancestor: { parentId: string | null } | null = await prisma.blogCategory.findUnique({
+          where: { id: ancestorId },
+          select: { parentId: true },
+        })
+        ancestorId = ancestor?.parentId ?? null
+      }
+    }
+
     const category = await prisma.blogCategory.update({
       where: { id },
       data: {
@@ -89,11 +137,21 @@ export async function PUT(
         slug,
         opis,
         aktywna: aktywna !== undefined ? aktywna : existingCategory.aktywna,
+        parentId: newParentId,
       },
       include: {
+        parent: {
+          select: {
+            id: true,
+            nazwa: true,
+            slug: true,
+            parentId: true,
+          },
+        },
         _count: {
           select: {
             blogPosts: true,
+            children: true,
           },
         },
       },
@@ -130,6 +188,7 @@ export async function DELETE(
         _count: {
           select: {
             blogPosts: true,
+            children: true,
           },
         },
       },
@@ -143,6 +202,14 @@ export async function DELETE(
     if (category._count.blogPosts > 0) {
       return NextResponse.json(
         { error: `Nie można usunąć kategorii. Jest używana przez ${category._count.blogPosts} wpis(ów)` },
+        { status: 400 }
+      )
+    }
+
+    // Sprawdź czy kategoria ma podkategorie
+    if (category._count.children > 0) {
+      return NextResponse.json(
+        { error: `Nie można usunąć kategorii. Posiada ${category._count.children} podkategorii(-e)` },
         { status: 400 }
       )
     }

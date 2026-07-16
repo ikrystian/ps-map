@@ -1008,6 +1008,11 @@ model BlogCategory {
 
   aktywna     Boolean  @default(true)
 
+  // Hierarchia (kategoria nadrzędna / podkategorie)
+  parentId    String?
+  parent      BlogCategory?  @relation("BlogCategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children    BlogCategory[] @relation("BlogCategoryHierarchy")
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -1016,6 +1021,7 @@ model BlogCategory {
 
   @@index([slug])
   @@index([aktywna])
+  @@index([parentId])
 }
 
 // ============================================================================

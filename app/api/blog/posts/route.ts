@@ -1,3 +1,4 @@
+import { getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -23,7 +24,11 @@ export async function GET(request: NextRequest) {
     }
 
     if (categoryId) {
-      where.categoryId = categoryId
+      // Uwzględnij również wpisy z podkategorii wybranej kategorii
+      const allCategories = await prisma.blogCategory.findMany({
+        select: { id: true, parentId: true },
+      })
+      where.categoryId = { in: getCategoryWithDescendantIds(allCategories, categoryId) }
     }
 
     if (lawFirmId) {
@@ -42,11 +47,16 @@ export async function GET(request: NextRequest) {
       prisma.blogPost.findMany({
         where,
         include: {
-          category: true,
+          category: {
+            include: {
+              parent: {
+                select: { id: true, nazwa: true, slug: true },
+              },
+            },
+          },
           lawFirm: {
             select: {
               id: true,
-              nazwa: true,
               nazwa: true,
               logo: true,
             },

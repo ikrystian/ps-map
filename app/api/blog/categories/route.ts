@@ -11,9 +11,18 @@ export async function GET() {
         aktywna: true,
       },
       include: {
+        parent: {
+          select: {
+            id: true,
+            nazwa: true,
+            slug: true,
+            parentId: true,
+          },
+        },
         _count: {
           select: {
             blogPosts: true,
+            children: true,
           },
         },
       },
@@ -39,7 +48,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { nazwa, slug: customSlug, opis, aktywna } = body
+    const { nazwa, slug: customSlug, opis, aktywna, parentId } = body
 
     if (!nazwa) {
       return NextResponse.json(
@@ -63,17 +72,41 @@ export async function POST(request: Request) {
       )
     }
 
+    // Sprawdź czy kategoria nadrzędna istnieje
+    if (parentId) {
+      const parentCategory = await prisma.blogCategory.findUnique({
+        where: { id: parentId },
+      })
+
+      if (!parentCategory) {
+        return NextResponse.json(
+          { error: "Kategoria nadrzędna nie istnieje" },
+          { status: 400 }
+        )
+      }
+    }
+
     const category = await prisma.blogCategory.create({
       data: {
         nazwa,
         slug,
         opis,
         aktywna: aktywna !== undefined ? aktywna : true,
+        parentId: parentId || null,
       },
       include: {
+        parent: {
+          select: {
+            id: true,
+            nazwa: true,
+            slug: true,
+            parentId: true,
+          },
+        },
         _count: {
           select: {
             blogPosts: true,
+            children: true,
           },
         },
       },

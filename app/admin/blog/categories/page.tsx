@@ -32,6 +32,13 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -44,18 +51,22 @@ import {
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Edit, Plus, Trash2 } from "lucide-react"
+import { CornerDownRight, Edit, Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import type { BlogCategory } from "@/types"
 import * as z from "zod"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { flattenCategoryTree, getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
+
+const NO_PARENT_VALUE = "__none__"
 
 const categorySchema = z.object({
   nazwa: z.string().min(1, "Nazwa jest wymagana"),
   slug: z.string().min(1, "Slug jest wymagany").regex(/^[a-z0-9-]+$/, "Slug może zawierać tylko małe litery, cyfry i myślniki"),
   opis: z.string().optional(),
   aktywna: z.boolean(),
+  parentId: z.string().optional(),
 })
 
 type CategoryFormValues = z.infer<typeof categorySchema>
@@ -75,6 +86,7 @@ export default function AdminBlogCategoriesPage() {
       slug: "",
       opis: "",
       aktywna: true,
+      parentId: NO_PARENT_VALUE,
     },
   })
 
@@ -125,6 +137,11 @@ export default function AdminBlogCategoriesPage() {
     }
   }
 
+  const toPayload = (values: CategoryFormValues) => ({
+    ...values,
+    parentId: values.parentId && values.parentId !== NO_PARENT_VALUE ? values.parentId : null,
+  })
+
   const handleCreateCategory = async (values: CategoryFormValues) => {
     try {
       const response = await fetch("/api/blog/categories", {
@@ -132,7 +149,7 @@ export default function AdminBlogCategoriesPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(toPayload(values)),
       })
 
       if (response.ok) {
@@ -158,7 +175,7 @@ export default function AdminBlogCategoriesPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(toPayload(values)),
       })
 
       if (response.ok) {
@@ -205,6 +222,7 @@ export default function AdminBlogCategoriesPage() {
       slug: category.slug,
       opis: category.opis || "",
       aktywna: category.aktywna,
+      parentId: category.parentId || NO_PARENT_VALUE,
     })
     setIsEditDialogOpen(true)
   }
@@ -212,6 +230,16 @@ export default function AdminBlogCategoriesPage() {
   const openDeleteDialog = (category: BlogCategory) => {
     setSelectedCategory(category)
     setIsDeleteDialogOpen(true)
+  }
+
+  // Lista spłaszczona wg hierarchii (rodzic przed dziećmi, z poziomem zagnieżdżenia)
+  const flatCategories = flattenCategoryTree(categories)
+
+  // Opcje kategorii nadrzędnej — przy edycji wyklucza edytowaną kategorię i jej potomków
+  const getParentOptions = (excludeId?: string) => {
+    if (!excludeId) return flatCategories
+    const excluded = new Set(getCategoryWithDescendantIds(categories, excludeId))
+    return flatCategories.filter((c) => !excluded.has(c.id))
   }
 
   if (loading) {
@@ -271,6 +299,37 @@ export default function AdminBlogCategoriesPage() {
                       </FormControl>
                       <FormDescription>
                         Unikalny identyfikator URL
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="parentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kategoria nadrzędna</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Brak (kategoria główna)" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={NO_PARENT_VALUE}>Brak (kategoria główna)</SelectItem>
+                          {getParentOptions().map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              <span style={{ paddingLeft: `${category.depth * 12}px` }}>
+                                {category.depth > 0 && "— "}
+                                {category.nazwa}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Wybierz, jeśli tworzysz podkategorię
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -344,9 +403,19 @@ export default function AdminBlogCategoriesPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                categories.map((category) => (
+                flatCategories.map((category) => (
                   <TableRow key={category.id}>
-                    <TableCell className="font-medium">{category.nazwa}</TableCell>
+                    <TableCell className="font-medium">
+                      <span
+                        className="inline-flex items-center gap-1.5"
+                        style={{ paddingLeft: `${category.depth * 20}px` }}
+                      >
+                        {category.depth > 0 && (
+                          <CornerDownRight className="h-3.5 w-3.5 text-muted-foreground" />
+                        )}
+                        {category.nazwa}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <code className="text-sm bg-muted px-2 py-1 rounded">{category.slug}</code>
                     </TableCell>
@@ -424,6 +493,37 @@ export default function AdminBlogCategoriesPage() {
                     </FormControl>
                     <FormDescription>
                       Unikalny identyfikator URL
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="parentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kategoria nadrzędna</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Brak (kategoria główna)" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NO_PARENT_VALUE}>Brak (kategoria główna)</SelectItem>
+                        {getParentOptions(selectedCategory?.id).map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            <span style={{ paddingLeft: `${category.depth * 12}px` }}>
+                              {category.depth > 0 && "— "}
+                              {category.nazwa}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Wybierz, jeśli kategoria ma być podkategorią
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

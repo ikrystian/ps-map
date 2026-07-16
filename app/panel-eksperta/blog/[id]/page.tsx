@@ -56,6 +56,7 @@ const postSchema = z.object({
 })
 
 import type { BlogCategory } from "@/types"
+import { flattenCategoryTree } from "@/lib/blog-category-tree"
 
 type PostFormValues = z.infer<typeof postSchema>
 
@@ -300,9 +301,12 @@ export default function LawFirmEditBlogPostPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
-                              {categories.map((category) => (
+                              {flattenCategoryTree(categories).map((category) => (
                                 <SelectItem key={category.id} value={category.id} className="hover:bg-primary/10 focus:bg-primary/10">
-                                  {category.nazwa}
+                                  <span style={{ paddingLeft: `${category.depth * 12}px` }}>
+                                    {category.depth > 0 && "— "}
+                                    {category.nazwa}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>

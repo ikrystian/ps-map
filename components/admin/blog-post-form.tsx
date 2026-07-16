@@ -33,6 +33,7 @@ import * as z from "zod"
 import { motion, AnimatePresence } from "framer-motion"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
+import { flattenCategoryTree } from "@/lib/blog-category-tree"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -346,9 +347,12 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {categories.map((category) => (
+                              {flattenCategoryTree(categories).map((category) => (
                                 <SelectItem key={category.id} value={category.id}>
-                                  {category.nazwa}
+                                  <span style={{ paddingLeft: `${category.depth * 12}px` }}>
+                                    {category.depth > 0 && "— "}
+                                    {category.nazwa}
+                                  </span>
                                 </SelectItem>
                               ))}
                             </SelectContent>

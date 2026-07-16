@@ -28,6 +28,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import type { BlogCategory } from "@/types";
 import { PaginationData } from '@/types/pagination';
 import { BlogPost } from '@/types/blog';
+import { buildCategoryTree, getCategoryPath, type BlogCategoryNode } from "@/lib/blog-category-tree";
 
 
 
@@ -205,6 +206,21 @@ export default function BlogPage() {
     return <IconArticle className={className} />;
   };
 
+  // Hierarchia kategorii: korzenie + ścieżka wybranej kategorii (dla wierszy podkategorii)
+  const categoryTree = buildCategoryTree(categories);
+  const nodeById = new Map<string, BlogCategoryNode>();
+  const indexNodes = (nodes: BlogCategoryNode[]) => {
+    nodes.forEach((node) => {
+      nodeById.set(node.id, node);
+      indexNodes(node.children);
+    });
+  };
+  indexNodes(categoryTree);
+  const selectedPath = selectedCategory
+    ? getCategoryPath(categories, selectedCategory)
+    : [];
+  const selectedPathIds = selectedPath.map((c) => c.id);
+
   // Splitting posts to featured vs grid
   const hasFeatured =
     posts.length > 0 && pagination.page === 1 && !debouncedSearch;
@@ -282,7 +298,8 @@ export default function BlogPage() {
       </section>
 
       {/* Category Pills Filter */}
-      <section className="px-4 py-8">
+      <section className="px-4 py-8 space-y-3">
+        {/* Kategorie główne */}
         <div className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto categories-pills" >
           <button
             onClick={() => handleCategoryChange(null)}
@@ -300,13 +317,15 @@ export default function BlogPage() {
             )}
             Wszystkie
           </button>
-          {categories.map((category) => (
+          {categoryTree.map((category) => (
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
               className={`relative px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors z-10 cursor-pointer ${selectedCategory === category.id
                 ? "text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                : selectedPathIds.includes(category.id)
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               {selectedCategory === category.id && (
@@ -320,6 +339,42 @@ export default function BlogPage() {
             </button>
           ))}
         </div>
+
+        {/* Podkategorie wybranej ścieżki (kolejne poziomy hierarchii) */}
+        {selectedPath.map((pathCategory) => {
+          const node = nodeById.get(pathCategory.id);
+          if (!node || node.children.length === 0) return null;
+          return (
+            <motion.div
+              key={pathCategory.id}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto"
+            >
+              {node.children.map((child) => (
+                <button
+                  key={child.id}
+                  onClick={() => handleCategoryChange(child.id)}
+                  className={`relative px-4 py-2 rounded-full text-[11px] font-semibold uppercase tracking-wider border transition-colors z-10 cursor-pointer ${selectedCategory === child.id
+                    ? "text-primary-foreground border-transparent"
+                    : selectedPathIds.includes(child.id)
+                      ? "text-primary border-primary/40 bg-primary/5"
+                      : "text-muted-foreground hover:text-foreground border-border/60 hover:border-border"
+                    }`}
+                >
+                  {selectedCategory === child.id && (
+                    <motion.div
+                      layoutId="activeCategory"
+                      className="absolute inset-0 bg-primary rounded-full -z-10"
+                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                    />
+                  )}
+                  {child.nazwa}
+                </button>
+              ))}
+            </motion.div>
+          );
+        })}
       </section>
 
       {/* Articles Main Container */}

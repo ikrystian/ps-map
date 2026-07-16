@@ -14,11 +14,23 @@ export async function GET(
         slug,
       },
       include: {
-        category: true,
+        category: {
+          include: {
+            parent: {
+              select: {
+                id: true,
+                nazwa: true,
+                slug: true,
+                parent: {
+                  select: { id: true, nazwa: true, slug: true },
+                },
+              },
+            },
+          },
+        },
         lawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             logo: true,
             opis: true,
@@ -34,7 +46,6 @@ export async function GET(
         sponsoredLawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             logo: true,
             opis: true,
