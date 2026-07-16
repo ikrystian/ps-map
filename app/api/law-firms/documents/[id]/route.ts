@@ -48,9 +48,25 @@ export async function DELETE(
       )
     }
 
-    // Delete file from filesystem if it's a local file
-    if (document.sciezka && !document.sciezka.startsWith('http')) {
-      const filePath = join(process.cwd(), "public", document.sciezka)
+    // Delete file from filesystem if it's a local file and is NOT a client-uploaded document (to keep chat attachments intact)
+    if (document.sciezka && !document.sciezka.startsWith('http') && document.zrodlo !== 'KLIENT') {
+      let filePath: string
+      if (document.sciezka.startsWith("/api/uploads/")) {
+        filePath = join(
+          process.cwd(),
+          ".uploads",
+          document.sciezka.substring("/api/uploads/".length)
+        )
+      } else if (document.sciezka.startsWith("/api/files/")) {
+        filePath = join(
+          process.cwd(),
+          "files",
+          document.sciezka.substring("/api/files/".length)
+        )
+      } else {
+        filePath = join(process.cwd(), "public", document.sciezka)
+      }
+
       if (existsSync(filePath)) {
         await unlink(filePath)
       }

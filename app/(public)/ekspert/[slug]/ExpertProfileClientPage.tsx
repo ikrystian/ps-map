@@ -476,7 +476,7 @@ export default function LawFirmProfilePage() {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Błąd</CardTitle>
-            <CardDescription>{error || "Nie znaleziono ekspercie"}</CardDescription>
+            <CardDescription>{error || "Nie znaleziono eksperta"}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => router.push("/")} variant="outline">

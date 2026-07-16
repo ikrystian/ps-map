@@ -80,7 +80,7 @@ export default function ForLawyersClientPage() {
                         </h1>
                         <p className="text-base text-[#aaa] mb-9 leading-[1.7] max-w-[580px]">
                             Wiesz, jak to zwykle wygląda. Wisisz w katalogu obok setki innych prawników i czekasz, aż ktoś
-                            Cię znajdzie. Albo płacisz za leady i oddzwaniasz do kogoś, kto „tylko sprawdzał ceny&rdquo;.
+                            Cię znajdzie, albo płacisz za leady i oddzwaniasz do kogoś, kto „tylko sprawdzał ceny&rdquo;.
                             ProstaSprawa.pl działa inaczej – zamiast przypadkowych zapytań dostajesz{" "}
                             <strong>konkretne sprawy</strong> od osób, które realnie szukają pomocy i są gotowe za nią
                             zapłacić.

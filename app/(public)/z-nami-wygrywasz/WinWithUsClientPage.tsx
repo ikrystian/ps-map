@@ -141,7 +141,7 @@ export default function WinWithUsClientPage() {
                   </h3>
                   <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mt-2">
                     Nie każda sprawa to od razu sąd i paragrafy. Znajdziesz tu też rzeczoznawców, doradców
-                    finansowych, księgowych, architektów i innych specjalistów. Jak jeden problem zahacza
+                    finansowych, księgowych, architektów i innych specjalistów. Gdy jeden problem zahacza
                     o kilka dziedzin — masz wszystkich w jednym miejscu.
                   </p>
                 </div>

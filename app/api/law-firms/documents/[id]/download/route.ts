@@ -76,7 +76,23 @@ export async function GET(
       contentType = response.headers.get("Content-Type") || contentType
     } else {
       // Read file from local filesystem
-      const filePath = join(process.cwd(), "public", document.sciezka)
+      let filePath: string
+      if (document.sciezka.startsWith("/api/uploads/")) {
+        filePath = join(
+          process.cwd(),
+          ".uploads",
+          document.sciezka.substring("/api/uploads/".length)
+        )
+      } else if (document.sciezka.startsWith("/api/files/")) {
+        filePath = join(
+          process.cwd(),
+          "files",
+          document.sciezka.substring("/api/files/".length)
+        )
+      } else {
+        filePath = join(process.cwd(), "public", document.sciezka)
+      }
+
       if (!existsSync(filePath)) {
         return NextResponse.json(
           { error: "File not found on server" },
@@ -86,7 +102,7 @@ export async function GET(
       fileBuffer = await readFile(filePath)
     }
 
-    return new NextResponse(fileBuffer as any, {
+    return new NextResponse(fileBuffer as unknown as BodyInit, {
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${document.nazwa}.${document.rozszerzenie}"`,

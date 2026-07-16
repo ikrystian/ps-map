@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
 
     if (!lawFirm) {
       return Response.json(
-        { error: "Nie znaleziono ekspercie" },
+        { error: "nie znaleziono eksperta" },
         { status: 404 }
       )
     }
