@@ -17,10 +17,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Menu,
   MessageSquare,
+  Newspaper,
   UserCircle,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
@@ -35,6 +37,8 @@ const navigation = [
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
   { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
   { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },
+  { name: "Centrum pomocy", href: "/panel-klienta/pomoc", icon: HelpCircle },
+  { name: "Centrum newsów", href: "/panel-klienta/newsy", icon: Newspaper },
 ]
 
 export default function ClientPanelLayout({

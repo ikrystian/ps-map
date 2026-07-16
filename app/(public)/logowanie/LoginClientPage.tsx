@@ -21,7 +21,7 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { FaApple, FaFacebook, FaGoogle } from "react-icons/fa"
+import { FaFacebook, FaGoogle } from "react-icons/fa"
 
 interface DevUser {
   id: string
@@ -459,15 +459,6 @@ export default function LoginPage() {
                 disabled={isLoading}
               >
                 <FaFacebook className="h-5 w-5" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="h-11"
-                onClick={() => signIn("apple", { callbackUrl })}
-                disabled={isLoading}
-              >
-                <FaApple className="h-5 w-5" />
               </Button>
             </div>
 

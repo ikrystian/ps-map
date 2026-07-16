@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye, Image as ImageIcon } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -122,7 +122,7 @@ interface BlogPostFormProps {
 
 export function BlogPostForm({ postId }: BlogPostFormProps) {
   const [categories, setCategories] = useState<BlogCategory[]>([])
-  const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string; nazwa: string }[]>([])
+  const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string }[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(!!postId)
   const [loadingCategories, setLoadingCategories] = useState(true)
@@ -506,20 +506,36 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                       )}
                     />
 
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+
+            {/* Prawa kolumna (Sidebar): Obrazek wyróżniający, SEO, Wpis Sponsorowany, Publikacja */}
+            <div className="space-y-6 lg:sticky lg:top-6">
+              {/* Obrazek wyróżniający */}
+              <motion.div variants={itemVariants}>
+                <Card className="border shadow-sm">
+                  <CardHeader className="py-5 px-6 border-b">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4 text-primary" />
+                      Obrazek wyróżniający
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Prześlij grafikę lub podaj bezpośredni link URL. Obrazek posłuży za miniaturę wpisu.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
                     <FormField
                       control={form.control}
                       name="obrazekWyrozniajacy"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <div className="rounded-xl p-1 bg-muted/10 border mt-4">
-                              <ImageUpload
-                                value={field.value}
-                                onChange={field.onChange}
-                                label="Obrazek wyróżniający"
-                                description="Prześlij grafikę lub podaj bezpośredni link URL. Obrazek posłuży za miniaturę wpisu."
-                              />
-                            </div>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -528,10 +544,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                   </CardContent>
                 </Card>
               </motion.div>
-            </div>
 
-            {/* Prawa kolumna (Sidebar): SEO, Wpis Sponsorowany, Publikacja */}
-            <div className="space-y-6 lg:sticky lg:top-6">
               {/* SEO */}
               <motion.div variants={itemVariants}>
                 <Card className="border shadow-sm overflow-hidden">

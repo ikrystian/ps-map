@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
 import { seedPackages } from './seed-packages';
+import { seedBlogCategories } from './seeds/blog-categories'
 import { seedCategories } from './seeds/categories'
 import { seedEmailTemplates } from './seeds/email-templates';
 import { seedExpertiseCategories } from './seeds/expertise-categories';
@@ -86,6 +87,7 @@ async function main() {
   // ==========================================================================
   await seedVoivodeships(prisma)               // upsert — zachowuje istniejące ID (powiązane z miastami)
   await seedCategories(prisma)
+  await seedBlogCategories(prisma)             // drzewo kategorii bloga (sprawy prywatne + firmowe)
   await seedExpertiseCategories(prisma)        // drzewo kategorii rejestracji ekspertów (krok 1)
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)

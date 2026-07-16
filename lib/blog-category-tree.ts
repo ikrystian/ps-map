@@ -41,6 +41,16 @@ export function buildCategoryTree(categories: BlogCategory[]): BlogCategoryNode[
 }
 
 /**
+ * Usuwa z drzewa kategorie bez wpisów (wg _count.blogPosts).
+ * Kategoria nadrzędna bez własnych wpisów zostaje, jeśli ma niepuste podkategorie.
+ */
+export function pruneEmptyCategoryTree(nodes: BlogCategoryNode[]): BlogCategoryNode[] {
+  return nodes
+    .map((node) => ({ ...node, children: pruneEmptyCategoryTree(node.children) }))
+    .filter((node) => (node._count?.blogPosts ?? 0) > 0 || node.children.length > 0)
+}
+
+/**
  * Spłaszcza drzewo kategorii do listy z poziomem zagnieżdżenia (depth),
  * zachowując kolejność drzewa (rodzic przed dziećmi).
  */

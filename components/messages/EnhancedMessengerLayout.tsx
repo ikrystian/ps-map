@@ -156,7 +156,7 @@ export function EnhancedMessengerLayout() {
   const themeColor = isClient ? "var(--secondary)" : "var(--primary)"
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col">
 
       <Card variant="glass" className="h-full flex rounded-lg flex-col md:flex-row overflow-hidden shadow-2xl relative">
         <BorderBeam lightColor={themeColor} lightWidth={450} duration={7} borderWidth={1} />
