@@ -155,13 +155,13 @@ export async function POST(request: NextRequest) {
       const currentMonth = now.getMonth()
       const isCurrentMonth = targetYear === currentYear && targetMonth === currentMonth
 
-      // Tryb testowy: pozwól włączyć promocję "Najczęściej konsultowane" od razu (bieżący miesiąc)
-      const immediateConsulted =
-        typPromocji === "NAJCZESCIEJ_KONSULTOWANE" &&
+      // Tryb testowy: pozwól włączyć promocję miesięczną ("Najczęściej konsultowane",
+      // "Polecani prawnicy i adwokaci") od razu (bieżący miesiąc)
+      const immediateMonthly =
         isCurrentMonth &&
         (await isSettingEnabled("promoteConsultedImmediately"))
 
-      if (immediateConsulted) {
+      if (immediateMonthly) {
         // Promocja aktywna natychmiast, do końca bieżącego miesiąca
         start = now
         end = monthEnd
@@ -205,13 +205,12 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Sprawdź limit 1 promowania w miesiącu na eksperta (tylko z tych dwóch typów)
+      // Sprawdź limit 1 promowania danego typu w miesiącu na eksperta
+      // (ekspert może mieć w miesiącu jedno "Polecani prawnicy" i jedno "Najczęściej konsultowane")
       const monthlyPromotionsCount = await prisma.promotion.count({
         where: {
           lawFirmId: lawFirm.id,
-          typPromocji: {
-            in: ["POLECANI_PRAWNICY", "NAJCZESCIEJ_KONSULTOWANE"],
-          },
+          typPromocji: typPromocji as PromotionType,
           startPromocji: {
             gte: monthStart,
             lte: monthEnd,
@@ -222,7 +221,7 @@ export async function POST(request: NextRequest) {
 
       if (monthlyPromotionsCount >= 1) {
         return Response.json(
-          { error: "Ekspert może zakupić maksymalnie 1 promowanie w miesiącu kalendarzowym" },
+          { error: "Ekspert może zakupić maksymalnie 1 promowanie danego typu w miesiącu kalendarzowym" },
           { status: 400 }
         )
       }

@@ -353,9 +353,7 @@ export function NewPromotionDialog({
                   <SelectValue placeholder="Wybierz miesiąc kalendarzowy" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                  {getFutureMonths(
-                    selectedType === "NAJCZESCIEJ_KONSULTOWANE" && allowImmediateConsulted
-                  ).map((m) => (
+                  {getFutureMonths(allowImmediateConsulted).map((m) => (
                     <SelectItem
                       key={m.value}
                       value={m.value}
@@ -366,7 +364,7 @@ export function NewPromotionDialog({
                   ))}
                 </SelectContent>
               </Select>
-              {selectedType === "NAJCZESCIEJ_KONSULTOWANE" && allowImmediateConsulted && (
+              {allowImmediateConsulted && (
                 <p className="text-xs text-amber-400/90 flex items-center gap-1.5">
                   <Info className="h-3.5 w-3.5 flex-shrink-0" />
                   Tryb testowy: wybór bieżącego miesiąca aktywuje promocję od razu.

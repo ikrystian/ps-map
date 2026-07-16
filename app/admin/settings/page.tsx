@@ -1086,7 +1086,7 @@ export default function AdminSettingsPage() {
                     <span className="text-sm bg-amber-500 text-amber-950 px-1.5 py-0.5 rounded font-mono font-semibold uppercase tracking-wider">TEST</span>
                   </Label>
                   <p className="text-sm text-muted-foreground max-w-xl">
-                    Po włączeniu promocja „Najczęściej konsultowane kategorie" zakupiona w panelu eksperta na bieżący miesiąc staje się aktywna od razu (od teraz), a nie dopiero od pierwszego dnia kolejnego miesiąca. Przeznaczone wyłącznie do testów.
+                    Po włączeniu promocje miesięczne („Najczęściej konsultowane kategorie" oraz „Polecani prawnicy i adwokaci") zakupione w panelu eksperta na bieżący miesiąc stają się aktywne od razu (od teraz), a nie dopiero od pierwszego dnia kolejnego miesiąca. Przeznaczone wyłącznie do testów.
                   </p>
                 </div>
                 <Switch
