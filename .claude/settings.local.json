@@ -31,7 +31,9 @@
       "Bash(echo \"=== lint exit: $? ===\")",
       "Bash(echo \"exit code filtered: $?\")",
       "Bash(lsof -i :3000 -sTCP:LISTEN -t)",
-      "Skill(run)"
+      "Skill(run)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"---exit: $?\")"
     ]
   }
 }

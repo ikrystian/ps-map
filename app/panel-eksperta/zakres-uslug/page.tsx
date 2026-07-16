@@ -106,9 +106,10 @@ interface SortableItemProps {
   onRemove: () => void
   skillLawFocusActive: boolean
   onPercentageChange: (categoryId: string, value: number) => void
+  maxAllowed: number
 }
 
-function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActive, onPercentageChange }: SortableItemProps) {
+function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActive, onPercentageChange, maxAllowed }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -195,30 +196,37 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
       </div>
 
       {skillLawFocusActive && (
-        <div className="flex items-center gap-4 pl-8 pr-2 py-1 w-full">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="5"
-            value={item.percentage || 0}
-            onChange={(e) => onPercentageChange(item.categoryId, parseInt(e.target.value) || 0)}
-            className="flex-1 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
-          />
-          <div className="flex items-center gap-1 shrink-0">
+        <div className="flex flex-col gap-1 pl-8 pr-2 py-1 w-full">
+          <div className="flex items-center gap-4 w-full">
             <input
-              type="number"
+              type="range"
               min="0"
               max="100"
+              step="5"
               value={item.percentage || 0}
-              onChange={(e) => {
-                const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0))
-                onPercentageChange(item.categoryId, val)
-              }}
-              className="w-12 h-7 bg-zinc-900 border border-border/30 rounded-md text-xs text-center text-white focus:outline-none focus:border-primary"
+              onChange={(e) => onPercentageChange(item.categoryId, Math.min(maxAllowed, parseInt(e.target.value) || 0))}
+              className="flex-1 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
             />
-            <span className="text-zinc-400 text-xs">%</span>
+            <div className="flex items-center gap-1 shrink-0">
+              <input
+                type="number"
+                min="0"
+                max={maxAllowed}
+                value={item.percentage || 0}
+                onChange={(e) => {
+                  const val = Math.max(0, Math.min(maxAllowed, parseInt(e.target.value) || 0))
+                  onPercentageChange(item.categoryId, val)
+                }}
+                className="w-12 h-7 bg-zinc-900 border border-border/30 rounded-md text-xs text-center text-white focus:outline-none focus:border-primary"
+              />
+              <span className="text-zinc-400 text-xs">%</span>
+            </div>
           </div>
+          <p className="text-[10px] text-zinc-500">
+            {maxAllowed <= (item.percentage || 0)
+              ? "Osiągnięto limit — pula 100% jest w pełni rozdzielona. Zmniejsz inną specjalizację, aby zwiększyć tę."
+              : `Możesz przydzielić jeszcze maks. ${maxAllowed - (item.percentage || 0)}% z pozostałej puli.`}
+          </p>
         </div>
       )}
     </div>
@@ -850,12 +858,12 @@ export default function LawFirmServicesPage() {
   const percentageSum = selectedCategories.reduce((acc, cat) => acc + (cat.percentage || 0), 0)
 
   const handlePercentageChange = (categoryId: string, val: number) => {
-    setSelectedCategories(prev => prev.map(sc => {
-      if (sc.categoryId === categoryId) {
-        return { ...sc, percentage: val }
-      }
-      return sc
-    }))
+    setSelectedCategories(prev => {
+      // Wartość nie może przekroczyć tego, co zostało w puli 100%
+      const othersSum = prev.reduce((acc, sc) => sc.categoryId === categoryId ? acc : acc + (sc.percentage || 0), 0)
+      const clamped = Math.max(0, Math.min(val, 100 - othersSum))
+      return prev.map(sc => sc.categoryId === categoryId ? { ...sc, percentage: clamped } : sc)
+    })
   }
 
   const handleAutoDistribute = () => {
@@ -1375,6 +1383,7 @@ export default function LawFirmServicesPage() {
               </div>
               <CardDescription className="text-zinc-400 text-xs">
                 Przeciągnij elementy, aby ustalić ich kolejność. Główna specjalizacja (oznaczona gwiazdką) musi pozostać na pierwszym miejscu.
+                {skillLawFocusActive && " Suwakami rozdziel pulę 100% między specjalizacje — określasz, jaką część Twojej praktyki stanowi każda z nich. Suma musi wynosić dokładnie 100%, nie da się jej przekroczyć."}
               </CardDescription>
             </CardHeader>
             <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar pt-4">
@@ -1392,10 +1401,10 @@ export default function LawFirmServicesPage() {
                   
                   {/* Progress bar */}
                   <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className={cn(
                         "h-full transition-all duration-300",
-                        percentageSum === 100 ? "bg-emerald-500" : percentageSum > 100 ? "bg-rose-500" : "bg-amber-500"
+                        percentageSum === 100 ? "bg-emerald-500" : "bg-amber-500"
                       )}
                       style={{ width: `${Math.min(100, percentageSum)}%` }}
                     />
@@ -1403,11 +1412,9 @@ export default function LawFirmServicesPage() {
 
                   <div className="flex items-center justify-between pt-1">
                     <p className="text-[10px] text-zinc-500">
-                      {percentageSum === 100 
-                        ? "Suma wynosi dokładnie 100%. Super!" 
-                        : percentageSum < 100 
-                        ? `Pozostało do rozdania: ${100 - percentageSum}%` 
-                        : `Przekroczono o: ${percentageSum - 100}%`
+                      {percentageSum === 100
+                        ? "Pula w pełni rozdzielona. Aby zwiększyć jedną specjalizację, najpierw zmniejsz inną."
+                        : `Pozostało do rozdania: ${100 - percentageSum}%. Suma musi wynosić dokładnie 100%.`
                       }
                     </p>
                     <Button
@@ -1442,6 +1449,7 @@ export default function LawFirmServicesPage() {
                           onRemove={() => toggleCategory(item.category)} 
                           skillLawFocusActive={skillLawFocusActive}
                           onPercentageChange={handlePercentageChange}
+                          maxAllowed={100 - (percentageSum - (item.percentage || 0))}
                         />
                       ))}
                     </div>
