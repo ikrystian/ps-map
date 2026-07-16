@@ -38,6 +38,7 @@ export default function BlogPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get("category");
+  const activeTag = searchParams.get("tag");
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -82,9 +83,14 @@ export default function BlogPage() {
     }
   }, [categorySlug, categories]);
 
+  // Po zmianie tagu w URL wróć na pierwszą stronę wyników
+  useEffect(() => {
+    setPagination((prev) => (prev.page === 1 ? prev : { ...prev, page: 1 }));
+  }, [activeTag]);
+
   useEffect(() => {
     fetchPosts();
-  }, [selectedCategory, debouncedSearch, pagination.page]);
+  }, [selectedCategory, debouncedSearch, activeTag, pagination.page]);
 
   const fetchCategories = async () => {
     try {
@@ -114,6 +120,10 @@ export default function BlogPage() {
         params.append("search", debouncedSearch);
       }
 
+      if (activeTag) {
+        params.append("tag", activeTag);
+      }
+
       const response = await fetch(`/api/blog/posts?${params}`);
       if (response.ok) {
         const data = await response.json();
@@ -131,14 +141,23 @@ export default function BlogPage() {
     setSelectedCategory(categoryId);
     setPagination((prev) => ({ ...prev, page: 1 }));
 
+    // Zachowaj aktywny filtr tagu przy zmianie kategorii
+    const tagSuffix = activeTag ? `tag=${encodeURIComponent(activeTag)}` : "";
+
     if (categoryId === null) {
-      router.push("/blog", { scroll: false });
+      router.push(tagSuffix ? `/blog?${tagSuffix}` : "/blog", { scroll: false });
     } else {
       const cat = categories.find((c) => c.id === categoryId);
       if (cat) {
-        router.push(`/blog?category=${cat.slug}`, { scroll: false });
+        router.push(`/blog?category=${cat.slug}${tagSuffix ? `&${tagSuffix}` : ""}`, { scroll: false });
       }
     }
+  };
+
+  const handleClearTag = () => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    const cat = selectedCategory ? categories.find((c) => c.id === selectedCategory) : null;
+    router.push(cat ? `/blog?category=${cat.slug}` : "/blog", { scroll: false });
   };
 
   const handleResetFilters = () => {
@@ -223,7 +242,7 @@ export default function BlogPage() {
 
   // Splitting posts to featured vs grid
   const hasFeatured =
-    posts.length > 0 && pagination.page === 1 && !debouncedSearch;
+    posts.length > 0 && pagination.page === 1 && !debouncedSearch && !activeTag;
   const featuredPost = hasFeatured ? posts[0] : null;
   const gridPosts = hasFeatured ? posts.slice(1) : posts;
 
@@ -339,6 +358,29 @@ export default function BlogPage() {
             </button>
           ))}
         </div>
+
+        {/* Aktywny filtr tagu (z linku pod artykułem) */}
+        {activeTag && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap items-center gap-2 justify-center max-w-5xl mx-auto"
+          >
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+              Wpisy z tagiem:
+            </span>
+            <Badge className="bg-primary/10 text-primary border border-primary/20 rounded-full pl-3 pr-1.5 py-1 text-xs font-semibold flex items-center gap-1.5">
+              #{activeTag}
+              <button
+                onClick={handleClearTag}
+                className="p-0.5 hover:bg-primary/20 rounded-full transition-colors cursor-pointer"
+                aria-label="Usuń filtr tagu"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </Badge>
+          </motion.div>
+        )}
 
         {/* Podkategorie wybranej ścieżki (kolejne poziomy hierarchii) */}
         {selectedPath.map((pathCategory) => {

@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const lawFirmId = searchParams.get("lawFirmId")
     const search = searchParams.get("search")
     const sponsored = searchParams.get("sponsored")
+    const tag = searchParams.get("tag")
     const skip = (page - 1) * limit
 
     // Buduj warunki filtrowania (ukryj wpisy zaplanowane na przyszłość)
@@ -41,6 +42,12 @@ export async function GET(request: NextRequest) {
 
     if (lawFirmId) {
       where.lawFirmId = lawFirmId
+    }
+
+    if (tag) {
+      // Tagi są zapisane jako string JSON (np. ["rozwód","prawo rodzinne"]) —
+      // dopasowanie po nazwie tagu w cudzysłowach, aby uniknąć częściowych trafień
+      where.tagi = { contains: `"${tag}"` }
     }
 
     if (search) {

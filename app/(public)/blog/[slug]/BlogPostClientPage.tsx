@@ -9,7 +9,8 @@ import {
   Building2,
   Calendar,
   Eye,
-  MapPin
+  MapPin,
+  Tag
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -126,6 +127,19 @@ export default function BlogPostPage() {
   const estimatedReadingTime = post && post.tresc
     ? Math.ceil(post.tresc.replace(/<[^>]*>/g, "").split(/\s+/).length / 200)
     : 0;
+
+  // Słowa kluczowe (tagi) zapisane w bloku SEO jako string JSON
+  let postTags: string[] = [];
+  if (post.tagi) {
+    try {
+      const parsed = JSON.parse(post.tagi);
+      if (Array.isArray(parsed)) {
+        postTags = parsed.filter((tag): tag is string => typeof tag === "string" && tag.trim() !== "");
+      }
+    } catch (e) {
+      console.error("Error parsing post tags:", e);
+    }
+  }
 
   // Ścieżka kategorii (od najwyższego poziomu do kategorii wpisu)
   const categoryPath = post.category
@@ -372,6 +386,28 @@ export default function BlogPostPage() {
               />
 
               <Separator className="my-10 bg-neutral-800/60" />
+
+              {/* Tagi (słowa kluczowe SEO) — klik przenosi do listy wpisów z danym tagiem */}
+              {postTags.length > 0 && (
+                <div className="mb-10">
+                  <div className="flex items-center gap-2 mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                    <Tag className="w-3.5 h-3.5 text-primary/80" />
+                    Tagi
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {postTags.map((tag) => (
+                      <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
+                        <Badge
+                          variant="secondary"
+                          className="bg-neutral-900/60 text-neutral-300 border border-neutral-800/80 hover:bg-primary/10 hover:text-primary hover:border-primary/30 text-sm font-medium px-3 py-1 rounded-full cursor-pointer transition-colors"
+                        >
+                          #{tag}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Article footer metadata info */}
               <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-neutral-450 bg-neutral-900/20 p-5 rounded-2xl border border-neutral-800/30">
