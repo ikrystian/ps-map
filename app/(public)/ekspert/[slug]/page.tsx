@@ -16,7 +16,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       where: { slug },
       select: {
         nazwa: true,
-        nazwa: true,
         opis: true,
         user: { select: { miasto: true } },
       },
