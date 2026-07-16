@@ -302,8 +302,8 @@ async function loadReferenceData() {
                 .sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"));
             // Grupowanie jak w aplikacji (/rejestracja/ekspert): najpierw firmowe, potem prywatne.
             const categoryGroups = [
-                { label: "Specjalizacje firmowe", items: mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE") },
-                { label: "Specjalizacje prywatne", items: mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE") },
+                { label: "Kategorie firmowe", items: mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE") },
+                { label: "Kategorie prywatne", items: mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE") },
             ];
             categoryGroups.forEach(({ label, items }) => {
                 if (items.length === 0) return;
@@ -546,7 +546,7 @@ async function submitForm(e) {
         if (errorEl) errorEl.textContent = err.message || "Wystąpił błąd podczas rejestracji";
         if (btn) {
             btn.disabled = false;
-            btn.textContent = "Załóż bezpłatne konto";
+            btn.textContent = "Zarejestruj się";
         }
     }
 }

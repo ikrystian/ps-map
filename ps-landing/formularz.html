@@ -45,6 +45,8 @@
             <div class="form-body">
                 <p class="step-indicator">Krok 1 z 3</p>
                 <h1 class="form-title">Wybierz rodzaj<br>swojej działalności</h1>
+                <p class="form-step-desc">Wybierz kategorię, podkategorię oraz swoją główną specjalizację zawodową.
+                    Pomoże nam to dostosować Twój profil dla potencjalnych klientów.</p>
                 <div class="form-group">
                     <label class="form-label" for="kategoriaEkspert">Kategoria</label>
                     <select class="form-select" id="kategoriaEkspert" required>
@@ -80,7 +82,7 @@
                 <p class="form-step-desc">Zaznacz główną dziedzinę prawa, w której się specjalizujesz. Pomoże nam to
                     lepiej dopasować zapytania od klientów.</p>
                 <div class="form-group">
-                    <label class="form-label" for="glownaSpecjalizacja">Główna specjalizacja</label>
+                    <label class="form-label" for="glownaSpecjalizacja">Główna kategoria</label>
                     <select class="form-select" id="glownaSpecjalizacja" name="categoryId" required>
                         <option value="">Wybierz dziedzinę...</option>
                     </select>
@@ -122,11 +124,10 @@
                     <div class="form-group">
                         <label class="form-label" for="numerTelefonu">Telefon główny</label>
                         <input class="form-input" type="tel" id="numerTelefonu" name="numerTelefonu"
-                            placeholder="np. 790466488" minlength="9" required>
+                            minlength="9" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy <span
-                                class="form-optional">(opcjonalnie)</span></label>
+                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy</label>
                         <input class="form-input" type="tel" id="numerTelefonu2" name="numerTelefonu2"
                             placeholder="Opcjonalnie">
                     </div>
@@ -135,21 +136,21 @@
                 <h3 class="form-section-heading">Dane adresowe</h3>
                 <div class="form-group">
                     <label class="form-label" for="adres">Adres (ulica i numer)</label>
-                    <input class="form-input" type="text" id="adres" name="adres" placeholder="np. ul. Warszawska 1/2"
+                    <input class="form-input" type="text" id="adres" name="adres" placeholder="Np. ul. Warszawska 1/2"
                         minlength="3" required>
                 </div>
                 <div class="form-row form-row-3">
                     <div class="form-group dropdown-container">
                         <label class="form-label" for="kodPocztowy">Kod pocztowy</label>
                         <input class="form-input" type="text" id="kodPocztowy" name="kodPocztowy"
-                            placeholder="np. 00-001" autocomplete="off" pattern="\d{2}-\d{3}"
+                            placeholder="00-000" autocomplete="off" pattern="\d{2}-\d{3}"
                             title="Wpisz poprawny kod pocztowy (np. 00-000)" required>
                         <div class="autocomplete-dropdown" id="kodPocztowyDropdown"></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="miasto">Miasto</label>
                         <input class="form-input" readonly type="text" id="miasto" name="miasto"
-                            placeholder="np. Warszawa" required>
+                            placeholder="Wybierz miasto..." required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="wojewodztwoSelect">Województwo</label>
@@ -223,8 +224,8 @@
                         </svg>
                     </span>
                     <span class="checkbox-text">
-                        <strong>Akceptuję regulamin portalu</strong>
-                        Administratorem danych osobowych jest PGIF Sp. z o.o.
+                        <strong>Akceptuję <a href="https://prostasprawa.pl/regulamin" target="_blank" rel="noopener"
+                                style="color:inherit;text-decoration:underline;">regulamin portalu</a></strong>
                     </span>
                 </label>
                 <label class="form-checkbox">
@@ -235,8 +236,10 @@
                         </svg>
                     </span>
                     <span class="checkbox-text">
-                        <strong>Zgadzam się na przetwarzanie moich danych osobowych</strong>
-                        w celu realizacji usług świadczonych przez platformę.
+                        <strong>Zgadzam się na <a href="https://prostasprawa.pl/polityka-prywatnosci" target="_blank"
+                                rel="noopener" style="color:inherit;text-decoration:underline;">przetwarzanie moich
+                                danych osobowych</a></strong>
+                        w celu realizacji usług.
                     </span>
                 </label>
 
@@ -244,8 +247,13 @@
 
                 <div class="form-actions-split">
                     <button type="button" class="btn-form btn-back" onclick="prevStep()">← Wstecz</button>
-                    <button type="submit" class="btn-form btn-grow btn-submit">Załóż bezpłatne konto</button>
+                    <button type="submit" class="btn-form btn-grow btn-submit">Zarejestruj się</button>
                 </div>
+                <p style="text-align:center;color:#888;font-size:0.9rem;margin-top:24px;">
+                    Masz już konto?
+                    <a href="https://prostasprawa.pl/logowanie"
+                        style="color:#c8a864;font-weight:600;text-decoration:none;">Zaloguj się</a>
+                </p>
             </div>
         </div>
 
@@ -261,7 +269,7 @@
                 <h1 class="form-title">Twoje konto eksperta zostało<br>utworzone. Dziękujemy za zainteresowanie<br>naszą
                     platformą.</h1>
                 <p style="color:#aaa;font-size:1rem;">Informujemy, że oficjalny start przewidujemy na dzień <strong
-                        style="color:#e0ddd5;">1 lipca 2026</strong> roku.</p>
+                        style="color:#e0ddd5;">1 sierpnia 2026</strong> roku.</p>
                 <div style="margin-top:40px;">
                     <a href="index.html" class="btn-primary"><span>Wróć na stronę główną</span></a>
                 </div>
