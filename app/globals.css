@@ -1323,3 +1323,233 @@ a .bg-card {
 #cc-main a:hover {
   color: #d7b56d;
 }
+
+/* ===== Blog Post Content (User Generated HTML) Styling ===== */
+#post-content .prose {
+  font-family: var(--font-poppins), sans-serif;
+  color: #e5e7eb; /* text-neutral-200 */
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+#post-content .prose p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #d1d5db; /* text-neutral-300 */
+}
+
+#post-content .prose h2,
+#post-content .prose h3,
+#post-content .prose h4,
+#post-content .prose h5,
+#post-content .prose h6 {
+  font-family: var(--font-playfair), serif;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+#post-content .prose h2 {
+  font-size: 1.85rem;
+  margin-top: 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.5rem;
+}
+
+#post-content .prose h3 {
+  font-size: 1.45rem;
+  margin-top: 2.25rem;
+}
+
+#post-content .prose h4 {
+  font-size: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+#post-content .prose strong,
+#post-content .prose b {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+#post-content .prose em,
+#post-content .prose i {
+  color: #e5e7eb;
+}
+
+#post-content .prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+#post-content .prose a:hover {
+  color: var(--primary-hover);
+  text-decoration-color: var(--primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+/* Lists styling */
+#post-content .prose ul,
+#post-content .prose ol {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+#post-content .prose ul {
+  list-style-type: disc;
+}
+
+#post-content .prose ol {
+  list-style-type: decimal;
+}
+
+#post-content .prose li {
+  margin-bottom: 0.625rem;
+  line-height: 1.7;
+  color: #d1d5db; /* text-neutral-300 */
+}
+
+#post-content .prose li::marker {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+#post-content .prose ul li::marker {
+  font-size: 1.1em;
+}
+
+/* Nested lists */
+#post-content .prose ul ul,
+#post-content .prose ol ol,
+#post-content .prose ul ol,
+#post-content .prose ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Blockquotes */
+#post-content .prose blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: rgba(13, 161, 146, 0.05); /* matches teal primary in dark mode */
+  padding: 1.25rem 1.75rem;
+  margin: 2rem 0;
+  border-radius: 0 1rem 1rem 0;
+  font-style: italic;
+  color: #f3f4f6; /* text-neutral-100 */
+  font-size: 1.15rem;
+}
+
+#post-content .prose blockquote p {
+  margin-bottom: 0;
+  color: inherit;
+}
+
+/* Responsive Table styling */
+#post-content .prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2.5rem 0;
+  font-size: 0.95rem;
+  text-align: left;
+  background-color: rgba(21, 21, 19, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+#post-content .prose th,
+#post-content .prose td {
+  padding: 1rem 1.25rem;
+}
+
+#post-content .prose th {
+  background-color: rgba(13, 161, 146, 0.08); /* teal accent */
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-playfair), serif;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+#post-content .prose td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #d1d5db; /* text-neutral-300 */
+}
+
+#post-content .prose tr:last-child td {
+  border-bottom: none;
+}
+
+#post-content .prose tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+#post-content .prose tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Make table responsive if it overflows */
+@media (max-width: 768px) {
+  #post-content .prose table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Images styling */
+#post-content .prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin: 2.5rem auto;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.6);
+}
+
+/* Horizontal Rules */
+#post-content .prose hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 3rem 0;
+}
+
+/* Inline Code & Code Blocks */
+#post-content .prose code {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--secondary); /* golden secondary accent */
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.375rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.9em;
+  word-break: break-word;
+}
+
+#post-content .prose pre {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#post-content .prose pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: 0.85em;
+  word-break: normal;
+}

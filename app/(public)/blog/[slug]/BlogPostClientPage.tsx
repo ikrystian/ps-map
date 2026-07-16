@@ -130,8 +130,8 @@ export default function BlogPostPage() {
   // Ścieżka kategorii (od najwyższego poziomu do kategorii wpisu)
   const categoryPath = post.category
     ? [post.category.parent?.parent, post.category.parent, post.category].filter(
-        (cat): cat is NonNullable<typeof post.category> => Boolean(cat)
-      )
+      (cat): cat is NonNullable<typeof post.category> => Boolean(cat)
+    )
     : [];
 
   const categoryBreadcrumbs = categoryPath.map((cat, index) => (
@@ -365,7 +365,7 @@ export default function BlogPostPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Article Content */}
           <div className="lg:col-span-2 space-y-8">
-            <article className="bg-[#151513]/40 border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+            <article className="bg-[#151513]/40 border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm" id="post-content">
               <div
                 className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-neutral-300 dark:prose-p:text-neutral-350 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-neutral-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-neutral-300"
                 dangerouslySetInnerHTML={{ __html: post.tresc || "" }}
