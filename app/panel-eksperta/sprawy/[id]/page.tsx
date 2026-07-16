@@ -56,6 +56,11 @@ interface Case {
   category: {
     nazwa: string
   }
+  categories?: Array<{
+    category: {
+      nazwa: string
+    }
+  }>
   voivodeship: {
     nazwa: string
   }
@@ -299,7 +304,11 @@ export default function LawFirmCaseDetailsPage() {
 
         <PageHeader
           title={caseData.nazwaSprawy}
-          subtitle={`${caseData.category.nazwa} • ${getCaseTypeLabel(caseData.typSprawy)}`}
+          subtitle={`${
+            caseData.categories && caseData.categories.length > 0
+              ? caseData.categories.map((link) => link.category.nazwa).join(", ")
+              : caseData.category.nazwa
+          } • ${getCaseTypeLabel(caseData.typSprawy)}`}
           titleClassName="text-white text-2xl sm:text-3xl font-playfair tracking-tight"
         >
           <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">

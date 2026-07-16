@@ -62,6 +62,12 @@ interface Case {
     nazwa: string
     slug: string
   }
+  categories?: Array<{
+    category: {
+      nazwa: string
+      slug: string
+    }
+  }>
   voivodeship: {
     nazwa: string
   }
@@ -78,7 +84,6 @@ interface Case {
     createdAt: string
     lawFirm: {
       id: string
-      nazwa: string
       nazwa: string
       logo?: string
       miasto: string
@@ -593,8 +598,14 @@ export default function ClientCaseDetailsPage() {
               <div className="flex gap-3">
                 <FileText className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Kategoria główna</span>
-                  <span className="font-medium text-white">{caseData.category.nazwa}</span>
+                  <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">
+                    {caseData.categories && caseData.categories.length > 1 ? "Kategorie" : "Kategoria główna"}
+                  </span>
+                  <span className="font-medium text-white">
+                    {caseData.categories && caseData.categories.length > 0
+                      ? caseData.categories.map((link) => link.category.nazwa).join(", ")
+                      : caseData.category.nazwa}
+                  </span>
                 </div>
               </div>
 

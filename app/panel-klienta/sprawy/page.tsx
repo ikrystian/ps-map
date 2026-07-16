@@ -50,6 +50,13 @@ interface Case {
     nazwa: string
     slug: string
   }
+  categories?: Array<{
+    category: {
+      id: string
+      nazwa: string
+      slug: string
+    }
+  }>
   voivodeship: {
     id: string
     nazwa: string
@@ -76,6 +83,15 @@ import { Category } from "@/types/categories"
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
 }
+
+// Wszystkie kategorie sprawy (many-to-many) z fallbackiem do kategorii głównej
+const getCaseCategories = (caseItem: {
+  category: { id: string; nazwa: string; slug: string }
+  categories?: Array<{ category: { id: string; nazwa: string; slug: string } }>
+}) =>
+  caseItem.categories && caseItem.categories.length > 0
+    ? caseItem.categories.map((link) => link.category)
+    : [caseItem.category]
 
 const statusLabels: Record<string, { label: string; className: string }> = {
   NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
@@ -189,8 +205,9 @@ export default function ClientCasesPage() {
     const matchesStatus = statusFilter === "ALL" || caseItem.status === statusFilter
     const matchesCategory =
       categoryFilter === "ALL" ||
-      caseItem.category.id === categoryFilter ||
-      caseItem.category.slug === categoryFilter
+      getCaseCategories(caseItem).some(
+        (cat) => cat.id === categoryFilter || cat.slug === categoryFilter,
+      )
     return matchesSearch && matchesStatus && matchesCategory
   })
 
@@ -496,10 +513,12 @@ export default function ClientCasesPage() {
                           {statusLabels[caseItem.status]?.label || caseItem.status}
                         </Badge>
 
-                        {/* Category Label */}
-                        <Badge variant="outline" className="inline-flex items-center bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
-                          {caseItem.category.nazwa}
-                        </Badge>
+                        {/* Category Labels */}
+                        {getCaseCategories(caseItem).map((cat) => (
+                          <Badge key={cat.id} variant="outline" className="inline-flex items-center bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
+                            {cat.nazwa}
+                          </Badge>
+                        ))}
 
                         {/* Client Type Label */}
                         <Badge variant="outline" className="inline-flex items-center bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">

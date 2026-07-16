@@ -519,6 +519,7 @@ model Category {
   // Relacje
   lawFirms    LawFirmCategory[]
   cases       Case[]
+  caseLinks   CaseCategory[]
   stats       LawFirmCategoryStats[]
   mainCategoryFor LawFirm[] @relation("MainCategory")
 
@@ -550,6 +551,24 @@ model LawFirmCategory {
 }
 
 // ============================================================================
+// RELACJA: SPRAWA <-> KATEGORIE (MANY-TO-MANY)
+// ============================================================================
+
+model CaseCategory {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([caseId, categoryId])
+  @@index([caseId])
+  @@index([categoryId])
+}
+
+// ============================================================================
 // SPRAWY (CASES)
 // ============================================================================
 
@@ -561,9 +580,11 @@ model Case {
   // Typ sprawy
   typSprawy                 CaseType
 
-  // Kategoria
+  // Kategoria główna (pierwsza z wybranych — zachowana dla kompatybilności)
   categoryId                String
   category                  Category @relation(fields: [categoryId], references: [id])
+  // Wszystkie kategorie sprawy (many-to-many, zawiera też kategorię główną)
+  categories                CaseCategory[]
   wybranadziedzinaPrawa     String?  // Podkategoria
   wybranaSpecyfikacja       String?  // Szczegółowa specyfikacja
   specjalizacja             String?  // Dodatkowe wymagania

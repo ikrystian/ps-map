@@ -62,6 +62,12 @@ interface Case {
     id: string
     nazwa: string
   }
+  categories?: Array<{
+    category: {
+      id: string
+      nazwa: string
+    }
+  }>
   voivodeship: {
     id: string
     nazwa: string
@@ -312,7 +318,11 @@ const SprawyPage = () => {
     }
 
     if (selectedCategory && selectedCategory !== "all") {
-      filtered = filtered.filter((c) => c.category.id === selectedCategory)
+      filtered = filtered.filter(
+        (c) =>
+          c.category.id === selectedCategory ||
+          c.categories?.some((link) => link.category.id === selectedCategory)
+      )
     }
 
     if (selectedType && selectedType !== "all") {
@@ -765,9 +775,14 @@ const SprawyPage = () => {
                             Złożono ofertę
                           </span>
                         )}
-                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
-                          {sprawa.category.nazwa}
-                        </span>
+                        {(sprawa.categories && sprawa.categories.length > 0
+                          ? sprawa.categories.map((link) => link.category)
+                          : [sprawa.category]
+                        ).map((cat) => (
+                          <span key={cat.id} className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
+                            {cat.nazwa}
+                          </span>
+                        ))}
                         <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">
                           {getTypeLabel(sprawa.typSprawy)}
                         </span>

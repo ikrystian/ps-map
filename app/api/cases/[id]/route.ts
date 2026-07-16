@@ -41,6 +41,7 @@ export async function GET(
       where: { id },
       include: {
         category: true,
+        categories: { include: { category: true } },
         voivodeship: true,
         city: true,
         client: {
@@ -58,7 +59,6 @@ export async function GET(
             lawFirm: {
               select: {
                 id: true,
-                nazwa: true,
                 nazwa: true,
                 logo: true,
                 stronaWww: true,

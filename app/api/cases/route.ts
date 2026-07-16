@@ -47,6 +47,7 @@ export async function GET(request: NextRequest) {
         where: { clientId: client.id },
         include: {
           category: true,
+          categories: { include: { category: true } },
           voivodeship: true,
           city: true,
           offers: {
@@ -93,10 +94,18 @@ export async function GET(request: NextRequest) {
       //   Jeśli firma nie ma skonfigurowanej lokalizacji lub kategorii, dana oś nie jest filtrowana
       const scopeConditions: any[] = []
 
+      // Sprawa pasuje, gdy dowolna z jej kategorii (główna lub dodatkowa) jest w zakresie firmy
+      const categoryScopeCondition = {
+        OR: [
+          { categoryId: { in: lawFirmCategoryIds } },
+          { categories: { some: { categoryId: { in: lawFirmCategoryIds } } } },
+        ],
+      }
+
       if (lawFirm.calaPolska) {
         // Cała Polska – tylko filtr kategorii (jeśli zadeklarowane)
         if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
+          scopeConditions.push(categoryScopeCondition)
         }
       } else {
         // Filtr lokalizacji: voivodeship OR city
@@ -113,7 +122,7 @@ export async function GET(request: NextRequest) {
 
         // Filtr kategorii (jeśli zadeklarowane)
         if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
+          scopeConditions.push(categoryScopeCondition)
         }
       }
 
@@ -132,6 +141,7 @@ export async function GET(request: NextRequest) {
         where: whereCondition,
         include: {
           category: true,
+          categories: { include: { category: true } },
           voivodeship: true,
           city: { include: { county: true } },
           client: {
@@ -230,10 +240,18 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
+    // Sprawa może mieć wiele kategorii (categoryIds[]); stare formularze wysyłają pojedyncze categoryId
+    const requestedCategoryIds: string[] =
+      Array.isArray(body.categoryIds) && body.categoryIds.length > 0
+        ? [...new Set(body.categoryIds.filter((id: any) => typeof id === "string" && id))]
+        : body.categoryId
+          ? [body.categoryId]
+          : []
+
     // Walidacja wymaganych pól
     if (
       !body.typSprawy ||
-      !body.categoryId ||
+      requestedCategoryIds.length === 0 ||
       !body.voivodeshipId ||
       !body.cityId ||
       !body.nazwaSprawy ||
@@ -246,35 +264,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Znajdź kategorię po ID lub po slugu (np. dla dawnych slugów w formularzach)
-    let category = await prisma.category.findFirst({
-      where: {
-        OR: [
-          { id: body.categoryId },
-          { slug: body.categoryId }
-        ]
-      },
-    })
-
-    if (!category) {
-      // Jeśli kategoria nie istnieje, a podana wartość wygląda jak UUID, to znaczy że nie istnieje w bazie
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.categoryId)
-      if (isUuid) {
-        return NextResponse.json({ error: "Selected category not found" }, { status: 404 })
-      }
-
-      // W przeciwnym wypadku utwórz nową kategorię (legacy fallback dla slugów)
-      category = await prisma.category.create({
-        data: {
-          nazwa: body.categoryId
-            .split("-")
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" "),
-          slug: body.categoryId,
-          aktywna: true,
+    // Znajdź kategorie po ID lub po slugu (np. dla dawnych slugów w formularzach)
+    const resolvedCategories = []
+    for (const requestedId of requestedCategoryIds) {
+      let category = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { id: requestedId },
+            { slug: requestedId }
+          ]
         },
       })
+
+      if (!category) {
+        // Jeśli kategoria nie istnieje, a podana wartość wygląda jak UUID, to znaczy że nie istnieje w bazie
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedId)
+        if (isUuid) {
+          return NextResponse.json({ error: "Selected category not found" }, { status: 404 })
+        }
+
+        // W przeciwnym wypadku utwórz nową kategorię (legacy fallback dla slugów)
+        category = await prisma.category.create({
+          data: {
+            nazwa: requestedId
+              .split("-")
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" "),
+            slug: requestedId,
+            aktywna: true,
+          },
+        })
+      }
+
+      resolvedCategories.push(category)
     }
+
+    // Pierwsza wybrana kategoria pozostaje kategorią główną sprawy
+    const category = resolvedCategories[0]
+    const allCategoryIds = resolvedCategories.map((c) => c.id)
+    const allCategoryNames = resolvedCategories.map((c) => c.nazwa).join(", ")
 
     // Znajdź lub utwórz województwo
     let voivodeship = await prisma.voivodeship.findUnique({
@@ -319,6 +347,9 @@ export async function POST(request: NextRequest) {
         clientId: client.id,
         typSprawy: body.typSprawy,
         categoryId: category.id,
+        categories: {
+          create: allCategoryIds.map((categoryId) => ({ categoryId })),
+        },
         wybranadziedzinaPrawa: null,
         wybranaSpecyfikacja: null,
         nazwaSprawy: body.nazwaSprawy,
@@ -339,6 +370,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         category: true,
+        categories: { include: { category: true } },
         voivodeship: true,
         city: true,
       },
@@ -380,13 +412,13 @@ export async function POST(request: NextRequest) {
                 : []),
             ],
           },
-          // Warunek kategorii: firma nie ma zadeklarowanych kategorii (brak filtra) LUB kategoria pasuje
+          // Warunek kategorii: firma nie ma zadeklarowanych kategorii (brak filtra) LUB dowolna kategoria sprawy pasuje
           {
             OR: [
               { categories: { none: {} } },
               {
                 categories: {
-                  some: { categoryId: newCase.categoryId },
+                  some: { categoryId: { in: allCategoryIds } },
                 },
               },
             ],
@@ -425,7 +457,7 @@ export async function POST(request: NextRequest) {
         variables: {
           "{klient}": `${client.imie} ${client.nazwisko}`,
           "{nazwaSprawy}": newCase.nazwaSprawy,
-          "{kategoria}": category.nazwa,
+          "{kategoria}": allCategoryNames,
           "{budzet}": budzetText,
           "{linkDoSprawy}": `${baseUrl}/panel-klienta/sprawy/${newCase.id}`,
         }
@@ -435,7 +467,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Utwórz powiadomienia dla ekspertów
-    console.log(`[NOTIFY] Found ${lawFirms.length} law firm(s) matching new case "${newCase.nazwaSprawy}" (cat: ${newCase.categoryId}, voiv: ${newCase.voivodeshipId}, city: ${newCase.cityId})`)
+    console.log(`[NOTIFY] Found ${lawFirms.length} law firm(s) matching new case "${newCase.nazwaSprawy}" (cats: ${allCategoryIds.join(",")}, voiv: ${newCase.voivodeshipId}, city: ${newCase.cityId})`)
 
     if (lawFirms.length > 0) {
       const locationText = [
@@ -449,7 +481,7 @@ export async function POST(request: NextRequest) {
           userId: lf.userId,
           typ: "NOWA_OFERTA",
           tytul: "Nowa sprawa zgodna z Twoim zakresem",
-          tresc: `📋 ${newCase.nazwaSprawy} · ${category.nazwa}${locationText ? ` · 📍 ${locationText}` : ""}. Sprawdź szczegóły i złóż ofertę.`,
+          tresc: `📋 ${newCase.nazwaSprawy} · ${allCategoryNames}${locationText ? ` · 📍 ${locationText}` : ""}. Sprawdź szczegóły i złóż ofertę.`,
           linkUrl: "/panel-eksperta/sprawy",
         })
         console.log(`[NOTIFY] Result for ${lf.nazwa}: success=${success}, emailSent=${emailSent}, notificationId=${lfNotification?.id}`)
@@ -466,7 +498,7 @@ export async function POST(request: NextRequest) {
               variables: {
                 "{ekspert}": lf.nazwa,
                 "{nazwaSprawi}": newCase.nazwaSprawy,
-                "{kategoria}": category.nazwa,
+                "{kategoria}": allCategoryNames,
                 "{klient}": `${client.imie} ${client.nazwisko}`,
                 "{budżet}": budzetText,
                 "{linkDoPanelu}": `${baseUrl}/panel-eksperta/sprawy`,

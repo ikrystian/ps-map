@@ -284,6 +284,8 @@ export function SearchHelpSection() {
           transition={{ duration: 0.5, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="mt-8 flex justify-center items-center w-full"
         >
+
+
           <Link href="/logowanie">
             <InteractiveHoverButton>Dodaj sprawę</InteractiveHoverButton>
           </Link>

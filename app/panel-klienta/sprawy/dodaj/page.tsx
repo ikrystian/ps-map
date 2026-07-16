@@ -73,12 +73,12 @@ interface FormData {
   // Krok 1: Typ sprawy
   typSprawy: CaseType | "";
 
-  // Krok 2: Kategoria
-  categoryId: string;
+  // Krok 3: Kategoria i lokalizacja (sprawa może mieć wiele kategorii)
+  categoryIds: string[];
   voivodeshipId: string;
   cityId: string;
 
-  // Krok 3: Opis
+  // Krok 2: Opis
   nazwaSprawy: string;
   opisSprawy: string;
   zalaczniki: string[];
@@ -132,6 +132,13 @@ export default function ClientAddCasePage() {
     string | null
   >(null);
 
+  // Automatyczny dobór kategorii przez AI na podstawie opisu sprawy
+  const [isSuggestingCategories, setIsSuggestingCategories] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState<{
+    uzasadnienie: string;
+    categories: { id: string; nazwa: string; path: string }[];
+  } | null>(null);
+
   const [categories, setCategories] = useState<any[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [voivodeships, setVoivodeships] = useState<any[]>([]);
@@ -145,7 +152,7 @@ export default function ClientAddCasePage() {
 
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
-    categoryId: "",
+    categoryIds: [],
     voivodeshipId: "",
     cityId: "",
     nazwaSprawy: "",
@@ -202,21 +209,22 @@ export default function ClientAddCasePage() {
 
   // Pre-select parent category when modal opens with existing selection
   useEffect(() => {
-    if (isCategoryModalOpen && formData.categoryId) {
+    const firstCategoryId = formData.categoryIds[0];
+    if (isCategoryModalOpen && firstCategoryId) {
       const filteredCats = getFilteredCategories();
-      const parent = filteredCats.find((c) => c.id === formData.categoryId);
+      const parent = filteredCats.find((c) => c.id === firstCategoryId);
       if (parent) {
         setSelectedParentIdForModal(parent.id);
       } else {
         const actualParent = filteredCats.find((c) =>
-          c.children?.some((child: any) => child.id === formData.categoryId)
+          c.children?.some((child: any) => child.id === firstCategoryId)
         );
         if (actualParent) {
           setSelectedParentIdForModal(actualParent.id);
         }
       }
     }
-  }, [isCategoryModalOpen, formData.categoryId]);
+  }, [isCategoryModalOpen, formData.categoryIds]);
 
   // Dynamic fetch and caching for cities
   useEffect(() => {
@@ -297,11 +305,8 @@ export default function ClientAddCasePage() {
     });
   };
 
-  const getSelectedCategoryPath = () => {
-    if (!formData.categoryId) return null;
-    const selected = categories.find(
-      (cat: any) => cat.id === formData.categoryId,
-    );
+  const getCategoryPath = (categoryId: string) => {
+    const selected = categories.find((cat: any) => cat.id === categoryId);
     if (!selected) return null;
     if (selected.parentId) {
       const parent = categories.find(
@@ -312,6 +317,51 @@ export default function ClientAddCasePage() {
       }
     }
     return selected.nazwa;
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      categoryIds: prev.categoryIds.includes(categoryId)
+        ? prev.categoryIds.filter((id) => id !== categoryId)
+        : [...prev.categoryIds, categoryId],
+    }));
+  };
+
+  // AI (deepseek przez OpenRouter) analizuje opis sprawy i dobiera kategorie za klienta
+  const handleSuggestCategories = async () => {
+    setIsSuggestingCategories(true);
+    try {
+      const response = await fetch("/api/cases/suggest-categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opisSprawy: formData.opisSprawy,
+          nazwaSprawy: formData.nazwaSprawy,
+          typSprawy: formData.typSprawy,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(
+          data.error || "Nie udało się automatycznie dobrać kategorii",
+        );
+        return;
+      }
+      updateFormData(
+        "categoryIds",
+        data.categories.map((cat: { id: string }) => cat.id),
+      );
+      setAiSuggestion(data);
+      toast.success(
+        "Kategorie zostały dobrane automatycznie na podstawie opisu sprawy",
+      );
+    } catch (error) {
+      console.error("Error suggesting categories:", error);
+      toast.error("Nie udało się automatycznie dobrać kategorii");
+    } finally {
+      setIsSuggestingCategories(false);
+    }
   };
 
   const getSearchResults = () => {
@@ -443,11 +493,13 @@ export default function ClientAddCasePage() {
       case 1:
         return !!formData.typSprawy;
       case 2:
-        return (
-          !!formData.categoryId && !!formData.voivodeshipId && !!formData.cityId
-        );
-      case 3:
         return !!formData.nazwaSprawy && formData.opisSprawy.length >= 50;
+      case 3:
+        return (
+          formData.categoryIds.length > 0 &&
+          !!formData.voivodeshipId &&
+          !!formData.cityId
+        );
       case 4:
         return true; // Termin i budżet są opcjonalne
       case 5:
@@ -533,8 +585,8 @@ export default function ClientAddCasePage() {
       <div className="mt-5 text-center">
         <h3 className="text-sm font-semibold tracking-wider uppercase text-primary">
           {currentStep === 1 && "Krok 1: Typ sprawy"}
-          {currentStep === 2 && "Krok 2: Kategoria i Lokalizacja"}
-          {currentStep === 3 && "Krok 3: Opis i Szczegóły"}
+          {currentStep === 2 && "Krok 2: Opis i Szczegóły"}
+          {currentStep === 3 && "Krok 3: Kategoria i Lokalizacja"}
           {currentStep === 4 && "Krok 4: Harmonogram i Budżet"}
           {currentStep === 5 && "Krok 5: Kontakt i Weryfikacja"}
         </h3>
@@ -585,7 +637,8 @@ export default function ClientAddCasePage() {
                 )}
                 onClick={() => {
                   updateFormData("typSprawy", option.value);
-                  updateFormData("categoryId", ""); // Reset selected category
+                  updateFormData("categoryIds", []); // Reset selected categories
+                  setAiSuggestion(null); // Reset AI suggestion
                   setSelectedParentIdForModal(null); // Reset selected parent category in modal
                 }}
               >
@@ -631,9 +684,11 @@ export default function ClientAddCasePage() {
     </div>
   );
 
-  const renderStep2 = () => {
+  const renderCategoryStep = () => {
     const filteredCats = getFilteredCategories();
-    const selectedPath = getSelectedCategoryPath();
+    const selectedCategories = formData.categoryIds
+      .map((id) => ({ id, path: getCategoryPath(id) }))
+      .filter((cat) => !!cat.path);
     const activeParentId =
       selectedParentIdForModal ||
       (filteredCats.length > 0 ? filteredCats[0].id : null);
@@ -646,7 +701,7 @@ export default function ClientAddCasePage() {
       <div className="space-y-5">
         <div>
           <Label className="text-muted-foreground text-xs font-semibold mb-2 block">
-            Kategoria sprawy *
+            Kategorie sprawy * (możesz wybrać więcej niż jedną)
           </Label>
           <Dialog
             open={isCategoryModalOpen}
@@ -657,21 +712,16 @@ export default function ClientAddCasePage() {
               }
             }}
           >
-            {selectedPath ? (
+            {selectedCategories.length > 0 ? (
               <Card className="border border-primary/30 bg-primary/5 rounded-lg shadow-md overflow-hidden relative">
                 <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                       <FolderOpen className="h-5 w-5" />
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground/70 uppercase tracking-wider font-semibold">
-                        Wybrana kategoria
-                      </p>
-                      <h4 className="text-sm font-bold text-white mt-0.5">
-                        {selectedPath}
-                      </h4>
-                    </div>
+                    <p className="text-sm text-muted-foreground/70 uppercase tracking-wider font-semibold">
+                      Wybrane kategorie ({selectedCategories.length})
+                    </p>
                   </div>
                   <DialogTrigger asChild>
                     <Button
@@ -679,10 +729,28 @@ export default function ClientAddCasePage() {
                       variant="outline"
                       className="h-9 rounded-md border-border/50 text-muted-foreground hover:text-white hover:bg-white/5 text-xs font-semibold shrink-0"
                     >
-                      Zmień kategorię
+                      Zmień kategorie
                     </Button>
                   </DialogTrigger>
                 </CardHeader>
+                <CardContent className="px-4 pb-4 pt-0 flex flex-wrap gap-2">
+                  {selectedCategories.map((cat) => (
+                    <span
+                      key={cat.id}
+                      className="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-xs font-semibold text-white"
+                    >
+                      {cat.path}
+                      <button
+                        type="button"
+                        onClick={() => toggleCategory(cat.id)}
+                        className="h-5 w-5 rounded-full flex items-center justify-center text-muted-foreground hover:text-white hover:bg-white/10 transition-colors"
+                        aria-label={`Usuń kategorię ${cat.path}`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </CardContent>
               </Card>
             ) : (
               <DialogTrigger asChild>
@@ -694,7 +762,7 @@ export default function ClientAddCasePage() {
                     <Search className="h-5 w-5" />
                   </div>
                   <span className="font-semibold text-sm text-white group-hover:text-primary transition-colors">
-                    Wybierz kategorię sprawy
+                    Wybierz kategorie sprawy
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 font-light">
                     Kliknij, aby otworzyć wyszukiwarkę i spis dziedzin prawa
@@ -707,11 +775,11 @@ export default function ClientAddCasePage() {
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[70px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white">
-                  Wybierz kategorię sprawy
+                  Wybierz kategorie sprawy
                 </DialogTitle>
                 <DialogDescription className="text-zinc-400 text-xs">
-                  Wyszukaj odpowiednią kategorię prawną lub wybierz ją ręcznie z
-                  podziału tematycznego.
+                  Wyszukaj odpowiednie kategorie prawne lub wybierz je ręcznie z
+                  podziału tematycznego. Możesz zaznaczyć więcej niż jedną.
                 </DialogDescription>
               </DialogHeader>
 
@@ -748,14 +816,10 @@ export default function ClientAddCasePage() {
                       <button
                         key={cat.id}
                         type="button"
-                        onClick={() => {
-                          updateFormData("categoryId", cat.id);
-                          setIsCategoryModalOpen(false);
-                          setCategorySearchQuery("");
-                        }}
+                        onClick={() => toggleCategory(cat.id)}
                         className={cn(
                           "w-full flex items-center justify-between p-3.5 rounded-lg border text-left transition-all",
-                          formData.categoryId === cat.id
+                          formData.categoryIds.includes(cat.id)
                             ? "border-primary bg-primary/5 text-primary"
                             : "border-border/10 hover:border-primary/50 hover:bg-primary/10 hover:text-white",
                         )}
@@ -770,7 +834,7 @@ export default function ClientAddCasePage() {
                             </span>
                           )}
                         </div>
-                        {formData.categoryId === cat.id && (
+                        {formData.categoryIds.includes(cat.id) && (
                           <Check className="h-4 w-4 text-primary shrink-0" />
                         )}
                       </button>
@@ -873,13 +937,10 @@ export default function ClientAddCasePage() {
                           {/* Opcja wyboru samej kategorii głównej */}
                           <button
                             type="button"
-                            onClick={() => {
-                              updateFormData("categoryId", activeParent.id);
-                              setIsCategoryModalOpen(false);
-                            }}
+                            onClick={() => toggleCategory(activeParent.id)}
                             className={cn(
                               "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all",
-                              formData.categoryId === activeParent.id
+                              formData.categoryIds.includes(activeParent.id)
                                 ? "border-primary bg-primary/5 text-primary"
                                 : "border-dashed border-border/20 hover:border-primary hover:bg-primary/10",
                             )}
@@ -893,7 +954,7 @@ export default function ClientAddCasePage() {
                                 dziedziny
                               </span>
                             </div>
-                            {formData.categoryId === activeParent.id && (
+                            {formData.categoryIds.includes(activeParent.id) && (
                               <Check className="h-4 w-4 text-primary shrink-0" />
                             )}
                           </button>
@@ -908,18 +969,15 @@ export default function ClientAddCasePage() {
                             <button
                               key={child.id}
                               type="button"
-                              onClick={() => {
-                                updateFormData("categoryId", child.id);
-                                setIsCategoryModalOpen(false);
-                              }}
+                              onClick={() => toggleCategory(child.id)}
                               className={cn(
                                 "w-full flex items-center justify-between p-3 rounded-lg border border-border/10 text-left transition-all text-xs font-medium text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-white",
-                                formData.categoryId === child.id &&
+                                formData.categoryIds.includes(child.id) &&
                                   "border-primary bg-primary/5 text-primary hover:border-primary",
                               )}
                             >
                               <span>{child.nazwa}</span>
-                              {formData.categoryId === child.id && (
+                              {formData.categoryIds.includes(child.id) && (
                                 <Check className="h-3.5 w-3.5 text-primary shrink-0" />
                               )}
                             </button>
@@ -934,8 +992,63 @@ export default function ClientAddCasePage() {
                   </div>
                 </div>
               )}
+
+              <DialogFooter className="pt-3 border-t border-border/20">
+                <div className="flex items-center justify-between w-full gap-3">
+                  <span className="text-xs text-muted-foreground font-light">
+                    Wybrane kategorie: {formData.categoryIds.length}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => setIsCategoryModalOpen(false)}
+                    disabled={formData.categoryIds.length === 0}
+                    className="h-10 px-5"
+                  >
+                    Zatwierdź wybór
+                  </Button>
+                </div>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Automatyczny dobór kategorii przez AI na podstawie opisu z kroku 2 */}
+          <button
+            type="button"
+            onClick={handleSuggestCategories}
+            disabled={isSuggestingCategories}
+            className="mt-3 w-full flex items-center justify-center gap-2.5 py-3.5 px-4 border border-dashed border-primary/30 hover:border-primary/60 rounded-lg hover:bg-primary/5 transition-all text-center disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isSuggestingCategories ? (
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-primary shrink-0" />
+            )}
+            <span className="text-xs font-semibold text-primary">
+              {isSuggestingCategories
+                ? "Analizujemy opis sprawy i dobieramy kategorie..."
+                : "Nie wiem, do jakiej kategorii przyporządkować sprawę — dobierz za mnie"}
+            </span>
+          </button>
+
+          {aiSuggestion && (
+            <div className="mt-3 rounded-lg border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <h5 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                  Kategorie dobrane automatycznie
+                </h5>
+                <p className="text-xs text-muted-foreground leading-relaxed font-light">
+                  Na podstawie opisu Twojej sprawy dobraliśmy kategorie
+                  automatycznie.
+                  {aiSuggestion.uzasadnienie &&
+                    ` ${aiSuggestion.uzasadnienie}`}{" "}
+                  Jeśli się z nimi nie zgadzasz, możesz je w każdej chwili
+                  zmienić lub usunąć.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -1036,7 +1149,7 @@ export default function ClientAddCasePage() {
     );
   };
 
-  const renderStep3 = () => (
+  const renderDescriptionStep = () => (
     <div className="space-y-5">
       <div>
         <Label
@@ -1462,8 +1575,8 @@ export default function ClientAddCasePage() {
                   exit="exit"
                 >
                   {currentStep === 1 && renderStep1()}
-                  {currentStep === 2 && renderStep2()}
-                  {currentStep === 3 && renderStep3()}
+                  {currentStep === 2 && renderDescriptionStep()}
+                  {currentStep === 3 && renderCategoryStep()}
                   {currentStep === 4 && renderStep4()}
                   {currentStep === 5 && renderStep5()}
                 </motion.div>
