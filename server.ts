@@ -1,6 +1,7 @@
 import { createServer } from "http"
 import next from "next"
 import { initScheduler } from "./lib/scheduler"
+import { initSocket } from "./lib/socket"
 
 const dev = process.env.NODE_ENV !== "production"
 const hostname = "localhost"
@@ -28,7 +29,9 @@ app.prepare().then(async () => {
     }
   })
 
-
+  // Serwer Socket.IO dla czatu i powiadomień w czasie rzeczywistym.
+  // Przechwytuje żądania na ścieżce /socket.io zanim trafią do Next.js.
+  initSocket(server)
 
   server.listen(port, () => {
     console.log(`> Ready on http://${hostname}:${port}`)

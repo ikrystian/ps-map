@@ -1,3 +1,4 @@
+import { getSocket } from "@/lib/socket-client"
 import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
@@ -7,6 +8,12 @@ interface UseRealtimeMessagesOptions {
   enabled?: boolean
 }
 
+/**
+ * Globalne aktualizacje wiadomości w czasie rzeczywistym (Socket.IO):
+ * - licznik nieprzeczytanych wiadomości (badge, dzwonek),
+ * - "message:notify" gdy bieżący użytkownik otrzyma nową wiadomość,
+ * - "conversation:update" gdy zmieni się stan którejkolwiek konwersacji.
+ */
 export function useRealtimeMessages({
   onUpdate,
   onNewMessage,
@@ -16,20 +23,19 @@ export function useRealtimeMessages({
   const [unreadCount, setUnreadCount] = useState(0)
   const [lastUpdate, setLastUpdate] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
-  
+
   const onUpdateRef = useRef(onUpdate)
   const onNewMessageRef = useRef(onNewMessage)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   useEffect(() => {
     onUpdateRef.current = onUpdate
     onNewMessageRef.current = onNewMessage
   }, [onUpdate, onNewMessage])
 
+  const isActive = enabled && status === "authenticated" && !!session?.user?.id
+
   const fetchUnreadCount = useCallback(async () => {
-    if (!session?.user?.id || !enabled || status !== "authenticated") {
-      return
-    }
+    if (!isActive) return
 
     try {
       const response = await fetch("/api/conversations/unread-count")
@@ -43,48 +49,54 @@ export function useRealtimeMessages({
     } catch (error) {
       console.error("Error fetching unread count:", error)
     }
-  }, [session, enabled, status])
-
-  const connect = useCallback(() => {
-    if (!session?.user?.id || !enabled || status !== "authenticated") {
-      return
-    }
-    
-    setIsConnected(true)
-    fetchUnreadCount()
-
-    // Poll every 30 seconds
-    if (!intervalRef.current) {
-      intervalRef.current = setInterval(() => {
-        fetchUnreadCount()
-      }, 30000)
-    }
-  }, [session, enabled, status, fetchUnreadCount])
-
-  const disconnect = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    }
-    setIsConnected(false)
-  }, [])
+  }, [isActive])
 
   useEffect(() => {
-    if (enabled && status === "authenticated") {
-      connect()
+    if (!isActive) return
+
+    const socket = getSocket()
+
+    const handleConnect = () => {
+      setIsConnected(true)
+      // Po (ponownym) połączeniu zsynchronizuj licznik z bazą
+      fetchUnreadCount()
+    }
+    const handleDisconnect = () => setIsConnected(false)
+
+    const handleMessageNotify = (data: any) => {
+      fetchUnreadCount()
+      onNewMessageRef.current?.(data)
     }
 
-    return () => {
-      disconnect()
+    const handleConversationUpdate = () => {
+      fetchUnreadCount()
+      onUpdateRef.current?.()
     }
-  }, [enabled, status, connect, disconnect])
+
+    socket.on("connect", handleConnect)
+    socket.on("disconnect", handleDisconnect)
+    socket.on("message:notify", handleMessageNotify)
+    socket.on("conversation:update", handleConversationUpdate)
+
+    if (socket.connected) {
+      setIsConnected(true)
+    }
+    fetchUnreadCount()
+
+    return () => {
+      socket.off("connect", handleConnect)
+      socket.off("disconnect", handleDisconnect)
+      socket.off("message:notify", handleMessageNotify)
+      socket.off("conversation:update", handleConversationUpdate)
+    }
+  }, [isActive, fetchUnreadCount])
 
   return {
     unreadCount,
     lastUpdate,
     isConnected,
-    reconnect: connect,
-    disconnect,
-    socket: null,
+    reconnect: fetchUnreadCount,
+    disconnect: () => undefined,
+    socket: isActive ? getSocket() : null,
   }
 }

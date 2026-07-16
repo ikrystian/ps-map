@@ -59,6 +59,7 @@ const nextConfig: NextConfig = {
     // Enable type checking during build to catch errors before production
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ["socket.io"],
   experimental: {
     webpackMemoryOptimizations: true,
     cpus: getOptimalBuildCPUs(),

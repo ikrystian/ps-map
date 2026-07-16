@@ -45,7 +45,7 @@ export async function PATCH(
     }
 
     // Oznacz wszystkie nieprzeczytane wiadomości od innych użytkowników jako przeczytane
-    await prisma.chatMessage.updateMany({
+    const unreadMessages = await prisma.chatMessage.findMany({
       where: {
         conversationId,
         senderId: {
@@ -53,11 +53,25 @@ export async function PATCH(
         },
         isRead: false,
       },
-      data: {
-        isRead: true,
-        readAt: new Date(),
-      },
+      select: { id: true },
     })
+
+    if (unreadMessages.length > 0) {
+      const messageIds = unreadMessages.map((m) => m.id)
+
+      await prisma.chatMessage.updateMany({
+        where: { id: { in: messageIds } },
+        data: {
+          isRead: true,
+          readAt: new Date(),
+          status: "READ",
+        },
+      })
+
+      // Powiadom nadawcę w czasie rzeczywistym o odczytaniu wiadomości
+      const { emitMessageRead } = await import("@/lib/socket")
+      await emitMessageRead(conversationId, messageIds, userId)
+    }
 
     return Response.json({ success: true })
   } catch (error) {

@@ -812,12 +812,12 @@ export default function PublicHeader({
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/z-nami-wygrywasz" className={cn(
+                  <Link href="/kontakt" className={cn(
                     navigationMenuTriggerStyle(),
                     "bg-transparent hover:bg-[#121212]",
-                    isZNamiWygrywaszActive && "text-primary font-semibold"
+                    isKontaktActive && "text-primary font-semibold"
                   )}>
-                    Z nami wygrywasz
+                    Kontakt
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -1068,7 +1068,7 @@ export default function PublicHeader({
                       >
                         O nas
                       </Link>
-
+                      {/* 
                       <Link
                         href="/z-nami-wygrywasz"
                         onClick={() => setMobileMenuOpen(false)}
@@ -1078,8 +1078,7 @@ export default function PublicHeader({
                         )}
                       >
                         Z nami wygrywasz
-                      </Link>
-
+                      </Link> */}
                       <Link
                         href="/kontakt"
                         onClick={() => setMobileMenuOpen(false)}

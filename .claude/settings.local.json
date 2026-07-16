@@ -33,7 +33,14 @@
       "Bash(lsof -i :3000 -sTCP:LISTEN -t)",
       "Skill(run)",
       "Bash(echo \"exit: $?\")",
-      "Bash(echo \"---exit: $?\")"
+      "Bash(echo \"---exit: $?\")",
+      "Bash(bun add *)",
+      "Bash(bunx tsc *)",
+      "Bash(bunx eslint *)",
+      "Bash(PORT=3100 timeout 60 bun server.ts)",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"http://localhost:3100/socket.io/?EIO=4&transport=polling\")",
+      "Bash(kill 367976)"
     ]
   }
 }

@@ -42,10 +42,10 @@ const contactMethods = [
   },
   {
     icon: MapPin,
-    label: "Odwiedź nas",
+    label: "Polska Grupa Identyfikacji Firm Sp. z o.o.",
     value: "Langiewicza 16/3, 25-381 Kielce",
     href: "https://maps.google.com/maps?q=Langiewicza+16/3+25-381+Kielce",
-    hint: "Siedziba ProstaSprawa.pl",
+    hint: "NIP: 9592020678",
   },
 ]
 

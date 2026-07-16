@@ -12,10 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/sonner"
 
+import {
+  requestNotificationPermission,
+  showBrowserNotification,
+} from "@/lib/browser-notifications"
+import { getSocket } from "@/lib/socket-client"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
 import { Trash2 } from "lucide-react"
 import BellIcon from "@/components/bell-icon"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -35,6 +41,7 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
+  const { status } = useSession()
 
 
   // Fetch notifications
@@ -60,6 +67,50 @@ export function NotificationBell() {
   useEffect(() => {
     fetchNotifications()
   }, [])
+
+  // Poproś o zgodę na powiadomienia przeglądarkowe
+  useEffect(() => {
+    if (status === "authenticated") {
+      requestNotificationPermission()
+    }
+  }, [status])
+
+  // Powiadomienia w czasie rzeczywistym przez Socket.IO
+  useEffect(() => {
+    if (status !== "authenticated") return
+
+    const socket = getSocket()
+
+    const handleNewNotification = (notification: Notification) => {
+      if (!notification?.id) return
+
+      setNotifications(prev =>
+        prev.some(n => n.id === notification.id) ? prev : [notification, ...prev]
+      )
+      setUnreadCount(prev => prev + 1)
+
+      // Push przeglądarkowy — pomiń powiadomienie o nowej wiadomości,
+      // gdy użytkownik właśnie ma otwartą stronę wiadomości w aktywnej karcie
+      const viewingMessages =
+        document.visibilityState === "visible" &&
+        window.location.pathname.includes("/wiadomosci")
+
+      if (!(notification.typ === "NOWA_WIADOMOSC" && viewingMessages)) {
+        showBrowserNotification({
+          title: notification.tytul,
+          body: notification.tresc,
+          url: notification.linkUrl,
+          tag: `notification-${notification.id}`,
+        })
+      }
+    }
+
+    socket.on("notification:new", handleNewNotification)
+
+    return () => {
+      socket.off("notification:new", handleNewNotification)
+    }
+  }, [status])
 
 
 

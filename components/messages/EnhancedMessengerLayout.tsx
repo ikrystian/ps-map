@@ -4,6 +4,7 @@ import { BorderBeam } from "@/components/ui/border-beam"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { requestNotificationPermission } from "@/lib/browser-notifications"
 import type { Conversation } from "@/types/conversations"
 import { Loader2, MessageCircle } from "lucide-react"
 import { useSession } from "next-auth/react"
@@ -71,13 +72,9 @@ export function EnhancedMessengerLayout() {
       fetchAllConversations(true)
     }, [fetchAllConversations]),
     onNewMessage: useCallback((data: any) => {
-      // Show notification for new message
-      if (Notification.permission === "granted") {
-        new Notification("Nowa wiadomość", {
-          body: "Otrzymałeś nową wiadomość",
-          icon: "/favicon.ico",
-        })
-      }
+      // Push przeglądarkowy wyświetla globalnie NotificationBell (zdarzenie notification:new).
+      // Tutaj odśwież listę konwersacji i odtwórz dźwięk.
+      fetchAllConversations(true)
       // Play sound (tylko jeśli użytkownik włączył dźwięk powiadomień)
       if (soundEnabledRef.current) {
         const audio = new Audio("/sounds/notification.mp3")
@@ -85,7 +82,7 @@ export function EnhancedMessengerLayout() {
           // Ignore errors if sound can't play
         })
       }
-    }, []),
+    }, [fetchAllConversations]),
     enabled: !!session?.user,
   })
 
@@ -117,9 +114,7 @@ export function EnhancedMessengerLayout() {
 
   // Request notification permission
   useEffect(() => {
-    if (typeof window !== "undefined" && Notification.permission === "default") {
-      Notification.requestPermission()
-    }
+    requestNotificationPermission()
   }, [])
 
   // Check URL for conversationId parameter

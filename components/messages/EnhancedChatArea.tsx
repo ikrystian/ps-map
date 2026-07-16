@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 
+import { getSocket } from "@/lib/socket-client"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import {
@@ -95,6 +96,9 @@ export function EnhancedChatArea({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const typingActiveRef = useRef(false)
+  const otherUserIdRef = useRef<string | null>(null)
+  const otherTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Audio for notifications
   const notificationSound = useRef<HTMLAudioElement | null>(null)
@@ -170,22 +174,132 @@ export function EnhancedChatArea({
     }
   }, [conversationId])
 
+  // Zapamiętaj ID rozmówcy (potrzebne do obsługi zdarzeń obecności)
+  useEffect(() => {
+    if (!conversation || !session?.user?.id) return
+    otherUserIdRef.current =
+      conversation.clientUser.id === session.user.id
+        ? conversation.lawFirmUser.id
+        : conversation.clientUser.id
+  }, [conversation, session?.user?.id])
+
+  // Socket.IO — czat w czasie rzeczywistym (nowe wiadomości, pisanie, odczyty, obecność)
+  useEffect(() => {
+    if (!conversationId || !session?.user?.id) return
+
+    const socket = getSocket()
+    const myUserId = session.user.id
+
+    const joinRoom = () => {
+      socket.emit(
+        "conversation:join",
+        conversationId,
+        (result: {
+          ok: boolean
+          otherUserId?: string
+          otherUserOnline?: boolean
+          otherUserLastSeen?: string | null
+        }) => {
+          if (!result?.ok) return
+          if (result.otherUserId) {
+            otherUserIdRef.current = result.otherUserId
+          }
+          setIsOnline(!!result.otherUserOnline)
+          setLastSeen(result.otherUserLastSeen ?? null)
+        }
+      )
+    }
+
+    const handleNewMessage = (message: EnhancedChatMessage & { conversationId?: string }) => {
+      if (message.conversationId && message.conversationId !== conversationId) return
+      setMessages((prev) =>
+        prev.some((m) => m.id === message.id) ? prev : [...prev, message]
+      )
+      // Rozmówca coś wysłał — na pewno skończył pisać
+      if (message.senderId !== myUserId) {
+        setOtherUserTyping(false)
+      }
+    }
+
+    const handleTyping = (data: { conversationId: string; userId: string; isTyping: boolean }) => {
+      if (data.conversationId !== conversationId || data.userId === myUserId) return
+      setOtherUserTyping(data.isTyping)
+
+      // Zabezpieczenie: wygaś wskaźnik, gdyby zdarzenie "stop" nie dotarło
+      if (otherTypingTimeoutRef.current) clearTimeout(otherTypingTimeoutRef.current)
+      if (data.isTyping) {
+        otherTypingTimeoutRef.current = setTimeout(() => setOtherUserTyping(false), 5000)
+      }
+    }
+
+    const handleMessageRead = (data: { conversationId: string; messageIds: string[] }) => {
+      if (data.conversationId !== conversationId) return
+      setMessages((prev) =>
+        prev.map((m) =>
+          data.messageIds.includes(m.id)
+            ? { ...m, isRead: true, status: "READ" as const }
+            : m
+        )
+      )
+    }
+
+    const handlePresence = (data: { userId: string; online: boolean; lastSeen: string | null }) => {
+      if (data.userId !== otherUserIdRef.current) return
+      setIsOnline(data.online)
+      if (data.lastSeen) setLastSeen(data.lastSeen)
+    }
+
+    socket.on("connect", joinRoom)
+    socket.on("message:new", handleNewMessage)
+    socket.on("typing", handleTyping)
+    socket.on("message:read", handleMessageRead)
+    socket.on("presence", handlePresence)
+
+    if (socket.connected) {
+      joinRoom()
+    }
+
+    return () => {
+      socket.emit("conversation:leave", conversationId)
+      socket.off("connect", joinRoom)
+      socket.off("message:new", handleNewMessage)
+      socket.off("typing", handleTyping)
+      socket.off("message:read", handleMessageRead)
+      socket.off("presence", handlePresence)
+      if (otherTypingTimeoutRef.current) clearTimeout(otherTypingTimeoutRef.current)
+    }
+  }, [conversationId, session?.user?.id])
+
   // Mark as read
   useEffect(() => {
     const markAsRead = async () => {
       try {
-        await fetch(`/api/conversations/${conversationId}/read`, {
+        const response = await fetch(`/api/conversations/${conversationId}/read`, {
           method: "PATCH",
         })
+        if (response.ok) {
+          // Odzwierciedl odczyt lokalnie, żeby nie ponawiać żądania
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.senderId !== session?.user?.id && !m.isRead
+                ? { ...m, isRead: true }
+                : m
+            )
+          )
+        }
       } catch (error) {
         console.error("Error marking messages as read:", error)
       }
     }
 
-    if (conversationId && messages.length > 0) {
+    const hasUnreadIncoming = messages.some(
+      (m) => m.senderId !== session?.user?.id && !m.isRead
+    )
+
+    if (conversationId && hasUnreadIncoming) {
       markAsRead()
     }
-  }, [conversationId, messages])
+  }, [conversationId, messages, session?.user?.id])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -205,10 +319,23 @@ export function EnhancedChatArea({
     }
   }, [hasMore, isLoadingMore])
 
+  // Emituj wskaźnik pisania tylko przy zmianie stanu (start/stop)
+  const emitTyping = useCallback(
+    (typing: boolean) => {
+      if (typingActiveRef.current === typing) return
+      typingActiveRef.current = typing
+      setIsTyping(typing)
+      getSocket().emit("typing", { conversationId, isTyping: typing })
+    },
+    [conversationId]
+  )
+
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageText(e.target.value)
 
-
+    emitTyping(true)
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+    typingTimeoutRef.current = setTimeout(() => emitTyping(false), 2500)
   }
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -217,6 +344,9 @@ export function EnhancedChatArea({
     if ((!messageText.trim() && attachments.length === 0) || isSending) return
 
     setIsSending(true)
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+    emitTyping(false)
 
 
 
@@ -241,7 +371,10 @@ export function EnhancedChatArea({
       }
 
       const newMessage = await response.json()
-      setMessages([...messages, newMessage])
+      // Zdarzenie socketowe mogło dotrzeć przed odpowiedzią HTTP — nie duplikuj
+      setMessages((prev) =>
+        prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
+      )
       setMessageText("")
       setAttachments([])
       textareaRef.current?.focus()
