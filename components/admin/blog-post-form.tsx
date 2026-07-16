@@ -131,6 +131,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
   // Collapse/Expand state for right column boxes (default to collapsed/false)
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
+  const [generatingSeo, setGeneratingSeo] = useState(false)
 
   // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
   const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
@@ -250,6 +251,43 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
       router.push("/admin/blog")
     } finally {
       setLoadingPost(false)
+    }
+  }
+
+  const handleGenerateSeo = async () => {
+    const tresc = form.getValues("tresc")
+    if (!tresc || !tresc.trim()) {
+      toast.error("Uzupełnij treść artykułu, aby wygenerować metadane SEO")
+      return
+    }
+
+    setGeneratingSeo(true)
+    try {
+      const response = await fetch("/api/admin/generate-seo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tytul: form.getValues("tytul"),
+          tresc,
+        }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.error || "Błąd generowania metadanych SEO")
+      }
+
+      form.setValue("tagi", data.tagi || [], { shouldDirty: true })
+      form.setValue("metaTitle", data.metaTitle || "", { shouldDirty: true })
+      form.setValue("metaDescription", data.metaDescription || "", { shouldDirty: true })
+      setSeoOpen(true)
+      toast.success("Metadane SEO zostały wygenerowane")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się wygenerować metadanych SEO")
+    } finally {
+      setGeneratingSeo(false)
     }
   }
 
@@ -502,7 +540,32 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                     onClick={() => setSeoOpen(!seoOpen)}
                   >
                     <div className="space-y-1">
-                      <CardTitle className="text-lg font-semibold">Optymalizacja SEO</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-lg font-semibold">Optymalizacja SEO</CardTitle>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          disabled={generatingSeo}
+                          className="h-7 px-2.5 text-xs shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleGenerateSeo()
+                          }}
+                        >
+                          {generatingSeo ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                              Generowanie...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
+                              Generuj
+                            </>
+                          )}
+                        </Button>
+                      </div>
                       <CardDescription className="text-xs">
                         Wprowadź tagi i metadane pod wyszukiwarki internetowe.
                       </CardDescription>
