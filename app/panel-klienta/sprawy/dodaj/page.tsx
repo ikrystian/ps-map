@@ -200,6 +200,24 @@ export default function ClientAddCasePage() {
     fetchVoivodeships();
   }, []);
 
+  // Pre-select parent category when modal opens with existing selection
+  useEffect(() => {
+    if (isCategoryModalOpen && formData.categoryId) {
+      const filteredCats = getFilteredCategories();
+      const parent = filteredCats.find((c) => c.id === formData.categoryId);
+      if (parent) {
+        setSelectedParentIdForModal(parent.id);
+      } else {
+        const actualParent = filteredCats.find((c) =>
+          c.children?.some((child: any) => child.id === formData.categoryId)
+        );
+        if (actualParent) {
+          setSelectedParentIdForModal(actualParent.id);
+        }
+      }
+    }
+  }, [isCategoryModalOpen, formData.categoryId]);
+
   // Dynamic fetch and caching for cities
   useEffect(() => {
     const query = locationSearch.trim().toLowerCase();
@@ -483,10 +501,10 @@ export default function ClientAddCasePage() {
           const isCompleted = step < currentStep;
           const isCurrent = step === currentStep;
           return (
-            <div key={step} className="flex items-center">
+            <div key={step} className="flex items-center flex-1 last:flex-initial">
               <div
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold text-sm transition-all duration-300 relative",
+                  "flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold text-sm transition-all duration-300 relative shrink-0",
                   isCompleted
                     ? "border-transparent bg-primary text-primary-foreground"
                     : isCurrent
@@ -503,7 +521,7 @@ export default function ClientAddCasePage() {
               {step < 5 && (
                 <div
                   className={cn(
-                    "mx-2 h-0.5 w-12 sm:w-16 rounded-full transition-all duration-300",
+                    "mx-1 sm:mx-2 h-0.5 flex-1 rounded-full transition-all duration-300",
                     step < currentStep ? "bg-primary" : "bg-border/30",
                   )}
                 />
@@ -685,13 +703,13 @@ export default function ClientAddCasePage() {
               </DialogTrigger>
             )}
 
-            <DialogContent className="sm:max-w-3xl w-full p-6 overflow-hidden">
+            <DialogContent className="sm:max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col p-5 sm:p-6 overflow-hidden">
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[70px] rounded-full pointer-events-none" />
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold font-playfair text-white">
                   Wybierz kategorię sprawy
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground text-xs">
+                <DialogDescription className="text-zinc-400 text-xs">
                   Wyszukaj odpowiednią kategorię prawną lub wybierz ją ręcznie z
                   podziału tematycznego.
                 </DialogDescription>
@@ -719,7 +737,7 @@ export default function ClientAddCasePage() {
 
               {categorySearchQuery ? (
                 /* Wyniki wyszukiwania */
-                <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 my-2">
+                <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 my-2">
                   {getSearchResults().length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground text-sm font-light">
                       Nie znaleziono kategorii dla frazy &quot;
@@ -761,9 +779,14 @@ export default function ClientAddCasePage() {
                 </div>
               ) : (
                 /* Układ dwukolumnowy */
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[320px] my-2">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-[350px] md:h-[400px] flex-1 min-h-0 my-2 overflow-hidden">
                   {/* Lewa kolumna: Kategorie główne (2/5) */}
-                  <div className="md:col-span-2 border border-border/10 rounded-lg p-2 overflow-y-auto bg-background-sec/10 space-y-1">
+                  <div
+                    className={cn(
+                      "md:col-span-2 border border-border/10 rounded-lg p-2 overflow-y-auto bg-background-sec/10 space-y-1 h-full",
+                      selectedParentIdForModal !== null ? "hidden md:block" : "block"
+                    )}
+                  >
                     <div className="text-sm font-semibold text-muted-foreground px-2.5 py-1 uppercase tracking-wider mb-1">
                       Działy prawa
                     </div>
@@ -825,9 +848,23 @@ export default function ClientAddCasePage() {
                   </div>
 
                   {/* Prawa kolumna: Podkategorie (3/5) */}
-                  <div className="md:col-span-3 border border-border/10 rounded-lg p-2 overflow-y-auto space-y-2">
+                  <div
+                    className={cn(
+                      "md:col-span-3 border border-border/10 rounded-lg p-2 overflow-y-auto space-y-2 h-full",
+                      selectedParentIdForModal === null ? "hidden md:block" : "block"
+                    )}
+                  >
                     {activeParent ? (
                       <>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setSelectedParentIdForModal(null)}
+                          className="md:hidden mb-2.5 w-full flex items-center justify-start gap-2 h-9 text-xs text-primary font-semibold hover:bg-primary/10 border border-primary/20"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          Wróć do kategorii
+                        </Button>
                         <div className="text-sm font-semibold text-muted-foreground px-2.5 py-1 uppercase tracking-wider">
                           Specjalizacje: {activeParent.nazwa}
                         </div>
@@ -921,7 +958,7 @@ export default function ClientAddCasePage() {
                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[300px] p-0" align="start">
+            <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-2rem)] p-0" align="start">
               <Command shouldFilter={false}>
                 <CommandInput
                   placeholder="Wyszukaj miasto..."
@@ -1116,7 +1153,7 @@ export default function ClientAddCasePage() {
               key={index}
               className="flex items-center justify-between rounded-lg border border-border/10 bg-background-sec/20 p-3.5 mt-2"
             >
-              <span className="text-xs text-muted-foreground truncate max-w-md">
+              <span className="text-xs text-muted-foreground truncate flex-1 min-w-0 mr-2">
                 {file.originalName}
               </span>
               <Button
@@ -1412,7 +1449,7 @@ export default function ClientAddCasePage() {
             duration={8}
             borderWidth={1}
           />
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             {renderStepIndicator()}
 
             <div className="min-h-[300px] py-4">
