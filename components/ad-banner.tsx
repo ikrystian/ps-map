@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { ExternalLink, Megaphone } from "lucide-react"
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
 interface Ad {
@@ -174,13 +175,13 @@ export function AdBanner({ location, className }: AdBannerProps) {
           </div>
         </div>
 
-        <a
-          href="mailto:reklama@prostawsprawa.pl?subject=Zapytanie o reklame na portalu"
+        <Link
+          href="/reklama"
           className="relative z-10 mt-3 sm:mt-0 flex items-center justify-center gap-2 rounded-lg bg-neutral-900 border border-neutral-800 px-4 py-2 text-xs font-medium text-neutral-300 hover:text-white hover:bg-neutral-850 hover:border-neutral-700 transition-all duration-200"
         >
           <span>Zareklamuj się</span>
           <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        </Link>
       </div>
     )
   }

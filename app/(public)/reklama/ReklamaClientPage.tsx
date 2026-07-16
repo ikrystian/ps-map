@@ -188,6 +188,12 @@ export default function ReklamaClientPage() {
 
   const calcResults = getCalcResults()
 
+  // Height estimates for the visual graph bars
+  const reachBarHeight = Math.min(75, Math.max(15, (calcResults.impressions / 600000) * 75))
+  const clicksBarHeight = Math.min(75, Math.max(15, (calcResults.clicks / 28800) * 75))
+  const roiValue = Number(calcResults.cpc) > 0 ? (0.75 / Number(calcResults.cpc)) * 50 : 15
+  const roiBarHeight = Math.min(75, Math.max(15, roiValue))
+
   // Obsługa wysyłki formularza
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -402,6 +408,37 @@ ${formData.tresc}`
         </div>
       </section>
 
+      {/* SECTION 2.5: TRUSTED PARTNERS SHOWCASE */}
+      <section className="relative z-10 py-10 border-b border-border/30 bg-muted/10 select-none">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <p className="text-center text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground/80 mb-8">
+            Zaufali nam liderzy branży prawnej i biznesowej
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-20 opacity-40 dark:opacity-30">
+            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
+              <Building2 className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">LEX PARTNERS</span>
+            </div>
+            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
+              <Award className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">KOWALSKI & CO.</span>
+            </div>
+            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
+              <ShieldCheck className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">SECURE TAX</span>
+            </div>
+            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
+              <Users className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">ADWOKACI 24</span>
+            </div>
+            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
+              <TrendingUp className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">BIZNES HUB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 3: AD FORMATS EXHIBITION */}
       <section id="formats-section" className="relative z-10 py-20 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -474,47 +511,159 @@ ${formData.tresc}`
                       transition={{ duration: 0.3 }}
                       className="bg-card border border-border rounded-3xl p-6 md:p-8 space-y-6 shadow-xl glass-panel text-left"
                     >
-                      <div className="flex items-center justify-between border-b border-border/60 pb-5">
-                        <div className="space-y-1">
-                          <span className="text-xs font-semibold text-primary dark:text-[#0da192] uppercase tracking-wider">{format.badge}</span>
-                          <h3 className="font-playfair text-2xl font-bold text-foreground">{format.title}</h3>
+                      {/* Interactive Visual Browser Mockup Preview */}
+                      <div className="w-full bg-zinc-950/90 border border-white/10 rounded-2xl overflow-hidden shadow-md select-none mb-2">
+                        {/* Browser Bar */}
+                        <div className="bg-zinc-900/80 border-b border-white/5 px-4 py-2 flex items-center gap-2">
+                          <div className="flex gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                            <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
+                            <span className="w-2 h-2 rounded-full bg-green-500/80" />
+                          </div>
+                          <div className="bg-zinc-950/80 text-[9px] text-muted-foreground/75 px-3 py-0.5 rounded-sm mx-auto w-48 text-center truncate font-mono">
+                            prostawsprawa.pl/wyszukiwarka
+                          </div>
                         </div>
-                        <div className="h-12 w-12 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary dark:text-[#0da192]">
-                          <IconComponent className="h-6 w-6" />
+                        {/* Browser Window Body */}
+                        <div className="p-4 bg-[#faf9f5] dark:bg-[#20201d] text-foreground min-h-[140px] relative flex flex-col justify-center">
+                          {format.id === "banner-top" && (
+                            <div className="space-y-3">
+                              {/* Top Horizontal Banner mockup */}
+                              <div className="w-full py-2.5 bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 border-2 border-dashed border-primary/40 rounded-xl flex items-center justify-center text-[10px] font-bold text-primary animate-pulse shadow-xs">
+                                <span className="flex items-center gap-1.5">
+                                  <Sparkles className="h-3 w-3" />
+                                  REKLAMA SPONSOROWANA (970x90)
+                                </span>
+                              </div>
+                              {/* Dummy listings */}
+                              <div className="space-y-1.5 opacity-40">
+                                <div className="h-8 bg-muted border border-border/40 rounded-lg flex items-center px-3 justify-between">
+                                  <div className="w-1/3 h-2.5 bg-muted-foreground/30 rounded" />
+                                  <div className="w-8 h-3.5 bg-muted/80 rounded" />
+                                </div>
+                                <div className="h-8 bg-muted border border-border/40 rounded-lg flex items-center px-3 justify-between">
+                                  <div className="w-1/4 h-2.5 bg-muted-foreground/30 rounded" />
+                                  <div className="w-8 h-3.5 bg-muted/80 rounded" />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {format.id === "banner-sidebar" && (
+                            <div className="flex gap-3">
+                              {/* Left main content mockup */}
+                              <div className="w-2/3 space-y-2 opacity-40">
+                                <div className="h-11 bg-muted border border-border/40 rounded-lg flex flex-col justify-center px-3 gap-1">
+                                  <div className="w-1/2 h-2 bg-muted-foreground/30 rounded" />
+                                  <div className="w-1/3 h-1.5 bg-muted-foreground/20 rounded" />
+                                </div>
+                                <div className="h-11 bg-muted border border-border/40 rounded-lg flex flex-col justify-center px-3 gap-1">
+                                  <div className="w-1/2 h-2 bg-muted-foreground/30 rounded" />
+                                  <div className="w-1/3 h-1.5 bg-muted-foreground/20 rounded" />
+                                </div>
+                              </div>
+                              {/* Sidebar Banner mockup */}
+                              <div className="w-1/3">
+                                <div className="w-full h-[98px] bg-gradient-to-br from-primary/10 to-primary/20 border-2 border-dashed border-primary/40 rounded-xl flex flex-col items-center justify-center text-[9px] font-bold text-primary p-2 text-center animate-pulse shadow-xs gap-1">
+                                  <Sparkles className="h-3 w-3" />
+                                  <span>BANER SIDEBAR</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {format.id === "profile-highlight" && (
+                            <div className="space-y-2">
+                              {/* Recommended Listing Card mockup */}
+                              <div className="border-2 border-primary/40 bg-gradient-to-r from-primary/[0.03] to-primary/[0.08] rounded-xl p-2.5 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-1.5 right-1.5 bg-primary text-white text-[7px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse flex items-center gap-0.5 shadow-xs">
+                                  <Award className="h-2 w-2" />
+                                  REKOMENDOWANY
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary border border-primary/30">
+                                    AD
+                                  </div>
+                                  <div className="space-y-0.5 text-left">
+                                    <div className="font-bold text-[10px] text-foreground flex items-center gap-1">
+                                      Kancelaria Adwokacka Adwokata
+                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                                    </div>
+                                    <div className="text-[8px] text-muted-foreground">Warszawa • Prawo Cywilne</div>
+                                    <div className="text-[8px] text-yellow-500 font-bold flex items-center gap-0.5">
+                                      <span>★ 5.0 (42 opinie)</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Regular listing mockup */}
+                              <div className="h-8 bg-muted/30 border border-border/40 rounded-xl opacity-35 flex items-center px-3 justify-between">
+                                <div className="w-1/4 h-2 bg-muted-foreground/20 rounded" />
+                                <div className="w-8 h-2.5 bg-muted/50 rounded" />
+                              </div>
+                            </div>
+                          )}
+
+                          {format.id === "sponsored-article" && (
+                            <div className="space-y-2 text-left">
+                              <div className="flex gap-3">
+                                <div className="w-1/5 h-12 bg-muted/50 rounded-lg flex items-center justify-center text-[8px] text-muted-foreground font-semibold border border-border/40">FOTO</div>
+                                <div className="w-4/5 space-y-1">
+                                  <div className="inline-block bg-primary/10 text-primary dark:text-[#0da192] text-[7px] font-bold px-1.5 py-0.5 rounded-full border border-primary/20">ARTYKUŁ SPONSOROWANY</div>
+                                  <h5 className="font-playfair text-[10px] font-bold leading-tight line-clamp-1">Zmiany w prawie spadkowym 2026. Jak zabezpieczyć majątek?</h5>
+                                  <p className="text-[8px] text-muted-foreground line-clamp-1">Wpis przygotowany przez ekspertów Kancelarii XYZ...</p>
+                                </div>
+                              </div>
+                              <div className="flex justify-between items-center text-[8px] text-muted-foreground pt-1.5 border-t border-border/40">
+                                <span>Czytane przez: 12 400 osób</span>
+                                <span className="text-primary font-bold">Czytaj artykuł →</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-                          {format.description}
-                        </p>
-
-                        <div className="flex items-center gap-4.5 bg-muted/60 p-4 rounded-xl border border-border/40">
-                          <div>
-                            <div className="text-xs text-muted-foreground">Wymiary / Format</div>
-                            <div className="text-sm font-bold text-foreground">{format.dimensions}</div>
-                          </div>
-                          <div className="w-px h-8 bg-border" />
-                          <div>
-                            <div className="text-xs text-muted-foreground">Estymowany CTR</div>
-                            <div className="text-sm font-bold text-foreground">{format.ctr}</div>
-                          </div>
+                      <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] font-semibold text-primary dark:text-[#0da192] uppercase tracking-wider">{format.badge}</span>
+                          <h3 className="font-playfair text-xl md:text-2xl font-bold text-foreground">{format.title}</h3>
+                        </div>
+                        <div className="h-10 w-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary dark:text-[#0da192]">
+                          <IconComponent className="h-5 w-5" />
                         </div>
                       </div>
 
                       <div className="space-y-3">
-                        <h4 className="text-sm font-bold text-foreground uppercase tracking-wide">Najważniejsze korzyści:</h4>
-                        <ul className="space-y-2">
+                        <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
+                          {format.description}
+                        </p>
+
+                        <div className="flex items-center gap-4 bg-muted/60 p-3.5 rounded-xl border border-border/40 text-xs">
+                          <div>
+                            <div className="text-[10px] text-muted-foreground">Wymiary / Format</div>
+                            <div className="font-bold text-foreground">{format.dimensions}</div>
+                          </div>
+                          <div className="w-px h-6 bg-border" />
+                          <div>
+                            <div className="text-[10px] text-muted-foreground">Estymowany CTR</div>
+                            <div className="font-bold text-foreground">{format.ctr}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-bold text-foreground uppercase tracking-wide">Najważniejsze korzyści:</h4>
+                        <ul className="space-y-1.5">
                           {format.benefits.map((benefit, i) => (
-                            <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                              <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                            <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                              <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                               <span>{benefit}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="pt-4 flex justify-end">
+                      <div className="pt-2 flex justify-end">
                         <Button 
                           onClick={() => {
                             setFormData(prev => ({ ...prev, format: format.id }))
@@ -752,6 +901,47 @@ ${formData.tresc}`
                       Szacowany koszt kliknięcia (CPC)
                     </span>
                     <span className="text-base font-semibold text-emerald-500">{calcResults.cpc} PLN</span>
+                  </div>
+
+                  {/* Visual Progress Chart */}
+                  <div className="space-y-3 pt-4 border-t border-border/40">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Wizualna prognoza efektywności</div>
+                    <div className="flex items-end justify-around h-24 bg-background/60 border border-border/40 rounded-xl p-3 relative overflow-hidden">
+                      
+                      {/* Bar 1: Zasięg */}
+                      <div className="flex flex-col items-center gap-1.5 w-1/3">
+                        <motion.div 
+                          className="w-7 bg-primary rounded-t-md shadow-lg"
+                          style={{ transformOrigin: "bottom" }}
+                          animate={{ height: `${reachBarHeight}%` }}
+                          transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                        />
+                        <span className="text-[9px] font-bold text-muted-foreground">Zasięg</span>
+                      </div>
+
+                      {/* Bar 2: Kliknięcia */}
+                      <div className="flex flex-col items-center gap-1.5 w-1/3">
+                        <motion.div 
+                          className="w-7 bg-[#0da192] rounded-t-md shadow-lg"
+                          style={{ transformOrigin: "bottom" }}
+                          animate={{ height: `${clicksBarHeight}%` }}
+                          transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                        />
+                        <span className="text-[9px] font-bold text-muted-foreground">Kliknięcia</span>
+                      </div>
+
+                      {/* Bar 3: Zwrot z ROI */}
+                      <div className="flex flex-col items-center gap-1.5 w-1/3">
+                        <motion.div 
+                          className="w-7 bg-amber-500 rounded-t-md shadow-lg"
+                          style={{ transformOrigin: "bottom" }}
+                          animate={{ height: `${roiBarHeight}%` }}
+                          transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                        />
+                        <span className="text-[9px] font-bold text-muted-foreground">ROI</span>
+                      </div>
+
+                    </div>
                   </div>
                 </div>
 
