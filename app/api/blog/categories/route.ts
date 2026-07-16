@@ -1,11 +1,16 @@
 import { auth } from "@/lib/auth"
+import { buildCategoryTree, pruneEmptyCategoryTree, type BlogCategoryNode } from "@/lib/blog-category-tree"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextResponse } from "next/server"
 
 // GET /api/blog/categories - Pobiera wszystkie kategorie
-export async function GET() {
+// ?public=true - liczy tylko opublikowane wpisy i pomija kategorie bez wpisów
+// (kategoria nadrzędna zostaje, jeśli którakolwiek podkategoria ma wpisy)
+export async function GET(request: Request) {
   try {
+    const publicOnly = new URL(request.url).searchParams.get("public") === "true"
+
     const categories = await prisma.blogCategory.findMany({
       where: {
         aktywna: true,
@@ -21,7 +26,17 @@ export async function GET() {
         },
         _count: {
           select: {
-            blogPosts: true,
+            blogPosts: publicOnly
+              ? {
+                  where: {
+                    opublikowany: true,
+                    OR: [
+                      { dataPublikacji: null },
+                      { dataPublikacji: { lte: new Date() } },
+                    ],
+                  },
+                }
+              : true,
             children: true,
           },
         },
@@ -30,6 +45,19 @@ export async function GET() {
         nazwa: "asc",
       },
     })
+
+    if (publicOnly) {
+      const prunedTree = pruneEmptyCategoryTree(buildCategoryTree(categories))
+      const keptIds = new Set<string>()
+      const collectIds = (nodes: BlogCategoryNode[]) => {
+        nodes.forEach((node) => {
+          keptIds.add(node.id)
+          collectIds(node.children)
+        })
+      }
+      collectIds(prunedTree)
+      return NextResponse.json(categories.filter((c) => keptIds.has(c.id)))
+    }
 
     return NextResponse.json(categories)
   } catch (error) {

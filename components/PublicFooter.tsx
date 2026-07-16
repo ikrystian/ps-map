@@ -42,7 +42,7 @@ export default function PublicFooter() {
   useEffect(() => {
     const fetchBlogCategories = async () => {
       try {
-        const response = await fetch("/api/blog/categories")
+        const response = await fetch("/api/blog/categories?public=true")
         if (response.ok) {
           const data = await response.json()
           setBlogCategories(data)

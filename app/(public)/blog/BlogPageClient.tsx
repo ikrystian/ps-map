@@ -94,7 +94,7 @@ export default function BlogPage() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/blog/categories");
+      const response = await fetch("/api/blog/categories?public=true");
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
