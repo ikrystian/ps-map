@@ -100,20 +100,6 @@ export function EnhancedChatArea({
   const otherUserIdRef = useRef<string | null>(null)
   const otherTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Audio for notifications
-  const notificationSound = useRef<HTMLAudioElement | null>(null)
-
-
-
-  useEffect(() => {
-    // Initialize notification sound
-    if (typeof window !== "undefined") {
-      notificationSound.current = new Audio("/sounds/notification.mp3")
-    }
-  }, [])
-
-
-
   // Pobierz szczegóły konwersacji
   useEffect(() => {
     const fetchConversation = async () => {

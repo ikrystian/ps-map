@@ -42,7 +42,8 @@
       "Bash(curl -s \"http://localhost:3100/socket.io/?EIO=4&transport=polling\")",
       "Bash(kill 367976)",
       "Bash(curl -s --max-time 20 \"https://stage.prostasprawa.pl/api/categories\" -o /tmp/cats.json -w \"%{http_code} %{size_download}\\\\n\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(ffmpeg -y -f lavfi -i \"aevalsrc=0.5*sin\\(2*PI*987.77*t\\)*exp\\(-7*t\\)+0.4*sin\\(2*PI*1318.51*t\\)*exp\\(-6*\\(t-0.12\\)\\)*gte\\(t\\\\,0.12\\):d=0.8:s=44100\" -ac 1 -b:a 96k public/sounds/notification.mp3)"
     ]
   }
 }
