@@ -36,7 +36,7 @@ import {
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnimatePresence, motion } from "framer-motion"
-import { Download, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, HardDrive, Clock, ShieldAlert, Eye } from "lucide-react"
+import { Download, ExternalLink, FileText, Loader2, Plus, Sparkles, Trash2, Upload, Search, Users, HardDrive, Clock, ShieldAlert, Eye, X } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"
@@ -337,7 +337,10 @@ export default function DocumentsPage() {
     setSelectedDocument(doc)
     setIsPreviewDialogOpen(true)
     setPreviewLoading(true)
-    setPreviewContent(null)
+    setPreviewContent((prev) => {
+      if (prev?.url) URL.revokeObjectURL(prev.url)
+      return null
+    })
 
     try {
       const response = await fetch(`/api/law-firms/documents/${doc.id}/download`)
@@ -1024,96 +1027,142 @@ export default function DocumentsPage() {
       <Dialog open={isPreviewDialogOpen} onOpenChange={(open) => {
         if (!open) closePreviewDialog()
       }}>
-        <DialogContent className="max-w-4xl w-[95vw] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[90vh]">
-          <BorderBeam lightColor="var(--primary)" lightWidth={450} duration={8} borderWidth={1} />
-          <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
+        <DialogContent
+          showCloseButton={false}
+          className="w-full max-w-full sm:w-full sm:max-w-full md:w-full md:max-w-full lg:w-[75vw] lg:max-w-[75vw] h-full lg:h-[92vh] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-none lg:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col"
+        >
+          <BorderBeam className="hidden lg:block" lightColor="var(--primary)" lightWidth={450} duration={8} borderWidth={1} />
 
-          <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border/20 shrink-0">
-            <div>
-              <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                {selectedDocument?.nazwa}
-              </DialogTitle>
-              <DialogDescription className="text-zinc-400 text-xs mt-1">
-                Typ: <span className="capitalize">{getDocumentTypeLabel(selectedDocument?.typDokumentu || "")}</span> • Rozmiar: {selectedDocument && formatFileSize(selectedDocument.rozmiar)}
-              </DialogDescription>
+          {/* Pasek nagłówka z metadanymi i akcjami */}
+          <DialogHeader className="flex flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-border/20 bg-zinc-950/80 shrink-0 space-y-0">
+            <div className="flex items-center gap-3 min-w-0">
+              {selectedDocument && (() => {
+                const extStyle = getExtensionStyles(selectedDocument.rozszerzenie)
+                return (
+                  <div className={cn("h-10 w-10 rounded-lg border flex flex-col items-center justify-center shadow-md shrink-0", extStyle.bg)}>
+                    <FileText className="h-4 w-4 mb-0.5" />
+                    <span className="text-[8px] font-mono font-bold leading-none">{extStyle.label}</span>
+                  </div>
+                )
+              })()}
+              <div className="min-w-0 text-left">
+                <DialogTitle className="text-base sm:text-lg font-bold font-playfair text-white truncate">
+                  {selectedDocument?.nazwa}
+                </DialogTitle>
+                <DialogDescription className="text-zinc-400 text-xs mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="capitalize">{getDocumentTypeLabel(selectedDocument?.typDokumentu || "")}</span>
+                  <span className="text-zinc-600">•</span>
+                  <span>{selectedDocument && formatFileSize(selectedDocument.rozmiar)}</span>
+                  <span className="text-zinc-600 hidden sm:inline">•</span>
+                  <span className="hidden sm:inline-flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-zinc-500" />
+                    {selectedDocument && formatDate(selectedDocument.createdAt)}
+                  </span>
+                </DialogDescription>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {previewContent?.type === "pdf" && previewContent.url && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => window.open(previewContent.url, "_blank", "noopener,noreferrer")}
+                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
+                  title="Otwórz w nowej karcie"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              )}
+              {selectedDocument && (
+                <Button
+                  onClick={() => handleDownloadDocument(selectedDocument)}
+                  className="h-9 px-4 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-lg border-t border-white/10 shadow-md gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Pobierz</span>
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={closePreviewDialog}
+                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-white hover:bg-muted transition-all"
+                title="Zamknij podgląd"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-hidden py-4 flex flex-col items-center justify-center min-h-[300px]">
+          {/* Obszar podglądu */}
+          <div className="flex-1 overflow-hidden bg-zinc-900/50 relative">
             {previewLoading ? (
-              <div className="text-center space-y-4">
-                <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-                <p className="text-muted-foreground text-sm font-light">Wczytywanie podglądu...</p>
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
+                  <p className="text-muted-foreground text-sm font-light">Wczytywanie podglądu...</p>
+                </div>
               </div>
             ) : previewContent ? (
               <>
                 {previewContent.type === "pdf" && previewContent.url && (
                   <iframe
-                    src={previewContent.url}
-                    className="w-full h-full min-h-[50vh] md:min-h-[60vh] rounded-lg border border-border/20 bg-white"
+                    src={`${previewContent.url}#view=FitH`}
+                    className="w-full h-full bg-white"
                     title={selectedDocument?.nazwa}
                   />
                 )}
 
                 {previewContent.type === "text" && (
-                  <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-zinc-950 rounded-lg border border-border/20 overflow-auto p-4">
-                    <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300 select-text">
-                      {previewContent.text}
-                    </pre>
+                  <div className="h-full overflow-auto">
+                    <div className="mx-auto max-w-4xl px-4 sm:px-8 py-6">
+                      <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-200 select-text bg-zinc-950/60 border border-border/20 rounded-xl p-5 sm:p-7 shadow-inner">
+                        {previewContent.text}
+                      </pre>
+                    </div>
                   </div>
                 )}
 
                 {previewContent.type === "docx" && (
-                  <div className="w-full h-full min-h-[50vh] md:min-h-[60vh] bg-white rounded-lg border border-border/20 overflow-auto p-4 md:p-8 shadow-inner select-text">
-                    <div ref={containerRef} className="docx-preview-container text-black" />
+                  <div className="h-full overflow-auto">
+                    <div className="mx-auto max-w-[880px] px-3 sm:px-6 py-6">
+                      <div className="bg-white rounded-md shadow-2xl ring-1 ring-black/20 p-6 sm:p-12 select-text min-h-[60vh]">
+                        <div ref={containerRef} className="docx-preview-container text-black [&_p]:leading-relaxed" />
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {previewContent.type === "unsupported" && (
-                  <div className="text-center py-12 space-y-4 max-w-md">
-                    <div className="h-16 w-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
-                      <ShieldAlert className="h-8 w-8" />
+                  <div className="h-full flex items-center justify-center p-6">
+                    <div className="text-center space-y-4 max-w-md">
+                      <div className="h-16 w-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
+                        <ShieldAlert className="h-8 w-8" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-white">Podgląd niedostępny</h4>
+                        <p className="text-sm text-zinc-400 mt-2 leading-relaxed">
+                          Natywny podgląd dla formatu <span className="font-semibold text-white">.{selectedDocument?.rozszerzenie}</span> nie jest bezpośrednio obsługiwany w przeglądarce. Pobierz plik na swój dysk, aby go otworzyć.
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => selectedDocument && handleDownloadDocument(selectedDocument)}
+                        className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Pobierz plik
+                      </Button>
                     </div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">Podgląd niedostępny</h4>
-                      <p className="text-sm text-zinc-400 mt-2 leading-relaxed">
-                        Natywny podgląd dla formatu <span className="font-semibold text-white">.{selectedDocument?.rozszerzenie}</span> nie jest bezpośrednio obsługiwany w przeglądarce. Pobierz plik na swój dysk, aby go otworzyć.
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => selectedDocument && handleDownloadDocument(selectedDocument)}
-                      className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
-                    >
-                      <Download className="h-4 w-4" />
-                      Pobierz plik
-                    </Button>
                   </div>
                 )}
               </>
             ) : (
-              <div className="text-zinc-500 text-sm">Wystąpił błąd podczas ładowania podglądu.</div>
+              <div className="h-full flex items-center justify-center text-zinc-500 text-sm">
+                Wystąpił błąd podczas ładowania podglądu.
+              </div>
             )}
           </div>
-
-          <DialogFooter className="pt-4 border-t border-border/20 shrink-0 flex flex-col-reverse sm:flex-row gap-2">
-            <Button
-              variant="outline"
-              onClick={closePreviewDialog}
-              className="border-border/50 hover:bg-muted text-white rounded-xl h-11 w-full sm:w-auto"
-            >
-              Zamknij
-            </Button>
-            {selectedDocument && (
-              <Button
-                onClick={() => handleDownloadDocument(selectedDocument)}
-                className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2 w-full sm:w-auto"
-              >
-                <Download className="h-4 w-4" />
-                Pobierz
-              </Button>
-            )}
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
