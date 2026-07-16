@@ -53,7 +53,7 @@ const step1Schema = z.object({
 })
 
 const step6Schema = z.object({
-  categoriesIds: z.array(z.string()).min(1, "Wybierz główną specjalizację"),
+  categoriesIds: z.array(z.string()).min(1, "Wybierz główną kategorię"),
 })
 
 const step4Schema = z.object({
@@ -89,7 +89,7 @@ import { Category, Voivodeship } from "@/types"
 
 const steps = [
   { id: 1, title: "Działalność", icon: Briefcase },
-  { id: 6, title: "Specjalizacje", icon: Scale },
+  { id: 6, title: "Kategorie", icon: Scale },
   { id: 4, title: "Dane kontaktowe", icon: User },
 ]
 
@@ -162,7 +162,7 @@ export default function LawFirmRegistrationPage() {
     voivodeshipsIds: [] as string[],
     calaPolska: false,
 
-    // Krok 6: Specjalizacje
+    // Krok 6: Kategorie
     categoriesIds: [] as string[],
 
     // Krok 7: Typ oferty (domyślny)
@@ -814,7 +814,7 @@ export default function LawFirmRegistrationPage() {
           <div className="space-y-0">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna specjalizacja *</Label>
+                <Label className={cn("text-base font-semibold", fieldErrors.categoriesIds && "text-destructive")}>Główna kategoria *</Label>
                 <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -826,7 +826,7 @@ export default function LawFirmRegistrationPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-muted-foreground" />
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Specjalizacje firmowe</h3>
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kategorie firmowe</h3>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {businessCategories.map(renderCategoryCard)}
@@ -837,7 +837,7 @@ export default function LawFirmRegistrationPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-muted-foreground" />
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Specjalizacje prywatne</h3>
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kategorie prywatne</h3>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {privateCategories.map(renderCategoryCard)}
