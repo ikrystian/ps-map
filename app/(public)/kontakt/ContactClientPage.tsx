@@ -243,7 +243,7 @@ export default function ContactClientPage() {
                   <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#d7b56d]/10 text-[#d7b56d]">
                     <MapPin className="h-5 w-5" />
                   </span>
-                  <h2 className="font-playfair text-2xl text-white">Nasza siedziba</h2>
+                  <h2 className="font-playfair text-2xl text-white">Polska Grupa Identyfikacji Firm Sp. z o.o.</h2>
                 </div>
                 <p className="text-neutral-400 text-sm leading-relaxed">
                   ProstaSprawa.pl
