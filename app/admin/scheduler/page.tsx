@@ -12,6 +12,10 @@ import {
   Play,
   RefreshCw,
   XCircle,
+  HardDrive,
+  Cloud,
+  RotateCcw,
+  Database,
 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 
@@ -32,6 +36,14 @@ import {
 import { Pagination } from "@/types/pagination"
 
 type JobRunStatus = "RUNNING" | "SUCCESS" | "FAILED"
+
+interface BackupInfo {
+  name: string
+  location: "local" | "gdrive" | "both"
+  sizeBytes?: number
+  createdTime?: string
+  driveFileId?: string
+}
 
 interface SchedulerJob {
   name: string
@@ -80,6 +92,15 @@ function formatDuration(ms: number | null): string {
   return `${(ms / 1000).toFixed(1)} s`
 }
 
+function formatBytes(bytes?: number): string {
+  if (bytes == null) return "—"
+  if (bytes < 1024) return `${bytes} B`
+  const kb = bytes / 1024
+  if (kb < 1024) return `${kb.toFixed(1)} KB`
+  const mb = kb / 1024
+  return `${mb.toFixed(1)} MB`
+}
+
 export default function AdminSchedulerPage() {
   const [jobs, setJobs] = useState<SchedulerJob[]>([])
   const [runs, setRuns] = useState<JobRun[]>([])
@@ -94,6 +115,71 @@ export default function AdminSchedulerPage() {
 
   const [jobFilter, setJobFilter] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const [backups, setBackups] = useState<BackupInfo[]>([])
+  const [loadingBackups, setLoadingBackups] = useState(true)
+  const [restoring, setRestoring] = useState<string | null>(null)
+  const [confirmRestore, setConfirmRestore] = useState<string | null>(null)
+
+  const fetchBackups = useCallback(async () => {
+    setLoadingBackups(true)
+    try {
+      const response = await fetch("/api/admin/backups")
+      if (!response.ok) throw new Error("Failed to fetch backups")
+      const data = await response.json()
+      setBackups(data.backups)
+    } catch (error) {
+      console.error("Error fetching backups:", error)
+      toast.error("Nie udało się pobrać listy kopii zapasowych")
+    } finally {
+      setLoadingBackups(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchBackups()
+  }, [fetchBackups])
+
+  const handleRestore = async (backup: BackupInfo) => {
+    setRestoring(backup.name)
+    try {
+      const response = await fetch("/api/admin/backups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "restore",
+          fileName: backup.name,
+          driveFileId: backup.driveFileId,
+        }),
+      })
+      const data = await response.json()
+      
+      if (!response.ok) {
+        toast.error(data.error || "Błąd podczas przywracania bazy")
+        return
+      }
+
+      toast.success(
+        <div className="space-y-1">
+          <p className="font-semibold">{data.message}</p>
+          {data.safetyBackup && (
+            <p className="text-xs text-muted-foreground">
+              Poprzedni stan zapisano w pliku: {data.safetyBackup}
+            </p>
+          )}
+        </div>
+      )
+      
+      fetchData()
+      fetchBackups()
+    } catch (error) {
+      console.error("Error restoring database:", error)
+      toast.error("Nie udało się przywrócić bazy danych")
+    } finally {
+      setRestoring(null)
+      setConfirmRestore(null)
+    }
+  }
 
   const fetchData = useCallback(async () => {
     try {
@@ -180,6 +266,7 @@ export default function AdminSchedulerPage() {
           onClick={() => {
             setLoading(true)
             fetchData()
+            fetchBackups()
           }}
           disabled={loading}
         >
@@ -250,6 +337,129 @@ export default function AdminSchedulerPage() {
           )
         })}
       </div>
+
+      {/* Kopie zapasowe */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between text-base">
+            <span className="flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" />
+              Kopie zapasowe bazy danych (Google Drive / Lokalne)
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchBackups}
+              disabled={loadingBackups}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${loadingBackups ? "animate-spin" : ""}`} />
+              Odśwież kopie
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loadingBackups ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : backups.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
+              <AlertCircle className="h-6 w-6" />
+              Brak utworzonych kopii zapasowych
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nazwa pliku</TableHead>
+                    <TableHead>Lokalizacja</TableHead>
+                    <TableHead>Data utworzenia</TableHead>
+                    <TableHead>Rozmiar</TableHead>
+                    <TableHead className="text-right">Akcje</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {backups.map((backup) => {
+                    const isLocal = backup.location === "local" || backup.location === "both"
+                    const isGDrive = backup.location === "gdrive" || backup.location === "both"
+                    
+                    return (
+                      <TableRow key={backup.name}>
+                        <TableCell className="font-mono text-xs max-w-[280px] truncate" title={backup.name}>
+                          {backup.name}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {isLocal && (
+                              <Badge variant="outline" className="flex items-center gap-1">
+                                <HardDrive className="h-3 w-3" />
+                                Lokalnie
+                              </Badge>
+                            )}
+                            {isGDrive && (
+                              <Badge variant="secondary" className="flex items-center gap-1 bg-green-500/10 text-green-700 border-green-500/20">
+                                <Cloud className="h-3 w-3" />
+                                Google Drive
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs whitespace-nowrap">
+                          {formatDate(backup.createdTime || null)}
+                        </TableCell>
+                        <TableCell className="text-xs whitespace-nowrap">
+                          {formatBytes(backup.sizeBytes)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {confirmRestore === backup.name ? (
+                            <div className="inline-flex items-center gap-2 bg-error/5 border border-error/20 p-1.5 rounded-md">
+                              <span className="text-xs text-error font-medium">Na pewno przywrócić?</span>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                disabled={restoring === backup.name}
+                                onClick={() => handleRestore(backup)}
+                                className="h-7 px-2.5 text-xs"
+                              >
+                                {restoring === backup.name ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  "Tak"
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={restoring === backup.name}
+                                onClick={() => setConfirmRestore(null)}
+                                className="h-7 px-2.5 text-xs"
+                              >
+                                Nie
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={restoring != null}
+                              onClick={() => setConfirmRestore(backup.name)}
+                              className="h-8 text-xs"
+                            >
+                              <RotateCcw className="h-3 w-3 mr-1.5" />
+                              Przywróć
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Historia uruchomień */}
       <Card>

@@ -5,6 +5,8 @@ import { pollPendingKsefInvoices } from "./ksef"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
+import { backupDbToGoogleDrive } from "./google-drive-backup"
+
 
 const MINUTE = 60 * 1000
 const HOUR = 60 * MINUTE
@@ -135,6 +137,18 @@ export function getJobDefinitions(): JobDefinition[] {
       fn: async () => {
         const deleted = await cleanupOldJobRuns()
         return { deleted }
+      },
+    },
+
+    // 9. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
+    {
+      name: "db-backup-gdrive",
+      description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (2x dziennie)",
+      intervalMs: 12 * HOUR,
+      options: { retries: 2, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const result = await backupDbToGoogleDrive()
+        return result
       },
     },
   ]
