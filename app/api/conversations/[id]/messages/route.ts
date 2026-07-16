@@ -273,6 +273,7 @@ export async function POST(
               return {
                 lawFirmId: lawFirmUser.lawFirm?.id,
                 conversationId: conversationId,
+                clientUserId: userId,
                 nazwa: filename,
                 typDokumentu: "klient-wiadomosc",
                 rozmiar: fileSize,

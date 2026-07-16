@@ -806,11 +806,12 @@ export default function DocumentsPage() {
                       </TableRow>
                     ) : (
                       filteredDocuments.map((document) => {
+                        const clientUser = document.clientUser || document.conversation?.clientUser
                         const clientName =
                           document.zrodlo === "KLIENT"
-                            ? document.clientUser?.client
-                              ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
-                              : document.clientUser?.name || "Nieznany klient"
+                            ? clientUser?.client
+                              ? `${clientUser.client.imie} ${clientUser.client.nazwisko}`
+                              : clientUser?.name || "Nieznany klient"
                             : null
 
                         const extStyle = getExtensionStyles(document.rozszerzenie)
@@ -923,11 +924,12 @@ export default function DocumentsPage() {
                 ) : (
                   <div className="space-y-3">
                     {filteredDocuments.map((document) => {
+                      const clientUser = document.clientUser || document.conversation?.clientUser
                       const clientName =
                         document.zrodlo === "KLIENT"
-                          ? document.clientUser?.client
-                            ? `${document.clientUser.client.imie} ${document.clientUser.client.nazwisko}`
-                            : document.clientUser?.name || "Nieznany klient"
+                          ? clientUser?.client
+                            ? `${clientUser.client.imie} ${clientUser.client.nazwisko}`
+                            : clientUser?.name || "Nieznany klient"
                           : null
 
                       const extStyle = getExtensionStyles(document.rozszerzenie)
