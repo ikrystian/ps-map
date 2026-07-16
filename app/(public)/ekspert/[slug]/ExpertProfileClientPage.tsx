@@ -49,7 +49,9 @@ import {
   Phone,
   Send,
   Share2,
-  Star
+  Star,
+  ShieldCheck,
+  FileText
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -1185,6 +1187,65 @@ export default function LawFirmProfilePage() {
                       </Badge>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Wpisy do rejestrów zawodowych Card */}
+            {(lawFirm.oirpStatus || lawFirm.oraStatus) && (
+              <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
+                <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-primary/80" />
+                    Wpisy do rejestrów zawodowych
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-4">
+                    {lawFirm.oirpStatus && (
+                      <div className="space-y-1.5 pb-3 border-b border-border/30 last:border-0 last:pb-0 animate-in fade-in duration-200">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
+                            Radca Prawny (OIRP)
+                          </Badge>
+                        </div>
+                        {lawFirm.oirpMiasto && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground/70" />
+                            <span className="font-medium text-foreground">Izba:</span> {lawFirm.oirpMiasto}
+                          </p>
+                        )}
+                        {lawFirm.oirpWpis && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            <FileText className="h-3.5 w-3.5 text-muted-foreground/70" />
+                            <span className="font-medium text-foreground">Numer wpisu:</span> {lawFirm.oirpWpis}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {lawFirm.oraStatus && (
+                      <div className="space-y-1.5 animate-in fade-in duration-200">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20">
+                            Adwokat (ORA)
+                          </Badge>
+                        </div>
+                        {lawFirm.oraMiasto && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground/70" />
+                            <span className="font-medium text-foreground">Izba:</span> {lawFirm.oraMiasto}
+                          </p>
+                        )}
+                        {lawFirm.oraWpis && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                            <FileText className="h-3.5 w-3.5 text-muted-foreground/70" />
+                            <span className="font-medium text-foreground">Numer wpisu:</span> {lawFirm.oraWpis}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}

@@ -68,7 +68,7 @@ const navigationGroups = [
   {
     label: "Wizytówka",
     items: [
-      { name: "Profil", href: "/panel-eksperta/profil", icon: User },
+      { name: "Edycja profilu", href: "/panel-eksperta/profil", icon: User },
       { name: "Podgląd profilu", href: "/ekspert/[slug]", icon: ExternalLink },
       { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: Wrench },
       { name: "Blog", href: "/panel-eksperta/blog", icon: BookOpen },

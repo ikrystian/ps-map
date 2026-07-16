@@ -182,10 +182,12 @@ export interface LawFirm extends LawFirmWithLocation {
     rokDo: string
   }>
   galeriaZdjec?: string[]
-  oraStatus?: string | null
+  oraStatus?: boolean
   oraMiasto?: string | null
-  oirpStatus?: string | null
+  oraWpis?: string | null
+  oirpStatus?: boolean
   oirpMiasto?: string | null
+  oirpWpis?: string | null
   user?: {
     id: string
     email: string
