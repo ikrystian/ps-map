@@ -460,14 +460,7 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                 </div>
               )}
 
-              {/* Card Footer with action link */}
-              <div className="mt-auto pt-2 border-t border-border/40 flex items-center justify-between text-sm font-semibold transition-colors">
-                <span className={`transition-colors ${isBusiness ? "group-hover:text-[#0da192]" : "group-hover:text-[#d7b56d]"}`}>
-                  Przeglądaj kategorię
-                </span>
-                <ChevronRight className={`h-4 w-4 transition-transform duration-300 transform group-hover:translate-x-1 ${isBusiness ? "text-[#0da192]" : "text-[#d7b56d]"
-                  }`} />
-              </div>
+
 
             </div>
           </MagicCard>

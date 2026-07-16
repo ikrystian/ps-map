@@ -1,0 +1,81 @@
+/* Custom CSS animations and utilities for /reklama landing page */
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glowing backgrounds */
+.bg-glow-orange {
+  background: radial-gradient(circle, rgba(201, 100, 66, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.bg-glow-teal {
+  background: radial-gradient(circle, rgba(13, 161, 146, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+/* Grid overlay background */
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(120, 110, 90, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(120, 110, 90, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glassmorphism card styles */
+.glass-panel {
+  background: rgba(250, 249, 245, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px border rgba(218, 217, 212, 0.4);
+}
+
+.dark .glass-panel {
+  background: rgba(32, 32, 29, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px border rgba(62, 62, 56, 0.4);
+}
+
+/* Floating animation */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
