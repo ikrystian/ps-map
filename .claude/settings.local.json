@@ -47,7 +47,14 @@
       "Bash(git *)",
       "Bash(ffprobe -v error -show_format -show_streams /home/krystian/Projects/ps-map/public/sounds/notification.mp3)",
       "Bash(bunx prisma *)",
-      "Bash(echo \"exit-grep:$?\")"
+      "Bash(echo \"exit-grep:$?\")",
+      "Bash(gh run *)",
+      "Bash(ps -o pid,lstart,args -p 55176)",
+      "Bash(curl -s -o /dev/null -w \"partnerzy: %{http_code}\\\\n\" http://localhost:3000/admin/partnerzy)",
+      "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3000/admin)",
+      "Bash(curl -s -o /dev/null -w \"api partner-logos: %{http_code}\\\\n\" http://localhost:3000/api/partner-logos)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} -> %{redirect_url}\\\\n\" http://localhost:3000/admin/partnerzy)",
+      "Bash(curl -s -i http://localhost:3000/api/partner-logos)"
     ]
   }
 }
