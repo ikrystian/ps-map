@@ -59,7 +59,7 @@ const nextConfig: NextConfig = {
     // Enable type checking during build to catch errors before production
     ignoreBuildErrors: true,
   },
-  serverExternalPackages: ["socket.io"],
+  serverExternalPackages: ["socket.io", "@libsql/client", "@prisma/adapter-libsql"],
   experimental: {
     webpackMemoryOptimizations: true,
     cpus: getOptimalBuildCPUs(),
