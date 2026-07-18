@@ -25,11 +25,14 @@ export async function GET(request: NextRequest) {
       deletedAt: null, // Only show non-deleted users
     }
 
-    // Search by name or email
+    // Search by user fields (name, email, first/last name, phone)
     if (search) {
       where.OR = [
         { name: { contains: search } },
         { email: { contains: search } },
+        { imie: { contains: search } },
+        { nazwisko: { contains: search } },
+        { numerTelefonu: { contains: search } },
       ]
     }
 

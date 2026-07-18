@@ -1,3 +1,4 @@
+import { verifyImpersonationToken } from "@/lib/impersonation"
 import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit } from "@/lib/rate-limit"
@@ -120,6 +121,49 @@ export const authOptions: NextAuthConfig = {
         }
       },
     }),
+    CredentialsProvider({
+      id: "impersonate",
+      name: "impersonate",
+      credentials: {
+        token: { label: "Token", type: "text" },
+      },
+      // Logowanie "jako inny użytkownik" (impersonacja). Token jest podpisywany
+      // serwerowo dopiero po weryfikacji sesji administratora w /api/admin/impersonate,
+      // więc tutaj wystarczy zweryfikować jego podpis i wczytać konto docelowe.
+      async authorize(credentials) {
+        const rawToken = credentials?.token
+        if (typeof rawToken !== "string") {
+          throw new Error("Brak tokenu impersonacji")
+        }
+
+        const parsed = await verifyImpersonationToken(rawToken)
+        if (!parsed) {
+          throw new Error("Nieprawidłowy lub wygasły token impersonacji")
+        }
+
+        const targetUser = await prisma.user.findFirst({
+          where: { id: parsed.targetUserId, deletedAt: null },
+        })
+        if (!targetUser) {
+          throw new Error("Użytkownik docelowy nie istnieje")
+        }
+
+        // Powrót do konta administratora (impersonatorId === null) musi trafić
+        // w faktyczne konto administratora.
+        if (parsed.impersonatorId === null && targetUser.role !== "ADMIN") {
+          throw new Error("Nieprawidłowy token powrotu")
+        }
+
+        return {
+          id: targetUser.id,
+          email: targetUser.email,
+          name: targetUser.name,
+          role: targetUser.role,
+          image: targetUser.image,
+          impersonatorId: parsed.impersonatorId ?? undefined,
+        }
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }: { token: JWT; user: User; trigger?: "signIn" | "signUp" | "update"; session?: any }) {
@@ -128,6 +172,10 @@ export const authOptions: NextAuthConfig = {
         token.role = user.role
         token.id = user.id as string
         token.picture = user.image
+
+        // Impersonacja: zapamiętaj ID administratora, który się wcielił.
+        // Wartość undefined (logowanie zwykłe lub powrót do admina) czyści stan.
+        token.impersonatorId = (user as any).impersonatorId ?? undefined
 
         // Fetch lawFirm or client data
         const dbUser = await prisma.user.findUnique({
@@ -273,11 +321,15 @@ export const authOptions: NextAuthConfig = {
           }
         }
       }
+      if (token.impersonatorId) {
+        session.impersonatorId = token.impersonatorId as string
+      }
       return session
     },
     async signIn({ user, account }: { user: User; account?: any }) {
-      // Handle OAuth sign-ins (Google, Facebook, Apple)
-      if (account?.provider !== "credentials") {
+      // Handle OAuth sign-ins (Google, Facebook, Apple).
+      // Provider "impersonate" traktujemy jak logowanie danymi (pomijamy logikę OAuth).
+      if (account?.provider !== "credentials" && account?.provider !== "impersonate") {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: user.id },

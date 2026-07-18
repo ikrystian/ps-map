@@ -7,6 +7,7 @@ import { useState } from "react"
 import AdminNotificationBell from "@/components/AdminNotificationBell"
 import AdminPageTitle from "@/components/admin/AdminPageTitle"
 import { AdminTitleProvider } from "@/components/admin/AdminTitleContext"
+import ImpersonateUserDialog from "@/components/admin/ImpersonateUserDialog"
 import { Button } from "@/components/ui/button"
 import UserMenu from "@/components/UserMenu"
 import { cn } from "@/lib/utils"
@@ -26,8 +27,10 @@ import {
   FolderTree,
   Handshake,
   HelpCircle,
+  type LucideIcon,
   LayoutDashboard,
   LayoutTemplate,
+  LogIn,
   Mail,
   MapPin,
   Megaphone,
@@ -46,7 +49,15 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-const navigation = [
+type NavItem = {
+  name: string
+  href: string
+  icon: LucideIcon
+  isSubmenu?: boolean
+  action?: "impersonate"
+}
+
+const navigation: { title: string; items: NavItem[] }[] = [
   {
     title: "Główne",
     items: [
@@ -120,6 +131,7 @@ const navigation = [
   {
     title: "System",
     items: [
+      { name: "Zaloguj jako", href: "#", icon: LogIn, action: "impersonate" },
       { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
       { name: "Ustawienia", href: "/admin/settings", icon: Settings },
     ],
@@ -136,11 +148,13 @@ export default function AdminLayout({
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [impersonateOpen, setImpersonateOpen] = useState(false)
 
   // Podstrony "Stron" z własnymi pozycjami w podmenu
   const legalPagesRoutes = ["/admin/pages/polityka-prywatnosci", "/admin/pages/regulamin"]
 
   const isNavItemActive = (href: string) => {
+    if (href === "#") return false
     if (pathname === href) return true
     if (href === "/admin") return false
     if (href === "/admin/transakcje") {
@@ -212,23 +226,17 @@ export default function AdminLayout({
                     const index = flatNavigation.indexOf(item)
                     const isActive = isNavItemActive(item.href)
 
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onMouseEnter={() => setHoveredIndex(index)}
-                        className={cn(
-                          "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 outline-none",
-                          isActive
-                            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                            : "text-muted-foreground hover:text-white",
-                          isCollapsed && "justify-center",
-                          item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
-                        )}
-                        title={isCollapsed ? item.name : undefined}
-                      >
-                        {/* Sliding/Fading Hover Background Pill */}
+                    const itemClassName = cn(
+                      "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 outline-none",
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                        : "text-muted-foreground hover:text-white",
+                      isCollapsed && "justify-center",
+                      item.isSubmenu && !isCollapsed && "pl-8 text-xs opacity-90"
+                    )
 
+                    const itemInner = (
+                      <>
                         <div className="flex items-center justify-center flex-shrink-0" suppressHydrationWarning>
                           <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
                         </div>
@@ -254,6 +262,34 @@ export default function AdminLayout({
                             transition={{ type: "spring", stiffness: 350, damping: 30 }}
                           />
                         )}
+                      </>
+                    )
+
+                    // Pozycje-akcje (np. "Zaloguj jako") otwierają modal zamiast nawigować.
+                    if (item.action === "impersonate") {
+                      return (
+                        <button
+                          key={item.name}
+                          type="button"
+                          onClick={() => setImpersonateOpen(true)}
+                          onMouseEnter={() => setHoveredIndex(index)}
+                          className={cn(itemClassName, "w-full text-left")}
+                          title={isCollapsed ? item.name : undefined}
+                        >
+                          {itemInner}
+                        </button>
+                      )
+                    }
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        className={itemClassName}
+                        title={isCollapsed ? item.name : undefined}
+                      >
+                        {itemInner}
                       </Link>
                     )
                   })}
@@ -288,6 +324,8 @@ export default function AdminLayout({
           </main>
         </div>
       </div>
+
+      <ImpersonateUserDialog open={impersonateOpen} onOpenChange={setImpersonateOpen} />
     </AdminTitleProvider>
   )
 }
