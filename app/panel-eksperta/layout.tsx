@@ -13,6 +13,7 @@ import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
 import { BusinessPackageWelcomeModal } from "@/components/law-firm/BusinessPackageWelcomeModal"
+import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { MessageNotificationSound } from "@/components/MessageNotificationSound"
 import { NotificationBell } from "@/components/NotificationBell"
 import { PanelFooter } from "@/components/PanelFooter"
@@ -254,7 +255,7 @@ export default function LawFirmPanelLayout({
     >
       {/* User Avatar and Name */}
       {(inSheet || !isCollapsed) && session?.user && (
-        <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
+        <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border expert-avatar-area">
           <Avatar className="h-16 w-16">
             <AvatarImage src={expertLogo || session.user.image || undefined} alt={session.user.name || "User"} />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg">
@@ -265,6 +266,7 @@ export default function LawFirmPanelLayout({
             <p className="text-md font-semibold">{session.user.name}</p>
             <p className="text-sm text-primary">Ekspert prawny</p>
           </div>
+          <ImpersonationNotice className="mt-2" />
         </div>
       )}
 

@@ -16,6 +16,7 @@ interface AuthLayoutProps {
   heroDescription?: string;
   heroStats?: HeroStat[];
   containerClassName?: string;
+  heroImage?: string;
 }
 
 export function AuthLayout({
@@ -28,6 +29,7 @@ export function AuthLayout({
     { value: 98, unit: "%", label: "Zadowolenia" },
   ],
   containerClassName,
+  heroImage,
 }: AuthLayoutProps) {
   return (
     <div className="min-h-[calc(100dvh-65px)] grid lg:grid-cols-2 bg-background">
@@ -69,7 +71,21 @@ export function AuthLayout({
       </div>
 
       {/* Right Column - Image/Hero */}
-      <div className="hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary hero-image overflow-hidden">
+      <div
+        className={`hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary overflow-hidden ${
+          !heroImage ? "hero-image" : ""
+        }`}
+        style={
+          heroImage
+            ? {
+                backgroundImage: `url(${heroImage})`,
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+              }
+            : undefined
+        }
+      >
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
         <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
           <div className="max-w-md space-y-8 text-center relative z-10">

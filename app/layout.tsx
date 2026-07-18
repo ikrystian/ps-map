@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { ChatAssistant } from "@/components/ChatAssistant";
 import CookieConsentBanner from "@/components/CookieConsent";
-import ImpersonationBanner from "@/components/ImpersonationBanner";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -102,7 +101,6 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <Providers session={session}>
-          <ImpersonationBanner />
           <NextTopLoader
             color="var(--primary)"
             initialPosition={0.08}

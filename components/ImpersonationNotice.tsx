@@ -1,13 +1,15 @@
 "use client"
 
 import { toast } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
 import { Loader2, LogOut, UserCog } from "lucide-react"
 import { signIn, useSession } from "next-auth/react"
 import { useState } from "react"
 
-// Pasek widoczny na każdej stronie, gdy administrator jest wcielony w innego
-// użytkownika (impersonacja). Umożliwia natychmiastowy powrót do konta admina.
-export default function ImpersonationBanner() {
+// Kompaktowa informacja o trybie impersonacji, osadzana w panelu (np. w obszarze
+// avatara eksperta). Widoczna tylko, gdy administrator jest wcielony w tego
+// użytkownika; umożliwia powrót do konta administratora.
+export default function ImpersonationNotice({ className }: { className?: string }) {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
 
@@ -37,19 +39,25 @@ export default function ImpersonationBanner() {
     }
   }
 
-  const currentName = session.user?.name || session.user?.email || "użytkownik"
-
   return (
-    <div className="fixed inset-x-0 top-0 z-[100] flex items-center justify-center gap-3 bg-amber-500 px-4 py-2 text-sm font-medium text-amber-950 shadow-md">
-      <UserCog className="h-4 w-4 shrink-0" />
-      <span className="truncate">
-        Tryb impersonacji — jesteś zalogowany jako <strong>{currentName}</strong>
+    <div
+      className={cn(
+        "flex w-full flex-col items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-center",
+        className
+      )}
+    >
+      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-500">
+        <UserCog className="h-3.5 w-3.5" />
+        Tryb impersonacji
       </span>
+      <p className="text-[11px] leading-tight text-muted-foreground">
+        Przeglądasz panel jako ten użytkownik.
+      </p>
       <button
         type="button"
         onClick={handleReturn}
         disabled={loading}
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-amber-950/10 px-3 py-1 font-semibold transition-colors hover:bg-amber-950/20 disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-amber-500 px-3 py-1.5 text-xs font-semibold text-amber-950 transition-colors hover:bg-amber-400 disabled:opacity-60"
       >
         {loading ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
