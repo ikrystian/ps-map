@@ -175,7 +175,7 @@ export const authOptions: NextAuthConfig = {
 
         // Impersonacja: zapamiętaj ID administratora, który się wcielił.
         // Wartość undefined (logowanie zwykłe lub powrót do admina) czyści stan.
-        token.impersonatorId = (user as any).impersonatorId ?? undefined
+        token.impersonatorId = user.impersonatorId ?? undefined
 
         // Fetch lawFirm or client data
         const dbUser = await prisma.user.findUnique({

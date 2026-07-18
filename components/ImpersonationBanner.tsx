@@ -30,7 +30,7 @@ export default function ImpersonationBanner() {
         throw new Error("Nie udało się przełączyć sesji")
       }
 
-      window.location.href = "/admin"
+      window.location.assign("/admin")
     } catch (err) {
       toast.error((err as Error).message)
       setLoading(false)
