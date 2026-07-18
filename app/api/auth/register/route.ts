@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
             "{imie}": clientData.imie,
             "{nazwisko}": clientData.nazwisko,
             "{email}": user.email,
-            "{linkDodajSprawa}": `${baseUrl}/dodaj-sprawe`,
+            "{linkDodajSprawa}": `${baseUrl}/sprawy/dodaj`,
           }
         })
       } catch (emailError) {

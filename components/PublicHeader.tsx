@@ -853,7 +853,7 @@ export default function PublicHeader({
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <AddCaseButton href="/panel-klienta/dodaj-sprawe" className="flex" />
+                <AddCaseButton href="/panel-klienta/sprawy/dodaj" className="flex" />
                 <Link href="/logowanie" className="hidden md:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
@@ -1095,7 +1095,7 @@ export default function PublicHeader({
                   {!isAuthenticated && (
                     <div className="p-6 border-t border-neutral-800 bg-[#101010] flex flex-col gap-3">
                       <AddCaseButton
-                        href="/panel-klienta/dodaj-sprawe"
+                        href="/panel-klienta/sprawy/dodaj"
                         className="w-full"
                         innerClassName="w-full h-11 justify-center text-base"
                         onClick={() => setMobileMenuOpen(false)}

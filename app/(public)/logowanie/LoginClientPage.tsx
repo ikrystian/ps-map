@@ -34,7 +34,12 @@ interface DevUser {
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get("callbackUrl") || "/"
+  const rawCallbackUrl = searchParams.get("callbackUrl")
+  // Akceptuj tylko ścieżki względne (ochrona przed open redirect)
+  const callbackUrl =
+    rawCallbackUrl && rawCallbackUrl.startsWith("/") && !rawCallbackUrl.startsWith("//")
+      ? rawCallbackUrl
+      : null
   const registered = searchParams.get("registered")
 
   const [email, setEmail] = useState("")
@@ -134,6 +139,39 @@ export default function LoginPage() {
     }
   }, [searchParams])
 
+  // Po zalogowaniu: callbackUrl z URL-a ma priorytet, w przeciwnym razie panel wg roli.
+  const redirectAfterLogin = async () => {
+    if (callbackUrl) {
+      router.push(callbackUrl)
+      return
+    }
+
+    try {
+      const response = await fetch("/api/auth/me")
+      if (response.ok) {
+        const data = await response.json()
+        const userRole = data.user.role
+
+        if (userRole === "CLIENT") {
+          router.push("/panel-klienta")
+          return
+        }
+        if (userRole === "LAW_FIRM") {
+          router.push("/panel-eksperta")
+          return
+        }
+        if (userRole === "ADMIN") {
+          router.push("/admin")
+          return
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching user role:", err)
+    }
+
+    router.push("/")
+  }
+
   // Wybór użytkownika z combo boxa i automatyczne logowanie.
   const handleUserSelect = async (user: DevUser) => {
     setSelectedUser(user)
@@ -173,25 +211,7 @@ export default function LoginPage() {
         return
       }
 
-      // Pobierz dane użytkownika aby określić rolę
-      const response = await fetch("/api/auth/me")
-      if (response.ok) {
-        const data = await response.json()
-        const userRole = data.user.role
-
-        // Przekieruj na odpowiedni panel
-        if (userRole === "CLIENT") {
-          router.push("/panel-klienta")
-        } else if (userRole === "LAW_FIRM") {
-          router.push("/panel-eksperta")
-        } else if (userRole === "ADMIN") {
-          router.push("/admin")
-        } else {
-          router.push(callbackUrl)
-        }
-      } else {
-        router.push(callbackUrl)
-      }
+      await redirectAfterLogin()
     } catch (err) {
       console.error("Login error:", err)
       setError("Wystąpił błąd podczas logowania")
@@ -232,25 +252,7 @@ export default function LoginPage() {
         return
       }
 
-      // 3. Pobierz dane użytkownika aby określić rolę
-      const response = await fetch("/api/auth/me")
-      if (response.ok) {
-        const data = await response.json()
-        const userRole = data.user.role
-
-        // Przekieruj na odpowiedni panel
-        if (userRole === "CLIENT") {
-          router.push("/panel-klienta")
-        } else if (userRole === "LAW_FIRM") {
-          router.push("/panel-eksperta")
-        } else if (userRole === "ADMIN") {
-          router.push("/admin")
-        } else {
-          router.push(callbackUrl)
-        }
-      } else {
-        router.push(callbackUrl)
-      }
+      await redirectAfterLogin()
     } catch (err) {
       console.error("Login error:", err)
       setError("Wystąpił błąd podczas logowania")
@@ -441,12 +443,12 @@ export default function LoginPage() {
             </div>
 
             {/* Social Login Buttons */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <Button
                 type="button"
                 variant="outline"
                 className="h-11"
-                onClick={() => signIn("google", { callbackUrl })}
+                onClick={() => signIn("google", { callbackUrl: callbackUrl ?? "/" })}
                 disabled={isLoading}
               >
                 <FaGoogle className="h-5 w-5" />
@@ -455,7 +457,7 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 className="h-11"
-                onClick={() => signIn("facebook", { callbackUrl })}
+                onClick={() => signIn("facebook", { callbackUrl: callbackUrl ?? "/" })}
                 disabled={isLoading}
               >
                 <FaFacebook className="h-5 w-5" />

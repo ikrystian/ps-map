@@ -87,7 +87,7 @@ export function HowItWorksPlatform() {
                 </div>
 
                 <Button asChild className="w-full mt-auto">
-                  <Link href="/dodaj-sprawe">
+                  <Link href="/panel-klienta/sprawy/dodaj">
                     Dodaj sprawę
                   </Link>
                 </Button>
