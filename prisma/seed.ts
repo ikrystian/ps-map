@@ -9,6 +9,7 @@ import { seedExperts } from './seeds/experts';
 import { seedPromotionConfigs } from './seeds/promotions'
 import { seedStaticPages } from './seeds/static-pages'
 import { seedVoivodeships } from './seeds/voivodeships'
+import { seedHelp } from './seeds/help'
 
 async function main() {
   console.log('Start seeding...')
@@ -92,6 +93,7 @@ async function main() {
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)
+  await seedHelp(prisma)
   // await seedAdvertisements(prisma)
 
   // ==========================================================================
