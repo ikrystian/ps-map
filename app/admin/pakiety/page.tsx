@@ -45,6 +45,7 @@ interface SubscriptionPlan {
   skillLawFocus: boolean
   aktywny: boolean
   isPrimary: boolean
+  kolor: string | null
 }
 
 export default function AdminSubscriptionPlansPage() {
@@ -136,7 +137,15 @@ export default function AdminSubscriptionPlansPage() {
               <CardHeader>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1">
-                    <CardTitle className="text-xl md:text-2xl">{plan.nazwa}</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl flex items-center gap-2">
+                      {plan.kolor && (
+                        <span
+                          className="inline-block h-3.5 w-3.5 rounded-full border border-white/20 shrink-0"
+                          style={{ backgroundColor: plan.kolor }}
+                        />
+                      )}
+                      {plan.nazwa}
+                    </CardTitle>
                     <CardDescription className="mt-2 flex gap-2">
                       <Badge variant={plan.aktywny ? "default" : "secondary"}>
                         {plan.aktywny ? "Aktywny" : "Nieaktywny"}

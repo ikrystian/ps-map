@@ -1536,6 +1536,10 @@ model SubscriptionPlan {
   // Obrazek pakietu
   obrazek               String?
 
+  // Kolor pakietu (hex, np. "#3b82f6") — ustawiany w panelu admina,
+  // używany do kolorowania kart i tabel pakietów
+  kolor                 String?
+
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 

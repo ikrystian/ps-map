@@ -157,6 +157,12 @@ export async function POST(request: NextRequest) {
             daneFaktury: finalDaneFaktury,
           },
         }),
+        // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
+        // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
+        prisma.notificationSettings.updateMany({
+          where: { userId: session.user.id },
+          data: { welcomePackageSeen: true },
+        }),
       ])
 
       return Response.json({
@@ -371,6 +377,12 @@ export async function POST(request: NextRequest) {
           },
         }),
         ...pointTransactions,
+        // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
+        // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
+        prisma.notificationSettings.updateMany({
+          where: { userId: session.user.id },
+          data: { welcomePackageSeen: true },
+        }),
       ])
       updatedLawFirm = result[0]
       order = result[1]
@@ -426,6 +438,12 @@ export async function POST(request: NextRequest) {
             transactionId: isTestPayment ? `TXN-TEST-SUB-${Date.now()}` : null,
             externalOrderId: isTestPayment ? `EXT-TEST-SUB-${Date.now()}` : null,
           },
+        }),
+        // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
+        // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
+        prisma.notificationSettings.updateMany({
+          where: { userId: session.user.id },
+          data: { welcomePackageSeen: true },
         }),
       ])
       updatedLawFirm = result[0]

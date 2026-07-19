@@ -1,5 +1,6 @@
 "use client"
 
+import { PackageActivatedModal } from "@/components/law-firm/PackageActivatedModal"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import {
   AlertDialog,
@@ -72,6 +73,7 @@ interface SubscriptionPlan {
   wyswietlanieReklam: boolean
   punktyGratis: number
   skillLawFocus: boolean
+  kolor: string | null
 }
 
 const formatDate = (dateString: string | Date) => {
@@ -80,6 +82,21 @@ const formatDate = (dateString: string | Date) => {
     month: "long",
     day: "numeric",
   })
+}
+
+// Dodaje kanał alfa do 6-znakowego koloru hex (kolor pakietu z panelu admina)
+const withAlpha = (hex: string, alpha: number): string => {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return hex
+  return `${hex}${Math.round(alpha * 255).toString(16).padStart(2, "0")}`
+}
+
+// Dobiera czytelny kolor tekstu (jasny/ciemny) do tła w kolorze pakietu
+const getContrastText = (hex: string): string => {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return "#ffffff"
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#09090b" : "#ffffff"
 }
 
 // Order of packages for reliable column rendering
@@ -171,6 +188,9 @@ export default function LawFirmPackagePage() {
   const [purchasing, setPurchasing] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [activatedPlan, setActivatedPlan] = useState<SubscriptionPlan | null>(null)
+  const [activatedUntil, setActivatedUntil] = useState<string | null>(null)
+  const [showActivatedModal, setShowActivatedModal] = useState(false)
   const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
 
   const isSubscriptionActive = !!lawFirm?.pakietSubskrypcji &&
@@ -298,11 +318,12 @@ export default function LawFirmPackagePage() {
         throw new Error(errorData.error || "Nie udało się aktywować pakietu")
       }
 
-      toast.success("Pakiet został pomyślnie aktywowany!", {
-        description: `Nowy pakiet: ${selectedPlan.nazwa}`,
-      })
+      const data = await response.json()
 
       setShowConfirmDialog(false)
+      setActivatedPlan(selectedPlan)
+      setActivatedUntil(data.plan?.dataPakietuDo ?? null)
+      setShowActivatedModal(true)
       fetchData() // Refresh details
     } catch (err) {
       toast.error("Błąd aktywacji pakietu", {
@@ -392,7 +413,9 @@ export default function LawFirmPackagePage() {
 
     if (feature.type === "boolean") {
       return value ? (
-        <CheckCircle2 className={`h-5 w-5 mx-auto ${plan.typ === "PREMIUM"
+        <CheckCircle2
+          style={plan.kolor ? { color: plan.kolor } : undefined}
+          className={`h-5 w-5 mx-auto ${plan.typ === "PREMIUM"
           ? "text-primary"
           : plan.typ === "BIZNES"
             ? "text-secondary"
@@ -498,9 +521,19 @@ export default function LawFirmPackagePage() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                <Package className="h-7 w-7 text-primary" />
-              </div>
+              {(() => {
+                const currentKolor = plans.find(p => p.typ === lawFirm.pakietSubskrypcji)?.kolor || null
+                return (
+                  <div
+                    style={currentKolor ? {
+                      backgroundColor: withAlpha(currentKolor, 0.1),
+                      borderColor: withAlpha(currentKolor, 0.25),
+                    } : undefined}
+                    className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <Package style={currentKolor ? { color: currentKolor } : undefined} className="h-7 w-7 text-primary" />
+                  </div>
+                )
+              })()}
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-xl font-bold tracking-tight text-white font-playfair">
@@ -623,9 +656,16 @@ export default function LawFirmPackagePage() {
             const monthlyEquivPoints = Math.round(pointsCost / periodMonths)
             const monthlyEquivPLN = Math.round(priceVal / periodMonths)
 
+            // Kolor pakietu ustawiony w panelu admina (pomijamy dla zablokowanych)
+            const kolor = !isDowngrade ? plan.kolor : null
+
             return (
               <div
                 key={plan.id}
+                style={kolor ? {
+                  borderColor: withAlpha(kolor, 0.45),
+                  backgroundImage: `linear-gradient(to bottom, transparent 40%, ${withAlpha(kolor, 0.07)})`,
+                } : undefined}
                 className={`relative rounded-2xl bg-card/25 backdrop-blur-md border p-6 flex flex-col justify-between transition-all duration-300 ${isDowngrade
                   ? "border-muted-foreground/20 bg-muted/[0.02] opacity-75 grayscale-25"
                   : cosmetic.popular
@@ -637,7 +677,9 @@ export default function LawFirmPackagePage() {
               >
                 {/* Popularity or Value Badges */}
                 {cosmetic.badgeText && !isDowngrade && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-primary" : "bg-secondary"
+                  <div
+                    style={kolor ? { backgroundColor: kolor, color: getContrastText(kolor) } : undefined}
+                    className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-md ${cosmetic.popular ? "bg-primary" : "bg-secondary"
                     }`}>
                     {cosmetic.badgeText}
                   </div>
@@ -658,7 +700,13 @@ export default function LawFirmPackagePage() {
                         {cosmetic.tagline}
                       </p>
                     </div>
-                    <div className={`p-2.5 rounded-xl shrink-0 ${isDowngrade
+                    <div
+                      style={kolor ? {
+                        backgroundColor: withAlpha(kolor, 0.1),
+                        borderColor: withAlpha(kolor, 0.25),
+                        color: kolor,
+                      } : undefined}
+                      className={`p-2.5 rounded-xl shrink-0 ${isDowngrade
                       ? "bg-muted/50 text-muted-foreground/60 border border-border/50"
                       : cosmetic.popular
                         ? "bg-primary/10 text-primary border border-primary/20"
@@ -698,7 +746,13 @@ export default function LawFirmPackagePage() {
 
                     {/* Gratis points */}
                     {plan.punktyGratis > 0 && (
-                      <div className="mt-3.5 inline-flex items-center gap-1 bg-secondary/15 text-secondary px-2.5 py-0.5 rounded-full text-sm font-bold border border-secondary/20 shadow-2xs">
+                      <div
+                        style={kolor ? {
+                          backgroundColor: withAlpha(kolor, 0.15),
+                          color: kolor,
+                          borderColor: withAlpha(kolor, 0.25),
+                        } : undefined}
+                        className="mt-3.5 inline-flex items-center gap-1 bg-secondary/15 text-secondary px-2.5 py-0.5 rounded-full text-sm font-bold border border-secondary/20 shadow-2xs">
                         <Gift className="h-3 w-3 shrink-0" />
                         <span>+{plan.punktyGratis} pkt GRATIS!</span>
                       </div>
@@ -712,7 +766,9 @@ export default function LawFirmPackagePage() {
                   <ul className="space-y-3 my-5 text-xs md:text-sm">
                     {cosmetic.bulletPoints.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2.5 text-muted-foreground">
-                        <CheckCircle2 className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${cosmetic.popular
+                        <CheckCircle2
+                          style={kolor ? { color: kolor } : undefined}
+                          className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${cosmetic.popular
                           ? "text-primary"
                           : cosmetic.bestValue
                             ? "text-secondary"
@@ -758,7 +814,8 @@ export default function LawFirmPackagePage() {
                     <Button
                       onClick={() => handlePurchaseClick(plan)}
                       disabled={purchasing || !canAfford}
-                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] shrink-0 shadow-sm rounded-xl ${cosmetic.popular
+                      style={kolor ? { backgroundColor: kolor, color: getContrastText(kolor) } : undefined}
+                      className={`w-full font-semibold transition-all duration-200 hover:scale-[1.015] hover:brightness-110 shrink-0 shadow-sm rounded-xl ${cosmetic.popular
                         ? "bg-primary hover:bg-primary-hover text-white hover:shadow-primary/10"
                         : cosmetic.bestValue
                           ? "bg-secondary hover:bg-secondary-hover text-white hover:shadow-secondary/10"
@@ -839,6 +896,7 @@ export default function LawFirmPackagePage() {
                       return (
                         <th
                           key={plan.id}
+                          style={plan.kolor ? { backgroundColor: withAlpha(plan.kolor, 0.06) } : undefined}
                           className={`border-b border-border/60 p-4 text-center font-bold text-base text-foreground w-[18.75%] ${isPopular
                             ? "bg-primary/5 border-x border-primary/10"
                             : isBestVal
@@ -847,7 +905,7 @@ export default function LawFirmPackagePage() {
                             }`}
                         >
                           <div className="flex flex-col items-center gap-1.5">
-                            <span>{plan.nazwa}</span>
+                            <span style={plan.kolor ? { color: plan.kolor } : undefined}>{plan.nazwa}</span>
                             {plan.typ === lawFirm.pakietSubskrypcji && (
                               <Badge className="bg-success text-success-foreground text-sm py-0 px-2 leading-relaxed">
                                 Obecny
@@ -889,6 +947,7 @@ export default function LawFirmPackagePage() {
                                   return (
                                     <td
                                       key={plan.id}
+                                      style={plan.kolor ? { backgroundColor: withAlpha(plan.kolor, 0.04) } : undefined}
                                       className={`p-4 text-center w-[18.75%] ${isPopular
                                         ? "bg-primary/5 border-x border-primary/10"
                                         : isBestVal
@@ -920,6 +979,7 @@ export default function LawFirmPackagePage() {
                       return (
                         <td
                           key={plan.id}
+                          style={plan.kolor ? { backgroundColor: withAlpha(plan.kolor, 0.09) } : undefined}
                           className={`p-4 text-center font-bold w-[18.75%] ${isPopular
                             ? "bg-primary/10 border-x border-primary/10"
                             : isBestVal
@@ -1060,6 +1120,18 @@ export default function LawFirmPackagePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Package Activated Celebration Modal */}
+      {activatedPlan && (
+        <PackageActivatedModal
+          open={showActivatedModal}
+          onOpenChange={setShowActivatedModal}
+          planTyp={activatedPlan.typ}
+          planNazwa={activatedPlan.nazwa}
+          punktyGratis={activatedPlan.punktyGratis}
+          dataPakietuDo={activatedUntil}
+        />
+      )}
 
       {/* Premium styled FAQ */}
       <Card variant="glass" className="bg-gradient-to-br from-card to-muted/10 overflow-hidden rounded-2xl">

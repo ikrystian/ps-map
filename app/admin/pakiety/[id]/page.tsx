@@ -48,6 +48,7 @@ interface SubscriptionPlanForm {
   aktywny: boolean
   isPrimary: boolean
   obrazek: string | null
+  kolor: string | null
 }
 
 export default function EditSubscriptionPlanPage() {
@@ -86,6 +87,7 @@ export default function EditSubscriptionPlanPage() {
     aktywny: true,
     isPrimary: false,
     obrazek: null,
+    kolor: null,
   })
 
   useEffect(() => {
@@ -218,6 +220,36 @@ export default function EditSubscriptionPlanPage() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="kolor">Kolor pakietu</Label>
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="kolor"
+                    type="color"
+                    value={formData.kolor || "#3b82f6"}
+                    onChange={(e) => handleChange("kolor", e.target.value)}
+                    className="h-10 w-20 cursor-pointer p-1"
+                  />
+                  <span className="text-sm text-muted-foreground font-mono">
+                    {formData.kolor || "brak (domyślny)"}
+                  </span>
+                  {formData.kolor && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleChange("kolor", null)}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Wyczyść
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Używany do kolorowania kart i tabel pakietów w panelu eksperta.
+                </p>
               </div>
 
               <div className="space-y-3">
