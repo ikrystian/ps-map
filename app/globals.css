@@ -334,6 +334,26 @@ a .bg-card {
   animation: pulse-dot 2s infinite;
 }
 
+/* Podświetlenie elementu wskazanego z karty „Ocena profilu" */
+@keyframes score-highlight-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--primary) 55%, transparent),
+      0 0 28px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+}
+
+.score-highlight {
+  border-radius: 1rem;
+  animation: score-highlight-pulse 1s ease-in-out 3;
+}
+
 .animate-gradient {
   animation: gradient 3s ease infinite;
 }

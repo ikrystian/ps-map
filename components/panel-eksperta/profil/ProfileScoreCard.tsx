@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { cn } from "@/lib/utils"
+import { scrollToAndHighlight } from "@/lib/scroll-highlight"
 import { useEffect, useRef, useState } from "react"
 import {
   Gauge,
@@ -457,9 +458,12 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
                         type="button"
                         onClick={() => {
                           if (field.id === "obszar") {
-                            router.push("/panel-eksperta/zakres-uslug")
+                            // Sekcja „Obszar działania" mieszka na innej stronie —
+                            // parametr podswietl uruchamia tam akcent po wczytaniu
+                            router.push("/panel-eksperta/zakres-uslug?podswietl=obszar")
                           } else {
                             onNavigate(group.tab)
+                            scrollToAndHighlight(`[data-score-target="${field.id}"]`)
                           }
                         }}
                         className={cn(

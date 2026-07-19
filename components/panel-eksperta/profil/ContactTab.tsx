@@ -247,7 +247,7 @@ export function ContactTab({
       {/* Rząd 1: Osoba kontaktowa oraz Dane teleadresowe */}
       <div className="grid grid-cols-1  gap-6 items-stretch">
         {/* Osoba kontaktowa */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
+        <Card data-score-target="osobaKontaktowa" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
           <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
@@ -316,7 +316,7 @@ export function ContactTab({
             </CardHeader>
             <CardContent className="space-y-4 pt-6 flex-grow flex flex-col justify-center">
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="grid gap-2">
+                <div className="grid gap-2" data-score-target="telefon">
                   <Label htmlFor="numerTelefonu" className="text-zinc-300 font-medium text-xs">Telefon główny *</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
@@ -347,7 +347,7 @@ export function ContactTab({
                   </div>
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2" data-score-target="email">
                   <Label htmlFor="emailKontakt" className="text-zinc-300 font-medium text-xs">Email *</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
@@ -364,7 +364,7 @@ export function ContactTab({
                   </div>
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2" data-score-target="stronaWww">
                   <Label htmlFor="stronaWww" className="text-zinc-300 font-medium text-xs">Strona WWW</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
@@ -389,7 +389,7 @@ export function ContactTab({
       {/* Rząd 2: Adres stacjonarny biura oraz Profile społecznościowe */}
       <div className="grid grid-cols-1 gap-6 items-stretch">
         {/* Adres stacjonarny */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
+        <Card data-score-target="adres" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
           <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">
@@ -560,7 +560,7 @@ export function ContactTab({
         </Card>
 
         {/* Social Media */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
+        <Card data-score-target="social" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300 flex flex-col h-full">
           <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
           <div className="flex flex-col h-full justify-between">
             <CardHeader className="border-b border-border/10 pb-4">

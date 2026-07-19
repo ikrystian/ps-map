@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { scrollToAndHighlight } from "@/lib/scroll-highlight"
 import { BorderBeam } from "@/components/ui/border-beam"
 import {
   closestCenter,
@@ -282,6 +283,16 @@ export default function LawFirmServicesPage() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  // Wejście z karty „Ocena profilu" (?podswietl=obszar) — po wczytaniu danych
+  // przewiń do sekcji obszaru działania i zaakcentuj ją
+  useEffect(() => {
+    if (loading) return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("podswietl") === "obszar") {
+      scrollToAndHighlight("#tour-zakres-area")
+    }
+  }, [loading])
 
   const fetchData = async () => {
     setLoading(true)

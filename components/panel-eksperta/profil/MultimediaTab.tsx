@@ -35,7 +35,7 @@ export function MultimediaTab({
   return (
     <div className="space-y-6">
       {/* Galeria zdjęć */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+      <Card data-score-target="galeria" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
         <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">
@@ -131,7 +131,7 @@ export function MultimediaTab({
       </Card>
 
       {/* Film YouTube */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+      <Card data-score-target="film" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
         <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={9} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center gap-2.5">

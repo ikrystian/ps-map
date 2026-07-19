@@ -191,7 +191,7 @@ export function BasicTab({
           <CardContent className="space-y-6 pt-6">
             <div className="grid gap-6">
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="grid gap-2">
+                <div className="grid gap-2" data-score-target="nazwa">
                   <Label htmlFor="nazwa" className="text-zinc-300 font-medium">Nazwa wyświetlana *</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
@@ -296,7 +296,7 @@ export function BasicTab({
                 </div>
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid gap-2" data-score-target="opis">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <Label htmlFor="opis" className="text-zinc-300 font-medium">Opis profilu</Label>
                   <button
@@ -389,7 +389,7 @@ export function BasicTab({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 items-start">
 
               {/* Logo Upload (Avatar) */}
-              <div className="space-y-4">
+              <div className="space-y-4" data-score-target="logo">
                 <div>
                   <Label className="text-white font-semibold text-base">Zdjęcie profilowe (Avatar)</Label>
                   <p className="text-xs text-zinc-400 font-light mt-1">
@@ -482,7 +482,7 @@ export function BasicTab({
               </div>
 
               {/* Zdjęcie główne Upload (Banner) */}
-              <div className="space-y-4">
+              <div className="space-y-4" data-score-target="zdjecieGlowne">
                 <div>
                   <Label className="text-white font-semibold text-base">Zdjęcie główne (Banner)</Label>
                   <p className="text-xs text-zinc-400 font-light mt-1">
@@ -598,7 +598,7 @@ export function BasicTab({
         </Card>
 
         {/* Wpisy do rejestrów */}
-        <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+        <Card data-score-target="rejestry" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
           <BorderBeam lightColor="var(--secondary)" lightWidth={400} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">

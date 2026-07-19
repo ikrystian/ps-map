@@ -35,7 +35,7 @@ export function SpecializationTab({
   return (
     <div className="space-y-6">
       {/* Kategorie usług */}
-      <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+      <Card data-score-target="kategorie" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
         <BorderBeam lightColor="var(--primary)" lightWidth={350} duration={8} borderWidth={1} />
         <CardHeader className="border-b border-border/10 pb-4">
           <div className="flex items-center justify-between gap-4">
@@ -96,7 +96,7 @@ export function SpecializationTab({
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           {/* Unikalny opis */}
-          <div className="grid gap-2">
+          <div className="grid gap-2" data-score-target="unikatowyOpis">
             <Label htmlFor="unikatowyOpisUslugi" className="text-zinc-300 font-medium">Unikalny opis usługi</Label>
             <Textarea
               id="unikatowyOpisUslugi"
@@ -114,7 +114,7 @@ export function SpecializationTab({
           <Separator className="bg-border/10" />
 
           {/* Słowa kluczowe */}
-          <div className="grid gap-2">
+          <div className="grid gap-2" data-score-target="slowaKluczowe">
             <div className="flex justify-between items-center mb-1">
               <Label htmlFor="slowoKluczowe" className="text-zinc-300 font-medium">Słowa kluczowe</Label>
               <span className="text-xs text-zinc-500">
