@@ -58,6 +58,20 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    // Pobierz statystyki wyświetleń wg dni tygodnia
+    const weekdayStatsRaw = await prisma.lawFirmWeekdayStats.findMany({
+      where: { lawFirmId: lawFirm.id },
+    })
+
+    const dayNames = ["Nd", "Pon", "Wt", "Śr", "Czw", "Pt", "Sob"]
+    const weekdayViews = [0, 1, 2, 3, 4, 5, 6].map(day => {
+      const found = weekdayStatsRaw.find(s => s.dayOfWeek === day)
+      return {
+        day: dayNames[day],
+        views: found?.profileViews || 0,
+      }
+    })
+
     // Pobierz statystyki według kategorii
     const categoryStats = await prisma.lawFirmCategoryStats.findMany({
       where: {
@@ -264,6 +278,7 @@ export async function GET(request: NextRequest) {
         month: s.monthStr,
         views: s.profileViews,
       })),
+      weekdayViews,
       monthlyOffers: monthlyStats.map(s => ({
         month: s.monthStr,
         total: s.offersSubmitted,

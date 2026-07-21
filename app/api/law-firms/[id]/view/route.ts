@@ -12,6 +12,7 @@ export async function POST(
     const now = new Date()
     const year = now.getFullYear()
     const month = now.getMonth() + 1 // 1-12
+    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -22,6 +23,24 @@ export async function POST(
         where: { id },
         data: {
           wyswietleniaProfilu: { increment: 1 },
+        },
+      })
+
+      // Update weekday stats
+      await tx.lawFirmWeekdayStats.upsert({
+        where: {
+          lawFirmId_dayOfWeek: {
+            lawFirmId: id,
+            dayOfWeek,
+          },
+        },
+        update: {
+          profileViews: { increment: 1 },
+        },
+        create: {
+          lawFirmId: id,
+          dayOfWeek,
+          profileViews: 1,
         },
       })
 

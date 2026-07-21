@@ -302,6 +302,7 @@ model LawFirm {
   favoritedBy           FavoriteLawFirm[]
   documents             Document[]
   stats                 LawFirmStats[]        // Statystyki miesięczne
+  weekdayStats          LawFirmWeekdayStats[] // Statystyki wg dni tygodnia
   categoryStats         LawFirmCategoryStats[] // Statystyki wg kategorii
   partnerProgram        PartnerProgram?       // Program partnerski
   pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
@@ -1744,6 +1745,25 @@ model LawFirmStats {
   @@unique([lawFirmId, year, month])
   @@index([lawFirmId])
   @@index([year, month])
+}
+
+// ============================================================================
+// STATYSTYKI KANCELARII WG DNI TYGODNIA
+// ============================================================================
+
+model LawFirmWeekdayStats {
+  id            String   @id @default(uuid())
+  lawFirmId     String
+  lawFirm       LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  dayOfWeek     Int      // 0 = Niedziela, 1 = Poniedziałek, ..., 6 = Sobota
+  profileViews  Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([lawFirmId, dayOfWeek])
+  @@index([lawFirmId])
 }
 
 // ============================================================================

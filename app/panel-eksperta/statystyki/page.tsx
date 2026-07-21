@@ -64,6 +64,10 @@ interface StatsData {
     month: string
     views: number
   }>
+  weekdayViews: Array<{
+    day: string
+    views: number
+  }>
   monthlyOffers: Array<{
     month: string
     total: number
@@ -122,6 +126,13 @@ const categoriesChartConfig = {
   },
   won: {
     label: "Wygrane oferty",
+    color: "hsl(var(--primary))",
+  },
+}
+
+const weekdayChartConfig = {
+  views: {
+    label: "Wyświetlenia",
     color: "hsl(var(--primary))",
   },
 }
@@ -324,7 +335,7 @@ export default function LawFirmStatsPage() {
     )
   }
 
-  const { lawFirm, stats, monthlyViews, monthlyOffers, categoryStats } = data
+  const { lawFirm, stats, monthlyViews, weekdayViews, monthlyOffers, categoryStats } = data
   const maxViews = monthlyViews.length > 0 ? Math.max(...monthlyViews.map(m => m.views)) : 0
 
   return (
@@ -520,6 +531,49 @@ export default function LawFirmStatsPage() {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Weekday breakdown chart */}
+            <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
+              <CardHeader className="border-b border-border/20 py-5 px-6">
+                <CardTitle className="text-lg font-playfair text-white">Wyświetlenia wg dni tygodnia</CardTitle>
+                <CardDescription className="text-zinc-400 text-xs">
+                  Rozkład wyświetleń Twojego profilu w poszczególnych dniach tygodnia.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="h-[240px] w-full pt-4">
+                  <ChartContainer config={weekdayChartConfig} className="h-full w-full">
+                    <BarChart
+                      data={weekdayViews}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
+                      <XAxis
+                        dataKey="day"
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="#71717a"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        allowDecimals={false}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="views" fill="var(--color-views)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+                {weekdayViews.every(d => d.views === 0) && (
+                  <div className="mt-4 text-center text-xs text-zinc-500 font-light">
+                    Brak danych — wyświetlenia będą rejestrowane od teraz
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
