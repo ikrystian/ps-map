@@ -34,10 +34,29 @@ const defaultSocialLinks = {
   instagram: "https://instagram.com",
 }
 
+function formatDeployTime(isoString: string): string {
+  if (!isoString) return ""
+  try {
+    const date = new Date(isoString)
+    return date.toLocaleString("pl-PL", {
+      timeZone: "Europe/Warsaw",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  } catch {
+    return ""
+  }
+}
+
 export default function PublicFooter() {
   const [blogCategories, setBlogCategories] = useState<{ id: string; nazwa: string; slug: string }[]>([])
   const [copyrightText, setCopyrightText] = useState("2026 © ProstaSprawa.pl")
   const [socialLinks, setSocialLinks] = useState(defaultSocialLinks)
+
+  const deployTime = formatDeployTime(process.env.DEPLOY_TIME || "")
 
   useEffect(() => {
     const fetchBlogCategories = async () => {
@@ -258,6 +277,11 @@ export default function PublicFooter() {
             >
               Ustawienia cookies
             </button>
+            {deployTime && (
+              <span className="font-light text-neutral-600" title="Data ostatniej aktualizacji strony">
+                Aktualizacja: {deployTime}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             {socialIcons

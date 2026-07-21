@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["ps-dev.com.pl", "team.studio-ai.com.pl", "rejestracja.prostasprawa.pl", "stage.prostasprawa.pl"],
   env: {
     ENV: process.env.ENV || "local",
+    DEPLOY_TIME: process.env.DEPLOY_TIME || "",
   },
   images: {
     remotePatterns: [

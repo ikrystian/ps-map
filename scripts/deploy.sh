@@ -19,6 +19,16 @@ OLD_DIR=".next-old"
 echo "==> Czyszczenie poprzedniego katalogu tymczasowego ($BUILD_DIR)"
 rm -rf "$BUILD_DIR"
 
+echo "==> Zapisuję datę i godzinę deployu do .env.local"
+DEPLOY_TIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+# Aktualizuj lub dodaj DEPLOY_TIME w .env.local
+if grep -q "^DEPLOY_TIME=" .env.local 2>/dev/null; then
+  sed -i "s|^DEPLOY_TIME=.*|DEPLOY_TIME=$DEPLOY_TIME|" .env.local
+else
+  echo "DEPLOY_TIME=$DEPLOY_TIME" >> .env.local
+fi
+echo "    DEPLOY_TIME=$DEPLOY_TIME"
+
 echo "==> Build do $BUILD_DIR (żywa aplikacja nadal serwuje z $LIVE_DIR)"
 NEXT_DIST_DIR="$BUILD_DIR" bun run build
 
