@@ -34,7 +34,13 @@ export async function GET(request: NextRequest) {
     }
 
     const validStatuses = ["ZLOZONA", "ZAAKCEPTOWANA", "ODRZUCONA", "NEGOCJACJE", "WYGASLA"]
-    if (status && validStatuses.includes(status)) {
+    if (status === "active") {
+      where.status = { in: ["ZLOZONA", "NEGOCJACJE", "ZAAKCEPTOWANA"] }
+      where.case = {
+        ...where.case,
+        status: { in: ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"] }
+      }
+    } else if (status && validStatuses.includes(status)) {
       where.status = status
     }
 

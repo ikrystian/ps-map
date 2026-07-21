@@ -18,7 +18,7 @@ interface LimitIndicatorProps {
   current: number;
   limit: number | null;
   label: string;
-  type?: "activeCases" | "categories" | "voivodeships" | "cities";
+  type?: "activeCases" | "categories" | "voivodeships" | "cities" | "counties" | "keywords";
   className?: string;
   showUpgradeButton?: boolean;
   size?: "sm" | "md" | "lg";

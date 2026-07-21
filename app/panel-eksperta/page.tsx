@@ -255,6 +255,11 @@ export default function LawFirmDashboardPage() {
   const [recentBlogPosts, setRecentBlogPosts] = useState<BlogPost[]>([])
   const [categoriesCount, setCategoriesCount] = useState(0)
   const [activeCasesCount, setActiveCasesCount] = useState(0)
+  const [voivodeshipsCount, setVoivodeshipsCount] = useState(0)
+  const [countiesCount, setCountiesCount] = useState(0)
+  const [citiesCount, setCitiesCount] = useState(0)
+  const [keywordsCount, setKeywordsCount] = useState(0)
+  const [isCalaPolska, setIsCalaPolska] = useState(false)
 
   // Sprawdź uprawnienia i limity
   const { permissions, packageName, packageExpired, expiryDate, daysUntilExpiry } = usePermissions()
@@ -264,6 +269,24 @@ export default function LawFirmDashboardPage() {
     fetchRecentBlogPosts()
     fetchLimitsData()
   }, [session])
+
+  useEffect(() => {
+    if (data?.lawFirm?.slowaKluczowe) {
+      try {
+        const raw = data.lawFirm.slowaKluczowe
+        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw
+        if (Array.isArray(parsed)) {
+          setKeywordsCount(parsed.length)
+        } else if (typeof raw === "string") {
+          setKeywordsCount(raw.split(",").filter(Boolean).length)
+        }
+      } catch (e) {
+        if (typeof data.lawFirm.slowaKluczowe === "string") {
+          setKeywordsCount(data.lawFirm.slowaKluczowe.split(",").filter(Boolean).length)
+        }
+      }
+    }
+  }, [data?.lawFirm?.slowaKluczowe])
 
   const fetchDashboardData = async () => {
     if (!session?.user?.id) return
@@ -307,9 +330,10 @@ export default function LawFirmDashboardPage() {
     if (!session?.user?.id) return
 
     try {
-      const [categoriesResponse, offersResponse] = await Promise.all([
+      const [categoriesResponse, offersResponse, areaResponse] = await Promise.all([
         fetch("/api/law-firm/categories"),
-        fetch("/api/offers?status=active")
+        fetch("/api/offers?status=active"),
+        fetch("/api/law-firm/area")
       ])
 
       if (categoriesResponse.ok) {
@@ -320,6 +344,14 @@ export default function LawFirmDashboardPage() {
       if (offersResponse.ok) {
         const offersData = await offersResponse.json()
         setActiveCasesCount(offersData.total || offersData.length || 0)
+      }
+
+      if (areaResponse.ok) {
+        const areaData = await areaResponse.json()
+        setVoivodeshipsCount(areaData.voivodeships?.length || 0)
+        setCountiesCount(areaData.counties?.length || 0)
+        setCitiesCount(areaData.cities?.length || 0)
+        setIsCalaPolska(!!areaData.calaPolska)
       }
     } catch (err) {
       console.error("Error fetching limits data:", err)
@@ -620,7 +652,7 @@ export default function LawFirmDashboardPage() {
           id="tour-pakiet"
           className="relative z-10"
         >
-          <Card variant="glass" className="rounded-2xl relative overflow-hidden">
+          <Card variant="glass" className="rounded-2xl relative overflow-hidden" id="current-package">
             <BorderBeam lightColor={lawFirm.pakietSubskrypcji === "BIZNES" ? "var(--secondary)" : "var(--primary)"} lightWidth={400} duration={8} borderWidth={1} />
             <div className={cn("relative p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden", bannerStyle.bg, bannerStyle.glow)}>
               {/* Watermark Icon */}
@@ -653,32 +685,184 @@ export default function LawFirmDashboardPage() {
                   </p>
                 )}
               </div>
-              <div className="relative z-10 flex-shrink-0 self-start md:self-center">
+              <div className="relative z-10 flex-shrink-0 self-start md:self-center flex flex-col items-start md:items-end gap-3">
                 <PackageBadge packageType={lawFirm.pakietSubskrypcji as any} size="lg" className="shadow-lg border border-white/10" />
+                <Link href="/panel-eksperta/pakiet">
+                  <Button size="sm" variant="outline" className="bg-background/40 backdrop-blur border-white/15 text-white hover:bg-white/10 rounded-xl text-xs gap-1.5 shadow-sm">
+                    Zarządzaj pakietem
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
               </div>
             </div>
-            <CardContent className="p-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                {/* Aktywne sprawy */}
-                <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
-                  <LimitIndicator
-                    current={activeCasesCount}
-                    limit={permissions.limits.activeCases}
-                    label="Aktywne sprawy"
-                    type="activeCases"
-                    size="md"
-                  />
+            <CardContent className="p-6 space-y-6">
+              {/* Limity z aktywnego pakietu */}
+              <div>
+                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <Target className="h-3.5 w-3.5 text-primary" />
+                  Limity z aktywnego pakietu
+                </h4>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {/* Aktywne sprawy */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={activeCasesCount}
+                      limit={permissions.limits.activeCases}
+                      label="Aktywne sprawy"
+                      type="activeCases"
+                      size="md"
+                    />
+                  </div>
+
+                  {/* Kategorie */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={categoriesCount}
+                      limit={permissions.limits.categories}
+                      label="Kategorie prawne"
+                      type="categories"
+                      size="md"
+                    />
+                  </div>
+
+                  {/* Województwa */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={isCalaPolska ? permissions.limits.voivodeships : voivodeshipsCount}
+                      limit={isCalaPolska ? null : permissions.limits.voivodeships}
+                      label="Województwa"
+                      type="voivodeships"
+                      size="md"
+                    />
+                  </div>
+
+                  {/* Powiaty */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={isCalaPolska ? permissions.limits.counties : countiesCount}
+                      limit={isCalaPolska ? null : permissions.limits.counties}
+                      label="Powiaty"
+                      type="counties"
+                      size="md"
+                    />
+                  </div>
+
+                  {/* Miasta */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={isCalaPolska ? permissions.limits.cities : citiesCount}
+                      limit={isCalaPolska ? null : permissions.limits.cities}
+                      label="Miasta"
+                      type="cities"
+                      size="md"
+                    />
+                  </div>
+
+                  {/* Tagi / Słowa kluczowe */}
+                  <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
+                    <LimitIndicator
+                      current={keywordsCount}
+                      limit={permissions.limits.keywords}
+                      label="Tagi i słowa kluczowe"
+                      type="keywords"
+                      size="md"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Dodatkowe korzyści i parametry pakietu */}
+              <div className="pt-2 border-t border-border/10">
+                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-secondary" />
+                  Funkcje i korzyści Twojego pakietu
+                </h4>
+                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+                  {/* Powiadomienia */}
+                  <div className="p-3 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                      <Clock className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground truncate">Powiadomienia o sprawach</p>
+                      <p className="text-xs font-semibold text-white">
+                        {permissions.extras.caseNotifications > 0 ? `${permissions.extras.caseNotifications} / mies.` : "Brak limitu"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Opiekun */}
+                  <div className="p-3 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
+                      <Users className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground truncate">Opieka nad kontem</p>
+                      <p className="text-xs font-semibold text-white truncate">
+                        {permissions.extras.personalSupport > 0 ? `Dedykowany opiekun` : "Standardowa"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Punkty gratis */}
+                  <div className="p-3 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                      <Coins className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground truncate">Punkty w pakiecie</p>
+                      <p className="text-xs font-semibold text-white">
+                        {permissions.extras.bonusPoints} pkt
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reklamy */}
+                  <div className="p-3 rounded-xl border border-border/10 bg-zinc-950/15 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
+                      <Eye className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground truncate">Reklamy w profilu</p>
+                      <p className="text-xs font-semibold text-white">
+                        {permissions.extras.hideAds ? "Ukryte (Bez reklam)" : "Standardowe"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Kategorie */}
-                <div className="p-4 rounded-xl border border-border/10 bg-zinc-950/15">
-                  <LimitIndicator
-                    current={categoriesCount}
-                    limit={permissions.limits.categories}
-                    label="Kategorie prawne"
-                    type="categories"
-                    size="md"
-                  />
+                {/* Badges aktywnych funkcji */}
+                <div className="mt-3 flex flex-wrap gap-2 pt-1">
+                  {permissions.features.canAccessPrioritySearch && (
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs py-1 gap-1">
+                      <TrendingUp className="h-3 w-3" /> Priorytet w wyszukiwaniu
+                    </Badge>
+                  )}
+                  {permissions.features.canAccessStatistics && (
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs py-1 gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> Zaawansowane statystyki
+                    </Badge>
+                  )}
+                  {permissions.features.canAccessBlog && (
+                    <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-xs py-1 gap-1">
+                      <FileText className="h-3 w-3" /> Prowadzenie bloga
+                    </Badge>
+                  )}
+                  {permissions.features.canPromoteProfile && (
+                    <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20 text-xs py-1 gap-1">
+                      <Crown className="h-3 w-3" /> Promowanie profilu
+                    </Badge>
+                  )}
+                  {permissions.features.canUploadCoverBanner && (
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs py-1 gap-1">
+                      <Sparkles className="h-3 w-3" /> Zdjęcie w tle (Cover banner)
+                    </Badge>
+                  )}
+                  {permissions.features.canSponsorArticles && (
+                    <Badge variant="outline" className="bg-pink-500/10 text-pink-400 border-pink-500/20 text-xs py-1 gap-1">
+                      <Star className="h-3 w-3" /> Artykuły sponsorowane
+                    </Badge>
+                  )}
                 </div>
               </div>
 
