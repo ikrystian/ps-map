@@ -1,5 +1,18 @@
 import crypto from "crypto"
 
+export enum P24Channel {
+  TRADITIONAL_TRANSFER = 1,
+  CARDS = 2,
+  PBL = 4, // Pay-By-Link / Szybkie przelewy
+  ALL_TIME = 16, // Płatności 24/7
+  INSTALLMENTS = 32, // Raty
+  WALLETS = 64, // Portfele cyfrowe (Google Pay, Apple Pay)
+  BLIK = 128,
+  CURRENCIES = 256,
+  BLIK_6_DIGIT = 512,
+  ALL = 1 | 2 | 4 | 16 | 32 | 64 | 128 | 256 | 512, // 1023 - Wszystkie kanały
+}
+
 export interface P24TransactionRequest {
   merchantId: number
   posId: number
@@ -14,6 +27,10 @@ export interface P24TransactionRequest {
   urlStatus: string
   sign: string
   encoding?: string
+  channel?: number
+  method?: number
+  waitForResult?: boolean
+  regulationAccept?: boolean
 }
 
 export interface P24TransactionResponse {
@@ -121,6 +138,10 @@ export class Przelewy24Client {
     urlStatus: string
     country?: string
     language?: string
+    channel?: number
+    method?: number
+    waitForResult?: boolean
+    regulationAccept?: boolean
   }): Promise<P24TransactionResponse> {
     const {
       sessionId,
@@ -131,6 +152,10 @@ export class Przelewy24Client {
       urlStatus,
       country = "PL",
       language = "pl",
+      channel,
+      method,
+      waitForResult,
+      regulationAccept,
     } = params
 
     const sign = this.generateSign({
@@ -155,6 +180,10 @@ export class Przelewy24Client {
       urlStatus,
       sign,
       encoding: "UTF-8",
+      ...(channel !== undefined && { channel }),
+      ...(method !== undefined && { method }),
+      ...(waitForResult !== undefined && { waitForResult }),
+      ...(regulationAccept !== undefined && { regulationAccept }),
     }
 
     try {

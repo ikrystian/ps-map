@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { p24Client } from "@/lib/przelewy24"
+import { p24Client, P24Channel } from "@/lib/przelewy24"
 import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
     const urlStatus = `${baseUrl}/api/payments/przelewy24/notify`
 
-    // Zarejestruj transakcję w Przelewy24
+    // Zarejestruj transakcję w Przelewy24 z obsługą wszystkich kanałów płatności
     const result = await p24Client.registerTransaction({
       sessionId,
       amount,
@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
       urlStatus,
       country: "PL",
       language: "pl",
+      channel: P24Channel.ALL,
     })
 
     if (result.error || !result.data?.token) {
