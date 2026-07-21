@@ -204,6 +204,35 @@ export class Przelewy24Client {
     }
   }
 
+  async getTransactionBySessionId(sessionId: string): Promise<{
+    data?: { orderId: number; sessionId: string; status: number; amount: number; currency: string }
+    error?: string
+  }> {
+    try {
+      const response = await fetch(
+        `${this.apiUrl}/api/v1/transaction/by/sessionId/${encodeURIComponent(sessionId)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.getAuthHeader(),
+          },
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return { error: data.error || "Nie udało się pobrać danych transakcji" }
+      }
+
+      return { data: data.data }
+    } catch (error) {
+      console.error("P24 getTransaction API error:", error)
+      return { error: "Błąd połączenia z bramką płatniczą" }
+    }
+  }
+
   getPaymentUrl(token: string): string {
     return `${this.apiUrl}/trnRequest/${token}`
   }

@@ -177,22 +177,32 @@ export default function CheckoutSuccessPage() {
       }
       let data = await response.json()
 
-      // Jeśli zamówienie jest opłacone przez PayU ale ma status OCZEKUJE, spróbuj zweryfikować
-      if (data.statusPlatnosci === "OCZEKUJE" && data.metodaPlatnosci === "PAYU") {
+      // Jeśli zamówienie ma status OCZEKUJE, spróbuj zweryfikować po stronie serwera
+      if (data.statusPlatnosci === "OCZEKUJE") {
         try {
-          const verifyResponse = await fetch("/api/payments/payu/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId })
-          })
+          let verifyEndpoint: string | null = null
+          if (data.metodaPlatnosci === "PAYU") {
+            verifyEndpoint = "/api/payments/payu/verify"
+          } else if (data.metodaPlatnosci === "PRZELEWY24") {
+            verifyEndpoint = "/api/payments/przelewy24/check"
+          }
 
-          if (verifyResponse.ok) {
-            const verifyData = await verifyResponse.json()
-            if (verifyData.status === "COMPLETED") {
-              // Odśwież dane zamówienia po weryfikacji
-              const refreshedResponse = await fetch(`/api/orders/${orderId}`)
-              if (refreshedResponse.ok) {
-                data = await refreshedResponse.json()
+          if (verifyEndpoint) {
+            const verifyResponse = await fetch(verifyEndpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId })
+            })
+
+            if (verifyResponse.ok) {
+              const verifyData = await verifyResponse.json()
+              const isCompleted =
+                verifyData.status === "COMPLETED" || verifyData.status === "ZAPLACONE"
+              if (isCompleted) {
+                const refreshedResponse = await fetch(`/api/orders/${orderId}`)
+                if (refreshedResponse.ok) {
+                  data = await refreshedResponse.json()
+                }
               }
             }
           }
