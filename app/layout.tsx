@@ -27,6 +27,71 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
+import { headers } from "next/headers";
+
+async function getBaseUrl(): Promise<string> {
+  try {
+    const headersList = await headers();
+    const host = headersList.get("x-forwarded-host") || headersList.get("host");
+    if (host && !host.includes("localhost") && !host.includes("127.0.0.1")) {
+      const proto = headersList.get("x-forwarded-proto") || (process.env.NODE_ENV === "production" ? "https" : "http");
+      return `${proto}://${host}`;
+    }
+  } catch (err) {
+    // Fallthrough if headers() is unavailable
+  }
+
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || process.env.URL;
+  if (envUrl) {
+    const formattedEnvUrl = envUrl.startsWith("http://") || envUrl.startsWith("https://")
+      ? envUrl
+      : `https://${envUrl}`;
+
+    if (process.env.NODE_ENV === "production") {
+      if (!formattedEnvUrl.includes("localhost") && !formattedEnvUrl.includes("127.0.0.1")) {
+        return formattedEnvUrl;
+      }
+    } else {
+      return formattedEnvUrl;
+    }
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://prostasprawa.pl";
+  }
+
+  return "http://localhost:3000";
+}
+
+function sanitizeImageUrl(urlStr: string | undefined, baseUrlStr: string): string {
+  if (!urlStr) return `${baseUrlStr}/favicon.png`;
+  let trimmed = urlStr.trim();
+
+  if (
+    trimmed.startsWith("http://localhost") ||
+    trimmed.startsWith("https://localhost") ||
+    trimmed.startsWith("http://127.0.0.1") ||
+    trimmed.startsWith("https://127.0.0.1")
+  ) {
+    try {
+      const parsed = new URL(trimmed);
+      trimmed = parsed.pathname + parsed.search;
+    } catch {
+      trimmed = "/favicon.png";
+    }
+  }
+
+  if (trimmed.startsWith("/")) {
+    return `${baseUrlStr}${trimmed}`;
+  }
+
+  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+    return `${baseUrlStr}/${trimmed}`;
+  }
+
+  return trimmed;
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   let siteName = "Prosta Sprawa"
   let favicon = "/favicon.png"
@@ -54,16 +119,16 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Error fetching settings for metadata:", error)
   }
 
-  const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || process.env.URL || "http://localhost:3000";
-  const baseUrlStr = rawBaseUrl.startsWith("http://") || rawBaseUrl.startsWith("https://")
-    ? rawBaseUrl
-    : `https://${rawBaseUrl}`;
+  const baseUrlStr = await getBaseUrl();
   let metadataBase: URL;
   try {
     metadataBase = new URL(baseUrlStr);
   } catch {
-    metadataBase = new URL("http://localhost:3000");
+    metadataBase = new URL("https://prostasprawa.pl");
   }
+
+  const cleanOgImage = sanitizeImageUrl(ogImage, baseUrlStr);
+  const cleanFavicon = sanitizeImageUrl(favicon, baseUrlStr);
 
   return {
     metadataBase,
@@ -73,16 +138,22 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: ogDescription,
     icons: {
-      icon: favicon,
-      shortcut: favicon,
-      apple: favicon,
+      icon: cleanFavicon,
+      shortcut: cleanFavicon,
+      apple: cleanFavicon,
     },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
       siteName: siteName,
-      images: ogImage ? [{ url: ogImage }] : [],
+      images: cleanOgImage ? [{ url: cleanOgImage }] : [],
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: ogDescription,
+      images: cleanOgImage ? [cleanOgImage] : [],
     },
   }
 }

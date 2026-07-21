@@ -1,6 +1,7 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
-import { cn } from "@/lib/utils"
+import { cn, stripHtmlTags } from "@/lib/utils"
 import {
   AlertCircle,
   ArrowLeft,
@@ -18,6 +19,7 @@ import {
   Clock,
   Download,
   Euro,
+  ExternalLink,
   FileText,
   Loader2,
   Mail,
@@ -26,9 +28,11 @@ import {
   Paperclip,
   Phone,
   Sparkles,
+  Star,
   User,
   XCircle,
 } from "lucide-react"
+import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -84,9 +88,21 @@ interface Case {
     createdAt: string
     lawFirm: {
       id: string
+      slug: string
       nazwa: string
       logo?: string
+      opis?: string
+      zweryfikowana: boolean
+      pakietSubskrypcji?: string | null
+      categories: Array<{
+        id: string
+        nazwa: string
+        slug: string
+      }>
+      avgRating: number
+      reviewCount: number
       miasto: string
+      voivodeship?: { nazwa: string } | null
       numerTelefonu: string
       numerTelefonu2?: string
       adres: string
@@ -462,16 +478,49 @@ export default function ClientCaseDetailsPage() {
                         isOfferPending && "hover:border-secondary/50 hover:bg-background-sec/45"
                       )}>
                         <CardHeader className="py-4 px-6 border-b border-border/20">
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <CardTitle className="text-base text-white font-playfair group-hover:text-secondary transition-colors">{offer.lawFirm.nazwa}</CardTitle>
-                              <CardDescription className="text-muted-foreground text-xs mt-0.5">
-                                Lokalizacja: {offer.lawFirm.miasto} • Złożono {formatDate(offer.createdAt)}
-                              </CardDescription>
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start gap-3 min-w-0 flex-1">
+                              <Avatar className="h-12 w-12 border border-border/40 shrink-0">
+                                <AvatarImage src={offer.lawFirm.logo || undefined} />
+                                <AvatarFallback className="bg-secondary/10 text-secondary font-semibold">
+                                  {offer.lawFirm.nazwa.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0 flex-1 space-y-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <CardTitle className="text-base text-white font-playfair group-hover:text-secondary transition-colors">
+                                    {offer.lawFirm.nazwa}
+                                  </CardTitle>
+                                  {offer.lawFirm.zweryfikowana && (
+                                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
+                                  {offer.lawFirm.categories?.[0] && (
+                                    <span>{offer.lawFirm.categories[0].nazwa}</span>
+                                  )}
+                                  <span className="flex items-center gap-1">
+                                    <MapPin className="h-3.5 w-3.5" />
+                                    {offer.lawFirm.miasto}
+                                    {offer.lawFirm.voivodeship ? `, ${offer.lawFirm.voivodeship.nazwa}` : ""}
+                                  </span>
+                                  {offer.lawFirm.reviewCount > 0 && (
+                                    <span className="flex items-center gap-1">
+                                      <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
+                                      <span className="font-semibold text-white">{offer.lawFirm.avgRating.toFixed(1)}</span>
+                                      <span>({offer.lawFirm.reviewCount})</span>
+                                    </span>
+                                  )}
+                                </div>
+                                <CardDescription className="text-muted-foreground text-xs">
+                                  Złożono {formatDate(offer.createdAt)}
+                                </CardDescription>
+                              </div>
                             </div>
                             <Badge
                               variant="outline"
                               className={cn(
+                                "shrink-0",
                                 offer.status === "ZLOZONA" && "bg-primary/10 text-primary border-primary/20",
                                 offer.status === "ZAAKCEPTOWANA" && "bg-success/10 text-success border-success/20",
                                 offer.status === "ODRZUCONA" && "bg-error/10 text-error border-error/20",
@@ -484,6 +533,22 @@ export default function ClientCaseDetailsPage() {
                           </div>
                         </CardHeader>
                         <CardContent className="p-6 space-y-4">
+                          {(offer.lawFirm.opis || offer.lawFirm.slug) && (
+                            <div className="flex items-center justify-between gap-4 p-3.5 bg-background-sec/20 rounded-lg border border-border/30">
+                              {offer.lawFirm.opis && (
+                                <p className="text-xs text-muted-foreground line-clamp-2 font-light min-w-0">
+                                  {stripHtmlTags(offer.lawFirm.opis)}
+                                </p>
+                              )}
+                              <Button variant="outline" size="sm" asChild className="shrink-0 gap-1.5 text-xs">
+                                <Link href={`/ekspert/${offer.lawFirm.slug}`} target="_blank" rel="noopener noreferrer">
+                                  Zobacz profil
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </Link>
+                              </Button>
+                            </div>
+                          )}
+
                           <div className="grid grid-cols-2 gap-4 p-4 bg-background-sec/20 rounded-lg border border-border/30">
                             <div>
                               <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Kwota brutto</span>

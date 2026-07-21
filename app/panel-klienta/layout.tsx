@@ -33,13 +33,14 @@ import { useEffect, useState } from "react"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
-  { name: "Zarządzanie profilem", href: "/panel-klienta/profil", icon: UserCircle },
+  { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
   { name: "Konsultacje", href: "/panel-klienta/konsultacje", icon: CalendarCheck },
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
-  { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
   { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },
   { name: "Centrum pomocy", href: "/panel-klienta/pomoc", icon: HelpCircle },
   { name: "Centrum newsów", href: "/panel-klienta/newsy", icon: Newspaper },
+  { name: "Ustawienia profilu", href: "/panel-klienta/profil", icon: UserCircle },
+
 ]
 
 export default function ClientPanelLayout({

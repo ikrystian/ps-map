@@ -59,9 +59,23 @@ export async function GET(
             lawFirm: {
               select: {
                 id: true,
+                slug: true,
                 nazwa: true,
                 logo: true,
+                opis: true,
                 stronaWww: true,
+                zweryfikowana: true,
+                pakietSubskrypcji: true,
+                categories: {
+                  include: {
+                    category: { select: { id: true, nazwa: true, slug: true } },
+                  },
+                  take: 3,
+                },
+                reviews: {
+                  where: { aktywna: true, zweryfikowana: true },
+                  select: { ocenaOgolna: true },
+                },
                 user: { select: USER_CONTACT_SELECT },
               },
             },
@@ -153,11 +167,23 @@ export async function GET(
       zalaczniki: caseDataWithCount.zalaczniki && typeof caseDataWithCount.zalaczniki === 'string' && caseDataWithCount.zalaczniki.trim()
         ? JSON.parse(caseDataWithCount.zalaczniki)
         : [],
-      // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
-      offers: caseDataWithCount.offers.map((offer: any) => ({
-        ...offer,
-        lawFirm: flattenLawFirmUser(offer.lawFirm),
-      })),
+      // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User) i policz ocenę
+      offers: caseDataWithCount.offers.map((offer: any) => {
+        const { reviews, categories, ...lawFirmRest } = offer.lawFirm
+        const avgRating = reviews.length > 0
+          ? reviews.reduce((sum: number, r: any) => sum + r.ocenaOgolna, 0) / reviews.length
+          : 0
+
+        return {
+          ...offer,
+          lawFirm: flattenLawFirmUser({
+            ...lawFirmRest,
+            categories: categories.map((c: any) => c.category),
+            avgRating: parseFloat(avgRating.toFixed(1)),
+            reviewCount: reviews.length,
+          }),
+        }
+      }),
     }
 
     return NextResponse.json(parsedCase)

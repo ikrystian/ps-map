@@ -70,8 +70,27 @@ interface Case {
   offers: Array<{
     id: string
     status: string
+    kwotaBrutto: number
+    terminRealizacjiDni: number
+    createdAt: string
+    lawFirm: {
+      id: string
+      nazwa: string
+      logo?: string | null
+    }
   }>
 }
+
+const offerStatusStyles: Record<string, { label: string; className: string }> = {
+  ZLOZONA: { label: "Złożona", className: "bg-primary/10 text-primary border-primary/20" },
+  ZAAKCEPTOWANA: { label: "Zaakceptowana", className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+  ODRZUCONA: { label: "Odrzucona", className: "bg-rose-500/10 text-rose-400 border-rose-500/20" },
+  NEGOCJACJE: { label: "Negocjacje", className: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+  WYGASLA: { label: "Wygasła", className: "bg-zinc-800 text-zinc-400 border-zinc-700/50" },
+}
+
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(amount)
 
 
 export default function ClientDashboardPage() {
@@ -261,9 +280,9 @@ export default function ClientDashboardPage() {
       </div>
 
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 relative z-10">
         {/* Left column (recent cases & blog) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-3 space-y-6">
           {/* Recent Cases Widget */}
           <Card variant="glass">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/20 py-4 px-6">
@@ -289,65 +308,119 @@ export default function ClientDashboardPage() {
                       caseItem.status === "OFERTY_OTRZYMANE" ||
                       (caseItem.offers.length > 0 && ["NOWA", "W_TRAKCIE"].includes(caseItem.status))
 
+                    // Zaakceptowana oferta na górze, potem najkorzystniejsze cenowo
+                    const sortedOffers = [...caseItem.offers].sort((a, b) => {
+                      if (a.status === "ZAAKCEPTOWANA" && b.status !== "ZAAKCEPTOWANA") return -1
+                      if (b.status === "ZAAKCEPTOWANA" && a.status !== "ZAAKCEPTOWANA") return 1
+                      return a.kwotaBrutto - b.kwotaBrutto
+                    })
+                    const visibleOffers = sortedOffers.slice(0, 2)
+                    const remainingOffersCount = sortedOffers.length - visibleOffers.length
+
                     return (
                       <div
                         key={caseItem.id}
                         onClick={() => router.push(`/panel-klienta/sprawy/${caseItem.id}`)}
                         className={cn(
-                          "p-4 rounded-md border border-border/30 bg-background/30 hover:bg-background/50 hover:border-primary/30 cursor-pointer transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group relative",
+                          "p-4 rounded-md border border-border/30 bg-background/30 hover:bg-background/50 hover:border-primary/30 cursor-pointer transition-all duration-200 flex flex-col gap-4 group relative",
                           hasActiveOffers && "border-secondary/30 bg-secondary/5 hover:border-secondary/50"
                         )}
                       >
                         {hasActiveOffers && (
                           <div className="absolute top-0 bottom-0 left-0 w-1 bg-secondary rounded-l-md" />
                         )}
-                        <div className="space-y-1.5 min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <Heading level="h4" size="h4" className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                              {caseItem.nazwaSprawy}
-                            </Heading>
-                            <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700/50 text-xs">
-                              {caseItem.category.nazwa}
-                            </Badge>
-                            {caseItem.trybPilny && (
-                              <Badge variant="destructive" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse text-xs">
-                                Pilne
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="space-y-1.5 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Heading level="h4" size="h4" className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
+                                {caseItem.nazwaSprawy}
+                              </Heading>
+                              <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700/50 text-xs">
+                                {caseItem.category.nazwa}
+                              </Badge>
+                              {caseItem.trybPilny && (
+                                <Badge variant="destructive" className="bg-rose-500/10 text-rose-400 border border-rose-500/20 font-medium animate-pulse text-xs">
+                                  Pilne
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground line-clamp-1 font-light">
+                              {caseItem.opisSprawy}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                            {caseItem.offers.length > 0 && (
+                              <Badge variant="secondary" className="bg-secondary/10 text-secondary border border-secondary/20 text-xs font-semibold">
+                                {caseItem.offers.length} {caseItem.offers.length === 1 ? "oferta" : "oferty"}
                               </Badge>
                             )}
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-1 font-light">
-                            {caseItem.opisSprawy}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                          {caseItem.offers.length > 0 && (
-                            <Badge variant="secondary" className="bg-secondary/10 text-secondary border border-secondary/20 text-xs font-semibold">
-                              {caseItem.offers.length} {caseItem.offers.length === 1 ? "oferta" : "oferty"}
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "text-xs font-medium",
+                                caseItem.status === "NOWA" && "bg-teal-500/10 text-teal-400 border-teal-500/20",
+                                caseItem.status === "OFERTY_OTRZYMANE" && "bg-secondary/15 text-secondary border-secondary/20",
+                                caseItem.status === "W_TRAKCIE" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
+                                caseItem.status === "ZAKONCZONA" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                                caseItem.status === "ANULOWANA" && "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                              )}
+                            >
+                              {caseItem.status === "NOWA"
+                                ? "Nowa"
+                                : caseItem.status === "OFERTY_OTRZYMANE"
+                                  ? "Oferty"
+                                  : caseItem.status === "W_TRAKCIE"
+                                    ? "W toku"
+                                    : caseItem.status === "ZAKONCZONA"
+                                      ? "Zakończona"
+                                      : "Anulowana"}
                             </Badge>
-                          )}
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "text-xs font-medium",
-                              caseItem.status === "NOWA" && "bg-teal-500/10 text-teal-400 border-teal-500/20",
-                              caseItem.status === "OFERTY_OTRZYMANE" && "bg-secondary/15 text-secondary border-secondary/20",
-                              caseItem.status === "W_TRAKCIE" && "bg-blue-500/10 text-blue-400 border-blue-500/20",
-                              caseItem.status === "ZAKONCZONA" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-                              caseItem.status === "ANULOWANA" && "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                            )}
-                          >
-                            {caseItem.status === "NOWA"
-                              ? "Nowa"
-                              : caseItem.status === "OFERTY_OTRZYMANE"
-                                ? "Oferty"
-                                : caseItem.status === "W_TRAKCIE"
-                                  ? "W toku"
-                                  : caseItem.status === "ZAKONCZONA"
-                                    ? "Zakończona"
-                                    : "Anulowana"}
-                          </Badge>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5 duration-200" />
+                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5 duration-200" />
+                          </div>
                         </div>
+
+                        {visibleOffers.length > 0 && (
+                          <div className="pt-3.5 border-t border-border/20 space-y-2">
+                            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                              {sortedOffers.length === 1 ? "Otrzymana oferta" : `Otrzymane oferty (${sortedOffers.length})`}
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {visibleOffers.map((offer) => {
+                                const offerStatus = offerStatusStyles[offer.status] || {
+                                  label: offer.status,
+                                  className: "bg-zinc-800 text-zinc-300 border-zinc-700/50",
+                                }
+                                return (
+                                  <div
+                                    key={offer.id}
+                                    className="flex items-center gap-2.5 p-2.5 rounded-md bg-background/40 border border-border/20"
+                                  >
+                                    <Avatar className="h-9 w-9 border border-border/40 shrink-0">
+                                      <AvatarImage src={offer.lawFirm.logo || undefined} />
+                                      <AvatarFallback className="text-xs bg-secondary/10 text-secondary font-semibold">
+                                        {offer.lawFirm.nazwa[0]?.toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-xs font-medium text-white truncate">{offer.lawFirm.nazwa}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {formatCurrency(offer.kwotaBrutto)} • {offer.terminRealizacjiDni} dni
+                                      </p>
+                                    </div>
+                                    <Badge variant="outline" className={cn("text-xs font-medium shrink-0", offerStatus.className)}>
+                                      {offerStatus.label}
+                                    </Badge>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                            {remainingOffersCount > 0 && (
+                              <p className="text-xs text-muted-foreground pt-0.5">
+                                +{remainingOffersCount} {remainingOffersCount === 1 ? "inna oferta" : "inne oferty"}
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )
                   })}
