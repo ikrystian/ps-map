@@ -2108,6 +2108,35 @@ h3 {
     letter-spacing: 0;
 }
 
+.required {
+    color: #e06c6c;
+    margin-left: 2px;
+    font-weight: 700;
+}
+
+.field-error {
+    display: none;
+    color: #e06c6c;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.field-error.active {
+    display: block;
+}
+
+.form-input.input-error,
+.form-select.input-error {
+    border-color: #e06c6c !important;
+    box-shadow: 0 0 0 3px rgba(224, 108, 108, 0.15) !important;
+}
+
+.form-checkbox.input-error {
+    border-color: #e06c6c !important;
+}
+
 .form-error {
     text-align: left;
     color: #e06c6c;

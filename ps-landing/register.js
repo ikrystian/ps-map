@@ -5,7 +5,7 @@
 // Adres API nadpisujesz bez edycji tego pliku, ustawiając przed załadowaniem skryptu:
 //   <script>window.PS_API_BASE = "https://prostasprawa.pl"</script>
 // Przy wdrożeniu produkcyjnym ustaw PS_API_BASE na adres produkcyjny (nie zostawiaj stage!).
-const API_BASE = window.PS_API_BASE || "https://stage.prostasprawa.pl";
+const API_BASE = window.PS_API_BASE || "https://prostasprawa.pl";
 
 // ===== Multi-step =====
 const formSteps = document.querySelectorAll(".form-step");
@@ -21,17 +21,133 @@ function showStep(index) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function getFieldErrorMessage(input) {
+    if (input.type === "checkbox") {
+        if (input.required && !input.checked) {
+            return input.dataset.errorRequired || "To pole jest wymagane.";
+        }
+        return "";
+    }
+
+    const val = input.value.trim();
+
+    if (input.required && !val) {
+        return input.dataset.errorRequired || "To pole jest wymagane.";
+    }
+
+    if (val && input.minLength && val.length < input.minLength) {
+        return input.dataset.errorMinlength || `Pole musi zawierać co najmniej ${input.minLength} znaków.`;
+    }
+
+    if (val && input.pattern) {
+        const regex = new RegExp("^" + input.pattern + "$");
+        if (!regex.test(val)) {
+            return input.dataset.errorPattern || input.title || "Niepoprawny format danych.";
+        }
+    }
+
+    if (val && input.type === "email") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(val)) {
+            return input.dataset.errorType || "Wpisz poprawny adres e-mail.";
+        }
+    }
+
+    if (input.id === "confirmPassword") {
+        const pass = document.getElementById("password")?.value || "";
+        if (val !== pass) {
+            return input.dataset.errorMismatch || "Hasła nie są identyczne.";
+        }
+    }
+
+    if (!input.checkValidity()) {
+        return input.validationMessage || "Niepoprawna wartość.";
+    }
+
+    return "";
+}
+
+function showFieldError(input, message) {
+    input.classList.add("input-error");
+    const checkboxGroup = input.closest(".form-checkbox");
+    if (checkboxGroup) {
+        checkboxGroup.classList.add("input-error");
+    }
+
+    const errorEl = document.getElementById(`error-${input.id}`);
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.add("active");
+    } else {
+        const group = input.closest(".form-group");
+        if (group) {
+            const fe = group.querySelector(".field-error");
+            if (fe) {
+                fe.textContent = message;
+                fe.classList.add("active");
+            }
+        }
+    }
+}
+
+function clearFieldError(input) {
+    input.classList.remove("input-error");
+    const checkboxGroup = input.closest(".form-checkbox");
+    if (checkboxGroup) {
+        checkboxGroup.classList.remove("input-error");
+    }
+
+    const errorEl = document.getElementById(`error-${input.id}`);
+    if (errorEl) {
+        errorEl.textContent = "";
+        errorEl.classList.remove("active");
+    } else {
+        const group = input.closest(".form-group");
+        if (group) {
+            const fe = group.querySelector(".field-error");
+            if (fe) {
+                fe.textContent = "";
+                fe.classList.remove("active");
+            }
+        }
+    }
+}
+
 function validateActiveStep() {
     const activeStep = formSteps[currentStep];
     const inputs = activeStep.querySelectorAll("input, select, textarea");
-    for (const input of inputs) {
-        if (input.disabled) continue;
-        if (!input.checkValidity()) {
-            input.reportValidity();
-            return false;
+    let isValid = true;
+    let firstInvalidInput = null;
+
+    inputs.forEach((input) => {
+        if (input.disabled) return;
+
+        if (input.id === "confirmPassword") {
+            const pass = document.getElementById("password")?.value || "";
+            if (input.value !== pass) {
+                input.setCustomValidity("Hasła nie są identyczne");
+            } else {
+                input.setCustomValidity("");
+            }
         }
+
+        const errorMessage = getFieldErrorMessage(input);
+        if (errorMessage) {
+            showFieldError(input, errorMessage);
+            isValid = false;
+            if (!firstInvalidInput) {
+                firstInvalidInput = input;
+            }
+        } else {
+            clearFieldError(input);
+        }
+    });
+
+    if (!isValid && firstInvalidInput) {
+        firstInvalidInput.focus();
     }
-    return true;
+
+    return isValid;
 }
 
 function nextStep() {
@@ -471,22 +587,6 @@ async function submitForm(e) {
 
     if (!validateActiveStep()) return;
 
-    // Zgodność haseł
-    confirmPasswordInput.setCustomValidity("");
-    if (passwordInput.value !== confirmPasswordInput.value) {
-        confirmPasswordInput.setCustomValidity("Hasła nie są identyczne");
-        confirmPasswordInput.reportValidity();
-        return;
-    }
-
-    // Miasto jest readonly (uzupełniane z listy), więc nie łapie go natywna walidacja.
-    const miastoValue = document.getElementById("miasto").value.trim();
-    if (!miastoValue) {
-        if (errorEl) errorEl.textContent = "Wybierz miasto – zacznij wpisywać kod pocztowy i wybierz pozycję z listy.";
-        document.getElementById("kodPocztowy").focus();
-        return;
-    }
-
     const voivodeshipId = wojewodztwoSelect.value;
     const categoryId = glownaSpecjalizacjaSelect.value;
 
@@ -554,4 +654,28 @@ async function submitForm(e) {
 document.addEventListener("DOMContentLoaded", () => {
     loadReferenceData();
     initCityAutocomplete();
+
+    const allInputs = document.querySelectorAll(".form-step input, .form-step select");
+    allInputs.forEach((input) => {
+        const updateValidationState = () => {
+            const errorMessage = getFieldErrorMessage(input);
+            if (!errorMessage) {
+                clearFieldError(input);
+            } else if (input.classList.contains("input-error")) {
+                showFieldError(input, errorMessage);
+            }
+        };
+        input.addEventListener("input", updateValidationState);
+        input.addEventListener("change", updateValidationState);
+        input.addEventListener("blur", () => {
+            if (input.value.trim() !== "" || input.classList.contains("input-error")) {
+                const errorMessage = getFieldErrorMessage(input);
+                if (errorMessage) {
+                    showFieldError(input, errorMessage);
+                } else {
+                    clearFieldError(input);
+                }
+            }
+        });
+    });
 });

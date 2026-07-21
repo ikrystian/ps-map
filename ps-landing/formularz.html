@@ -48,22 +48,28 @@
                 <p class="form-step-desc">Wybierz kategorię, podkategorię oraz swoją główną specjalizację zawodową.
                     Pomoże nam to dostosować Twój profil dla potencjalnych klientów.</p>
                 <div class="form-group">
-                    <label class="form-label" for="kategoriaEkspert">Kategoria</label>
-                    <select class="form-select" id="kategoriaEkspert" required>
+                    <label class="form-label" for="kategoriaEkspert">Kategoria <span class="required">*</span></label>
+                    <select class="form-select" id="kategoriaEkspert" required
+                        data-error-required="Wybierz kategorię działalności.">
                         <option value="">Wybierz kategorię...</option>
                     </select>
+                    <span class="field-error" id="error-kategoriaEkspert"></span>
                 </div>
                 <div class="form-group" id="podkategoriaGroup" style="display: none;">
-                    <label class="form-label" for="podkategoriaEkspert">Podkategoria</label>
-                    <select class="form-select" id="podkategoriaEkspert">
+                    <label class="form-label" for="podkategoriaEkspert">Podkategoria <span class="required">*</span></label>
+                    <select class="form-select" id="podkategoriaEkspert"
+                        data-error-required="Wybierz podkategorię działalności.">
                         <option value="">Wybierz podkategorię...</option>
                     </select>
+                    <span class="field-error" id="error-podkategoriaEkspert"></span>
                 </div>
                 <div class="form-group" id="specjalizacjaGroup" style="display: none;">
-                    <label class="form-label" for="specjalizacjaEkspert">Specjalizacja</label>
-                    <select class="form-select" id="specjalizacjaEkspert">
+                    <label class="form-label" for="specjalizacjaEkspert">Specjalizacja <span class="required">*</span></label>
+                    <select class="form-select" id="specjalizacjaEkspert"
+                        data-error-required="Wybierz specjalizację.">
                         <option value="">Wybierz specjalizację...</option>
                     </select>
+                    <span class="field-error" id="error-specjalizacjaEkspert"></span>
                 </div>
                 <!-- expertiseCategoryId (leaf) + jego ścieżka -->
                 <input type="hidden" name="expertiseCategoryId" id="expertiseCategoryId">
@@ -82,10 +88,12 @@
                 <p class="form-step-desc">Zaznacz główną dziedzinę prawa, w której się specjalizujesz. Pomoże nam to
                     lepiej dopasować zapytania od klientów.</p>
                 <div class="form-group">
-                    <label class="form-label" for="glownaSpecjalizacja">Główna kategoria</label>
-                    <select class="form-select" id="glownaSpecjalizacja" name="categoryId" required>
+                    <label class="form-label" for="glownaSpecjalizacja">Główna kategoria <span class="required">*</span></label>
+                    <select class="form-select" id="glownaSpecjalizacja" name="categoryId" required
+                        data-error-required="Wybierz główną dziedzinę prawa.">
                         <option value="">Wybierz dziedzinę...</option>
                     </select>
+                    <span class="field-error" id="error-glownaSpecjalizacja"></span>
                 </div>
                 <div class="form-actions-split">
                     <button type="button" class="btn-form btn-back" onclick="prevStep()">← Wstecz</button>
@@ -102,61 +110,85 @@
 
                 <h3 class="form-section-heading">Dane profilu</h3>
                 <div class="form-group">
-                    <label class="form-label" for="nazwa">Nazwa wyświetlana</label>
+                    <label class="form-label" for="nazwa">Nazwa wyświetlana <span class="required">*</span></label>
                     <input class="form-input" type="text" id="nazwa" name="nazwa"
-                        placeholder="Pełna nazwa profilu" minlength="3" required>
+                        placeholder="Pełna nazwa profilu" minlength="3" required
+                        data-error-required="Wpisz nazwę wyświetlaną."
+                        data-error-minlength="Nazwa musi mieć co najmniej 3 znaki.">
+                    <span class="field-error" id="error-nazwa"></span>
                 </div>
 
                 <h3 class="form-section-heading">Dane kontaktowe</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="imieKontakt">Imię</label>
+                        <label class="form-label" for="imieKontakt">Imię <span class="required">*</span></label>
                         <input class="form-input" type="text" id="imieKontakt" name="imieKontakt"
-                            placeholder="np. Jan" minlength="2" required>
+                            placeholder="np. Jan" minlength="2" required
+                            data-error-required="Wpisz imię."
+                            data-error-minlength="Imię musi mieć co najmniej 2 znaki.">
+                        <span class="field-error" id="error-imieKontakt"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="nazwiskoKontakt">Nazwisko</label>
+                        <label class="form-label" for="nazwiskoKontakt">Nazwisko <span class="required">*</span></label>
                         <input class="form-input" type="text" id="nazwiskoKontakt" name="nazwiskoKontakt"
-                            placeholder="np. Kowalski" minlength="2" required>
+                            placeholder="np. Kowalski" minlength="2" required
+                            data-error-required="Wpisz nazwisko."
+                            data-error-minlength="Nazwisko musi mieć co najmniej 2 znaki.">
+                        <span class="field-error" id="error-nazwiskoKontakt"></span>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="numerTelefonu">Telefon główny</label>
+                        <label class="form-label" for="numerTelefonu">Telefon główny <span class="required">*</span></label>
                         <input class="form-input" type="tel" id="numerTelefonu" name="numerTelefonu"
-                            minlength="9" required>
+                            placeholder="np. 600111222" minlength="9" required
+                            data-error-required="Wpisz numer telefonu."
+                            data-error-minlength="Numer telefonu musi mieć co najmniej 9 cyfr.">
+                        <span class="field-error" id="error-numerTelefonu"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy</label>
+                        <label class="form-label" for="numerTelefonu2">Telefon dodatkowy <span class="form-optional">(opcjonalnie)</span></label>
                         <input class="form-input" type="tel" id="numerTelefonu2" name="numerTelefonu2"
                             placeholder="Opcjonalnie">
+                        <span class="field-error" id="error-numerTelefonu2"></span>
                     </div>
                 </div>
 
                 <h3 class="form-section-heading">Dane adresowe</h3>
                 <div class="form-group">
-                    <label class="form-label" for="adres">Adres (ulica i numer)</label>
+                    <label class="form-label" for="adres">Adres (ulica i numer) <span class="required">*</span></label>
                     <input class="form-input" type="text" id="adres" name="adres" placeholder="Np. ul. Warszawska 1/2"
-                        minlength="3" required>
+                        minlength="3" required
+                        data-error-required="Wpisz adres (ulica i numer)."
+                        data-error-minlength="Adres musi mieć co najmniej 3 znaki.">
+                    <span class="field-error" id="error-adres"></span>
                 </div>
                 <div class="form-row form-row-3">
                     <div class="form-group dropdown-container">
-                        <label class="form-label" for="kodPocztowy">Kod pocztowy</label>
+                        <label class="form-label" for="kodPocztowy">Kod pocztowy <span class="required">*</span></label>
                         <input class="form-input" type="text" id="kodPocztowy" name="kodPocztowy"
                             placeholder="00-000" autocomplete="off" pattern="\d{2}-\d{3}"
-                            title="Wpisz poprawny kod pocztowy (np. 00-000)" required>
+                            title="Wpisz poprawny kod pocztowy (np. 00-000)" required
+                            data-error-required="Wpisz kod pocztowy."
+                            data-error-pattern="Wpisz poprawny kod pocztowy w formacie 00-000.">
                         <div class="autocomplete-dropdown" id="kodPocztowyDropdown"></div>
+                        <span class="field-error" id="error-kodPocztowy"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="miasto">Miasto</label>
-                        <input class="form-input" readonly type="text" id="miasto" name="miasto"
-                            placeholder="Wybierz miasto..." required>
+                        <label class="form-label" for="miasto">Miasto <span class="required">*</span></label>
+                        <input class="form-input" type="text" id="miasto" name="miasto"
+                            placeholder="Np. Warszawa" minlength="2" required
+                            data-error-required="Wpisz miasto."
+                            data-error-minlength="Nazwa miasta musi mieć co najmniej 2 znaki.">
+                        <span class="field-error" id="error-miasto"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="wojewodztwoSelect">Województwo</label>
-                        <select class="form-select" id="wojewodztwoSelect" name="voivodeshipId" required>
+                        <label class="form-label" for="wojewodztwoSelect">Województwo <span class="required">*</span></label>
+                        <select class="form-select" id="wojewodztwoSelect" name="voivodeshipId" required
+                            data-error-required="Wybierz województwo z listy.">
                             <option value="">Wybierz...</option>
                         </select>
+                        <span class="field-error" id="error-wojewodztwoSelect"></span>
                     </div>
                 </div>
 
@@ -199,49 +231,66 @@
 
                 <h3 class="form-section-heading">Dane logowania</h3>
                 <div class="form-group">
-                    <label class="form-label" for="email">Email logowania (Twój login)</label>
+                    <label class="form-label" for="email">Email logowania (Twój login) <span class="required">*</span></label>
                     <input class="form-input" type="email" id="email" name="email" placeholder="login@portal.pl"
-                        required>
+                        required
+                        data-error-required="Wpisz adres e-mail."
+                        data-error-type="Wpisz poprawny adres e-mail (np. jan@domena.pl).">
+                    <span class="field-error" id="error-email"></span>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="password">Hasło</label>
+                        <label class="form-label" for="password">Hasło <span class="required">*</span></label>
                         <input class="form-input" type="password" id="password" name="password" placeholder="••••••••"
-                            minlength="8" required>
+                            minlength="8" required
+                            data-error-required="Wpisz hasło."
+                            data-error-minlength="Hasło musi mieć co najmniej 8 znaków.">
+                        <span class="field-error" id="error-password"></span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="confirmPassword">Potwierdź hasło</label>
+                        <label class="form-label" for="confirmPassword">Potwierdź hasło <span class="required">*</span></label>
                         <input class="form-input" type="password" id="confirmPassword" name="confirmPassword"
-                            placeholder="••••••••" minlength="8" required>
+                            placeholder="••••••••" minlength="8" required
+                            data-error-required="Potwierdź hasło."
+                            data-error-mismatch="Hasła nie są identyczne.">
+                        <span class="field-error" id="error-confirmPassword"></span>
                     </div>
                 </div>
 
-                <label class="form-checkbox">
-                    <input type="checkbox" id="zgodaRegulamin" name="zgodaRegulamin" required>
-                    <span class="checkbox-custom">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                    <span class="checkbox-text">
-                        <strong>Akceptuję <a href="https://prostasprawa.pl/regulamin" target="_blank" rel="noopener"
-                                style="color:inherit;text-decoration:underline;">regulamin portalu</a></strong>
-                    </span>
-                </label>
-                <label class="form-checkbox">
-                    <input type="checkbox" id="zgodaPrzetwarzanie" name="zgodaPrzetwarzanie" required>
-                    <span class="checkbox-custom">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                    <span class="checkbox-text">
-                        <strong>Zgadzam się na <a href="https://prostasprawa.pl/polityka-prywatnosci" target="_blank"
-                                rel="noopener" style="color:inherit;text-decoration:underline;">przetwarzanie moich
-                                danych osobowych</a></strong>
-                        w celu realizacji usług.
-                    </span>
-                </label>
+                <div class="form-group">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="zgodaRegulamin" name="zgodaRegulamin" required
+                            data-error-required="Musisz akceptować regulamin portalu.">
+                        <span class="checkbox-custom">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="checkbox-text">
+                            <strong>Akceptuję <a href="https://prostasprawa.pl/regulamin" target="_blank" rel="noopener"
+                                    style="color:inherit;text-decoration:underline;">regulamin portalu</a> <span class="required">*</span></strong>
+                        </span>
+                    </label>
+                    <span class="field-error" id="error-zgodaRegulamin"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="zgodaPrzetwarzanie" name="zgodaPrzetwarzanie" required
+                            data-error-required="Musisz wyrazić zgodę na przetwarzanie danych osobowych.">
+                        <span class="checkbox-custom">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="checkbox-text">
+                            <strong>Zgadzam się na <a href="https://prostasprawa.pl/polityka-prywatnosci" target="_blank"
+                                    rel="noopener" style="color:inherit;text-decoration:underline;">przetwarzanie moich
+                                    danych osobowych</a> <span class="required">*</span></strong>
+                            w celu realizacji usług.
+                        </span>
+                    </label>
+                    <span class="field-error" id="error-zgodaPrzetwarzanie"></span>
+                </div>
 
                 <p class="form-error" id="formError"></p>
 
