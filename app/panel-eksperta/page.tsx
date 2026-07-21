@@ -501,7 +501,116 @@ export default function LawFirmDashboardPage() {
           </Card>
         </motion.div>
       </motion.div>
+      {/* Recent Cases and Offers grids */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.26, duration: 0.4 }}
+        className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
+      >
+        {/* Nowe sprawy */}
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
+          <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-white text-base">
+                <Briefcase className="h-4.5 w-4.5 text-primary" />
+                Nowe sprawy w okolicy
+              </CardTitle>
+              <Link href="/panel-eksperta/sprawy">
+                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5 text-xs rounded-lg gap-1.5 h-8">
+                  Zobacz wszystkie
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+            <CardDescription className="text-zinc-400 text-xs">
+              W tym miesiącu opublikowano {stats.casesThisMonth} nowych spraw w Twoich kategoriach
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            {recentCases.length === 0 ? (
+              <p className="text-center text-zinc-500 py-6 text-sm font-light">
+                Brak nowych spraw do wyświetlenia w tym momencie.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentCases.slice(0, 5).map((caseItem) => (
+                  <Link
+                    key={caseItem.id}
+                    href={`/panel-eksperta/sprawy/${caseItem.id}`}
+                    className="block"
+                  >
+                    <div className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/30 hover:bg-zinc-950/25 transition-all cursor-pointer">
+                      <div className="flex-1 min-w-0 pr-2">
+                        <p className="font-semibold text-sm text-white truncate" title={caseItem.nazwaSprawy}>
+                          {caseItem.nazwaSprawy}
+                        </p>
+                        <p className="text-sm text-zinc-400 font-light mt-1 flex items-center gap-1.5">
+                          <span>{caseItem.category.nazwa}</span>
+                          <span className="text-zinc-600">•</span>
+                          <span>{caseItem._count.offers} złożonych ofert</span>
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {getCaseStatusBadge(caseItem.status)}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
+        {/* Ostatnie oferty */}
+        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
+          <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-white text-base">
+                <FileText className="h-4.5 w-4.5 text-primary" />
+                Twoje ostatnie oferty
+              </CardTitle>
+              <Link href="/panel-eksperta/oferty">
+                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5 text-xs rounded-lg gap-1.5 h-8">
+                  Wszystkie oferty
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+            <CardDescription className="text-zinc-400 text-xs">
+              Historia ostatnio złożonych wycen w sprawach
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            {recentOffers.length === 0 ? (
+              <p className="text-center text-zinc-500 py-6 text-sm font-light">
+                Nie złożyłeś jeszcze żadnej oferty cenowej.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentOffers.slice(0, 5).map((offer) => (
+                  <div
+                    key={offer.id}
+                    className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/20 transition-all duration-300"
+                  >
+                    <div className="flex-1 min-w-0 pr-2">
+                      <p className="font-semibold text-sm text-white truncate" title={offer.case.nazwaSprawy}>
+                        {offer.case.nazwaSprawy}
+                      </p>
+                      <p className="text-xs font-bold text-primary mt-1">
+                        {formatCurrency(offer.kwotaBrutto)}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      {getOfferStatusBadge(offer.status)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
       {/* Package info and limits */}
       {permissions && (
         <motion.div
@@ -1188,11 +1297,13 @@ export default function LawFirmDashboardPage() {
         </Card>
       </motion.div>
 
+
+
       {/* Subscription & Points Summary Cards */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.26, duration: 0.4 }}
+        transition={{ delay: 0.28, duration: 0.4 }}
         className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
       >
         {/* Stan punktów */}
@@ -1263,7 +1374,7 @@ export default function LawFirmDashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.28, duration: 0.4 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
         className="relative z-10"
       >
         <Card variant="glass" className="rounded-2xl relative overflow-hidden">
@@ -1307,7 +1418,7 @@ export default function LawFirmDashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
+          transition={{ delay: 0.32, duration: 0.4 }}
           className="relative z-10"
         >
           <Card variant="glass" className="rounded-2xl relative overflow-hidden">
@@ -1354,117 +1465,6 @@ export default function LawFirmDashboardPage() {
           </Card>
         </motion.div>
       )}
-
-      {/* Recent Cases and Offers grids */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.32, duration: 0.4 }}
-        className="grid gap-6 grid-cols-1 md:grid-cols-2 relative z-10"
-      >
-        {/* Nowe sprawy */}
-        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
-          <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-white text-base">
-                <Briefcase className="h-4.5 w-4.5 text-primary" />
-                Nowe sprawy w okolicy
-              </CardTitle>
-              <Link href="/panel-eksperta/sprawy">
-                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5 text-xs rounded-lg gap-1.5 h-8">
-                  Zobacz wszystkie
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </div>
-            <CardDescription className="text-zinc-400 text-xs">
-              W tym miesiącu opublikowano {stats.casesThisMonth} nowych spraw w Twoich kategoriach
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            {recentCases.length === 0 ? (
-              <p className="text-center text-zinc-500 py-6 text-sm font-light">
-                Brak nowych spraw do wyświetlenia w tym momencie.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {recentCases.slice(0, 5).map((caseItem) => (
-                  <Link
-                    key={caseItem.id}
-                    href={`/panel-eksperta/sprawy/${caseItem.id}`}
-                    className="block"
-                  >
-                    <div className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/30 hover:bg-zinc-950/25 transition-all cursor-pointer">
-                      <div className="flex-1 min-w-0 pr-2">
-                        <p className="font-semibold text-sm text-white truncate" title={caseItem.nazwaSprawy}>
-                          {caseItem.nazwaSprawy}
-                        </p>
-                        <p className="text-sm text-zinc-400 font-light mt-1 flex items-center gap-1.5">
-                          <span>{caseItem.category.nazwa}</span>
-                          <span className="text-zinc-600">•</span>
-                          <span>{caseItem._count.offers} złożonych ofert</span>
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0">
-                        {getCaseStatusBadge(caseItem.status)}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Ostatnie oferty */}
-        <Card variant="glass" className="rounded-2xl relative overflow-hidden">
-          <CardHeader className="py-4 px-6 border-b border-border/20 bg-zinc-950/15">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-white text-base">
-                <FileText className="h-4.5 w-4.5 text-primary" />
-                Twoje ostatnie oferty
-              </CardTitle>
-              <Link href="/panel-eksperta/oferty">
-                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white hover:bg-white/5 text-xs rounded-lg gap-1.5 h-8">
-                  Wszystkie oferty
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </div>
-            <CardDescription className="text-zinc-400 text-xs">
-              Historia ostatnio złożonych wycen w sprawach
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            {recentOffers.length === 0 ? (
-              <p className="text-center text-zinc-500 py-6 text-sm font-light">
-                Nie złożyłeś jeszcze żadnej oferty cenowej.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {recentOffers.slice(0, 5).map((offer) => (
-                  <div
-                    key={offer.id}
-                    className="flex items-start justify-between p-3.5 bg-zinc-950/15 border border-border/10 rounded-xl hover:border-primary/20 transition-all duration-300"
-                  >
-                    <div className="flex-1 min-w-0 pr-2">
-                      <p className="font-semibold text-sm text-white truncate" title={offer.case.nazwaSprawy}>
-                        {offer.case.nazwaSprawy}
-                      </p>
-                      <p className="text-xs font-bold text-primary mt-1">
-                        {formatCurrency(offer.kwotaBrutto)}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0">
-                      {getOfferStatusBadge(offer.status)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
     </div>
   )
 }

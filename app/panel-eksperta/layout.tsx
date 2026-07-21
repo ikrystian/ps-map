@@ -13,6 +13,7 @@ import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
 import { AccountManagerWidget } from "@/components/law-firm/AccountManagerWidget"
 import { NotificationSettingsPromptModal } from "@/components/law-firm/NotificationSettingsPromptModal"
 import { BusinessPackageWelcomeModal } from "@/components/law-firm/BusinessPackageWelcomeModal"
+import { AreaRequiredModal } from "@/components/law-firm/AreaRequiredModal"
 import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { MessageNotificationSound } from "@/components/MessageNotificationSound"
 import { NotificationBell } from "@/components/NotificationBell"
@@ -552,6 +553,9 @@ export default function LawFirmPanelLayout({
 
       {/* Account Manager Widget */}
       <AccountManagerWidget />
+
+      {/* Modal braku zakresu usług / obszaru działania */}
+      <AreaRequiredModal />
 
       {/* Expert Onboarding Tour */}
       <ExpertTourManager />
