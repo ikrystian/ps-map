@@ -199,6 +199,8 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
       <AdresL1>${escapeXml(buyerAddressL1)}</AdresL1>
       ${buyerAddressL2 ? `<AdresL2>${escapeXml(buyerAddressL2)}</AdresL2>` : ""}
     </Adres>
+    <JST>2</JST>
+    <GV>2</GV>
   </Podmiot2>
   <Fa>
     <KodWaluty>PLN</KodWaluty>
