@@ -192,11 +192,11 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
   <Podmiot2>
     <DaneIdentyfikacyjne>
       ${buyerNip ? `<NIP>${buyerNip}</NIP>` : `<BrakID>1</BrakID>`}
-      <Nazwa>${escapeXml(buyerName)}</Nazwa>
+      <Nazwa>${escapeXml(buyerName || "Nabywca")}</Nazwa>
     </DaneIdentyfikacyjne>
     <Adres>
       <KodKraju>PL</KodKraju>
-      <AdresL1>${escapeXml(buyerAddressL1)}</AdresL1>
+      <AdresL1>${escapeXml(buyerAddressL1 || "Brak adresu")}</AdresL1>
       ${buyerAddressL2 ? `<AdresL2>${escapeXml(buyerAddressL2)}</AdresL2>` : ""}
     </Adres>
     <JST>2</JST>
@@ -210,17 +210,23 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     <P_13_1>${netStr}</P_13_1>
     <P_14_1>${vatStr}</P_14_1>
     <P_15>${grossStr}</P_15>
-    <RodzajFaktury>VAT</RodzajFaktury>
     <Adnotacje>
       <P_16>2</P_16>
       <P_17>2</P_17>
       <P_18>2</P_18>
       <P_18A>2</P_18A>
-      <P_19>2</P_19>
-      <P_22>2</P_22>
+      <Zwolnienie>
+        <P_19N>1</P_19N>
+      </Zwolnienie>
+      <NoweSrodkiTransportu>
+        <P_22N>1</P_22N>
+      </NoweSrodkiTransportu>
       <P_23>2</P_23>
-      <P_PMarzy>2</P_PMarzy>
+      <PMarzy>
+        <P_PMarzyN>1</P_PMarzyN>
+      </PMarzy>
     </Adnotacje>
+    <RodzajFaktury>VAT</RodzajFaktury>
     <FaWiersz>
       <NrWierszaFa>1</NrWierszaFa>
       <P_7>${escapeXml(itemDescription)}</P_7>
