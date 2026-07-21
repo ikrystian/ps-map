@@ -202,6 +202,41 @@ async function markAsPaid(order: ResolvableOrder, transactionId: string) {
 }
 
 /**
+ * Porządkuje zamówienia P24, na które klient nigdy nie wrócił na stronę sukcesu
+ * (więc nikt nie wywołał `resolveP24Order` przy powrocie). Bez tego takie
+ * zamówienia zostałyby w statusie OCZEKUJE na zawsze. Wywoływane cyklicznie
+ * przez wewnętrzny scheduler (`lib/scheduler.ts`) oraz dostępne pod
+ * `/api/cron/expire-pending-payments` do ręcznego/zewnętrznego wyzwolenia.
+ */
+export async function expireStalePrzelewy24Orders(): Promise<{ checked: number; resolved: number }> {
+  const expiryThreshold = new Date(Date.now() - P24_PENDING_EXPIRY_HOURS * 60 * 60 * 1000)
+
+  const staleOrders = await prisma.order.findMany({
+    where: {
+      metodaPlatnosci: "PRZELEWY24",
+      statusPlatnosci: "OCZEKUJE",
+      externalOrderId: { not: null },
+      createdAt: { lt: expiryThreshold },
+    },
+    include: { invoice: true, subscriptionPlan: true },
+  })
+
+  let resolvedCount = 0
+  for (const order of staleOrders) {
+    try {
+      const result = await resolveP24Order(order)
+      if (result.status !== "OCZEKUJE") {
+        resolvedCount++
+      }
+    } catch (err) {
+      console.error(`Error resolving stale P24 order ${order.id}:`, err)
+    }
+  }
+
+  return { checked: staleOrders.length, resolved: resolvedCount }
+}
+
+/**
  * Rozstrzyga bieżący status zamówienia opłacanego przez Przelewy24 na podstawie
  * stanu transakcji po stronie P24. Używane zarówno przy powrocie klienta na stronę
  * sukcesu (weryfikacja "na żądanie"), jak i w zadaniu CRON porządkującym porzucone

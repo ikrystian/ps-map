@@ -2,6 +2,7 @@ import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./co
 import { cleanupOldJobRuns, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { pollPendingKsefInvoices } from "./ksef"
+import { expireStalePrzelewy24Orders } from "./przelewy24-resolve"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
@@ -90,7 +91,21 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 5. Przeliczanie pozycji w rankingu (co 12 godzin)
+    // 5. Anulowanie porzuconych płatności Przelewy24 (klient nie wrócił na
+    //    stronę sukcesu, więc nikt nie zweryfikował transakcji) — co 1 godzinę,
+    //    próg przedawnienia to P24_PENDING_EXPIRY_HOURS (72h).
+    {
+      name: "expire-pending-p24-payments",
+      description: "Anulowanie przeterminowanych, porzuconych płatności Przelewy24",
+      intervalMs: HOUR,
+      options: { retries: 2, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const result = await expireStalePrzelewy24Orders()
+        return result
+      },
+    },
+
+    // 6. Przeliczanie pozycji w rankingu (co 12 godzin)
     {
       name: "rankings",
       description: "Przeliczanie pozycji kancelarii w rankingu",
@@ -102,7 +117,7 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 6. Generowanie linków Google Meet na ~5 min przed konsultacją (co 1 minutę)
+    // 7. Generowanie linków Google Meet na ~5 min przed konsultacją (co 1 minutę)
     {
       name: "google-meet-links",
       description: "Generowanie linków Google Meet przed konsultacją",
@@ -114,7 +129,7 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 7. Sprawdzanie statusu i pobieranie UPO dla faktur wysłanych do KSeF
+    // 8. Sprawdzanie statusu i pobieranie UPO dla faktur wysłanych do KSeF
     //    (status "SENT" → ACCEPTED/REJECTED). W prod co 5 minut, w dev co minutę.
     {
       name: "ksef-upo-poll",
@@ -127,7 +142,7 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 8. Czyszczenie starej historii uruchomień zadań (co 24 godziny)
+    // 9. Czyszczenie starej historii uruchomień zadań (co 24 godziny)
     //    Zapobiega nieograniczonemu wzrostowi tabeli ScheduledJobRun.
     {
       name: "cleanup-job-runs",
@@ -140,7 +155,7 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 9. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
+    // 10. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
     {
       name: "db-backup-gdrive",
       description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (2x dziennie)",
