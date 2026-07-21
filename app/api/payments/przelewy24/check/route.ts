@@ -55,6 +55,39 @@ export async function POST(request: NextRequest) {
     const p24Tx = txResult.data
 
     // Status P24: 0 - brak wpłaty, 1 - przedpłata (wymaga verify), 2 - wykonana, 3 - zwrócona
+    if (p24Tx.status === 3) {
+      // Zwrot trzeba odzwierciedlić w statusie zamówienia — inaczej strona sukcesu
+      // zapętla się w "OCZEKUJE" mimo że środki wróciły do klienta
+      const updated = await prisma.order.updateMany({
+        where: { id: order.id, statusPlatnosci: { not: "ZWROT" } },
+        data: { statusPlatnosci: "ZWROT" },
+      })
+
+      if (updated.count > 0) {
+        const lawFirm = await prisma.lawFirm.findUnique({ where: { id: order.lawFirmId } })
+        if (lawFirm) {
+          const notification = await prisma.notification.create({
+            data: {
+              userId: lawFirm.userId,
+              typ: "ZMIANA_STATUSU",
+              tytul: "Płatność zwrócona",
+              tresc: `Płatność za zamówienie ${order.orderNumber} została zwrócona.`,
+              linkUrl: "/panel-eksperta/punkty",
+            },
+          })
+
+          try {
+            const { emitNewNotification } = await import("@/lib/socket")
+            await emitNewNotification(lawFirm.userId, notification)
+          } catch (e) {
+            console.error("Socket emit error:", e)
+          }
+        }
+      }
+
+      return Response.json({ status: "ZWROT" })
+    }
+
     if (p24Tx.status !== 1 && p24Tx.status !== 2) {
       return Response.json({ status: "OCZEKUJE" })
     }

@@ -200,14 +200,12 @@ export default function CheckoutSuccessPage() {
             })
 
             if (verifyResponse.ok) {
-              const verifyData = await verifyResponse.json()
-              const isCompleted =
-                verifyData.status === "COMPLETED" || verifyData.status === "ZAPLACONE"
-              if (isCompleted) {
-                const refreshedResponse = await fetch(`/api/orders/${orderId}`)
-                if (refreshedResponse.ok) {
-                  data = await refreshedResponse.json()
-                }
+              // Endpoint weryfikacyjny mógł zaktualizować zamówienie do dowolnego statusu
+              // (ZAPLACONE, ZWROT, ANULOWANE) — odśwież zawsze, nie tylko przy sukcesie,
+              // inaczej strona zostaje w "OCZEKUJE" mimo rozstrzygniętej płatności
+              const refreshedResponse = await fetch(`/api/orders/${orderId}`)
+              if (refreshedResponse.ok) {
+                data = await refreshedResponse.json()
               }
             }
           }
@@ -535,9 +533,13 @@ export default function CheckoutSuccessPage() {
                 <div className="p-3 bg-error/10 rounded-full mb-4">
                   <XCircle className="h-12 w-12 text-error" />
                 </div>
-                <h2 className="text-xl font-bold mb-2">Transakcja nie powiodła się</h2>
+                <h2 className="text-xl font-bold mb-2">
+                  {order?.statusPlatnosci === "ZWROT" ? "Płatność została zwrócona" : "Transakcja nie powiodła się"}
+                </h2>
                 <p className="text-muted-foreground text-sm max-w-xs mb-6">
-                  Twoja płatność została odrzucona lub anulowana. Spróbuj dokonać zakupu ponownie.
+                  {order?.statusPlatnosci === "ZWROT"
+                    ? "Środki za tę transakcję zostały zwrócone. Jeśli nie spodziewałeś się zwrotu, skontaktuj się z obsługą klienta."
+                    : "Twoja płatność została odrzucona lub anulowana. Spróbuj dokonać zakupu ponownie."}
                 </p>
                 <div className="flex gap-3">
                   <Button variant="outline" onClick={() => router.push("/panel-eksperta/punkty")} className="rounded-xl">
