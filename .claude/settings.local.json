@@ -80,7 +80,8 @@
       "Bash(curl -s http://localhost:3000/api/subscription-plans)",
       "Bash(python3 -c \"import json,sys; [print\\(p['typ'], p.get\\('kolor'\\)\\) for p in json.load\\(sys.stdin\\)]\")",
       "Skill(update-config)",
-      "WebFetch(domain:developers.przelewy24.pl)"
+      "WebFetch(domain:developers.przelewy24.pl)",
+      "Bash(curl -s --max-time 20 \"https://api-test.ksef.mf.gov.pl/api/v2/security/public-key-certificates\")"
     ]
   }
 }

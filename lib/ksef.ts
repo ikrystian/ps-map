@@ -152,12 +152,14 @@ function escapeXml(unsafe: string): string {
 /**
  * Generates an XML invoice compliant with KSeF FA(3) schema
  */
-export function generateInvoiceXml(invoice: any): string {
+export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): string {
   const issueDateStr = formatDate(invoice.issueDate)
   const saleDateStr = formatDate(invoice.saleDate)
   const creationDateTimeStr = formatDateTime(invoice.issueDate)
 
-  const sellerNip = "1234567890" // Platform NIP
+  // NIP sprzedawcy musi być zgodny z NIP-em uwierzytelnionego kontekstu KSeF,
+  // inaczej KSeF odrzuci fakturę.
+  const sellerNip = sellerNipOverride?.replace(/\D/g, "") || "1234567890"
   const sellerName = "Prosta Sprawa Sp. z o.o."
   const sellerAddress = parseAddress("ul. Przykładowa 123")
   const sellerPostalCode = "00-001"
@@ -287,7 +289,7 @@ function ksefBaseUrl(config: KsefConfig): string {
 async function ksefAuthenticate(
   baseUrl: string,
   config: KsefConfig
-): Promise<{ accessToken: string; symPublicKey: crypto.KeyObject }> {
+): Promise<{ accessToken: string; symPublicKey: crypto.KeyObject; symPublicKeyId?: string }> {
   // 1. Fetch certificates
   const certsResponse = await ksefFetch(
     `${baseUrl}/security/public-key-certificates`,
@@ -298,8 +300,17 @@ async function ksefAuthenticate(
     throw new Error(`Failed to fetch KSeF security certificates. HTTP Status ${certsResponse.status}`)
   }
   const certsData = await certsResponse.json()
-  const tokenCertObj = certsData.subjects?.find((s: any) => s.usage === "KsefTokenEncryption") || certsData.subjects?.[0]
-  const symCertObj = certsData.subjects?.find((s: any) => s.usage === "SymmetricKeyEncryption") || certsData.subjects?.[0]
+  // API zwraca tablicę certyfikatów, a `usage` jest tablicą zastosowań,
+  // np. [{ certificate: "...", usage: ["KsefTokenEncryption"] }, ...]
+  const certs: any[] = Array.isArray(certsData)
+    ? certsData
+    : certsData.certificates || certsData.subjects || []
+  const findByUsage = (usage: string) =>
+    certs.find((c: any) =>
+      Array.isArray(c.usage) ? c.usage.includes(usage) : c.usage === usage
+    )
+  const tokenCertObj = findByUsage("KsefTokenEncryption") || certs[0]
+  const symCertObj = findByUsage("SymmetricKeyEncryption") || certs[0]
 
   if (!tokenCertObj || !symCertObj) {
     throw new Error("Could not identify required encryption certificates from KSeF")
@@ -312,10 +323,6 @@ async function ksefAuthenticate(
   const cleanedNip = config.nip.replace(/\D/g, "")
   const challengeResponse = await ksefFetch(`${baseUrl}/auth/challenge`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      identifier: { type: "onip", identifier: cleanedNip },
-    }),
   }, "Auth challenge")
 
   if (!challengeResponse.ok) {
@@ -323,11 +330,13 @@ async function ksefAuthenticate(
   }
   const challengeData = await challengeResponse.json()
   const challenge = challengeData.challenge
-  const timestamp = challengeData.timestamp
+  // KSeF 2.0 wymaga znacznika czasu challenge jako liczby milisekund epoch
+  // (format szyfrowanego ciągu: "{token}|{timestampMs}").
+  const challengeTimestampMs: number =
+    challengeData.timestampMs ?? new Date(challengeData.timestamp).getTime()
 
   // 3. Encrypt Authorization Token
-  const challengeTimestamp = new Date(timestamp).toISOString()
-  const textToEncrypt = `${config.token}|${challengeTimestamp}`
+  const textToEncrypt = `${config.token}|${challengeTimestampMs}`
   const encryptedToken = crypto.publicEncrypt({
     key: tokenPublicKey,
     padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
@@ -340,7 +349,9 @@ async function ksefAuthenticate(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       challenge,
-      ksefToken: encryptedToken.toString("base64"),
+      contextIdentifier: { type: "Nip", value: cleanedNip },
+      encryptedToken: encryptedToken.toString("base64"),
+      ...(tokenCertObj.publicKeyId ? { publicKeyId: tokenCertObj.publicKeyId } : {}),
     }),
   }, "Token authentication")
 
@@ -350,20 +361,60 @@ async function ksefAuthenticate(
   }
   const tokenData = await tokenResponse.json()
   const tempToken = tokenData.authenticationToken?.token
+  const authReferenceNumber = tokenData.referenceNumber
+  if (!tempToken || !authReferenceNumber) {
+    throw new Error("KSeF Token Authentication: missing authenticationToken/referenceNumber in response")
+  }
 
-  // 5. Redeem Token (Get JWT Access Token)
+  // 4b. Poll authentication operation status until it completes
+  // (code 100 = w toku, 200 = sukces, 4xx = niepowodzenie).
+  const authHeaders = { Authorization: `Bearer ${tempToken}` }
+  let authCompleted = false
+  for (let i = 0; i < 20; i++) {
+    const statusResponse = await ksefFetch(
+      `${baseUrl}/auth/${authReferenceNumber}`,
+      { headers: authHeaders },
+      "Auth status check"
+    )
+    if (!statusResponse.ok) {
+      throw new Error(`KSeF Auth status check failed: HTTP ${statusResponse.status}`)
+    }
+    const statusData = await statusResponse.json()
+    const code = statusData.status?.code
+    if (code === 200) {
+      authCompleted = true
+      break
+    }
+    if (typeof code === "number" && code >= 400) {
+      const details = [statusData.status?.description, ...(statusData.status?.details || [])]
+        .filter(Boolean)
+        .join("; ")
+      throw new Error(`KSeF authentication failed (status ${code}): ${details}`)
+    }
+    await sleep(1000)
+  }
+  if (!authCompleted) {
+    throw new Error("KSeF authentication did not complete in time")
+  }
+
+  // 5. Redeem Token (Get JWT Access Token) — authorized with the temporary
+  // authenticationToken; the token pair can only be redeemed once.
   const redeemResponse = await ksefFetch(`${baseUrl}/auth/token/redeem`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ authenticationToken: tempToken }),
+    headers: authHeaders,
   }, "Token redeem")
 
   if (!redeemResponse.ok) {
-    throw new Error(`KSeF Token Redeem failed: ${redeemResponse.statusText}`)
+    const errorText = await redeemResponse.text()
+    throw new Error(`KSeF Token Redeem failed (HTTP ${redeemResponse.status}): ${errorText}`)
   }
   const redeemData = await redeemResponse.json()
+  const accessToken = redeemData.accessToken?.token
+  if (!accessToken) {
+    throw new Error("KSeF Token Redeem: missing accessToken in response")
+  }
 
-  return { accessToken: redeemData.accessToken, symPublicKey }
+  return { accessToken, symPublicKey, symPublicKeyId: symCertObj.publicKeyId }
 }
 
 /**
@@ -493,12 +544,11 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
   // Real KSeF 2.0 Integration
   try {
     const baseUrl = ksefBaseUrl(config)
-    const cleanedNip = config.nip.replace(/\D/g, "")
 
     console.log(`KSeF: Connecting to KSeF 2.0 (${config.env}) for invoice ${invoice.invoiceNumber}`)
 
     // 1-5. Authenticate (certificates → challenge → encrypt token → redeem JWT)
-    const { accessToken, symPublicKey } = await ksefAuthenticate(baseUrl, config)
+    const { accessToken, symPublicKey, symPublicKeyId } = await ksefAuthenticate(baseUrl, config)
 
     // 6. Generate AES symmetric key and IV for invoice session
     const aesKey = crypto.randomBytes(32)
@@ -511,7 +561,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
       oaepHash: "sha256"
     }, aesKey)
 
-    // 7. Start interactive session
+    // 7. Start interactive session (IV przekazywany przy otwarciu sesji)
     const sessionResponse = await ksefFetch(`${baseUrl}/sessions/online`, {
       method: "POST",
       headers: {
@@ -522,11 +572,12 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
         formCode: {
           systemCode: "FA (3)",
           schemaVersion: "1-0E",
-          targetNamespace: "http://crd.gov.pl/wzor/2025/06/25/13775/",
-          value: "Faktura"
+          value: "FA"
         },
         encryption: {
-          encryptionKey: encryptedSymKey.toString("base64")
+          encryptedSymmetricKey: encryptedSymKey.toString("base64"),
+          initializationVector: aesIv.toString("base64"),
+          ...(symPublicKeyId ? { publicKeyId: symPublicKeyId } : {})
         }
       })
     }, "Online session init")
@@ -538,22 +589,28 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     const sessionData = await sessionResponse.json()
     const sessionRefNumber = sessionData.referenceNumber
 
-    // 8. Generate invoice XML and encrypt it
-    const xmlContent = generateInvoiceXml(invoice)
+    // 8. Generate invoice XML and encrypt it (AES-256-CBC, PKCS#7)
+    const xmlContent = generateInvoiceXml(invoice, config.nip)
+    const xmlBuffer = Buffer.from(xmlContent, "utf8")
     const cipher = crypto.createCipheriv("aes-256-cbc", aesKey, aesIv)
-    let encryptedXml = cipher.update(xmlContent, "utf8", "base64")
-    encryptedXml += cipher.final("base64")
+    const encryptedBuffer = Buffer.concat([cipher.update(xmlBuffer), cipher.final()])
+    const sha256Base64 = (data: Buffer) =>
+      crypto.createHash("sha256").update(data).digest("base64")
 
-    // 9. Send Encrypted Invoice
+    // 9. Send Encrypted Invoice (hash i rozmiar jawnego XML oraz szyfrogramu)
     const uploadResponse = await ksefFetch(`${baseUrl}/sessions/online/${sessionRefNumber}/invoices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
-        "X-KSeF-Symmetric-IV": aesIv.toString("base64")
+        "Authorization": `Bearer ${accessToken}`
       },
       body: JSON.stringify({
-        invoiceContent: encryptedXml
+        invoiceHash: sha256Base64(xmlBuffer),
+        invoiceSize: xmlBuffer.length,
+        encryptedInvoiceHash: sha256Base64(encryptedBuffer),
+        encryptedInvoiceSize: encryptedBuffer.length,
+        encryptedInvoiceContent: encryptedBuffer.toString("base64"),
+        offlineMode: false
       })
     }, "Upload invoice")
 
@@ -563,16 +620,25 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     }
     const uploadData = await uploadResponse.json()
 
-    // 10. Process upload result
-    const docNumber = uploadData.documentNumber
-    const ksefId = uploadData.ksefInvoiceNumber || `KSEF-${cleanedNip}-${formatDate(new Date()).replace(/-/g, "")}-${docNumber}`
+    // 10. Process upload result. Finalny numer KSeF zostanie nadany dopiero po
+    // asynchronicznym przetworzeniu — pobiera go checkInvoiceKsefStatus.
+    const invoiceElementRef = uploadData.referenceNumber
+
+    // 11. Close session to trigger processing/UPO generation (best-effort)
+    try {
+      await ksefFetch(`${baseUrl}/sessions/online/${sessionRefNumber}/close`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${accessToken}` }
+      }, "Close session")
+    } catch (e) {
+      console.warn("KSeF: Failed to close online session (will auto-close):", e)
+    }
 
     // Update database
     await prisma.invoice.update({
       where: { id: invoiceId },
       data: {
         ksefStatus: "SENT",
-        ksefNumber: ksefId,
         ksefReferenceNumber: sessionRefNumber,
         ksefDiagnostics: "Faktura wysłana do KSeF. Oczekiwanie na przetworzenie i nadanie UPO."
       }
@@ -586,7 +652,7 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
         message: `Pomyślnie wysłano fakturę ${invoice.invoiceNumber} do KSeF (Real API).`,
         metadata: JSON.stringify({
           invoiceNumber: invoice.invoiceNumber,
-          ksefNumber: ksefId,
+          invoiceElementRef,
           ksefReferenceNumber: sessionRefNumber
         })
       }
@@ -761,11 +827,10 @@ export async function checkInvoiceKsefStatus(invoiceId: string): Promise<string>
       // Próba pobrania UPO (best-effort — przy niepowodzeniu pobierzemy później).
       let upoXml: string | null = null
       try {
-        const upoRes = await ksefFetch(
-          `${baseUrl}/sessions/${invoice.ksefReferenceNumber}/invoices/${invoiceRef || ksefNumber}/upo`,
-          { headers: authHeader },
-          "Fetch UPO"
-        )
+        const upoUrl = invoiceRef
+          ? `${baseUrl}/sessions/${invoice.ksefReferenceNumber}/invoices/${invoiceRef}/upo`
+          : `${baseUrl}/sessions/${invoice.ksefReferenceNumber}/invoices/ksef/${ksefNumber}/upo`
+        const upoRes = await ksefFetch(upoUrl, { headers: authHeader }, "Fetch UPO")
         if (upoRes.ok) {
           upoXml = await upoRes.text()
         }
