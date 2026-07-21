@@ -72,7 +72,7 @@ export default function ComingSoon() {
     })();
 
     // Countdown — Cel: 1 lipca 2026, 00:00 (czas lokalny)
-    const target = new Date(2026, 6, 1, 0, 0, 0).getTime();
+    const target = new Date(2026, 7, 1, 0, 0, 0).getTime();
     const cd = document.getElementById("countdown");
     const elDays = cd?.querySelector("[data-days]");
     const elHours = cd?.querySelector("[data-hours]");
@@ -81,12 +81,14 @@ export default function ComingSoon() {
 
     const pad = (n: number) => String(n).padStart(2, "0");
 
+    let timer: ReturnType<typeof setInterval> | undefined = undefined;
+
     function tick() {
       if (!cd) return;
       const diff = target - Date.now();
       if (diff <= 0) {
         cd.innerHTML = '<p class="countdown__done">Już wystartowaliśmy! 🎉</p>';
-        clearInterval(timer);
+        if (timer !== undefined) clearInterval(timer);
         return;
       }
       const totalSeconds = Math.floor(diff / 1000);
@@ -102,10 +104,10 @@ export default function ComingSoon() {
     }
 
     tick();
-    const timer = setInterval(tick, 1000);
+    timer = setInterval(tick, 1000);
 
     return () => {
-      clearInterval(timer);
+      if (timer !== undefined) clearInterval(timer);
       document.body.style.background = previousBg;
     };
   }, []);
