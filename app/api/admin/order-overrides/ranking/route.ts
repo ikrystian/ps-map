@@ -167,7 +167,6 @@ export async function GET(request: NextRequest) {
         id: firm.id,
         slug: firm.slug,
         nazwa: firm.nazwa,
-        nazwa: firm.nazwa,
         logo: firm.logo,
         miasto: firm.user?.miasto || "",
         zweryfikowana: firm.zweryfikowana,
@@ -249,7 +248,6 @@ export async function GET(request: NextRequest) {
         lawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             logo: true,
             user: {

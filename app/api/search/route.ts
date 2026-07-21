@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
         id: true,
         slug: true,
         nazwa: true,
-        nazwa: true,
         logo: true,
         zdjecieGlowne: true,
         opis: true,
@@ -71,7 +70,6 @@ export async function GET(request: NextRequest) {
       return {
         id: firm.id,
         slug: firm.slug,
-        nazwa: firm.nazwa,
         nazwa: firm.nazwa,
         logo: pokazAwatar ? firm.logo : null,
         zdjecieGlowne: firm.zdjecieGlowne,

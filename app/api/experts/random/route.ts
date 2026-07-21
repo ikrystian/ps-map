@@ -14,7 +14,6 @@ export async function GET() {
         id: true,
         slug: true,
         nazwa: true,
-        nazwa: true,
         opis: true,
         logo: true,
         zdjecieGlowne: true,

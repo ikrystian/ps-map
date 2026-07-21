@@ -62,7 +62,6 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               nazwa: true,
-              nazwa: true,
               nip: true,
               zweryfikowana: true,
               aktywna: true,

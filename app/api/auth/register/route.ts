@@ -272,7 +272,6 @@ export async function POST(request: NextRequest) {
           typ: userData.lawFirm.typ,
           typInny: userData.lawFirm.typInny || null,
           nazwa: userData.lawFirm.nazwa || userData.lawFirm.nazwa,
-          nazwa: userData.lawFirm.nazwa,
           slug,
           nip, // Tymczasowy NIP dla MVP
           regon: userData.lawFirm.regon || null,

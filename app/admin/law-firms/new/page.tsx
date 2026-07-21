@@ -142,7 +142,6 @@ export default function NewLawFirmPage() {
       typInny: "",
       expertiseCategoryId: "",
       nazwa: "",
-      nazwa: "",
       slug: "",
       nip: "",
       regon: "",

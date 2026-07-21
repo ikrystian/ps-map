@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
       let formattedFeatured = featuredFirms.map((firm: any) => ({
         id: firm.id,
         nazwa: firm.nazwa,
-        nazwa: firm.nazwa,
         logo: firm.logo,
         opis: firm.opis,
         miasto: firm.miasto,
@@ -83,7 +82,6 @@ export async function GET(request: NextRequest) {
       // Format data for frontend
       let formattedTop = topFirms.map((firm: any) => ({
         id: firm.id,
-        nazwa: firm.nazwa,
         nazwa: firm.nazwa,
         logo: firm.logo,
         opis: firm.opis,

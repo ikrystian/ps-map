@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
         id: true,
         slug: true,
         nazwa: true,
-        nazwa: true,
         logo: true,
         opis: true,
         punktySaldo: true,
@@ -67,7 +66,6 @@ export async function GET(request: NextRequest) {
       return {
         id: firm.id,
         slug: firm.slug,
-        nazwa: firm.nazwa,
         nazwa: firm.nazwa,
         logo: firm.logo,
         opis: firm.opis,

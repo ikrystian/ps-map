@@ -24,7 +24,6 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
             nip: true,
           },
         },
@@ -107,7 +106,6 @@ export async function PUT(
         lawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
           },
         },

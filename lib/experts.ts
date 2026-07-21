@@ -70,7 +70,6 @@ export async function getExpertsCatalog(
     select: {
       slug: true,
       nazwa: true,
-      nazwa: true,
       user: {
         select: {
           imie: true,

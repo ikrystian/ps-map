@@ -177,7 +177,6 @@ export async function allocateMonthlyPoints(year: number, month: number) {
         select: {
           id: true,
           nazwa: true,
-          nazwa: true,
           punktySaldo: true,
           stronaWww: true
         }

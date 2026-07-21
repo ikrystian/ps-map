@@ -31,10 +31,7 @@ export async function GET(request: NextRequest) {
         { externalOrderId: { contains: search } },
         {
           lawFirm: {
-            OR: [
-              { nazwa: { contains: search } },
-              { nazwa: { contains: search } }
-            ]
+            nazwa: { contains: search }
           }
         },
       ]
@@ -72,7 +69,6 @@ export async function GET(request: NextRequest) {
           lawFirm: {
             select: {
               id: true,
-              nazwa: true,
               nazwa: true,
               user: {
                 select: {

@@ -75,7 +75,6 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               nazwa: true,
-              nazwa: true,
             },
           },
           client: {
@@ -212,7 +211,6 @@ export async function POST(request: NextRequest) {
         lawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
           },
         },

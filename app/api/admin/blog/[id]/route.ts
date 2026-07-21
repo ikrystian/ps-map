@@ -25,13 +25,11 @@ export async function GET(
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             slug: true,
           },
@@ -70,7 +68,6 @@ export async function DELETE(
       include: {
         lawFirm: {
           select: {
-            nazwa: true,
             nazwa: true,
           },
         },
@@ -236,13 +233,11 @@ export async function PATCH(
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             slug: true,
           },

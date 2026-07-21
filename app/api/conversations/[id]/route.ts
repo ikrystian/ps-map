@@ -60,7 +60,6 @@ export async function GET(
               select: {
                 id: true,
                 nazwa: true,
-                nazwa: true,
                 logo: true,
               },
             },

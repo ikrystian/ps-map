@@ -67,13 +67,11 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               nazwa: true,
-              nazwa: true,
             },
           },
           sponsoredLawFirm: {
             select: {
               id: true,
-              nazwa: true,
               nazwa: true,
               slug: true,
             },
@@ -213,13 +211,11 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
           },
         },
         sponsoredLawFirm: {
           select: {
             id: true,
-            nazwa: true,
             nazwa: true,
             slug: true,
           },

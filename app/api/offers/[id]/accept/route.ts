@@ -57,7 +57,6 @@ export async function POST(
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
             userId: true,
             slug: true,
             user: {

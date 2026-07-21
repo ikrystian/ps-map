@@ -37,7 +37,6 @@ export async function POST(
         lawFirm: {
           select: {
             nazwa: true,
-            nazwa: true,
           },
         },
       },

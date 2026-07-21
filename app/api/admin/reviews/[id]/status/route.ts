@@ -47,7 +47,6 @@ export async function PATCH(
           select: {
             id: true,
             nazwa: true,
-            nazwa: true,
           },
         },
         client: {
