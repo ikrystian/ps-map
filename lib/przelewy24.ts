@@ -51,6 +51,21 @@ export interface P24VerifyRequest {
   sign: string
 }
 
+export interface P24PaymentMethod {
+  id: number
+  name: string
+  blueMediaId?: number
+  imgUrl: string
+  mobileImgUrl: string
+  status: boolean
+}
+
+export interface P24PaymentMethodsResponse {
+  data?: P24PaymentMethod[]
+  error?: string
+  responseCode?: number
+}
+
 export class Przelewy24Client {
   private merchantId: number
   private posId: number
@@ -302,6 +317,53 @@ export class Przelewy24Client {
 
   getPaymentUrl(token: string): string {
     return `${this.apiUrl}/trnRequest/${token}`
+  }
+
+  async getPaymentMethods(params?: {
+    lang?: string
+    amount?: number
+    currency?: string
+  }): Promise<P24PaymentMethodsResponse> {
+    const lang = params?.lang || "pl"
+    const queryParams = new URLSearchParams()
+    if (params?.amount !== undefined) {
+      queryParams.append("amount", params.amount.toString())
+    }
+    if (params?.currency) {
+      queryParams.append("currency", params.currency)
+    }
+
+    const queryString = queryParams.toString()
+    const url = `${this.apiUrl}/api/v1/payment/methods/${lang}${queryString ? `?${queryString}` : ""}`
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: this.getAuthHeader(),
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return {
+          error: data.error || "Nie udało się pobrać metod płatności",
+          responseCode: data.responseCode,
+        }
+      }
+
+      return {
+        data: data.data,
+        responseCode: data.responseCode,
+      }
+    } catch (error) {
+      console.error("P24 getPaymentMethods API error:", error)
+      return {
+        error: "Błąd połączenia z bramką płatniczą",
+      }
+    }
   }
 }
 
