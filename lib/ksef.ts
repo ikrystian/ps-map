@@ -92,8 +92,10 @@ export async function getKsefConfig(): Promise<KsefConfig> {
 
   return {
     enabled: settings.find(s => s.key === "ksefEnabled")?.value === "true",
-    nip: settings.find(s => s.key === "ksefNip")?.value || "1234567890",
-    token: settings.find(s => s.key === "ksefToken")?.value || "",
+    nip: (settings.find(s => s.key === "ksefNip")?.value || "1234567890").trim(),
+    // Trim chroni przed spacją/nową linią z kopiowania — KSeF odrzuca wtedy
+    // token z błędem "Nieprawidłowe kodowanie tokenu".
+    token: (settings.find(s => s.key === "ksefToken")?.value || "").trim(),
     env: (settings.find(s => s.key === "ksefEnv")?.value as "test" | "prod") || "test"
   }
 }
@@ -483,43 +485,26 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
   const isMock = !config.enabled || !config.token || !config.nip
 
   if (isMock && !forceReal) {
-    // Run simulation
+    // Run simulation — odwzorowuje realny proces: wysyłka kończy się statusem
+    // SENT, a numer KSeF i UPO nadaje dopiero polling (checkInvoiceKsefStatus),
+    // po którym generowany jest finalny PDF z kodem QR.
     console.log(`KSeF: Running in SIMULATION MODE for invoice ${invoice.invoiceNumber}`)
-    
-    // Generate XML to test logic and save it in logs
-    const xml = generateInvoiceXml(invoice)
+
+    const xml = generateInvoiceXml(invoice, config.nip)
 
     // Simulate async network latency
     await new Promise(resolve => setTimeout(resolve, 1500))
 
-    // Generate simulated KSeF details
-    const ksefPart1 = config.nip.replace(/\D/g, "")
-    const ksefPart2 = formatDate(new Date()).replace(/-/g, "")
-    const ksefPart3 = crypto.randomBytes(8).toString("hex").toUpperCase()
-    const ksefNumber = `${ksefPart1}-${ksefPart2}-${ksefPart3}-01`
     const ksefReferenceNumber = `REF-${crypto.randomBytes(6).toString("hex").toUpperCase()}`
-
-    const upoXml = `<?xml version="1.0" encoding="UTF-8"?>
-<UrzadowePoswiadczenieOdbioru xmlns="http://crd.gov.pl/xml/schematy/upo/2020/01/01/">
-  <Naglowek>
-    <WersjaSchema>1-0</WersjaSchema>
-    <DataOdbioru>${formatDateTime(new Date())}</DataOdbioru>
-  </Naglowek>
-  <StatusKSeF>ACCEPTED</StatusKSeF>
-  <KsefInvoiceNumber>${ksefNumber}</KsefInvoiceNumber>
-  <ReferenceNumber>${ksefReferenceNumber}</ReferenceNumber>
-  <Komunikat>Dokument został poprawnie przyjęty i przetworzony przez system KSeF 2.0.</Komunikat>
-</UrzadowePoswiadczenieOdbioru>`
 
     // Update database
     await prisma.invoice.update({
       where: { id: invoiceId },
       data: {
-        ksefStatus: "ACCEPTED",
-        ksefNumber,
+        ksefStatus: "SENT",
         ksefReferenceNumber,
-        upoContent: upoXml,
-        ksefDiagnostics: "Symulacja KSeF 2.0: Faktura wysłana i zaakceptowana pomyślnie."
+        ksefXml: xml,
+        ksefDiagnostics: "Symulacja KSeF 2.0: Faktura wysłana. Oczekiwanie na przetworzenie i nadanie numeru KSeF."
       }
     })
 
@@ -531,7 +516,6 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
         message: `Symulacja KSeF: Wysłano fakturę ${invoice.invoiceNumber} do KSeF (Mock).`,
         metadata: JSON.stringify({
           invoiceNumber: invoice.invoiceNumber,
-          ksefNumber,
           ksefReferenceNumber,
           xmlPreview: xml.substring(0, 1000)
         })
@@ -634,12 +618,14 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
       console.warn("KSeF: Failed to close online session (will auto-close):", e)
     }
 
-    // Update database
+    // Update database. XML utrwalamy w dokładnie tej postaci, w jakiej został
+    // wysłany — jego hash SHA-256 jest częścią weryfikacyjnego kodu QR na PDF.
     await prisma.invoice.update({
       where: { id: invoiceId },
       data: {
         ksefStatus: "SENT",
         ksefReferenceNumber: sessionRefNumber,
+        ksefXml: xmlContent,
         ksefDiagnostics: "Faktura wysłana do KSeF. Oczekiwanie na przetworzenie i nadanie UPO."
       }
     })
@@ -683,6 +669,30 @@ export async function sendInvoiceToKsef(invoiceId: string, forceReal = false): P
     })
 
     return false
+  }
+}
+
+/**
+ * Best-effort generation of the final invoice PDF (with KSeF number and QR
+ * code) after the invoice has been ACCEPTED. Failures are logged but do not
+ * propagate — the PDF is also generated on demand at download time.
+ *
+ * Dynamiczny import łamie cykl modułów ksef.ts ↔ invoice-pdf.ts.
+ */
+async function tryGenerateInvoicePdf(invoiceId: string, invoiceNumber: string): Promise<void> {
+  try {
+    const { generateInvoicePdf } = await import("./invoice-pdf")
+    await generateInvoicePdf(invoiceId)
+  } catch (error: any) {
+    console.error(`KSeF: Failed to generate final PDF for invoice ${invoiceNumber}:`, error)
+    await prisma.systemLog.create({
+      data: {
+        level: "ERROR",
+        action: "KSEF_INVOICE_PDF_FAILED",
+        message: `Nie udało się wygenerować finalnego PDF faktury ${invoiceNumber}.`,
+        metadata: JSON.stringify({ invoiceNumber, error: error.message || String(error) }),
+      },
+    }).catch(() => {})
   }
 }
 
@@ -758,6 +768,9 @@ export async function checkInvoiceKsefStatus(invoiceId: string): Promise<string>
         metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, ksefNumber }),
       },
     })
+
+    // Numer KSeF nadany — generujemy finalny PDF z kodem QR
+    await tryGenerateInvoicePdf(invoiceId, invoice.invoiceNumber)
 
     return "ACCEPTED"
   }
@@ -857,6 +870,10 @@ export async function checkInvoiceKsefStatus(invoiceId: string): Promise<string>
           metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, ksefNumber }),
         },
       })
+
+      // Numer KSeF nadany — generujemy finalny PDF z kodem QR
+      await tryGenerateInvoicePdf(invoiceId, invoice.invoiceNumber)
+
       return "ACCEPTED"
     }
 

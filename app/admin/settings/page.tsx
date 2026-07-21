@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, Settings as SettingsIcon } from "lucide-react"
+import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Settings as SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -200,6 +200,14 @@ interface Settings {
     value: string
     description: string | null
   }
+  googleAnalyticsId?: {
+    value: string
+    description: string | null
+  }
+  googleAnalyticsEnabled?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -265,6 +273,10 @@ export default function AdminSettingsPage() {
   const [isUploadingFavicon, setIsUploadingFavicon] = useState(false)
   const [isUploadingOgImage, setIsUploadingOgImage] = useState(false)
 
+  // Google Analytics
+  const [googleAnalyticsId, setGoogleAnalyticsId] = useState("")
+  const [googleAnalyticsEnabled, setGoogleAnalyticsEnabled] = useState("false")
+
 
   useEffect(() => {
     fetchSettings()
@@ -318,6 +330,10 @@ export default function AdminSettingsPage() {
         setEmailLogToMails(data.emailLogToMails?.value || "false")
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
+
+        // Google Analytics
+        setGoogleAnalyticsId(data.googleAnalyticsId?.value || "")
+        setGoogleAnalyticsEnabled(data.googleAnalyticsEnabled?.value || "false")
 
         // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
         setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
@@ -613,6 +629,14 @@ export default function AdminSettingsPage() {
               value: footerSocialInstagram,
               description: "Adres URL profilu Instagram w dolnym pasku stopki (pusty = ukryta ikona)",
             },
+            googleAnalyticsId: {
+              value: googleAnalyticsId,
+              description: "Identyfikator pomiaru Google Analytics (np. G-XXXXXXXXXX lub UA-XXXXXXXX-X)",
+            },
+            googleAnalyticsEnabled: {
+              value: googleAnalyticsEnabled,
+              description: "Czy śledzenie Google Analytics jest włączone",
+            },
           },
         }),
       })
@@ -877,6 +901,54 @@ export default function AdminSettingsPage() {
 
         {/* ============== TAB 2: WYGLĄD I SEO ============== */}
         <TabsContent value="appearance" className="space-y-6 m-0">
+          {/* Google Analytics */}
+          <Card className="border-blue-500/20 bg-blue-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Google Analytics (GA4)
+              </CardTitle>
+              <CardDescription>
+                Skonfiguruj śledzenie analityki w serwisie za pomocą Google Analytics 4 (Measurement ID).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4 bg-background">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Włącz śledzenie Google Analytics</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Gdy opcja jest włączona, skrypt Google Analytics jest automatycznie dołączany na stronach publicznych.
+                  </p>
+                </div>
+                <Switch
+                  checked={googleAnalyticsEnabled === "true"}
+                  onCheckedChange={(checked) => setGoogleAnalyticsEnabled(checked ? "true" : "false")}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ga-id">Identyfikator pomiaru Google Analytics (Measurement ID / Tracking ID)</Label>
+                <Input
+                  id="ga-id"
+                  type="text"
+                  value={googleAnalyticsId}
+                  onChange={(e) => setGoogleAnalyticsId(e.target.value)}
+                  placeholder="G-XXXXXXXXXX lub UA-XXXXXXXX-X"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Wklej unikalny identyfikator strumienia danych z panelu Google Analytics (np. <strong>G-ABC123XYZ</strong>).
+                </p>
+              </div>
+
+              {googleAnalyticsEnabled === "true" && !googleAnalyticsId.trim() && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>Śledzenie jest włączone, ale nie podano Identyfikatora pomiaru Google Analytics. Wprowadź poprawny identyfikator G-XXXXXXXXXX i zapisz ustawienia.</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Favicon i Open Graph (SEO) */}
           <Card className="border-teal-500/20 bg-teal-500/[0.01]">
             <CardHeader>

@@ -189,6 +189,19 @@ export async function GET(request: NextRequest) {
         description: "Tryb testowy: promocje 'Najczęściej konsultowane kategorie' są aktywowane natychmiast (od teraz) zamiast od pierwszego dnia kolejnego miesiąca",
       }
     }
+    if (!settingsObject.googleAnalyticsId) {
+      settingsObject.googleAnalyticsId = {
+        value: "",
+        description: "Identyfikator pomiaru Google Analytics (np. G-XXXXXXXXXX lub UA-XXXXXXXX-X)",
+      }
+    }
+    if (!settingsObject.googleAnalyticsEnabled) {
+      settingsObject.googleAnalyticsEnabled = {
+        value: "false",
+        description: "Czy śledzenie Google Analytics jest włączone",
+      }
+    }
+
 
     // SMTP settings
     if (!settingsObject.emailServerHost) {

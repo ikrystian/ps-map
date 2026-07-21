@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { ChatAssistant } from "@/components/ChatAssistant";
 import CookieConsentBanner from "@/components/CookieConsent";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,7 +10,6 @@ import { Geist_Mono, Playfair_Display, Poppins } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { Providers } from "./providers";
-
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -83,15 +83,23 @@ export default async function RootLayout({
   const session = await auth();
 
   let showChat = true;
+  let gaId = "";
+  let gaEnabled = false;
+
   try {
-    const chatSetting = await prisma.settings.findUnique({
-      where: { key: "showChatAssistant" },
+    const settings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: ["showChatAssistant", "googleAnalyticsId", "googleAnalyticsEnabled"],
+        },
+      },
     });
-    if (chatSetting) {
-      showChat = chatSetting.value === "true";
-    }
+    const map = new Map(settings.map((s) => [s.key, s.value]));
+    if (map.has("showChatAssistant")) showChat = map.get("showChatAssistant") === "true";
+    if (map.has("googleAnalyticsId")) gaId = map.get("googleAnalyticsId")!;
+    if (map.has("googleAnalyticsEnabled")) gaEnabled = map.get("googleAnalyticsEnabled") === "true";
   } catch (error) {
-    console.error("Error reading showChatAssistant setting:", error);
+    console.error("Error reading settings in RootLayout:", error);
   }
 
   return (
@@ -100,6 +108,7 @@ export default async function RootLayout({
         className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased font-poppins`}
         suppressHydrationWarning
       >
+        <GoogleAnalytics gaId={gaId} enabled={gaEnabled} />
         <Providers session={session}>
           <NextTopLoader
             color="var(--primary)"
@@ -122,3 +131,4 @@ export default async function RootLayout({
     </html>
   )
 }
+

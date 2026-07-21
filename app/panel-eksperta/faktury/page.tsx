@@ -42,6 +42,8 @@ interface Invoice {
   buyerName: string
   buyerNIP: string
   pdfUrl: string | null
+  ksefStatus: string | null
+  ksefNumber: string | null
   order: {
     orderNumber: string
     orderType: string
@@ -118,11 +120,17 @@ export default function InvoicesPage() {
     }).format(amount)
   }
 
+  // Finalny PDF (z numerem KSeF i kodem QR) istnieje dopiero po zaakceptowaniu
+  // faktury przez KSeF — wcześniej pobieranie jest zablokowane.
+  const isPdfReady = (invoice: Invoice) => invoice.ksefStatus === "ACCEPTED" && !!invoice.ksefNumber
+
   const handleDownload = (invoice: Invoice) => {
-    // Otwórz stronę do drukowania w nowym oknie
-    const printUrl = `/panel-eksperta/faktury/${invoice.id}/drukuj`
-    window.open(printUrl, "_blank", "width=1000,height=800")
-    toast.success(`Otwarto podgląd faktury ${invoice.invoiceNumber}`)
+    if (!isPdfReady(invoice)) {
+      toast.info("Faktura oczekuje na rejestrację w KSeF. PDF będzie dostępny po nadaniu numeru KSeF.")
+      return
+    }
+    window.open(`/api/invoices/${invoice.id}/pdf`, "_blank")
+    toast.success(`Pobieranie faktury ${invoice.invoiceNumber}`)
   }
 
   if (loading) {
@@ -260,15 +268,28 @@ export default function InvoicesPage() {
                               </TableCell>
                               <TableCell className="py-4 px-6 text-right">
                                 <div className="flex items-center justify-end">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleDownload(invoice)}
-                                    className="h-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all text-xs gap-1.5"
-                                  >
-                                    <Download className="h-3.5 w-3.5" />
-                                    Pobierz PDF
-                                  </Button>
+                                  {isPdfReady(invoice) ? (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleDownload(invoice)}
+                                      className="h-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all text-xs gap-1.5"
+                                    >
+                                      <Download className="h-3.5 w-3.5" />
+                                      Pobierz PDF
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      disabled
+                                      title="PDF będzie dostępny po nadaniu numeru KSeF"
+                                      className="h-9 rounded-lg border border-border/50 text-zinc-500 text-xs gap-1.5 opacity-60 cursor-not-allowed"
+                                    >
+                                      <Clock className="h-3.5 w-3.5" />
+                                      Oczekuje na KSeF
+                                    </Button>
+                                  )}
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -322,15 +343,27 @@ export default function InvoicesPage() {
                           </div>
 
                           <div className="flex items-center justify-end border-t border-border/5 pt-2.5">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDownload(invoice)}
-                              className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1 text-sm"
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                              Pobierz PDF
-                            </Button>
+                            {isPdfReady(invoice) ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDownload(invoice)}
+                                className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1 text-sm"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Pobierz PDF
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled
+                                className="h-8 rounded-lg border border-border/50 text-zinc-500 gap-1 text-sm opacity-60 cursor-not-allowed"
+                              >
+                                <Clock className="h-3.5 w-3.5" />
+                                Oczekuje na KSeF
+                              </Button>
+                            )}
                           </div>
                         </div>
                       )

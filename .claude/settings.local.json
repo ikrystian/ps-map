@@ -81,7 +81,12 @@
       "Bash(python3 -c \"import json,sys; [print\\(p['typ'], p.get\\('kolor'\\)\\) for p in json.load\\(sys.stdin\\)]\")",
       "Skill(update-config)",
       "WebFetch(domain:developers.przelewy24.pl)",
-      "Bash(curl -s --max-time 20 \"https://api-test.ksef.mf.gov.pl/api/v2/security/public-key-certificates\")"
+      "Bash(curl -s --max-time 20 \"https://api-test.ksef.mf.gov.pl/api/v2/security/public-key-certificates\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(rg -n \"\\\\.uploads|UPLOAD_DIR|uploadsDir|join\\\\\\(process.cwd\" /home/krystian/Projects/ps-map/app/api/law-firms/documents/route.ts /home/krystian/Projects/ps-map/app/api/law-firms/documents/[id]/download/route.ts /home/krystian/Projects/ps-map/app/api/upload/document/route.ts)",
+      "Bash(mkdir -p /home/krystian/Projects/ps-map/assets/fonts)",
+      "Bash(curl -sL -o DejaVuSans.ttf \"https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans.ttf\")",
+      "Bash(curl -sL -o DejaVuSans-Bold.ttf \"https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans-Bold.ttf\")"
     ]
   }
 }

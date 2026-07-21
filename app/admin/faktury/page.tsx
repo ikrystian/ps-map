@@ -150,11 +150,17 @@ export default function AdminInvoicesPage() {
   }
 
   const handleDownload = (invoice: Invoice) => {
-    // Otwórz stronę do drukowania w nowym oknie (trasa admina — middleware
-    // blokuje adminowi /panel-eksperta/*)
+    // Finalny PDF (z numerem KSeF i kodem QR) istnieje dopiero po akceptacji
+    // w KSeF. Wcześniej admin dostaje roboczy podgląd HTML (trasa admina —
+    // middleware blokuje adminowi /panel-eksperta/*).
+    if (invoice.ksefStatus === "ACCEPTED" && invoice.ksefNumber) {
+      window.open(`/api/invoices/${invoice.id}/pdf`, "_blank")
+      toast.success(`Pobieranie faktury ${invoice.invoiceNumber}`)
+      return
+    }
     const printUrl = `/admin/faktury/${invoice.id}/drukuj`
     window.open(printUrl, "_blank", "width=1000,height=800")
-    toast.success(`Otwarto podgląd faktury ${invoice.invoiceNumber}`)
+    toast.info(`Faktura ${invoice.invoiceNumber} nie ma jeszcze numeru KSeF — otwarto roboczy podgląd`)
   }
 
   if (loading) {
