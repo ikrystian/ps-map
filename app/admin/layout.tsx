@@ -16,6 +16,7 @@ import {
   Bell,
   BookOpen,
   Briefcase,
+  Bug,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -134,6 +135,7 @@ const navigation: { title: string; items: NavItem[] }[] = [
     title: "System",
     items: [
       { name: "Zaloguj jako", href: "#", icon: LogIn, action: "impersonate" },
+      { name: "Zgłoszenia błędów", href: "/admin/bug-reports", icon: Bug },
       { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
       { name: "Ustawienia", href: "/admin/settings", icon: Settings },
     ],

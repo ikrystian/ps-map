@@ -70,6 +70,9 @@ model User {
   // Zgłoszenia opinii
   reviewReports       ReviewReport[]
 
+  // Zgłoszenia błędów (ekspert)
+  bugReports          BugReport[]
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -1197,6 +1200,7 @@ enum PointTransactionType {
   SUBSCRIPTION_BONUS       // Bonus za pakiet
   REVIEW_DELETE            // Usunięcie opinii przez eksperta za punkty
   SURVEY_REWARD            // Nagroda za wypełnienie ankiety
+  BUG_REPORT_REWARD        // Nagroda za zaakceptowane zgłoszenie błędu
 }
 
 // ============================================================================
@@ -2286,6 +2290,47 @@ model ReviewReport {
 
   @@index([reviewId])
   @@index([userId])
+}
+
+// ============================================================================
+// ZGŁOSZENIA BŁĘDÓW (EKSPERT)
+// ============================================================================
+
+model BugReport {
+  id              String            @id @default(uuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  opis            String
+  url             String            // Adres URL strony, na której wystąpił błąd
+  kategoria       BugReportCategory
+  zalaczniki      String?           // JSON array URL-i zrzutów ekranu
+
+  status          BugReportStatus   @default(NOWE)
+  adminNotatka    String?           // Opcjonalny komentarz admina przy odrzuceniu
+  punktyPrzyznane Boolean           @default(false) // Zabezpieczenie przed podwójną wypłatą punktów
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum BugReportCategory {
+  UI_UX           // Błąd wizualny / interfejsu
+  FUNKCJONALNY    // Funkcja nie działa zgodnie z oczekiwaniami
+  WYDAJNOSC       // Wolne działanie / zawieszanie się
+  PLATNOSCI       // Problem z płatnością
+  BEZPIECZENSTWO  // Problem bezpieczeństwa
+  INNE            // Inne
+}
+
+enum BugReportStatus {
+  NOWE
+  ZAAKCEPTOWANE
+  ODRZUCONE
 }
 
 // ============================================================================

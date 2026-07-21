@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { BugReportWidget } from "@/components/BugReportWidget";
 import { ChatAssistant } from "@/components/ChatAssistant";
 import CookieConsentBanner from "@/components/CookieConsent";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -208,6 +209,7 @@ export default async function RootLayout({
           <Toaster />
           <Sonner />
           {showChat && <ChatAssistant />}
+          <BugReportWidget />
           <CookieConsentBanner />
         </Providers>
       </body>

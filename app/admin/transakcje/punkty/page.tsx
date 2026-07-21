@@ -58,6 +58,7 @@ const pointTransactionTypeLabels: Record<string, { label: string; variant: "defa
   REFUND: { label: "Zwrot punktów", variant: "outline", customClass: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200" },
   SUBSCRIPTION_BONUS: { label: "Bonus za pakiet", variant: "default", customClass: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200" },
   REVIEW_DELETE: { label: "Usunięcie opinii", variant: "destructive", customClass: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200" },
+  BUG_REPORT_REWARD: { label: "Nagroda za zgłoszenie błędu", variant: "default", customClass: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400 border-cyan-200" },
 }
 
 export default function AdminTransakcjePunktyPage() {
