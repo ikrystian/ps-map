@@ -21,11 +21,11 @@ rm -rf "$BUILD_DIR"
 
 echo "==> Zapisuję datę i godzinę deployu do .env.local"
 DEPLOY_TIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-# Aktualizuj lub dodaj DEPLOY_TIME w .env.local
-if grep -q "^DEPLOY_TIME=" .env.local 2>/dev/null; then
+# Aktualizuj lub dodaj DEPLOY_TIME w .env
+if grep -q "^DEPLOY_TIME=" .env 2>/dev/null; then
   sed -i "s|^DEPLOY_TIME=.*|DEPLOY_TIME=$DEPLOY_TIME|" .env.local
 else
-  echo "DEPLOY_TIME=$DEPLOY_TIME" >> .env.local
+  echo "DEPLOY_TIME=$DEPLOY_TIME" >> .env
 fi
 echo "    DEPLOY_TIME=$DEPLOY_TIME"
 
