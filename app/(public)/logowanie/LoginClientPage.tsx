@@ -395,6 +395,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Hasło</Label>
                 <Link
+                  tabIndex={0}
                   href="/moje-konto/lost-password"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >

@@ -1,5 +1,5 @@
 import { pickCompanyDataFields } from "@/lib/biala-lista"
-import { generateEmailVerificationEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
+import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
@@ -891,6 +891,20 @@ Zgoda na dane: ${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}
         })
       } catch (notifErr) {
         console.error('Failed to send notification email to bok@prostasprawa.pl:', notifErr)
+      }
+
+      // Wyślij email powitalny do zarejestrowanego użytkownika
+      try {
+        const welcomeEmail = generateLandingWelcomeEmail()
+        await sendEmail({
+          to: body.email,
+          subject: welcomeEmail.subject,
+          html: welcomeEmail.html,
+          text: welcomeEmail.text,
+          templateType: 'LANDING_WELCOME',
+        })
+      } catch (welcomeErr) {
+        console.error('Failed to send welcome email to user:', welcomeErr)
       }
     }
 
