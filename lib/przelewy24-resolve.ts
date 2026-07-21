@@ -9,7 +9,7 @@ import { p24Client } from "@/lib/przelewy24"
 // uznajemy płatność za odrzuconą. Próg musi być na tyle duży, by nie anulować
 // zamówień opłacanych wolnymi kanałami (np. tradycyjny przelew bankowy,
 // który potrafi się księgować kilka dni roboczych).
-export const P24_PENDING_EXPIRY_HOURS = 72
+export const P24_PENDING_EXPIRY_HOURS = 2
 
 export type P24ResolutionStatus = "ZAPLACONE" | "OCZEKUJE" | "ZWROT" | "ANULOWANE"
 

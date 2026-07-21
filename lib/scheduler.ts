@@ -92,13 +92,13 @@ export function getJobDefinitions(): JobDefinition[] {
     },
 
     // 5. Anulowanie porzuconych płatności Przelewy24 (klient nie wrócił na
-    //    stronę sukcesu, więc nikt nie zweryfikował transakcji) — co 1 godzinę,
-    //    próg przedawnienia to P24_PENDING_EXPIRY_HOURS (72h).
+    //    stronę sukcesu, więc nikt nie zweryfikował transakcji) — co 5min,
+    //    próg przedawnienia to P24_PENDING_EXPIRY_HOURS (2h).
     {
       name: "expire-pending-p24-payments",
       description: "Anulowanie przeterminowanych, porzuconych płatności Przelewy24",
       intervalMs: HOUR,
-      options: { retries: 2, retryDelayMs: 60 * 1000 },
+      options: { retries: 24, retryDelayMs: 5 * 1000 },
       fn: async () => {
         const result = await expireStalePrzelewy24Orders()
         return result
