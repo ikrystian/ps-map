@@ -1917,6 +1917,152 @@ h3 {
     letter-spacing: 0.05em;
 }
 
+/* Custom Select Dropdown dla Miasta (rejestracja) */
+.custom-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: #e0ddd5;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.custom-select-trigger .placeholder-text {
+    color: #555;
+}
+
+.custom-select-trigger .select-chevron {
+    color: #888;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.custom-select-trigger.active .select-chevron {
+    transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: rgba(22, 22, 20, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(200, 168, 100, 0.3);
+    border-radius: 12px;
+    z-index: 200;
+    display: none;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    animation: fadeInDown 0.2s ease;
+}
+
+.custom-select-dropdown.active {
+    display: block;
+}
+
+.dropdown-search-wrapper {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(200, 168, 100, 0.3);
+    border-radius: 8px;
+    color: #e0ddd5;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.dropdown-search-input:focus {
+    border-color: #c8a864;
+}
+
+.dropdown-options-list {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.dropdown-options-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-options-list::-webkit-scrollbar-thumb {
+    background: rgba(200, 168, 100, 0.3);
+    border-radius: 10px;
+}
+
+.dropdown-status-msg {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+    font-style: italic;
+}
+
+.select-option-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #e0ddd5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.2s, color 0.2s;
+}
+
+.select-option-item:last-child {
+    border-bottom: none;
+}
+
+.select-option-item:hover,
+.select-option-item.highlighted {
+    background: rgba(200, 168, 100, 0.15);
+    color: #fff;
+}
+
+.select-option-item .option-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.select-option-item .option-city-name {
+    font-weight: 500;
+}
+
+.select-option-item .option-postal-code {
+    font-size: 0.8rem;
+    color: #c8a864;
+}
+
+.select-option-item .option-voivodeship-name {
+    font-size: 0.8rem;
+    color: #888;
+    margin-left: auto;
+}
+
 /* Autocomplete Dropdown */
 .dropdown-container {
     position: relative;

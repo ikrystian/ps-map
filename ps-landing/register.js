@@ -69,6 +69,10 @@ function getFieldErrorMessage(input) {
 
 function showFieldError(input, message) {
     input.classList.add("input-error");
+    if (input.id === "miasto") {
+        const btn = document.getElementById("miastoSelectBtn");
+        if (btn) btn.classList.add("input-error");
+    }
     const checkboxGroup = input.closest(".form-checkbox");
     if (checkboxGroup) {
         checkboxGroup.classList.add("input-error");
@@ -92,6 +96,10 @@ function showFieldError(input, message) {
 
 function clearFieldError(input) {
     input.classList.remove("input-error");
+    if (input.id === "miasto") {
+        const btn = document.getElementById("miastoSelectBtn");
+        if (btn) btn.classList.remove("input-error");
+    }
     const checkboxGroup = input.closest(".form-checkbox");
     if (checkboxGroup) {
         checkboxGroup.classList.remove("input-error");
@@ -136,7 +144,7 @@ function validateActiveStep() {
             showFieldError(input, errorMessage);
             isValid = false;
             if (!firstInvalidInput) {
-                firstInvalidInput = input;
+                firstInvalidInput = input.id === "miasto" ? document.getElementById("miastoSelectBtn") : input;
             }
         } else {
             clearFieldError(input);
@@ -444,136 +452,220 @@ async function loadReferenceData() {
     }
 }
 
-// ===== Autouzupełnianie miasta / kodu pocztowego (z /api/cities) =====
+// ===== Rozwijana lista miast z wyszukiwarką oraz autouzupełnianie po kodzie pocztowym (z /api/cities) =====
 function initCityAutocomplete() {
     const zipInput = document.getElementById("kodPocztowy");
-    const dropdown = document.getElementById("kodPocztowyDropdown");
     const cityInput = document.getElementById("miasto");
+    const citySelectBtn = document.getElementById("miastoSelectBtn");
+    const citySelectLabel = document.getElementById("miastoSelectLabel");
+    const cityDropdown = document.getElementById("miastoDropdown");
+    const citySearchInput = document.getElementById("miastoSearchInput");
+    const cityOptionsList = document.getElementById("miastoOptionsList");
+    const cityGroup = document.getElementById("miastoGroup");
 
-    if (!zipInput || !dropdown || !cityInput) return;
+    if (!zipInput || !cityInput || !citySelectBtn || !cityDropdown || !citySearchInput || !cityOptionsList) return;
 
-    let items = [];
-    let highlightedIndex = -1;
-    let debounceTimer;
+    let citiesCache = {};
+    let currentCities = [];
+    let searchDebounceTimer = null;
+    let isLoadingCities = false;
 
-    zipInput.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/[^0-9-]/g, "");
-        if (value.length === 5 && !value.includes("-")) {
-            value = value.slice(0, 2) + "-" + value.slice(2);
+    function selectCity(city, matchedPostalCode) {
+        const postalCode = matchedPostalCode || city.postalCodes?.[0]?.code || zipInput.value || "";
+        
+        cityInput.value = city.nazwa;
+        citySelectLabel.textContent = city.nazwa;
+        citySelectLabel.classList.remove("placeholder-text");
+
+        if (zipInput && postalCode) {
+            zipInput.value = postalCode;
         }
-        if (value.length > 6) value = value.slice(0, 6);
-        e.target.value = value;
 
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => fetchSuggestions(value), 220);
-    });
+        if (wojewodztwoSelect && city.voivodeshipId) {
+            wojewodztwoSelect.value = city.voivodeshipId;
+        }
 
-    async function fetchSuggestions(query) {
-        const cleanQuery = query.trim();
-        if (cleanQuery.length < 2) {
-            closeDropdown();
+        clearFieldError(cityInput);
+        if (zipInput) clearFieldError(zipInput);
+        if (wojewodztwoSelect) clearFieldError(wojewodztwoSelect);
+
+        closeCityDropdown();
+    }
+
+    function renderCityOptions(citiesList, query) {
+        cityOptionsList.innerHTML = "";
+        const cleanQuery = (query || "").trim().toLowerCase();
+
+        if (isLoadingCities) {
+            cityOptionsList.innerHTML = `<div class="dropdown-status-msg">Wyszukiwanie...</div>`;
             return;
         }
-        try {
-            const res = await fetch(`${API_BASE}/api/cities?search=${encodeURIComponent(cleanQuery)}&limit=15`);
-            if (!res.ok) throw new Error("Search failed");
-            const cities = await res.json();
-            // Spłaszcz do par (kod, miasto, województwo)
-            items = [];
-            cities.forEach((city) => {
-                const codes = (city.postalCodes || []).filter((p) =>
-                    p.code && p.code.replace(/-/g, "").startsWith(cleanQuery.replace(/-/g, ""))
-                );
-                const list = codes.length > 0 ? codes : (city.postalCodes || []).slice(0, 1);
-                list.forEach((p) => {
-                    items.push({
-                        zip: p.code,
-                        city: city.nazwa,
-                        voivodeshipId: city.voivodeshipId,
-                        voivodeship: city.voivodeship?.nazwa || "",
-                    });
-                });
-            });
-            items = items.slice(0, 15);
-            renderDropdown();
-        } catch (err) {
-            console.error("Błąd pobierania kodów pocztowych:", err);
-        }
-    }
 
-    function renderDropdown() {
-        dropdown.innerHTML = "";
-        highlightedIndex = -1;
-        if (items.length === 0) {
-            const noResults = document.createElement("div");
-            noResults.className = "autocomplete-no-results";
-            noResults.textContent = "Brak pasujących wyników";
-            dropdown.appendChild(noResults);
-        } else {
-            items.forEach((item) => {
-                const div = document.createElement("div");
-                div.className = "autocomplete-item";
-                div.innerHTML = `
-                    <span class="item-zip">${item.zip}</span>
-                    <span class="item-details">${item.city}, ${item.voivodeship}</span>
-                `;
-                div.addEventListener("click", () => {
-                    fillFields(item);
-                    closeDropdown();
-                });
-                dropdown.appendChild(div);
-            });
-        }
-        dropdown.classList.add("active");
-    }
-
-    function fillFields(item) {
-        zipInput.value = item.zip;
-        cityInput.value = item.city;
-        if (item.voivodeshipId && wojewodztwoSelect) {
-            wojewodztwoSelect.value = item.voivodeshipId;
-        }
-    }
-
-    function closeDropdown() {
-        dropdown.classList.remove("active");
-        dropdown.innerHTML = "";
-        items = [];
-        highlightedIndex = -1;
-    }
-
-    zipInput.addEventListener("keydown", (e) => {
-        const els = dropdown.querySelectorAll(".autocomplete-item");
-        if (!dropdown.classList.contains("active") || els.length === 0) return;
-        if (e.key === "ArrowDown") {
-            e.preventDefault();
-            highlightedIndex = (highlightedIndex + 1) % els.length;
-            updateHighlight(els);
-        } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            highlightedIndex = (highlightedIndex - 1 + els.length) % els.length;
-            updateHighlight(els);
-        } else if (e.key === "Enter") {
-            if (highlightedIndex >= 0 && highlightedIndex < items.length) {
-                e.preventDefault();
-                fillFields(items[highlightedIndex]);
-                closeDropdown();
+        if (citiesList.length === 0) {
+            if (cleanQuery.length < 2 && zipInput.value.length !== 6) {
+                cityOptionsList.innerHTML = `<div class="dropdown-status-msg">Wpisz co najmniej 2 znaki...</div>`;
+            } else {
+                cityOptionsList.innerHTML = `<div class="dropdown-status-msg">Nie znaleziono miasta.</div>`;
             }
-        } else if (e.key === "Escape") {
-            closeDropdown();
+            return;
         }
-    });
 
-    function updateHighlight(els) {
-        els.forEach((el, idx) => {
-            el.classList.toggle("highlighted", idx === highlightedIndex);
-            if (idx === highlightedIndex) el.scrollIntoView({ block: "nearest" });
+        citiesList.forEach((city) => {
+            const matchedPostal = (city.postalCodes || []).find((p) =>
+                p.code && p.code.toLowerCase().includes(cleanQuery)
+            );
+            const postalDisplay = matchedPostal ? matchedPostal.code : (city.postalCodes?.[0]?.code || "");
+
+            const item = document.createElement("div");
+            item.className = "select-option-item";
+            item.innerHTML = `
+                <div class="option-left">
+                    <span class="option-city-name">${city.nazwa}</span>
+                    ${postalDisplay ? `<span class="option-postal-code">(${postalDisplay})</span>` : ""}
+                </div>
+                <span class="option-voivodeship-name">${city.voivodeship?.nazwa || ""}</span>
+            `;
+            item.addEventListener("click", () => {
+                selectCity(city, matchedPostal?.code || postalDisplay);
+            });
+            cityOptionsList.appendChild(item);
         });
     }
 
+    async function fetchCities(query) {
+        const cleanQuery = query.trim().toLowerCase();
+        if (cleanQuery.length < 2) {
+            if (zipInput.value.length === 6) {
+                fetchCitiesForPostal(zipInput.value);
+            } else {
+                currentCities = [];
+                renderCityOptions([], cleanQuery);
+            }
+            return;
+        }
+
+        if (citiesCache[cleanQuery]) {
+            currentCities = citiesCache[cleanQuery];
+            renderCityOptions(currentCities, cleanQuery);
+            return;
+        }
+
+        isLoadingCities = true;
+        renderCityOptions([], cleanQuery);
+
+        try {
+            const res = await fetch(`${API_BASE}/api/cities?search=${encodeURIComponent(cleanQuery)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    citiesCache[cleanQuery] = data;
+                    currentCities = data;
+                }
+            }
+        } catch (err) {
+            console.error("Błąd pobierania miast:", err);
+        } finally {
+            isLoadingCities = false;
+            renderCityOptions(currentCities, cleanQuery);
+        }
+    }
+
+    async function fetchCitiesForPostal(postalCode) {
+        if (postalCode.length !== 6) return;
+        isLoadingCities = true;
+        try {
+            const res = await fetch(`${API_BASE}/api/cities?search=${encodeURIComponent(postalCode)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    currentCities = data;
+                    if (data.length === 1) {
+                        const matched = data[0];
+                        cityInput.value = matched.nazwa;
+                        citySelectLabel.textContent = matched.nazwa;
+                        citySelectLabel.classList.remove("placeholder-text");
+                        if (wojewodztwoSelect && matched.voivodeshipId) {
+                            wojewodztwoSelect.value = matched.voivodeshipId;
+                        }
+                        clearFieldError(cityInput);
+                        if (wojewodztwoSelect) clearFieldError(wojewodztwoSelect);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Błąd pobierania miast po kodzie pocztowym:", err);
+        } finally {
+            isLoadingCities = false;
+            if (cityDropdown.classList.contains("active")) {
+                renderCityOptions(currentCities, citySearchInput.value);
+            }
+        }
+    }
+
+    zipInput.addEventListener("input", (e) => {
+        let val = e.target.value.replace(/[^\d]/g, "");
+        if (val.length > 5) val = val.slice(0, 5);
+
+        let formatted = val;
+        if (val.length > 2) {
+            formatted = `${val.slice(0, 2)}-${val.slice(2)}`;
+        }
+        e.target.value = formatted;
+
+        if (formatted.length < 6) {
+            if (cityInput.value) {
+                cityInput.value = "";
+                citySelectLabel.textContent = "Wybierz miasto...";
+                citySelectLabel.classList.add("placeholder-text");
+                if (wojewodztwoSelect) wojewodztwoSelect.value = "";
+            }
+            currentCities = [];
+        } else if (formatted.length === 6) {
+            fetchCitiesForPostal(formatted);
+        }
+    });
+
+    function openCityDropdown() {
+        cityDropdown.classList.add("active");
+        citySelectBtn.classList.add("active");
+        citySearchInput.value = "";
+        citySearchInput.focus();
+        if (zipInput.value.length === 6 && currentCities.length > 0) {
+            renderCityOptions(currentCities, "");
+        } else {
+            renderCityOptions([], "");
+        }
+    }
+
+    function closeCityDropdown() {
+        cityDropdown.classList.remove("active");
+        citySelectBtn.classList.remove("active");
+    }
+
+    citySelectBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (cityDropdown.classList.contains("active")) {
+            closeCityDropdown();
+        } else {
+            openCityDropdown();
+        }
+    });
+
+    citySearchInput.addEventListener("input", (e) => {
+        clearTimeout(searchDebounceTimer);
+        const q = e.target.value;
+        searchDebounceTimer = setTimeout(() => fetchCities(q), 250);
+    });
+
     document.addEventListener("click", (e) => {
-        if (!zipInput.contains(e.target) && !dropdown.contains(e.target)) {
-            closeDropdown();
+        if (!cityGroup.contains(e.target)) {
+            closeCityDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && cityDropdown.classList.contains("active")) {
+            closeCityDropdown();
         }
     });
 }

@@ -170,14 +170,25 @@
                             autocomplete="off" pattern="\d{2}-\d{3}" title="Wpisz poprawny kod pocztowy (np. 00-000)"
                             required data-error-required="Wpisz kod pocztowy."
                             data-error-pattern="Wpisz poprawny kod pocztowy w formacie 00-000.">
-                        <div class="autocomplete-dropdown" id="kodPocztowyDropdown"></div>
                         <span class="field-error" id="error-kodPocztowy"></span>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="miasto">Miasto <span class="required">*</span></label>
-                        <input class="form-input" type="text" id="miasto" name="miasto" placeholder="Np. Warszawa"
-                            minlength="2" required data-error-required="Wpisz miasto."
-                            data-error-minlength="Nazwa miasta musi mieć co najmniej 2 znaki.">
+                    <div class="form-group dropdown-container" id="miastoGroup">
+                        <label class="form-label" for="miastoSelectBtn">Miasto <span class="required">*</span></label>
+                        <input type="hidden" id="miasto" name="miasto" required data-error-required="Wybierz miasto z listy.">
+                        <button type="button" class="form-select custom-select-trigger" id="miastoSelectBtn">
+                            <span id="miastoSelectLabel" class="placeholder-text">Wybierz miasto...</span>
+                            <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="custom-select-dropdown" id="miastoDropdown">
+                            <div class="dropdown-search-wrapper">
+                                <input type="text" class="dropdown-search-input" id="miastoSearchInput" placeholder="Szukaj miasta..." autocomplete="off">
+                            </div>
+                            <div class="dropdown-options-list" id="miastoOptionsList">
+                                <div class="dropdown-status-msg">Wpisz co najmniej 2 znaki...</div>
+                            </div>
+                        </div>
                         <span class="field-error" id="error-miasto"></span>
                     </div>
                     <div class="form-group">
