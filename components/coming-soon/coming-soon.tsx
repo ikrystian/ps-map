@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
 function loadScript(src: string): Promise<void> {
@@ -28,7 +29,10 @@ export default function ComingSoon() {
       try {
         await loadScript("https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js");
         await loadScript("https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js");
-        const w = window as any;
+        const w = window as unknown as {
+          tsParticles?: { load: (opts: Record<string, unknown>) => Promise<void> };
+          loadSlim?: (engine: unknown) => Promise<void>;
+        };
         if (w.tsParticles && w.loadSlim) {
           await w.loadSlim(w.tsParticles);
           await w.tsParticles.load({
@@ -108,9 +112,7 @@ export default function ComingSoon() {
 
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link
@@ -439,10 +441,10 @@ export default function ComingSoon() {
       `}</style>
 
       <section className="app-hero">
-        <a href="/" className="app-hero__logo">
+        <Link href="/" className="app-hero__logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="Prosta Sprawa" />
-        </a>
+        </Link>
 
         <div className="app-hero__overlay"></div>
         <div className="app-hero__orb app-hero__orb--primary"></div>
