@@ -23,7 +23,8 @@ import { NewsletterSection } from "@/components/homepage/newsletter-section";
 import { RecommendedLawyers } from "@/components/homepage/recommended-lawyers";
 import { SearchHelpSection } from "@/components/homepage/search-help-section";
 import { LocalSeoLinks } from "@/components/seo/local-seo-links";
-import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
+import { SurveySection } from "@/components/homepage/survey-section";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -163,6 +164,9 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* SECTION 11.7: Survey for experts */}
+      <SurveySection isExpert={session?.user?.role === "LAW_FIRM"} />
 
       {/* SECTION 12: Newsletter */}
       <NewsletterSection />

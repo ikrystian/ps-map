@@ -309,6 +309,7 @@ model LawFirm {
   consultationBookings       ConsultationBooking[]
   badges                     LawFirmBadge[]
   orderOverrides             OrderOverride[]
+  surveyResponses            SurveyResponse[]
 
   @@index([userId])
   @@index([nip])
@@ -1194,6 +1195,7 @@ enum PointTransactionType {
   REFUND                   // Zwrot punktów
   SUBSCRIPTION_BONUS       // Bonus za pakiet
   REVIEW_DELETE            // Usunięcie opinii przez eksperta za punkty
+  SURVEY_REWARD            // Nagroda za wypełnienie ankiety
 }
 
 // ============================================================================
@@ -2385,6 +2387,82 @@ model ExpertiseCategory {
 
   @@index([parentId])
   @@index([aktywna])
+}
+
+// ============================================================================
+// ANKIETY
+// ============================================================================
+
+enum QuestionType {
+  SINGLE    // jednokrotny wybór
+  MULTIPLE  // wielokrotny wybór
+}
+
+model Survey {
+  id             String   @id @default(uuid())
+  tytul          String
+  opis           String?
+  aktywna        Boolean  @default(false)
+  nagrodaPunktow Int      @default(10)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  pytania    SurveyQuestion[]
+  odpowiedzi SurveyResponse[]
+}
+
+model SurveyQuestion {
+  id        String       @id @default(uuid())
+  surveyId  String
+  survey    Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  kolejnosc Int
+  tresc     String
+  typ       QuestionType
+
+  opcje      SurveyOption[]
+  odpowiedzi SurveyAnswer[]
+
+  @@index([surveyId])
+}
+
+model SurveyOption {
+  id         String         @id @default(uuid())
+  questionId String
+  question   SurveyQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  kolejnosc  Int
+  tresc      String
+
+  odpowiedzi SurveyAnswer[]
+
+  @@index([questionId])
+}
+
+model SurveyResponse {
+  id        String   @id @default(uuid())
+  surveyId  String
+  survey    Survey   @relation(fields: [surveyId], references: [id])
+  lawFirmId String
+  lawFirm   LawFirm  @relation(fields: [lawFirmId], references: [id])
+  createdAt DateTime @default(now())
+
+  odpowiedzi SurveyAnswer[]
+
+  @@unique([surveyId, lawFirmId])
+  @@index([surveyId])
+  @@index([lawFirmId])
+}
+
+model SurveyAnswer {
+  id         String         @id @default(uuid())
+  responseId String
+  response   SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  questionId String
+  question   SurveyQuestion @relation(fields: [questionId], references: [id])
+  optionId   String
+  option     SurveyOption   @relation(fields: [optionId], references: [id])
+
+  @@index([responseId])
+  @@index([questionId])
 }
 
 

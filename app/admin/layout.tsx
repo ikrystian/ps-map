@@ -23,6 +23,7 @@ import {
   Coins,
   CreditCard,
   FileCode,
+  ClipboardList,
   FileText,
   FolderTree,
   Handshake,
@@ -118,6 +119,7 @@ const navigation: { title: string; items: NavItem[] }[] = [
       { name: "Blog", href: "/admin/blog", icon: BookOpen },
       { name: "Kategorie bloga", href: "/admin/blog/categories", icon: Tags, isSubmenu: true },
       { name: "Centrum pomocy", href: "/admin/centrum-pomocy", icon: HelpCircle },
+      { name: "Ankiety", href: "/admin/ankiety", icon: ClipboardList },
     ],
   },
   {

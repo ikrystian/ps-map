@@ -309,7 +309,6 @@ export default function PublicHeader({
 
   const isDlaPrawnikaActive = pathname.startsWith("/dla-prawnika")
   const isZNamiWygrywaszActive = pathname === "/z-nami-wygrywasz"
-  const isKontaktActive = pathname === "/kontakt"
   const isBlogActive = pathname.startsWith("/blog")
   const isONasActive = pathname === "/o-nas"
 
@@ -811,12 +810,12 @@ export default function PublicHeader({
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/kontakt" className={cn(
+                  <Link href="/z-nami-wygrywasz" className={cn(
                     navigationMenuTriggerStyle(),
                     "bg-transparent hover:bg-[#121212]",
-                    isKontaktActive && "text-primary font-semibold"
+                    isZNamiWygrywaszActive && "text-primary font-semibold"
                   )}>
-                    Kontakt
+                    Z nami wygrywasz
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -1082,10 +1081,10 @@ export default function PublicHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isKontaktActive ? "text-primary font-semibold" : "text-neutral-200"
+                          isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
                         )}
                       >
-                        Kontakt
+                        Z nami wygrywasz
                       </Link>
 
                     </div>
