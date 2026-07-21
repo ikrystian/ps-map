@@ -101,25 +101,6 @@ export async function getKsefConfig(): Promise<KsefConfig> {
 }
 
 /**
- * Parses address string into street name and house number for KSeF compliance
- */
-function parseAddress(address: string) {
-  const cleanAddress = address.trim()
-  // Match patterns like "ul. Marszałkowska 10/12", "Marszałkowska 10", "Al. Jerozolimskie 12"
-  const match = cleanAddress.match(/^(?:ul\.\s+|al\.\s+|aleja\s+)?(.*?)\s+(\d+[a-zA-Z]*(?:\/\d+)?)$/i)
-  if (match) {
-    return {
-      street: match[1].trim(),
-      houseNo: match[2].trim()
-    }
-  }
-  return {
-    street: cleanAddress,
-    houseNo: "1" // Fallback
-  }
-}
-
-/**
  * Formats date to YYYY-MM-DD
  */
 function formatDate(d: Date | string) {
@@ -169,14 +150,12 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
   // inaczej KSeF odrzuci fakturę.
   const sellerNip = sellerNipOverride?.replace(/\D/g, "") || "1234567890"
   const sellerName = "Prosta Sprawa Sp. z o.o."
-  const sellerAddress = parseAddress("ul. Przykładowa 123")
   const sellerPostalCode = "00-001"
   const sellerCity = "Warszawa"
 
   const buyerNip = invoice.buyerNIP ? invoice.buyerNIP.replace(/\D/g, "") : null
-  const buyerAddress = parseAddress(invoice.buyerAddress)
-  const buyerPostalCode = invoice.buyerPostalCode
-  const buyerCity = invoice.buyerCity
+  const buyerAddressL1 = invoice.buyerAddress || ""
+  const buyerAddressL2 = [invoice.buyerPostalCode, invoice.buyerCity].filter(Boolean).join(" ")
   const buyerName = invoice.buyerName
 
   // Obliczenie kwot zgodnie z regułą W_019: VAT = round(netto × stawka/100, 2).
@@ -206,12 +185,8 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     </DaneIdentyfikacyjne>
     <Adres>
       <KodKraju>PL</KodKraju>
-      <AdresPol>
-        <KodPocztowy>${sellerPostalCode}</KodPocztowy>
-        <Miejscowosc>${sellerCity}</Miejscowosc>
-        <Ulica>${escapeXml(sellerAddress.street)}</Ulica>
-        <NrDomu>${escapeXml(sellerAddress.houseNo)}</NrDomu>
-      </AdresPol>
+      <AdresL1>${escapeXml("ul. Przykładowa 123")}</AdresL1>
+      <AdresL2>${escapeXml(sellerPostalCode + " " + sellerCity)}</AdresL2>
     </Adres>
   </Podmiot1>
   <Podmiot2>
@@ -221,12 +196,8 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     </DaneIdentyfikacyjne>
     <Adres>
       <KodKraju>PL</KodKraju>
-      <AdresPol>
-        <KodPocztowy>${buyerPostalCode}</KodPocztowy>
-        <Miejscowosc>${escapeXml(buyerCity)}</Miejscowosc>
-        <Ulica>${escapeXml(buyerAddress.street)}</Ulica>
-        <NrDomu>${escapeXml(buyerAddress.houseNo)}</NrDomu>
-      </AdresPol>
+      <AdresL1>${escapeXml(buyerAddressL1)}</AdresL1>
+      ${buyerAddressL2 ? `<AdresL2>${escapeXml(buyerAddressL2)}</AdresL2>` : ""}
     </Adres>
   </Podmiot2>
   <Fa>
