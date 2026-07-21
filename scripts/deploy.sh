@@ -19,11 +19,11 @@ OLD_DIR=".next-old"
 echo "==> Czyszczenie poprzedniego katalogu tymczasowego ($BUILD_DIR)"
 rm -rf "$BUILD_DIR"
 
-echo "==> Zapisuję datę i godzinę deployu do .env.local"
+echo "==> Zapisuję datę i godzinę deployu do .env"
 DEPLOY_TIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 # Aktualizuj lub dodaj DEPLOY_TIME w .env
 if grep -q "^DEPLOY_TIME=" .env 2>/dev/null; then
-  sed -i "s|^DEPLOY_TIME=.*|DEPLOY_TIME=$DEPLOY_TIME|" .env.local
+  sed -i "s|^DEPLOY_TIME=.*|DEPLOY_TIME=$DEPLOY_TIME|" .env
 else
   echo "DEPLOY_TIME=$DEPLOY_TIME" >> .env
 fi
