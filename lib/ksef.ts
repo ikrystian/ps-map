@@ -152,12 +152,18 @@ function escapeXml(unsafe: string): string {
 }
 
 /**
- * Generates an XML invoice compliant with KSeF FA(3) schema
+ * Generates an XML invoice compliant with KSeF FA(3) schema (version 1-0E,
+ * namespace http://crd.gov.pl/wzor/2025/06/25/13775/).
+ *
+ * Kwoty obliczane metodą "od netto" per reguła semantyczna KSeF W_019:
+ *   P_14_1 = round(P_13_1 × stawka/100, 2)
+ *   P_15   = P_13_1 + P_14_1
  */
 export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): string {
   const issueDateStr = formatDate(invoice.issueDate)
   const saleDateStr = formatDate(invoice.saleDate)
-  const creationDateTimeStr = formatDateTime(invoice.issueDate)
+  // DataWytworzeniaFa = chwila wytworzenia dokumentu XML (nie data wystawienia faktury).
+  const creationDateTimeStr = formatDateTime(new Date())
 
   // NIP sprzedawcy musi być zgodny z NIP-em uwierzytelnionego kontekstu KSeF,
   // inaczej KSeF odrzuci fakturę.
@@ -173,29 +179,30 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
   const buyerCity = invoice.buyerCity
   const buyerName = invoice.buyerName
 
-  const netAmount = invoice.netAmount.toFixed(2)
-  const vatAmount = invoice.vatAmount.toFixed(2)
-  const grossAmount = invoice.grossAmount.toFixed(2)
-  const vatRate = String(invoice.vatRate)
+  // Obliczenie kwot zgodnie z regułą W_019: VAT = round(netto × stawka/100, 2).
+  // Dzięki temu P_14_1 zawsze = round(P_13_1 × stawka/100, 2) — wymóg KSeF.
+  const vatRateNum: number = invoice.vatRate  // np. 23 dla stawki 23%
+  const netStr = invoice.netAmount.toFixed(2)
+  const vatStr = (Math.round(parseFloat(netStr) * vatRateNum) / 100).toFixed(2)
+  const grossStr = (parseFloat(netStr) + parseFloat(vatStr)).toFixed(2)
+  const vatRateStr = String(vatRateNum)
 
   const itemDescription = invoice.order.orderType === "SUBSCRIPTION"
     ? `Subskrypcja: ${invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}`
     : "Pakiet punktów"
 
-  // FA(3) XML Template
+  // FA(3) XML — schemat http://crd.gov.pl/wzor/2025/06/25/13775/
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crd.gov.pl/wzor/2025/06/25/13775/ schemat.xsd">
   <Naglowek>
-    <KodFormularza kodSystemowy="FA (3)" wersjaSchema="1-0E">FA</KodFormularza>
+    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
     <WariantFormularza>3</WariantFormularza>
     <DataWytworzeniaFa>${creationDateTimeStr}</DataWytworzeniaFa>
-    <KodUrzedu>1472</KodUrzedu>
-    <CelZlozenia>1</CelZlozenia>
   </Naglowek>
   <Podmiot1>
     <DaneIdentyfikacyjne>
       <NIP>${sellerNip}</NIP>
-      <NazwaPelna>${escapeXml(sellerName)}</NazwaPelna>
+      <Nazwa>${escapeXml(sellerName)}</Nazwa>
     </DaneIdentyfikacyjne>
     <Adres>
       <KodKraju>PL</KodKraju>
@@ -208,17 +215,10 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     </Adres>
   </Podmiot1>
   <Podmiot2>
-    ${buyerNip ? `
     <DaneIdentyfikacyjne>
-      <NIP>${buyerNip}</NIP>
-      <NazwaPelna>${escapeXml(buyerName)}</NazwaPelna>
+      ${buyerNip ? `<NIP>${buyerNip}</NIP>` : `<BrakID>1</BrakID>`}
+      <Nazwa>${escapeXml(buyerName)}</Nazwa>
     </DaneIdentyfikacyjne>
-    ` : `
-    <DaneIdentyfikacyjne>
-      <BrakNIP>1</BrakNIP>
-      <NazwaPelna>${escapeXml(buyerName)}</NazwaPelna>
-    </DaneIdentyfikacyjne>
-    `}
     <Adres>
       <KodKraju>PL</KodKraju>
       <AdresPol>
@@ -234,9 +234,10 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     <P_1>${issueDateStr}</P_1>
     <P_2>${escapeXml(invoice.invoiceNumber)}</P_2>
     <P_6>${saleDateStr}</P_6>
-    <P_13_1>${netAmount}</P_13_1>
-    <P_14_1>${vatAmount}</P_14_1>
-    <P_15>${grossAmount}</P_15>
+    <P_13_1>${netStr}</P_13_1>
+    <P_14_1>${vatStr}</P_14_1>
+    <P_15>${grossStr}</P_15>
+    <RodzajFaktury>VAT</RodzajFaktury>
     <Adnotacje>
       <P_16>2</P_16>
       <P_17>2</P_17>
@@ -247,15 +248,14 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
       <P_23>2</P_23>
       <P_PMarzy>2</P_PMarzy>
     </Adnotacje>
-    <RodzajFaktury>VAT</RodzajFaktury>
     <FaWiersz>
       <NrWierszaFa>1</NrWierszaFa>
       <P_7>${escapeXml(itemDescription)}</P_7>
       <P_8A>szt.</P_8A>
       <P_8B>1</P_8B>
-      <P_9A>${netAmount}</P_9A>
-      <P_11>${netAmount}</P_11>
-      <P_12>${vatRate}</P_12>
+      <P_9A>${netStr}</P_9A>
+      <P_11>${netStr}</P_11>
+      <P_12>${vatRateStr}</P_12>
     </FaWiersz>
   </Fa>
 </Faktura>`
@@ -816,16 +816,21 @@ export async function checkInvoiceKsefStatus(invoiceId: string): Promise<string>
       (typeof statusCode === "number" && statusCode >= 400)
     if (isRejected) {
       const reason = item.status?.description || item.description || "Faktura odrzucona przez KSeF"
+      // Zbieramy sub-błędy z KSeF (szczegółowe kody walidacji) do diagnostyki.
+      const details: string[] = item.status?.details || item.status?.errors || item.errors || []
+      const detailsStr = details.length > 0
+        ? `\nSzczegóły: ${Array.isArray(details) ? details.map((d: any) => typeof d === "string" ? d : (d.message || d.description || JSON.stringify(d))).join("; ") : JSON.stringify(details)}`
+        : ""
       await prisma.invoice.update({
         where: { id: invoiceId },
-        data: { ksefStatus: "REJECTED", ksefDiagnostics: `KSeF odrzucił fakturę: ${reason}` },
+        data: { ksefStatus: "REJECTED", ksefDiagnostics: `KSeF odrzucił fakturę: ${reason}${detailsStr}` },
       })
       await prisma.systemLog.create({
         data: {
           level: "ERROR",
           action: "KSEF_INVOICE_REJECTED",
           message: `Faktura ${invoice.invoiceNumber} odrzucona przez KSeF.`,
-          metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, reason }),
+          metadata: JSON.stringify({ invoiceNumber: invoice.invoiceNumber, reason, details, rawItem: item }),
         },
       })
       return "REJECTED"
