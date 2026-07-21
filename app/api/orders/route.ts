@@ -204,9 +204,12 @@ export async function POST(request: NextRequest) {
       })
 
     // Utwórz zamówienie
+    const orderNumber = `PKT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
+
     const order = await prisma.order.create({
       data: {
         lawFirmId: lawFirm.id,
+        orderNumber,
         pakietPunktow,
         liczbaPunktow,
         kwota,
