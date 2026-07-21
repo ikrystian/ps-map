@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { orderId, methodId } = body
+    const { orderId } = body
 
     if (!orderId) {
       return Response.json(
@@ -69,7 +69,8 @@ export async function POST(request: NextRequest) {
     const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
     const urlStatus = `${baseUrl}/api/payments/przelewy24/notify`
 
-    // Zarejestruj transakcję w Przelewy24 z obsługą wszystkich kanałów płatności
+    // Zarejestruj transakcję w Przelewy24 z kanałem "wszystkie 24/7" — wybór
+    // konkretnej metody odbywa się po stronie P24, nie w naszym checkout
     const result = await p24Client.registerTransaction({
       sessionId,
       amount,
@@ -79,9 +80,7 @@ export async function POST(request: NextRequest) {
       urlStatus,
       country: "PL",
       language: "pl",
-      channel: P24Channel.ALL,
-      // Jeśli użytkownik wybrał konkretną metodę, przekaż ją — P24 pomija stronę wyboru
-      ...(methodId !== undefined && { method: Number(methodId) }),
+      channel: P24Channel.ALL_TIME,
     })
 
     if (result.error || !result.data?.token) {
