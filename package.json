@@ -16,6 +16,7 @@
     "db:seed": "prisma db seed",
     "reset": "prisma generate && prisma migrate dev && prisma db seed && python3 prisma/import_postal_codes.py",
     "update": "prisma generate && prisma migrate deploy && pm2 reload 0 --update-env",
+    "deploy": "bash scripts/deploy.sh",
     "db:backup": "bash scripts/db-backup.sh manual",
     "db:restore": "bash scripts/db-restore.sh",
     "db:rollback": "bash scripts/migration-rollback.sh"

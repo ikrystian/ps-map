@@ -87,7 +87,9 @@
       "Bash(mkdir -p /home/krystian/Projects/ps-map/assets/fonts)",
       "Bash(curl -sL -o DejaVuSans.ttf \"https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans.ttf\")",
       "Bash(curl -sL -o DejaVuSans-Bold.ttf \"https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans-Bold.ttf\")",
-      "WebFetch(domain:crd.gov.pl)"
+      "WebFetch(domain:crd.gov.pl)",
+      "Bash(pm2 list *)",
+      "Bash(pm2 describe *)"
     ]
   }
 }

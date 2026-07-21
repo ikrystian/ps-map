@@ -19,6 +19,9 @@ const getOptimalBuildCPUs = () => {
 };
 
 const nextConfig: NextConfig = {
+  // Pozwala skierować `next build` do osobnego katalogu (np. .next-build),
+  // żeby atomowo podmienić go z `.next` po zakończeniu builda — patrz scripts/deploy.sh.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   allowedDevOrigins: ["ps-dev.com.pl", "team.studio-ai.com.pl", "rejestracja.prostasprawa.pl", "stage.prostasprawa.pl"],
   env: {
     ENV: process.env.ENV || "local",
