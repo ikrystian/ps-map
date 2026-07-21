@@ -1,5 +1,5 @@
 import { pickCompanyDataFields } from "@/lib/biala-lista"
-import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
+import { generateEmailVerificationEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
@@ -761,25 +761,8 @@ export async function POST(request: NextRequest) {
         // Don't fail registration if email fails, just log it
       }
     } else if (!existingUser && body.skipEmailVerification) {
-      // Pre-rejestracja z landing page (ps-landing): konto jest od razu zweryfikowane,
-      // więc zamiast maila aktywacyjnego wysyłamy mail powitalny w standardowej szacie
-      // graficznej (ten sam layout, co pozostałe maile systemowe).
-      try {
-        const welcome = generateLandingWelcomeEmail()
-        emailSent = await sendEmail({
-          to: body.email,
-          subject: welcome.subject,
-          html: welcome.html,
-          text: welcome.text,
-          templateType: EmailType.REJESTRACJA_KANCELARIA,
-        })
-        if (!emailSent) {
-          console.error('Failed to send landing welcome email to:', body.email)
-        }
-      } catch (welcomeError) {
-        // Nie blokuj rejestracji, jeśli mail powitalny się nie wyśle.
-        console.error('Failed to send landing welcome email to:', body.email, welcomeError)
-      }
+      // Pre-rejestracja z landing page (ps-landing): konto ma status PENDING i czeka na
+      // ręczne zatwierdzenie — do użytkownika nie wysyłamy żadnego maila.
 
       // Wyślij e-mail informacyjny do BOK (bok@prostasprawa.pl) z uzupełnionymi danymi formularza
       try {

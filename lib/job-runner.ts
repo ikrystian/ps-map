@@ -29,6 +29,23 @@ export type RunJobResult<T> =
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+// Ponawia operację DB przy przejściowych błędach (timeout, busy lock).
+async function withDbRetry<T>(fn: () => Promise<T>, attempts = 4, baseDelayMs = 200): Promise<T> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn()
+    } catch (err: any) {
+      const isTransient =
+        err?.code === "P1008" || // Operations timed out
+        err?.code === "P2024" || // Connection pool timed out
+        /timeout|SQLITE_BUSY/i.test(err?.message ?? "")
+      if (!isTransient || i === attempts - 1) throw err
+      await sleep(baseDelayMs * 2 ** i)
+    }
+  }
+  throw new Error("unreachable")
+}
+
 function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.stack || error.message
   return String(error)
@@ -84,15 +101,17 @@ async function acquireLock(jobName: string): Promise<boolean> {
 
 async function releaseLock(jobName: string, status: JobRunStatus): Promise<void> {
   try {
-    await prisma.scheduledJob.update({
-      where: { jobName },
-      data: {
-        lockedAt: null,
-        lockedBy: null,
-        lastRunAt: new Date(),
-        lastStatus: status,
-      },
-    })
+    await withDbRetry(() =>
+      prisma.scheduledJob.update({
+        where: { jobName },
+        data: {
+          lockedAt: null,
+          lockedBy: null,
+          lastRunAt: new Date(),
+          lastStatus: status,
+        },
+      })
+    )
   } catch (error) {
     console.error(`[JOB:${jobName}] Failed to release lock:`, error)
   }
@@ -140,27 +159,33 @@ export async function runJob<T>(
       try {
         const result = await fn()
 
-        await prisma.scheduledJobRun.update({
-          where: { id: run.id },
-          data: {
-            status: JobRunStatus.SUCCESS,
-            finishedAt: new Date(),
-            durationMs: Date.now() - startedAt,
-            result: safeJson(result),
-          },
-        })
+        await withDbRetry(() =>
+          prisma.scheduledJobRun.update({
+            where: { id: run.id },
+            data: {
+              status: JobRunStatus.SUCCESS,
+              finishedAt: new Date(),
+              durationMs: Date.now() - startedAt,
+              result: safeJson(result),
+            },
+          })
+        )
 
         finalStatus = JobRunStatus.SUCCESS
         return { skipped: false, status: JobRunStatus.SUCCESS, result }
       } catch (error) {
-        await prisma.scheduledJobRun.update({
-          where: { id: run.id },
-          data: {
-            status: JobRunStatus.FAILED,
-            finishedAt: new Date(),
-            durationMs: Date.now() - startedAt,
-            error: errorMessage(error),
-          },
+        await withDbRetry(() =>
+          prisma.scheduledJobRun.update({
+            where: { id: run.id },
+            data: {
+              status: JobRunStatus.FAILED,
+              finishedAt: new Date(),
+              durationMs: Date.now() - startedAt,
+              error: errorMessage(error),
+            },
+          })
+        ).catch((updateErr) => {
+          console.error(`[JOB:${jobName}] Failed to record failure status:`, updateErr)
         })
 
         const willRetry = attempt <= retries
