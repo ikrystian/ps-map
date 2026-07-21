@@ -398,8 +398,8 @@ export function ContactTab({
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-white font-playfair">Adres stacjonarny biura</CardTitle>
-                  <CardDescription className="text-zinc-400 text-sm">Główna lokalizacja fizyczna</CardDescription>
+                  <CardTitle className="text-xl text-white font-playfair">Adres </CardTitle>
+                  <CardDescription className="text-zinc-400 text-sm">Główna lokalizacja</CardDescription>
                 </div>
               </div>
             </CardHeader>

@@ -89,7 +89,8 @@
       "Bash(curl -sL -o DejaVuSans-Bold.ttf \"https://github.com/dejavu-fonts/dejavu-fonts/raw/version_2_37/ttf/DejaVuSans-Bold.ttf\")",
       "WebFetch(domain:crd.gov.pl)",
       "Bash(pm2 list *)",
-      "Bash(pm2 describe *)"
+      "Bash(pm2 describe *)",
+      "Bash(ps -o pid,ppid,cmd -p 19443)"
     ]
   }
 }

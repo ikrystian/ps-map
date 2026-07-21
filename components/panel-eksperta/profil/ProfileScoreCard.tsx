@@ -235,9 +235,9 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
         },
         {
           id: "adres",
-          label: "Adres stacjonarny",
+          label: "Adre",
           description:
-            "Ulica, kod pocztowy i miasto biura. Umożliwia wyświetlanie na mapie oraz w wyszukiwaniu lokalnym.",
+            "Ulica, kod pocztowy i miasto.",
           weight: 8,
           done:
             !!formData.adres?.trim() && !!formData.kodPocztowy?.trim() && !!formData.miasto?.trim(),
