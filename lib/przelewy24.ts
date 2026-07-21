@@ -140,7 +140,7 @@ export class Przelewy24Client {
         }
       }
 
-      return { data }
+      return { data: data.data }
     } catch (error) {
       console.error("P24 API error:", error)
       return {
