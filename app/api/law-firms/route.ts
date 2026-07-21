@@ -599,10 +599,10 @@ export async function POST(request: NextRequest) {
             kodPocztowy: body.kodPocztowy,
             miasto: body.miasto,
             voivodeshipId: body.voivodeshipId,
-            // Pre-rejestracja z landing page (ps-landing): konto zakładane bez maila
-            // aktywacyjnego, więc oznaczamy email jako zweryfikowany od razu, żeby było
-            // gotowe do logowania po starcie platformy.
-            emailVerified: body.skipEmailVerification ? new Date() : undefined,
+            // Pre-rejestracja z landing page (ps-landing): konto ma status PENDING i czeka
+            // na ręczne wysłanie maila aktywacyjnego przez admina (panel admin/users).
+            // emailVerified pozostaje null — użytkownik musi kliknąć link aktywacyjny.
+            emailVerified: undefined,
             status: body.skipEmailVerification ? "PENDING" : "ACTIVE",
           },
         })

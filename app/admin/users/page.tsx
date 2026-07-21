@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Edit, Lock, RefreshCw, Search, Trash2, Unlock, UserPlus } from "lucide-react"
+import { Edit, Lock, Mail, RefreshCw, Search, Trash2, Unlock, UserPlus } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -73,6 +73,8 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isSendVerificationDialogOpen, setIsSendVerificationDialogOpen] = useState(false)
+  const [isSendingVerification, setIsSendingVerification] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("")
@@ -164,6 +166,35 @@ export default function AdminUsersPage() {
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete user")
+    }
+  }
+
+  // Send activation emails to all PENDING users
+  const handleSendPendingVerification = async () => {
+    setIsSendingVerification(true)
+    try {
+      const response = await fetch("/api/admin/users/send-pending-verification", {
+        method: "POST",
+      })
+      const data = await response.json()
+      if (response.ok) {
+        if (data.total === 0) {
+          toast.info("Brak użytkowników PENDING oczekujących na aktywację.")
+        } else {
+          toast.success(
+            `Wysłano ${data.sent} z ${data.total} maili aktywacyjnych.${
+              data.failed > 0 ? ` ${data.failed} nie udało się wysłać.` : ""
+            }`
+          )
+        }
+      } else {
+        throw new Error(data.error || "Błąd serwera")
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się wysłać maili")
+    } finally {
+      setIsSendingVerification(false)
+      setIsSendVerificationDialogOpen(false)
     }
   }
 
@@ -275,7 +306,14 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <AdminHeaderSetter title="Zarządzanie użytkownikami" subtitle="Zarządzaj użytkownikami systemu" />
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-2">
+        <Button
+          variant="outline"
+          onClick={() => setIsSendVerificationDialogOpen(true)}
+        >
+          <Mail className="mr-2 h-4 w-4" />
+          Wyślij maile aktywacyjne
+        </Button>
         <Button asChild>
           <Link href="/admin/users/new">
             <UserPlus className="mr-2 h-4 w-4" />
@@ -499,6 +537,32 @@ export default function AdminUsersPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Send Verification Confirmation Dialog */}
+      <AlertDialog open={isSendVerificationDialogOpen} onOpenChange={setIsSendVerificationDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Wysłać maile aktywacyjne?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ta akcja wyśle maile z linkiem weryfikacyjnym (ważnym 24h) do{" "}
+              <strong>wszystkich użytkowników ze statusem PENDING</strong>{" "}
+              którzy nie mają jeszcze potwierdzonego emaila. Poprzednie tokeny
+              weryfikacyjne zostaną unieważnione i zastąpione nowymi.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSendingVerification}>
+              Anuluj
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSendPendingVerification}
+              disabled={isSendingVerification}
+            >
+              {isSendingVerification ? "Wysyłanie..." : "Wyślij maile"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
