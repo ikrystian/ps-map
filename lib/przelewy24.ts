@@ -51,6 +51,11 @@ export class Przelewy24Client {
     this.apiUrl = process.env.P24_API_URL || "https://sandbox.przelewy24.pl"
   }
 
+  // Kolejność kluczy w JSON musi być identyczna jak w dokumentacji P24 (sha384 z json_encode)
+  private sha384(payload: Record<string, unknown>): string {
+    return crypto.createHash("sha384").update(JSON.stringify(payload)).digest("hex")
+  }
+
   private generateSign(data: {
     sessionId: string
     merchantId?: number
@@ -59,15 +64,47 @@ export class Przelewy24Client {
     crc: string
   }): string {
     const { sessionId, merchantId, amount, currency, crc } = data
-    const json = JSON.stringify({
+    return this.sha384({
       sessionId,
       merchantId: merchantId || this.merchantId,
       amount,
       currency,
       crc,
     })
+  }
 
-    return crypto.createHash("sha384").update(json).digest("hex")
+  // Sign notyfikacji urlStatus: {merchantId, posId, sessionId, amount, originAmount, currency, orderId, methodId, statement, crc}
+  verifyNotificationSign(notification: {
+    merchantId: number
+    posId: number
+    sessionId: string
+    amount: number
+    originAmount: number
+    currency: string
+    orderId: number
+    methodId: number
+    statement: string
+    sign: string
+  }): boolean {
+    const expected = this.sha384({
+      merchantId: notification.merchantId,
+      posId: notification.posId,
+      sessionId: notification.sessionId,
+      amount: notification.amount,
+      originAmount: notification.originAmount,
+      currency: notification.currency,
+      orderId: notification.orderId,
+      methodId: notification.methodId,
+      statement: notification.statement,
+      crc: this.crc,
+    })
+
+    const expectedBuf = Buffer.from(expected, "hex")
+    const receivedBuf = Buffer.from(notification.sign || "", "hex")
+    return (
+      expectedBuf.length === receivedBuf.length &&
+      crypto.timingSafeEqual(expectedBuf, receivedBuf)
+    )
   }
 
   private getAuthHeader(): string {
@@ -156,9 +193,10 @@ export class Przelewy24Client {
   }): Promise<{ success: boolean; error?: string }> {
     const { sessionId, amount, orderId } = params
 
-    const sign = this.generateSign({
+    // Sign weryfikacji: {sessionId, orderId, amount, currency, crc} — inny niż przy rejestracji!
+    const sign = this.sha384({
       sessionId,
-      merchantId: this.merchantId,
+      orderId,
       amount,
       currency: "PLN",
       crc: this.crc,

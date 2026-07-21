@@ -52,35 +52,51 @@ export async function POST(request: NextRequest) {
       return Response.json({ status: "OCZEKUJE", error: txResult.error })
     }
 
-    const tx = txResult.data
+    const p24Tx = txResult.data
 
-    // status === 1 oznacza zweryfikowaną/ukończoną transakcję w P24
-    if (tx.status !== 1) {
+    // Status P24: 0 - brak wpłaty, 1 - przedpłata (wymaga verify), 2 - wykonana, 3 - zwrócona
+    if (p24Tx.status !== 1 && p24Tx.status !== 2) {
       return Response.json({ status: "OCZEKUJE" })
     }
 
-    // Zweryfikuj transakcję z P24
-    const verification = await p24Client.verifyTransaction({
-      sessionId: order.externalOrderId,
-      amount: tx.amount,
-      orderId: tx.orderId,
-    })
+    // Kwota wpłaty musi zgadzać się z kwotą zamówienia
+    const expectedAmount = Math.round(order.kwota * 100)
+    if (p24Tx.amount !== expectedAmount) {
+      console.error(
+        `P24 amount mismatch for order ${order.id}: expected ${expectedAmount}, got ${p24Tx.amount}`
+      )
+      return Response.json({ status: "OCZEKUJE", error: "Nieprawidłowa kwota transakcji" })
+    }
 
-    if (!verification.success) {
-      console.error("P24 check verification failed:", verification.error)
-      return Response.json({ status: "OCZEKUJE", error: verification.error })
+    // Przedpłatę (status 1) trzeba potwierdzić przez transaction/verify — bez tego środki wrócą do klienta
+    if (p24Tx.status === 1) {
+      const verification = await p24Client.verifyTransaction({
+        sessionId: order.externalOrderId,
+        amount: p24Tx.amount,
+        orderId: p24Tx.orderId,
+      })
+
+      if (!verification.success) {
+        console.error("P24 check verification failed:", verification.error)
+        return Response.json({ status: "OCZEKUJE", error: verification.error })
+      }
     }
 
     // Zaktualizuj zamówienie i obsłuż typ
     const result = await prisma.$transaction(async (tx: any) => {
-      await tx.order.update({
-        where: { id: order.id },
+      // Warunkowy update chroni przed podwójnym doładowaniem (wyścig z notyfikacją P24)
+      const updated = await tx.order.updateMany({
+        where: { id: order.id, statusPlatnosci: { not: "ZAPLACONE" } },
         data: {
           statusPlatnosci: "ZAPLACONE",
           zaplaconoData: new Date(),
-          transactionId: String(txResult.data!.orderId),
+          transactionId: String(p24Tx.orderId),
         },
       })
+
+      if (updated.count === 0) {
+        return null
+      }
 
       if (order.orderType === "POINTS") {
         const updatedFirm = await tx.lawFirm.update({
@@ -151,6 +167,11 @@ export async function POST(request: NextRequest) {
 
       return { lawFirm, notification }
     })
+
+    // Notyfikacja P24 zdążyła przetworzyć zamówienie równolegle — status jest już ZAPLACONE
+    if (!result) {
+      return Response.json({ status: "ZAPLACONE" })
+    }
 
     try {
       const { emitNewNotification } = await import("@/lib/socket")

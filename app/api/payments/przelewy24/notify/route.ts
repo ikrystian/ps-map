@@ -22,6 +22,28 @@ export async function POST(request: NextRequest) {
       sign,
     } = body
 
+    // Zweryfikuj podpis notyfikacji (sha384 z pól notyfikacji + CRC)
+    const isSignValid = p24Client.verifyNotificationSign({
+      merchantId,
+      posId,
+      sessionId,
+      amount,
+      originAmount,
+      currency,
+      orderId,
+      methodId,
+      statement,
+      sign,
+    })
+
+    if (!isSignValid) {
+      console.error("P24 notification sign invalid for sessionId:", sessionId)
+      return Response.json(
+        { error: "Nieprawidłowy podpis notyfikacji" },
+        { status: 400 }
+      )
+    }
+
     // Znajdź zamówienie po sessionId
     const order = await prisma.order.findFirst({
       where: {
@@ -37,6 +59,23 @@ export async function POST(request: NextRequest) {
       return Response.json(
         { error: "Nie znaleziono zamówienia" },
         { status: 404 }
+      )
+    }
+
+    // P24 ponawia notyfikacje (po 3, 5, 15... min) — nie przetwarzaj drugi raz
+    if (order.statusPlatnosci === "ZAPLACONE") {
+      return Response.json({ success: true })
+    }
+
+    // Kwota z notyfikacji musi zgadzać się z kwotą zamówienia
+    const expectedAmount = Math.round(order.kwota * 100)
+    if (amount !== expectedAmount || currency !== "PLN") {
+      console.error(
+        `P24 amount mismatch for order ${order.id}: expected ${expectedAmount}, got ${amount} ${currency}`
+      )
+      return Response.json(
+        { error: "Nieprawidłowa kwota transakcji" },
+        { status: 400 }
       )
     }
 
@@ -66,15 +105,19 @@ export async function POST(request: NextRequest) {
 
     // Zaktualizuj status zamówienia i obsłuż typ zamówienia
     const result = await prisma.$transaction(async (tx: any) => {
-      // Zaktualizuj zamówienie
-      await tx.order.update({
-        where: { id: order.id },
+      // Warunkowy update chroni przed podwójnym doładowaniem (retry notyfikacji / wyścig z endpointem check)
+      const updated = await tx.order.updateMany({
+        where: { id: order.id, statusPlatnosci: { not: "ZAPLACONE" } },
         data: {
           statusPlatnosci: "ZAPLACONE",
           zaplaconoData: new Date(),
           transactionId: String(orderId),
         },
       })
+
+      if (updated.count === 0) {
+        return null
+      }
 
       // Handle Points
       if (orderWithPlan?.orderType === 'POINTS') {
@@ -156,6 +199,11 @@ export async function POST(request: NextRequest) {
 
       return { lawFirm, notification }
     })
+
+    // Inny proces (retry/check) już przetworzył to zamówienie
+    if (!result) {
+      return Response.json({ success: true })
+    }
 
     // Emit notification via Socket.IO
     const { emitNewNotification } = await import("@/lib/socket")

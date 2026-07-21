@@ -127,6 +127,8 @@ export default function CheckoutSuccessPage() {
     }, 250)
   }
 
+  const isResolved = !!order && order.statusPlatnosci !== "OCZEKUJE"
+
   useEffect(() => {
     // Jeśli to jest pakiet subskrypcyjny (np. type === "package")
     if (type === "package") {
@@ -144,6 +146,9 @@ export default function CheckoutSuccessPage() {
       return
     }
 
+    // Status rozstrzygnięty (zapłacone/anulowane) — polling nie jest już potrzebny
+    if (isResolved) return
+
     // Wyczyść pending order z sessionStorage
     sessionStorage.removeItem("pendingOrder")
 
@@ -159,7 +164,7 @@ export default function CheckoutSuccessPage() {
       clearInterval(pollInterval)
       clearTimeout(timeout)
     }
-  }, [orderId, type, router])
+  }, [orderId, type, router, isResolved])
 
   // Trigger celebration once order becomes ZAPLACONE
   useEffect(() => {
