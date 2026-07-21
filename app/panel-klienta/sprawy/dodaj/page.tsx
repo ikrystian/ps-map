@@ -5,6 +5,8 @@ import { Heading } from "@/components/ui/heading";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -162,7 +164,7 @@ export default function ClientAddCasePage() {
     trybPilny: false,
     budzetOd: "",
     budzetDo: "",
-    doNegocjacji: false,
+    doNegocjacji: true,
     imieNazwisko: "",
     telefonKontakt: "",
     preferowanyKontakt: "EMAIL",
@@ -526,8 +528,8 @@ export default function ClientAddCasePage() {
           ...formData,
           oczekiwanyTerminRealizacji:
             formData.oczekiwanyTerminRealizacji || null,
-          budzetOd: formData.budzetOd ? parseFloat(formData.budzetOd) : null,
-          budzetDo: formData.budzetDo ? parseFloat(formData.budzetDo) : null,
+          budzetOd: !formData.doNegocjacji && formData.budzetOd ? parseFloat(formData.budzetOd) : null,
+          budzetDo: !formData.doNegocjacji && formData.budzetDo ? parseFloat(formData.budzetDo) : null,
         }),
       });
 
@@ -1291,18 +1293,18 @@ export default function ClientAddCasePage() {
       <div>
         <Label
           htmlFor="oczekiwanyTerminRealizacji"
-          className="text-muted-foreground text-xs font-semibold"
+          className="text-muted-foreground text-xs font-semibold mb-1.5 block"
         >
           Oczekiwany termin realizacji (opcjonalnie)
         </Label>
-        <Input
+        <DatePicker
           id="oczekiwanyTerminRealizacji"
-          type="date"
           value={formData.oczekiwanyTerminRealizacji}
-          className="h-11 mt-1.5"
-          onChange={(e) =>
-            updateFormData("oczekiwanyTerminRealizacji", e.target.value)
+          onChange={(val) =>
+            updateFormData("oczekiwanyTerminRealizacji", val)
           }
+          placeholder="Wybierz oczekiwany termin..."
+          minDate={new Date()}
         />
       </div>
 
@@ -1321,58 +1323,82 @@ export default function ClientAddCasePage() {
         </Label>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <Label
-            htmlFor="budzetOd"
-            className="text-muted-foreground text-xs font-semibold"
-          >
-            Szacowany budżet od (PLN)
-          </Label>
-          <Input
-            id="budzetOd"
-            type="number"
-            min="0"
-            step="0.01"
-            value={formData.budzetOd}
-            onChange={(e) => updateFormData("budzetOd", e.target.value)}
-            placeholder="0.00"
-            className="h-11 mt-1.5"
+      <div className="rounded-lg border border-border/20 bg-background-sec/10 p-4 space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <Label
+              htmlFor="doNegocjacji"
+              className="cursor-pointer text-sm font-semibold text-white block"
+            >
+              Budżet pozostawiam do negocjacji z ekspertem
+            </Label>
+            <p className="text-xs text-muted-foreground font-light">
+              Włącz tę opcję, jeśli chcesz otrzymać propozycje wyceny bezpośrednio od ekspertów.
+            </p>
+          </div>
+          <Switch
+            id="doNegocjacji"
+            checked={formData.doNegocjacji}
+            onCheckedChange={(checked) => {
+              updateFormData("doNegocjacji", checked);
+              if (checked) {
+                updateFormData("budzetOd", "");
+                updateFormData("budzetDo", "");
+              }
+            }}
           />
         </div>
-        <div>
-          <Label
-            htmlFor="budzetDo"
-            className="text-muted-foreground text-xs font-semibold"
-          >
-            Szacowany budżet do (PLN)
-          </Label>
-          <Input
-            id="budzetDo"
-            type="number"
-            min="0"
-            step="0.01"
-            value={formData.budzetDo}
-            onChange={(e) => updateFormData("budzetDo", e.target.value)}
-            placeholder="0.00"
-            className="h-11 mt-1.5"
-          />
-        </div>
-      </div>
 
-      <div className="flex items-center space-x-3 py-1.5">
-        <Checkbox
-          id="doNegocjacji"
-          checked={formData.doNegocjacji}
-          onCheckedChange={(checked) => updateFormData("doNegocjacji", checked)}
-          className="h-5 w-5 border-border/50 text-primary focus:ring-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded"
-        />
-        <Label
-          htmlFor="doNegocjacji"
-          className="cursor-pointer text-sm text-muted-foreground font-medium"
-        >
-          Budżet pozostawiam do negocjacji z ekspertem
-        </Label>
+        <AnimatePresence>
+          {!formData.doNegocjacji && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="overflow-hidden pt-3 border-t border-border/10"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label
+                    htmlFor="budzetOd"
+                    className="text-muted-foreground text-xs font-semibold block mb-1.5"
+                  >
+                    Szacowany budżet od (PLN)
+                  </Label>
+                  <Input
+                    id="budzetOd"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.budzetOd}
+                    onChange={(e) => updateFormData("budzetOd", e.target.value)}
+                    placeholder="0.00"
+                    className="h-11"
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="budzetDo"
+                    className="text-muted-foreground text-xs font-semibold block mb-1.5"
+                  >
+                    Szacowany budżet do (PLN)
+                  </Label>
+                  <Input
+                    id="budzetDo"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.budzetDo}
+                    onChange={(e) => updateFormData("budzetDo", e.target.value)}
+                    placeholder="0.00"
+                    className="h-11"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mt-6 flex items-start gap-3">
@@ -1383,8 +1409,8 @@ export default function ClientAddCasePage() {
           </h5>
           <p className="text-xs text-muted-foreground leading-relaxed font-light">
             Określenie zakresu finansowego pozwala ekspertom dopasować wycenę do
-            Twoich możliwości. Jeśli nie znasz szacowanego kosztu, zostaw pola
-            puste i zaznacz opcję budżetu do negocjacji.
+            Twoich możliwości. Jeśli nie znasz szacowanego kosztu, zostaw opcję
+            budżetu do negocjacji włączoną.
           </p>
         </div>
       </div>
