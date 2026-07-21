@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.homepageConsultedCategories) {
       settingsObject.homepageConsultedCategories = "[]"
     }
+    if (!settingsObject.comingSoonMode) {
+      settingsObject.comingSoonMode = "false"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {

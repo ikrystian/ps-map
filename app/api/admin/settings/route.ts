@@ -201,6 +201,12 @@ export async function GET(request: NextRequest) {
         description: "Czy śledzenie Google Analytics jest włączone",
       }
     }
+    if (!settingsObject.comingSoonMode) {
+      settingsObject.comingSoonMode = {
+        value: "false",
+        description: "Tryb 'Coming Soon' - zastępuje stronę główną stroną zapowiedzi (pozostałe podstrony pozostają dostępne)",
+      }
+    }
 
 
     // SMTP settings

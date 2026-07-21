@@ -208,6 +208,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  comingSoonMode?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -277,6 +281,9 @@ export default function AdminSettingsPage() {
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState("")
   const [googleAnalyticsEnabled, setGoogleAnalyticsEnabled] = useState("false")
 
+  // Coming Soon Mode
+  const [comingSoonMode, setComingSoonMode] = useState("false")
+
 
   useEffect(() => {
     fetchSettings()
@@ -334,6 +341,9 @@ export default function AdminSettingsPage() {
         // Google Analytics
         setGoogleAnalyticsId(data.googleAnalyticsId?.value || "")
         setGoogleAnalyticsEnabled(data.googleAnalyticsEnabled?.value || "false")
+
+        // Coming Soon Mode
+        setComingSoonMode(data.comingSoonMode?.value || "false")
 
         // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
         setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
@@ -637,6 +647,10 @@ export default function AdminSettingsPage() {
               value: googleAnalyticsEnabled,
               description: "Czy śledzenie Google Analytics jest włączone",
             },
+            comingSoonMode: {
+              value: comingSoonMode,
+              description: "Tryb 'Coming Soon' - zastępuje stronę główną stroną zapowiedzi (pozostałe podstrony pozostają dostępne)",
+            },
           },
         }),
       })
@@ -895,6 +909,39 @@ export default function AdminSettingsPage() {
                   onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Tryb Coming Soon */}
+          <Card className="border-amber-500/20 bg-amber-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-amber-600 dark:text-amber-400">Tryb Coming Soon</CardTitle>
+              <CardDescription>
+                Zastąp stronę główną stroną zapowiedzi (&quot;Już wkrótce startujemy&quot; z odliczaniem).
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-4 hover:bg-amber-500/[0.07] transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="comingSoonMode" className="text-base font-semibold">
+                    Włącz tryb Coming Soon
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu strona główna (/) wyświetla stronę zapowiedzi zamiast standardowej zawartości. Pozostałe podstrony pozostają dostępne po bezpośrednim podaniu adresu.
+                  </p>
+                </div>
+                <Switch
+                  id="comingSoonMode"
+                  checked={comingSoonMode === "true"}
+                  onCheckedChange={(checked) => setComingSoonMode(checked ? "true" : "false")}
+                />
+              </div>
+              {comingSoonMode === "true" && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20 mt-4">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>Tryb Coming Soon jest aktywny — odwiedzający stronę główną zobaczą wyłącznie stronę zapowiedzi.</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
