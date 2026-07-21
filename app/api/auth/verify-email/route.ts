@@ -57,9 +57,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Zaktualizuj użytkownika - oznacz email jako zweryfikowany
+    // i aktywuj konto jeśli oczekiwało na weryfikację (PENDING)
     await prisma.user.update({
       where: { id: user.id },
-      data: { emailVerified: new Date() },
+      data: {
+        emailVerified: new Date(),
+        ...(user.status === "PENDING" ? { status: "ACTIVE" } : {}),
+      },
     })
 
     // Usuń użyty token

@@ -859,23 +859,23 @@ export function generateLandingWelcomeEmail(): { subject: string; html: string; 
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witamy w ProstaSprawa!</h2>
     <p style="margin: 0 0 16px 0;">Dzień dobry,</p>
     <p style="margin: 0 0 16px 0;">dziękujemy za rejestrację i cieszymy się, że dołączasz do nas jako jeden z ekspertów tworzących największą aplikację prawną w Polsce.</p>
-    <p style="margin: 0 0 16px 0;">Oficjalnie ruszamy <strong>1 lipca</strong>. Do tego czasu odezwie się do Ciebie dedykowany opiekun, który przeprowadzi Cię przez kolejne kroki, pomoże uzupełnić profil i odpowie na wszystkie pytania. Nie musisz nic robić – wystarczy, że poczekasz na kontakt.</p>
+    <p style="margin: 0 0 16px 0;">Oficjalnie ruszamy <strong>1 sierpnia</strong>. Do tego czasu odezwie się do Ciebie dedykowany opiekun, który przeprowadzi Cię przez kolejne kroki, pomoże uzupełnić profil i odpowie na wszystkie pytania. Nie musisz nic robić – wystarczy, że poczekasz na kontakt.</p>
     <p style="margin: 0 0 16px 0;">Jeśli już teraz coś budzi Twoją ciekawość lub wątpliwości, śmiało napisz w odpowiedzi na tę wiadomość.</p>
-    <p style="margin: 0 0 24px 0;">Do zobaczenia 1 lipca!</p>
+    <p style="margin: 0 0 24px 0;">Do zobaczenia 1 sierpnia!</p>
     <p style="margin: 0;">Pozdrawiamy,<br>Zespół ProstaSprawa.pl</p>
   `
 
-  const html = getBrandEmailLayout(contentHtml, 'Dziękujemy za rejestrację w ProstaSprawa. Startujemy 1 lipca!')
+  const html = getBrandEmailLayout(contentHtml, 'Dziękujemy za rejestrację w ProstaSprawa. Startujemy 1 sierpnia!')
 
   const text = `Dzień dobry,
 
 dziękujemy za rejestrację i cieszymy się, że dołączasz do nas jako jeden z ekspertów tworzących największą aplikację prawną w Polsce.
 
-Oficjalnie ruszamy 1 lipca. Do tego czasu odezwie się do Ciebie dedykowany opiekun, który przeprowadzi Cię przez kolejne kroki, pomoże uzupełnić profil i odpowie na wszystkie pytania. Nie musisz nic robić – wystarczy, że poczekasz na kontakt.
+Oficjalnie ruszamy 1 sierpnia. Do tego czasu odezwie się do Ciebie dedykowany opiekun, który przeprowadzi Cię przez kolejne kroki, pomoże uzupełnić profil i odpowie na wszystkie pytania. Nie musisz nic robić – wystarczy, że poczekasz na kontakt.
 
 Jeśli już teraz coś budzi Twoją ciekawość lub wątpliwości, śmiało napisz w odpowiedzi na tę wiadomość.
 
-Do zobaczenia 1 lipca!
+Do zobaczenia 1 sierpnia!
 
 Pozdrawiamy,
 Zespół ProstaSprawa.pl`
