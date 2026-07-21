@@ -73,6 +73,20 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
   const [termsAccepted, setTermsAccepted] = useState(false)
 
+  // P24 metody płatności
+  interface P24Method {
+    id: number
+    name: string
+    imgUrl: string
+    mobileImgUrl: string
+    status: boolean
+  }
+  const [p24Methods, setP24Methods] = useState<P24Method[]>([])
+  const [p24MethodsLoading, setP24MethodsLoading] = useState(false)
+  const [p24MethodsError, setP24MethodsError] = useState<string | null>(null)
+  // null = brak wyboru (przekieruj na stronę wyboru P24), number = wybrany method id
+  const [selectedP24Method, setSelectedP24Method] = useState<number | null>(null)
+
   const fetchSettings = async () => {
     try {
       const response = await fetch("/api/settings")
@@ -139,6 +153,28 @@ export default function CheckoutPage() {
     fetchLawFirmData()
     fetchSettings()
   }, [router])
+
+  // Pobierz metody P24 gdy wybrana metoda to PRZELEWY24
+  useEffect(() => {
+    if (paymentMethod !== "PRZELEWY24") return
+    setP24MethodsLoading(true)
+    setP24MethodsError(null)
+    const amount = orderData?.kwota || orderData?.price
+    const url = amount
+      ? `/api/payments/przelewy24/methods?lang=pl&amount=${Math.round(amount * 100)}&currency=PLN`
+      : `/api/payments/przelewy24/methods?lang=pl`
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          setP24Methods(data.data.filter((m: P24Method) => m.status))
+        } else {
+          setP24MethodsError("Nie udało się pobrać metod płatności")
+        }
+      })
+      .catch(() => setP24MethodsError("Błąd połączenia z bramką płatności"))
+      .finally(() => setP24MethodsLoading(false))
+  }, [paymentMethod, orderData])
 
   const fetchLawFirmData = async () => {
     try {
@@ -212,7 +248,11 @@ export default function CheckoutPage() {
             const paymentResponse = await fetch("/api/payments/przelewy24/init", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ orderId })
+              body: JSON.stringify({
+                orderId,
+                // Jeśli wybrana konkretna metoda, przekazujemy jej ID
+                ...(selectedP24Method !== null && { methodId: selectedP24Method }),
+              })
             })
 
             if (!paymentResponse.ok) {
@@ -299,6 +339,8 @@ export default function CheckoutPage() {
             },
             body: JSON.stringify({
               orderId: order.id,
+              // Jeśli wybrana konkretna metoda, przekazujemy jej ID
+              ...(selectedP24Method !== null && { methodId: selectedP24Method }),
             }),
           })
 
@@ -468,18 +510,87 @@ export default function CheckoutPage() {
                     )}
 
                     {isP24Enabled && (
-                      <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                      <div className={`border rounded-xl overflow-hidden transition-all duration-300 ${
                         paymentMethod === "PRZELEWY24"
                           ? "border-primary bg-primary/10"
                           : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
                       }`}>
-                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-primary focus:ring-primary" />
-                        <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white text-sm">Przelewy24</div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
-                            Szybka płatność online (przelew, BLIK, karty)
+                        {/* Nagłówek opcji */}
+                        <div
+                          className="flex items-center space-x-3 p-4 cursor-pointer"
+                          onClick={() => setPaymentMethod("PRZELEWY24")}
+                        >
+                          <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-primary focus:ring-primary" />
+                          <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
+                            <div className="font-semibold text-white text-sm">Przelewy24</div>
+                            <div className="text-xs text-zinc-400 font-light mt-0.5">
+                              Szybka płatność online (przelew, BLIK, karty)
+                            </div>
+                          </Label>
+                        </div>
+
+                        {/* Siatka metod P24 */}
+                        {paymentMethod === "PRZELEWY24" && (
+                          <div className="px-4 pb-4 border-t border-border/20 pt-3">
+                            {p24MethodsLoading && (
+                              <div className="flex items-center gap-2 text-xs text-zinc-400 py-2">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Ładowanie dostępnych metod płatności...
+                              </div>
+                            )}
+
+                            {p24MethodsError && (
+                              <div className="text-xs text-zinc-500 py-2">
+                                {p24MethodsError} — po kliknięciu “Zapłać” zostaniesz przekierowany do wyboru metody.
+                              </div>
+                            )}
+
+                            {!p24MethodsLoading && !p24MethodsError && p24Methods.length > 0 && (
+                              <>
+                                <p className="text-[11px] text-zinc-500 mb-2.5">
+                                  Wybierz metodę płatności (opcjonalnie) — zostaniesz do niej przekierowany od razu.
+                                </p>
+                                <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
+                                  {/* Kafelek „Brak preferencji‟ — ogólna strona P24 */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedP24Method(null)}
+                                    className={`flex flex-col items-center justify-center rounded-lg p-1.5 border text-[10px] font-medium transition-all duration-150 h-14 ${
+                                      selectedP24Method === null
+                                        ? "border-primary bg-primary/20 text-primary"
+                                        : "border-border/30 bg-zinc-900/40 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
+                                    }`}
+                                  >
+                                    <CreditCard className="h-4 w-4 mb-0.5" />
+                                    Wszystkie
+                                  </button>
+
+                                  {p24Methods.map((method) => (
+                                    <button
+                                      key={method.id}
+                                      type="button"
+                                      title={method.name}
+                                      onClick={() => setSelectedP24Method(method.id)}
+                                      className={`relative flex items-center justify-center rounded-lg border transition-all duration-150 h-14 p-1 ${
+                                        selectedP24Method === method.id
+                                          ? "border-primary bg-primary/20 ring-1 ring-primary/50"
+                                          : "border-border/30 bg-zinc-900/40 hover:border-zinc-600"
+                                      }`}
+                                    >
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={method.mobileImgUrl || method.imgUrl}
+                                        alt={method.name}
+                                        className="max-h-8 max-w-full object-contain"
+                                        loading="lazy"
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
                           </div>
-                        </Label>
+                        )}
                       </div>
                     )}
 

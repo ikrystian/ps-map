@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { orderId } = body
+    const { orderId, methodId } = body
 
     if (!orderId) {
       return Response.json(
@@ -80,6 +80,8 @@ export async function POST(request: NextRequest) {
       country: "PL",
       language: "pl",
       channel: P24Channel.ALL,
+      // Jeśli użytkownik wybrał konkretną metodę, przekaż ją — P24 pomija stronę wyboru
+      ...(methodId !== undefined && { method: Number(methodId) }),
     })
 
     if (result.error || !result.data?.token) {
