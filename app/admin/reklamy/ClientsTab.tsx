@@ -9,19 +9,16 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Building2, Calendar, Edit, Eye, Loader2, Mail,
+  Building2, Check, CheckCircle2, Edit, Eye, FileText, Loader2, Mail,
   MousePointerClick, Percent, Phone, Plus, Search,
   Trash2, User,
 } from "lucide-react"
 import { useState } from "react"
-import type { AdClient, Advertisement } from "./types"
+import type { AdClient } from "./types"
 
 interface ClientsTabProps {
   clients: AdClient[]
@@ -32,6 +29,7 @@ export function ClientsTab({ clients, onRefresh }: ClientsTabProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<AdClient | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: "", contactName: "", contactEmail: "", contactPhone: "", notes: "", active: true,
   })
@@ -61,14 +59,15 @@ export function ClientsTab({ clients, onRefresh }: ClientsTabProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.name) { toast.error("Nazwa klienta jest wymagana"); return }
+    if (!formData.name.trim()) { toast.error("Nazwa klienta jest wymagana"); return }
 
+    setIsSubmitting(true)
     const payload = {
-      name: formData.name,
-      contactName: formData.contactName || null,
-      contactEmail: formData.contactEmail || null,
-      contactPhone: formData.contactPhone || null,
-      notes: formData.notes || null,
+      name: formData.name.trim(),
+      contactName: formData.contactName.trim() || null,
+      contactEmail: formData.contactEmail.trim() || null,
+      contactPhone: formData.contactPhone.trim() || null,
+      notes: formData.notes.trim() || null,
       active: formData.active,
     }
 
@@ -77,11 +76,13 @@ export function ClientsTab({ clients, onRefresh }: ClientsTabProps) {
       const method = editingClient ? "PUT" : "POST"
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       if (!res.ok) throw new Error((await res.json()).error || "Błąd zapisu")
-      toast.success(editingClient ? "Zapisano zmiany" : "Dodano klienta")
+      toast.success(editingClient ? "Zapisano zmiany klienta" : "Dodano nowego klienta")
       setIsDialogOpen(false)
       onRefresh()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Błąd")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -213,42 +214,167 @@ export function ClientsTab({ clients, onRefresh }: ClientsTabProps) {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden border-border shadow-2xl">
           <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>{editingClient ? "Edytuj klienta" : "Dodaj klienta reklamowego"}</DialogTitle>
-              <DialogDescription>Dane identyfikacyjne i kontaktowe klienta.</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="client-name" className="text-right">Nazwa *</Label>
-                <Input id="client-name" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="np. Kancelaria Kowalski & Wspólnicy" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="contact-name" className="text-right">Kontakt</Label>
-                <Input id="contact-name" value={formData.contactName} onChange={e => setFormData(p => ({ ...p, contactName: e.target.value }))} placeholder="Imię i nazwisko" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="contact-email" className="text-right">E-mail</Label>
-                <Input id="contact-email" type="email" value={formData.contactEmail} onChange={e => setFormData(p => ({ ...p, contactEmail: e.target.value }))} placeholder="kontakt@firma.pl" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="contact-phone" className="text-right">Telefon</Label>
-                <Input id="contact-phone" value={formData.contactPhone} onChange={e => setFormData(p => ({ ...p, contactPhone: e.target.value }))} placeholder="+48 123 456 789" className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label htmlFor="client-notes" className="text-right pt-2">Notatki</Label>
-                <Textarea id="client-notes" value={formData.notes} onChange={e => setFormData(p => ({ ...p, notes: e.target.value }))} placeholder="Wewnętrzne uwagi..." className="col-span-3 h-20" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="client-active" className="text-right">Aktywny</Label>
-                <Switch id="client-active" checked={formData.active} onCheckedChange={v => setFormData(p => ({ ...p, active: v }))} />
+            {/* Header z tłem akcentowym */}
+            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 border-b border-border/60">
+              <div className="flex items-center gap-3.5">
+                <div className="p-3 rounded-2xl bg-primary/15 text-primary border border-primary/20 shadow-sm shrink-0">
+                  <Building2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl font-bold tracking-tight">
+                    {editingClient ? "Edytuj klienta" : "Dodaj klienta reklamowego"}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground mt-1">
+                    {editingClient
+                      ? "Zaktualizuj dane kontaktowe i ustawienia konta klienta."
+                      : "Wprowadź dane identyfikacyjne nowego reklamodawcy."}
+                  </DialogDescription>
+                </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Anuluj</Button>
-              <Button type="submit">{editingClient ? "Zapisz zmiany" : "Dodaj klienta"}</Button>
-            </DialogFooter>
+
+            {/* Treść formularza */}
+            <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+              {/* Sekcja 1: Identyfikacja */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Building2 className="h-3.5 w-3.5 text-primary" />
+                  <span>Dane identyfikacyjne</span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="client-name" className="text-xs font-medium text-foreground flex items-center justify-between">
+                    <span>Nazwa klienta / firmy <span className="text-destructive">*</span></span>
+                  </Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="client-name"
+                      value={formData.name}
+                      onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
+                      placeholder="np. Kancelaria Kowalski & Wspólnicy"
+                      className="pl-9 bg-background/50 focus:bg-background transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 2: Dane kontaktowe */}
+              <div className="space-y-4 pt-1">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <User className="h-3.5 w-3.5 text-primary" />
+                  <span>Osoba kontaktowa i dane</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="contact-name" className="text-xs font-medium">Osoba kontaktowa</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="contact-name"
+                        value={formData.contactName}
+                        onChange={e => setFormData(p => ({ ...p, contactName: e.target.value }))}
+                        placeholder="Jan Kowalski"
+                        className="pl-9 bg-background/50 focus:bg-background transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contact-email" className="text-xs font-medium">Adres e-mail</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="contact-email"
+                        type="email"
+                        value={formData.contactEmail}
+                        onChange={e => setFormData(p => ({ ...p, contactEmail: e.target.value }))}
+                        placeholder="kontakt@firma.pl"
+                        className="pl-9 bg-background/50 focus:bg-background transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contact-phone" className="text-xs font-medium">Numer telefonu</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="contact-phone"
+                        value={formData.contactPhone}
+                        onChange={e => setFormData(p => ({ ...p, contactPhone: e.target.value }))}
+                        placeholder="+48 123 456 789"
+                        className="pl-9 bg-background/50 focus:bg-background transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sekcja 3: Notatki */}
+              <div className="space-y-1.5 pt-1">
+                <Label htmlFor="client-notes" className="text-xs font-medium flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-muted-foreground" /> Notatki wewnętrzne
+                </Label>
+                <Textarea
+                  id="client-notes"
+                  value={formData.notes}
+                  onChange={e => setFormData(p => ({ ...p, notes: e.target.value }))}
+                  placeholder="Wpisz istotne informacje dotyczące umowy, ustaleń lub preferencji klienta..."
+                  className="h-20 bg-background/50 focus:bg-background transition-colors resize-none text-xs"
+                />
+              </div>
+
+              {/* Sekcja 4: Status aktywacji */}
+              <div className="pt-2">
+                <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                  formData.active
+                    ? "bg-primary/5 border-primary/20"
+                    : "bg-muted/40 border-border"
+                }`}>
+                  <div className="space-y-0.5">
+                    <Label htmlFor="client-active" className="text-sm font-semibold cursor-pointer flex items-center gap-2">
+                      <CheckCircle2 className={`h-4 w-4 ${formData.active ? "text-primary" : "text-muted-foreground"}`} />
+                      Klient aktywny
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {formData.active
+                        ? "Reklamy tego klienta będą mogły być emitowane na portalu."
+                        : "Konto wyłączone – wszystkie kampanie tego klienta zostaną wstrzymane."}
+                    </p>
+                  </div>
+                  <Switch
+                    id="client-active"
+                    checked={formData.active}
+                    onCheckedChange={v => setFormData(p => ({ ...p, active: v }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 px-6 bg-muted/30 border-t border-border/80 flex items-center justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="px-5">
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="px-5 gap-2 font-medium">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Zapisywanie...
+                  </>
+                ) : (
+                  <>
+                    {editingClient ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    {editingClient ? "Zapisz zmiany" : "Dodaj klienta"}
+                  </>
+                )}
+              </Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>

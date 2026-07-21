@@ -16,7 +16,9 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Calendar, Edit, Loader2, Megaphone, Plus, Search, Trash2,
+  Building2, Calendar, Check, CheckCircle2, Code2, Edit,
+  Image as ImageIcon, LayoutGrid, Link, Loader2, Megaphone, Plus,
+  Search, Sliders, Tag, Trash2, UploadCloud, X,
 } from "lucide-react"
 import { useState } from "react"
 import type { AdClient, Advertisement } from "./types"
@@ -35,6 +37,7 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingAd, setEditingAd] = useState<Advertisement | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [creativeType, setCreativeType] = useState<"image" | "html">("image")
 
   const [formData, setFormData] = useState({
@@ -88,7 +91,7 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
       if (!res.ok) throw new Error((await res.json()).error || "Upload failed")
       const data = await res.json()
       setFormData(p => ({ ...p, imageUrl: data.url }))
-      toast.success("Plik przesłany pomyślnie!")
+      toast.success("Plik graficzny przesłany pomyślnie!")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Błąd przesyłania")
     } finally {
@@ -118,20 +121,22 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.name || !formData.location || !formData.linkUrl) {
-      toast.error("Wypełnij wymagane pola")
+    if (!formData.name.trim() || !formData.location || !formData.linkUrl.trim()) {
+      toast.error("Wypełnij wszystkie wymagane pola")
       return
     }
-    if (creativeType === "image" && !formData.imageUrl) { toast.error("Musisz wgrać plik graficzny"); return }
+    if (creativeType === "image" && !formData.imageUrl) { toast.error("Musisz wgrać lub podać link do pliku graficznego"); return }
     if (creativeType === "html" && !formData.htmlContent) { toast.error("Musisz wkleić kod HTML"); return }
 
+    setIsSubmitting(true)
+
     const payload = {
-      name: formData.name,
+      name: formData.name.trim(),
       location: formData.location,
-      linkUrl: formData.linkUrl,
+      linkUrl: formData.linkUrl.trim(),
       active: formData.active,
-      imageUrl: creativeType === "image" ? formData.imageUrl : null,
-      htmlContent: creativeType === "html" ? formData.htmlContent : null,
+      imageUrl: creativeType === "image" ? formData.imageUrl.trim() : null,
+      htmlContent: creativeType === "html" ? formData.htmlContent.trim() : null,
       startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
       endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
       clientId: formData.clientId || null,
@@ -144,11 +149,13 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
       const method = editingAd ? "PUT" : "POST"
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       if (!res.ok) throw new Error((await res.json()).error || "Błąd zapisu")
-      toast.success(editingAd ? "Zapisano zmiany" : "Dodano reklamę")
+      toast.success(editingAd ? "Zapisano zmiany reklamy" : "Dodano nową reklamę")
       setIsDialogOpen(false)
       onRefresh()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Błąd")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -283,108 +290,349 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
         </CardContent>
       </Card>
 
-      {/* Dialog */}
+      {/* Modernized Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[580px]">
+        <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden border-border shadow-2xl">
           <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>{editingAd ? "Edytuj reklamę" : "Dodaj nową reklamę"}</DialogTitle>
-              <DialogDescription>Zdefiniuj kreację i parametry wyświetlania banneru.</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ad-name" className="text-right">Nazwa *</Label>
-                <Input id="ad-name" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="np. Kancelaria XYZ – Maj 2025" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Klient</Label>
-                <div className="col-span-3">
-                  <Select value={formData.clientId || "_none"} onValueChange={v => setFormData(p => ({ ...p, clientId: v === "_none" ? "" : v }))}>
-                    <SelectTrigger><SelectValue placeholder="Brak (opcjonalne)" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="_none">Brak przypisania</SelectItem>
-                      {clients.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+            {/* Header z akcentem wizualnym */}
+            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 border-b border-border/60">
+              <div className="flex items-center gap-3.5">
+                <div className="p-3 rounded-2xl bg-primary/15 text-primary border border-primary/20 shadow-sm shrink-0">
+                  <Megaphone className="h-6 w-6" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl font-bold tracking-tight">
+                    {editingAd ? "Edytuj reklamę" : "Dodaj nową reklamę"}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground mt-1">
+                    Skonfiguruj kreację banerową, link docelowy oraz zasady emisji i rotacji.
+                  </DialogDescription>
                 </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Lokalizacja *</Label>
-                <div className="col-span-3">
-                  <Select value={formData.location} onValueChange={v => setFormData(p => ({ ...p, location: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {AD_LOCATIONS.map(l => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+            </div>
+
+            {/* Treść formularza */}
+            <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+              {/* Sekcja 1: Podstawowe informacje */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Tag className="h-3.5 w-3.5 text-primary" />
+                  <span>Podstawowe parametry</span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="ad-name" className="text-xs font-medium">
+                    Nazwa reklamy / kampanii <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="ad-name"
+                      value={formData.name}
+                      onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
+                      placeholder="np. Baner Główny – Kancelaria XYZ"
+                      className="pl-9 bg-background/50 focus:bg-background transition-colors text-xs"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">Klient reklamowy</Label>
+                    <Select value={formData.clientId || "_none"} onValueChange={v => setFormData(p => ({ ...p, clientId: v === "_none" ? "" : v }))}>
+                      <SelectTrigger className="bg-background/50 text-xs">
+                        <div className="flex items-center gap-2 truncate">
+                          <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <SelectValue placeholder="Brak (opcjonalne)" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="_none">Brak przypisania (reklama własna)</SelectItem>
+                        {clients.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium">
+                      Lokalizacja / Slot <span className="text-destructive">*</span>
+                    </Label>
+                    <Select value={formData.location} onValueChange={v => setFormData(p => ({ ...p, location: v }))}>
+                      <SelectTrigger className="bg-background/50 text-xs">
+                        <div className="flex items-center gap-2 truncate">
+                          <LayoutGrid className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <SelectValue />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AD_LOCATIONS.map(l => <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="ad-link" className="text-xs font-medium">
+                    Docelowy link URL <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Link className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="ad-link"
+                      type="url"
+                      value={formData.linkUrl}
+                      onChange={e => setFormData(p => ({ ...p, linkUrl: e.target.value }))}
+                      placeholder="https://kancelaria-kowalski.pl/promocja"
+                      className="pl-9 bg-background/50 focus:bg-background transition-colors text-xs"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ad-link" className="text-right">Link URL *</Label>
-                <Input id="ad-link" type="url" value={formData.linkUrl} onChange={e => setFormData(p => ({ ...p, linkUrl: e.target.value }))} placeholder="https://example.com" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Typ kreacji</Label>
-                <div className="col-span-3 flex gap-4">
-                  {(["image", "html"] as const).map(t => (
-                    <label key={t} className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input type="radio" checked={creativeType === t} onChange={() => setCreativeType(t)} className="accent-primary" />
-                      {t === "image" ? "Grafika (Baner)" : "Własny HTML / Skrypt"}
-                    </label>
-                  ))}
+
+              {/* Sekcja 2: Kreacja reklamowa */}
+              <div className="space-y-3.5 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <ImageIcon className="h-3.5 w-3.5 text-primary" />
+                    <span>Format kreacji</span>
+                  </div>
                 </div>
-              </div>
-              {creativeType === "image" && (
-                <div className="grid grid-cols-4 items-start gap-4">
-                  <Label className="text-right pt-2">Baner graficzny</Label>
-                  <div className="col-span-3 space-y-2">
+
+                {/* Przełącznik typu kreacji */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setCreativeType("image")}
+                    className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+                      creativeType === "image"
+                        ? "border-primary bg-primary/10 ring-1 ring-primary text-foreground font-medium shadow-sm"
+                        : "border-border bg-background/50 hover:bg-accent/40 text-muted-foreground"
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg shrink-0 ${creativeType === "image" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                      <ImageIcon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold">Grafika (Baner)</p>
+                      <p className="text-[11px] text-muted-foreground">Plik JPG, PNG, WebP, GIF</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCreativeType("html")}
+                    className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+                      creativeType === "html"
+                        ? "border-primary bg-primary/10 ring-1 ring-primary text-foreground font-medium shadow-sm"
+                        : "border-border bg-background/50 hover:bg-accent/40 text-muted-foreground"
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg shrink-0 ${creativeType === "html" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                      <Code2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold">Kod HTML / Skrypt</p>
+                      <p className="text-[11px] text-muted-foreground">AdSense, iframe, widget JS</p>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Grafika Banera */}
+                {creativeType === "image" && (
+                  <div className="space-y-3 p-4 rounded-xl border border-border/80 bg-muted/20">
+                    <Label className="text-xs font-medium flex items-center justify-between">
+                      <span>Grafika reklamowa <span className="text-destructive">*</span></span>
+                      {formData.imageUrl && (
+                        <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                          <Check className="h-3 w-3" /> Wybrano grafikę
+                        </span>
+                      )}
+                    </Label>
+
                     <div className="flex gap-2">
-                      <Input value={formData.imageUrl} onChange={e => setFormData(p => ({ ...p, imageUrl: e.target.value }))} placeholder="Link do grafiki lub wgraj plik..." className="flex-1" />
+                      <div className="relative flex-1">
+                        <Input
+                          value={formData.imageUrl}
+                          onChange={e => setFormData(p => ({ ...p, imageUrl: e.target.value }))}
+                          placeholder="Wklej adres URL grafiki lub przesłaj plik z komputera..."
+                          className="text-xs bg-background pr-3"
+                        />
+                      </div>
                       <div className="relative">
-                        <input id="banner-file" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={isUploading} />
-                        <Button type="button" variant="outline" onClick={() => document.getElementById("banner-file")?.click()} disabled={isUploading}>
-                          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Wgraj plik"}
+                        <input
+                          id="banner-file"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => document.getElementById("banner-file")?.click()}
+                          disabled={isUploading}
+                          className="gap-2 text-xs h-9 px-3 shrink-0"
+                        >
+                          {isUploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UploadCloud className="h-3.5 w-3.5 text-primary" />}
+                          {isUploading ? "Przesyłanie..." : "Wgraj plik"}
                         </Button>
                       </div>
                     </div>
-                    {formData.imageUrl && (
-                      <div className="border rounded p-2 bg-neutral-950 flex justify-center max-h-[120px] overflow-hidden">
-                        <img src={formData.imageUrl} alt="Podgląd" className="max-h-[100px] object-contain" />
+
+                    {/* Podgląd banera */}
+                    {formData.imageUrl ? (
+                      <div className="relative border border-border/80 rounded-lg p-3 bg-neutral-950/90 flex flex-col items-center justify-center min-h-[110px] overflow-hidden group">
+                        <img
+                          src={formData.imageUrl}
+                          alt="Podgląd kreacji"
+                          className="max-h-[130px] w-auto object-contain rounded"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = 'none'
+                          }}
+                        />
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="h-6 w-6 rounded-full"
+                            onClick={() => setFormData(p => ({ ...p, imageUrl: "" }))}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border border-dashed border-border rounded-lg p-5 text-center bg-background/50">
+                        <ImageIcon className="h-7 w-7 mx-auto text-muted-foreground/40 mb-1.5" />
+                        <p className="text-xs text-muted-foreground">Brak podglądu – wgraj plik lub wpisz URL grafiki</p>
                       </div>
                     )}
                   </div>
-                </div>
-              )}
-              {creativeType === "html" && (
-                <div className="grid grid-cols-4 items-start gap-4">
-                  <Label className="text-right pt-2">Kod HTML *</Label>
-                  <Textarea value={formData.htmlContent} onChange={e => setFormData(p => ({ ...p, htmlContent: e.target.value }))} placeholder="<a href='...'><img src='...' /></a>" className="col-span-3 font-mono text-xs h-[90px]" required={creativeType === "html"} />
-                </div>
-              )}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Waga rotacji</Label>
-                <div className="col-span-3 flex items-center gap-3">
-                  <Input type="number" min="1" max="10" value={formData.weight} onChange={e => setFormData(p => ({ ...p, weight: e.target.value }))} className="w-24" />
-                  <span className="text-xs text-muted-foreground">1–10, wyższy = częściej wyświetlana</span>
-                </div>
+                )}
+
+                {/* HTML content */}
+                {creativeType === "html" && (
+                  <div className="space-y-2 p-4 rounded-xl border border-border/80 bg-muted/20">
+                    <Label className="text-xs font-medium flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Code2 className="h-3.5 w-3.5 text-primary" /> Kod HTML lub Skrypt <span className="text-destructive">*</span>
+                      </span>
+                    </Label>
+                    <Textarea
+                      value={formData.htmlContent}
+                      onChange={e => setFormData(p => ({ ...p, htmlContent: e.target.value }))}
+                      placeholder="<a href='...'><img src='...' /></a> lub kod skryptu Google AdSense..."
+                      className="font-mono text-xs h-[110px] bg-neutral-950 text-neutral-100 border-neutral-800 focus:border-primary resize-none"
+                      required={creativeType === "html"}
+                    />
+                  </div>
+                )}
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ad-start" className="text-right">Data startu</Label>
-                <Input id="ad-start" type="date" value={formData.startDate} onChange={e => setFormData(p => ({ ...p, startDate: e.target.value }))} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ad-end" className="text-right">Data końca</Label>
-                <Input id="ad-end" type="date" value={formData.endDate} onChange={e => setFormData(p => ({ ...p, endDate: e.target.value }))} className="col-span-3" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ad-active" className="text-right">Aktywna</Label>
-                <Switch id="ad-active" checked={formData.active} onCheckedChange={v => setFormData(p => ({ ...p, active: v }))} />
+
+              {/* Sekcja 3: Rotacja i Harmonogram */}
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Sliders className="h-3.5 w-3.5 text-primary" />
+                  <span>Emisja i Rotacja</span>
+                </div>
+
+                <div className="space-y-1.5 p-3.5 rounded-xl border border-border/80 bg-muted/20">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-medium flex items-center gap-1.5">
+                      <Sliders className="h-3.5 w-3.5 text-primary" /> Waga rotacji (Priorytet wyświetlania)
+                    </Label>
+                    <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0.5">
+                      Waga: {formData.weight}x
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-3 pt-1">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={formData.weight}
+                      onChange={e => setFormData(p => ({ ...p, weight: e.target.value }))}
+                      className="w-20 text-center font-bold text-sm bg-background"
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      Wartość od 1 do 10. Wyższa waga zwiększa szansę w losowaniu reklam w tym samym slocie.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ad-start" className="text-xs font-medium flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground" /> Data rozpoczęcia
+                    </Label>
+                    <Input
+                      id="ad-start"
+                      type="date"
+                      value={formData.startDate}
+                      onChange={e => setFormData(p => ({ ...p, startDate: e.target.value }))}
+                      className="text-xs bg-background/50 focus:bg-background"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ad-end" className="text-xs font-medium flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground" /> Data zakończenia
+                    </Label>
+                    <Input
+                      id="ad-end"
+                      type="date"
+                      value={formData.endDate}
+                      onChange={e => setFormData(p => ({ ...p, endDate: e.target.value }))}
+                      className="text-xs bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                </div>
+
+                {/* Status aktywności */}
+                <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                  formData.active ? "bg-primary/5 border-primary/20" : "bg-muted/40 border-border"
+                }`}>
+                  <div className="space-y-0.5">
+                    <Label htmlFor="ad-active" className="text-sm font-semibold cursor-pointer flex items-center gap-2">
+                      <CheckCircle2 className={`h-4 w-4 ${formData.active ? "text-primary" : "text-muted-foreground"}`} />
+                      Reklama aktywna
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {formData.active ? "Reklama jest aktywna i bierze udział w rotacji na portalu." : "Reklama jest wstrzymana i nie będzie wyświetlana."}
+                    </p>
+                  </div>
+                  <Switch
+                    id="ad-active"
+                    checked={formData.active}
+                    onCheckedChange={v => setFormData(p => ({ ...p, active: v }))}
+                  />
+                </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Anuluj</Button>
-              <Button type="submit">{editingAd ? "Zapisz zmiany" : "Dodaj reklamę"}</Button>
-            </DialogFooter>
+
+            {/* Footer */}
+            <div className="p-4 px-6 bg-muted/30 border-t border-border/80 flex items-center justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="px-5">
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="px-5 gap-2 font-medium">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Zapisywanie...
+                  </>
+                ) : (
+                  <>
+                    {editingAd ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    {editingAd ? "Zapisz zmiany" : "Dodaj reklamę"}
+                  </>
+                )}
+              </Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
