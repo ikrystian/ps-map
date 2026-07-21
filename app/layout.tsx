@@ -54,7 +54,19 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Error fetching settings for metadata:", error)
   }
 
+  const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || process.env.URL || "http://localhost:3000";
+  const baseUrlStr = rawBaseUrl.startsWith("http://") || rawBaseUrl.startsWith("https://")
+    ? rawBaseUrl
+    : `https://${rawBaseUrl}`;
+  let metadataBase: URL;
+  try {
+    metadataBase = new URL(baseUrlStr);
+  } catch {
+    metadataBase = new URL("http://localhost:3000");
+  }
+
   return {
+    metadataBase,
     title: {
       default: ogTitle,
       template: `%s | ${siteName}`,
