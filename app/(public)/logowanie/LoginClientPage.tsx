@@ -448,7 +448,7 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 className="h-11"
-                onClick={() => signIn("google", { callbackUrl: callbackUrl ?? "/" })}
+                onClick={() => signIn("google", { callbackUrl: callbackUrl ?? "/panel-klienta" })}
                 disabled={isLoading}
               >
                 <FaGoogle className="h-5 w-5" />
@@ -457,7 +457,7 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 className="h-11"
-                onClick={() => signIn("facebook", { callbackUrl: callbackUrl ?? "/" })}
+                onClick={() => signIn("facebook", { callbackUrl: callbackUrl ?? "/panel-klienta" })}
                 disabled={isLoading}
               >
                 <FaFacebook className="h-5 w-5" />

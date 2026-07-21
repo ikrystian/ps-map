@@ -57,7 +57,7 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           typ: "KONSULTACJA_ZAAKCEPTOWANA",
           tytul: "Twój link do konsultacji jest gotowy",
           tresc: `Twój wirtualny pokój z ${booking.lawFirm.nazwa} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
-          linkUrl: "/panel-klienta/consultacje",
+          linkUrl: "/panel-klienta/konsultacje",
           emailTemplateType: "LINK_KONSULTACJI",
           emailVariables: {
             '{odbiorca}': booking.client.user.name || booking.client.user.email,
@@ -76,7 +76,7 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           typ: "KONSULTACJA_ZAAKCEPTOWANA",
           tytul: "Twój link do konsultacji jest gotowy",
           tresc: `Twój wirtualny pokój z klientem ${booking.client.user.name} na dzień ${dateStr} jest już aktywny.${linkTresc}`,
-          linkUrl: "/panel-eksperta/consultacje",
+          linkUrl: "/panel-eksperta/konsultacje",
           emailTemplateType: "LINK_KONSULTACJI",
           emailVariables: {
             '{odbiorca}': booking.lawFirm.nazwa,
