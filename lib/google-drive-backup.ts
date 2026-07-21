@@ -2,6 +2,7 @@ import { exec } from "child_process"
 import { promisify } from "util"
 import fs from "fs"
 import path from "path"
+import { Readable } from "stream"
 import { google } from "googleapis"
 
 const execPromise = promisify(exec)
@@ -74,15 +75,20 @@ export async function backupDbToGoogleDrive() {
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID || undefined
   const fileMetadata: any = {
     name: backupFileName,
-    mimeType: "application/x-sqlite3",
   }
   if (folderId) {
     fileMetadata.parents = [folderId]
   }
 
+  // Read file into buffer to avoid multipart boundary issues with createReadStream
+  const fileBuffer = fs.readFileSync(backupFilePath)
+  const fileReadable = new Readable()
+  fileReadable.push(fileBuffer)
+  fileReadable.push(null)
+
   const media = {
     mimeType: "application/x-sqlite3",
-    body: fs.createReadStream(backupFilePath),
+    body: fileReadable,
   }
 
   let driveFileId = ""
