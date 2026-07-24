@@ -73,6 +73,10 @@ function showFieldError(input, message) {
         const btn = document.getElementById("miastoSelectBtn");
         if (btn) btn.classList.add("input-error");
     }
+    const customTrigger = input.closest(".form-group")?.querySelector(".custom-select-trigger");
+    if (customTrigger) {
+        customTrigger.classList.add("input-error");
+    }
     const checkboxGroup = input.closest(".form-checkbox");
     if (checkboxGroup) {
         checkboxGroup.classList.add("input-error");
@@ -99,6 +103,10 @@ function clearFieldError(input) {
     if (input.id === "miasto") {
         const btn = document.getElementById("miastoSelectBtn");
         if (btn) btn.classList.remove("input-error");
+    }
+    const customTrigger = input.closest(".form-group")?.querySelector(".custom-select-trigger");
+    if (customTrigger) {
+        customTrigger.classList.remove("input-error");
     }
     const checkboxGroup = input.closest(".form-checkbox");
     if (checkboxGroup) {
@@ -144,7 +152,8 @@ function validateActiveStep() {
             showFieldError(input, errorMessage);
             isValid = false;
             if (!firstInvalidInput) {
-                firstInvalidInput = input.id === "miasto" ? document.getElementById("miastoSelectBtn") : input;
+                const customTrigger = input.closest(".form-group")?.querySelector(".custom-select-trigger");
+                firstInvalidInput = customTrigger || (input.id === "miasto" ? document.getElementById("miastoSelectBtn") : input);
             }
         } else {
             clearFieldError(input);
@@ -768,7 +777,286 @@ async function submitForm(e) {
     }
 }
 
+// ===== Inicjalizacja customowych selectów pasujących do designu portalu =====
+function initCustomSelects() {
+    const selects = document.querySelectorAll("select.form-select");
+
+    selects.forEach((select) => {
+        if (select.dataset.customSelectInitialized) return;
+        select.dataset.customSelectInitialized = "true";
+
+        const parentGroup = select.closest(".form-group");
+        if (parentGroup) {
+            parentGroup.classList.add("dropdown-container");
+        }
+
+        select.style.display = "none";
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "form-select custom-select-trigger";
+        trigger.setAttribute("aria-haspopup", "listbox");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.id = `${select.id}SelectBtn`;
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "custom-select-label placeholder-text";
+        labelSpan.id = `${select.id}SelectLabel`;
+
+        const chevronSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        chevronSvg.setAttribute("class", "select-chevron");
+        chevronSvg.setAttribute("width", "16");
+        chevronSvg.setAttribute("height", "16");
+        chevronSvg.setAttribute("viewBox", "0 0 24 24");
+        chevronSvg.setAttribute("fill", "none");
+        chevronSvg.setAttribute("stroke", "currentColor");
+        chevronSvg.setAttribute("stroke-width", "2");
+        chevronSvg.innerHTML = `<path d="M6 9l6 6 6-6"/>`;
+
+        trigger.appendChild(labelSpan);
+        trigger.appendChild(chevronSvg);
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "custom-select-dropdown";
+        dropdown.id = `${select.id}Dropdown`;
+
+        const searchWrapper = document.createElement("div");
+        searchWrapper.className = "dropdown-search-wrapper";
+        searchWrapper.style.display = "none";
+
+        const searchInput = document.createElement("input");
+        searchInput.type = "text";
+        searchInput.className = "dropdown-search-input";
+        searchInput.placeholder = "Szukaj...";
+        searchInput.autocomplete = "off";
+        searchWrapper.appendChild(searchInput);
+
+        const optionsList = document.createElement("div");
+        optionsList.className = "dropdown-options-list";
+
+        dropdown.appendChild(searchWrapper);
+        dropdown.appendChild(optionsList);
+
+        select.insertAdjacentElement("afterend", trigger);
+        trigger.insertAdjacentElement("afterend", dropdown);
+
+        function updateTriggerLabel() {
+            const selectedOpt = select.options[select.selectedIndex];
+            const hasVal = selectedOpt && selectedOpt.value !== "";
+            labelSpan.textContent = selectedOpt ? selectedOpt.textContent : "Wybierz...";
+            if (hasVal) {
+                labelSpan.classList.remove("placeholder-text");
+            } else {
+                labelSpan.classList.add("placeholder-text");
+            }
+
+            const currentVal = select.value;
+            optionsList.querySelectorAll(".select-option-item").forEach((item) => {
+                const isSelected = item.dataset.value === currentVal;
+                item.classList.toggle("selected", isSelected);
+                const checkIcon = item.querySelector(".option-check-icon");
+                if (checkIcon) checkIcon.style.display = isSelected ? "inline-block" : "none";
+            });
+        }
+
+        function createOptionItem(opt, isOptgroupChild) {
+            const item = document.createElement("div");
+            item.className = "select-option-item" + (isOptgroupChild ? " is-optgroup-child" : "");
+            if (opt.value === "") item.classList.add("is-placeholder-option");
+            item.dataset.value = opt.value;
+
+            const textSpan = document.createElement("span");
+            textSpan.textContent = opt.textContent;
+
+            const isSelected = opt.value === select.value && select.selectedIndex >= 0;
+            if (isSelected) item.classList.add("selected");
+
+            const checkSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            checkSvg.setAttribute("class", "option-check-icon");
+            checkSvg.setAttribute("width", "14");
+            checkSvg.setAttribute("height", "14");
+            checkSvg.setAttribute("viewBox", "0 0 24 24");
+            checkSvg.setAttribute("fill", "none");
+            checkSvg.setAttribute("stroke", "#c8a864");
+            checkSvg.setAttribute("stroke-width", "2.5");
+            checkSvg.style.display = isSelected ? "inline-block" : "none";
+            checkSvg.style.flexShrink = "0";
+            checkSvg.innerHTML = `<path d="M5 13l4 4L19 7"/>`;
+
+            item.appendChild(textSpan);
+            item.appendChild(checkSvg);
+
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+                select.value = opt.value;
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                select.dispatchEvent(new Event("input", { bubbles: true }));
+                clearFieldError(select);
+                closeDropdown();
+            });
+
+            return item;
+        }
+
+        function syncOptions() {
+            optionsList.innerHTML = "";
+            const children = Array.from(select.children);
+            let totalOptions = 0;
+
+            children.forEach((child) => {
+                if (child.tagName === "OPTGROUP") {
+                    const groupLabel = document.createElement("div");
+                    groupLabel.className = "dropdown-optgroup-label";
+                    groupLabel.textContent = child.label;
+                    optionsList.appendChild(groupLabel);
+
+                    Array.from(child.children).forEach((opt) => {
+                        if (opt.tagName === "OPTION") {
+                            totalOptions++;
+                            optionsList.appendChild(createOptionItem(opt, true));
+                        }
+                    });
+                } else if (child.tagName === "OPTION") {
+                    totalOptions++;
+                    optionsList.appendChild(createOptionItem(child, false));
+                }
+            });
+
+            if (totalOptions === 0) {
+                optionsList.innerHTML = `<div class="dropdown-status-msg">Brak opcji do wyboru</div>`;
+            }
+
+            searchWrapper.style.display = totalOptions > 7 ? "block" : "none";
+            updateTriggerLabel();
+        }
+
+        function filterOptions(query) {
+            const cleanQuery = (query || "").trim().toLowerCase();
+            const items = optionsList.querySelectorAll(".select-option-item");
+            const groupLabels = optionsList.querySelectorAll(".dropdown-optgroup-label");
+            let hasMatch = false;
+
+            items.forEach((item) => {
+                const matches = item.textContent.toLowerCase().includes(cleanQuery);
+                item.style.display = matches ? "flex" : "none";
+                if (matches) hasMatch = true;
+            });
+
+            groupLabels.forEach((label) => {
+                let next = label.nextElementSibling;
+                let groupHasVisible = false;
+                while (next && next.classList.contains("select-option-item")) {
+                    if (next.style.display !== "none") {
+                        groupHasVisible = true;
+                    }
+                    next = next.nextElementSibling;
+                }
+                label.style.display = groupHasVisible ? "block" : "none";
+            });
+
+            let noMatchMsg = optionsList.querySelector(".dropdown-no-match-msg");
+            if (!hasMatch && cleanQuery !== "") {
+                if (!noMatchMsg) {
+                    noMatchMsg = document.createElement("div");
+                    noMatchMsg.className = "dropdown-status-msg dropdown-no-match-msg";
+                    noMatchMsg.textContent = "Brak pasujących opcji.";
+                    optionsList.appendChild(noMatchMsg);
+                }
+                noMatchMsg.style.display = "block";
+            } else if (noMatchMsg) {
+                noMatchMsg.style.display = "none";
+            }
+        }
+
+        searchInput.addEventListener("input", (e) => {
+            filterOptions(e.target.value);
+        });
+
+        function openDropdown() {
+            document.querySelectorAll(".custom-select-dropdown.active").forEach((d) => {
+                if (d !== dropdown) d.classList.remove("active");
+            });
+            document.querySelectorAll(".custom-select-trigger.active").forEach((t) => {
+                if (t !== trigger) t.classList.remove("active");
+            });
+
+            dropdown.classList.add("active");
+            trigger.classList.add("active");
+
+            if (searchWrapper.style.display !== "none") {
+                searchInput.value = "";
+                filterOptions("");
+                setTimeout(() => searchInput.focus(), 50);
+            }
+        }
+
+        function closeDropdown() {
+            dropdown.classList.remove("active");
+            trigger.classList.remove("active");
+        }
+
+        trigger.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (dropdown.classList.contains("active")) {
+                closeDropdown();
+            } else {
+                openDropdown();
+            }
+        });
+
+        document.addEventListener("click", (e) => {
+            if (parentGroup && !parentGroup.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        trigger.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (!dropdown.classList.contains("active")) {
+                    openDropdown();
+                }
+            } else if (e.key === "Escape") {
+                closeDropdown();
+            }
+        });
+
+        dropdown.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeDropdown();
+                trigger.focus();
+            }
+        });
+
+        const observer = new MutationObserver(() => {
+            syncOptions();
+        });
+        observer.observe(select, { childList: true, subtree: true, characterData: true });
+
+        select.addEventListener("change", updateTriggerLabel);
+        select.addEventListener("input", updateTriggerLabel);
+
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
+        if (descriptor && descriptor.set) {
+            Object.defineProperty(select, "value", {
+                get() {
+                    return descriptor.get.call(this);
+                },
+                set(val) {
+                    descriptor.set.call(this, val);
+                    updateTriggerLabel();
+                },
+                configurable: true,
+            });
+        }
+
+        syncOptions();
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    initCustomSelects();
     loadReferenceData();
     initCityAutocomplete();
 

@@ -3612,6 +3612,7 @@ h3 {
 .form-group {
     margin-bottom: 24px;
     text-align: left;
+    position: relative;
 }
 
 .form-label {
@@ -3804,6 +3805,45 @@ h3 {
 .select-option-item.highlighted {
     background: rgba(200, 168, 100, 0.15);
     color: #fff;
+}
+
+.select-option-item.selected {
+    background: rgba(200, 168, 100, 0.2);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.select-option-item.is-placeholder-option {
+    color: #777;
+    font-style: italic;
+}
+
+.select-option-item.is-optgroup-child {
+    padding-left: 26px;
+}
+
+.dropdown-optgroup-label {
+    padding: 10px 16px 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #c8a864;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    user-select: none;
+}
+
+.custom-select-trigger:focus,
+.custom-select-trigger:focus-visible {
+    border-color: rgba(200, 168, 100, 0.4);
+    box-shadow: 0 0 0 3px rgba(200, 168, 100, 0.08);
+    outline: none;
+}
+
+.custom-select-trigger.input-error {
+    border-color: #ff4d4d !important;
+    box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.15) !important;
 }
 
 .select-option-item .option-left {
