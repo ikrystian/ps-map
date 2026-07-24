@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { generateInvoiceForOrder } from "@/lib/invoice-generator"
+import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -25,6 +25,24 @@ export async function GET(
             id: true,
             nazwa: true,
             nip: true,
+            user: {
+              select: {
+                email: true,
+                imie: true,
+                nazwisko: true,
+                adres: true,
+                kodPocztowy: true,
+                miasto: true,
+                companyData: {
+                  select: {
+                    COMPANY_name: true,
+                    COMPANY_nip: true,
+                    COMPANY_residenceAddress: true,
+                    COMPANY_workingAddress: true,
+                  },
+                },
+              },
+            },
           },
         },
         subscriptionPlan: {
@@ -45,7 +63,11 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(order)
+    // Jeżeli ekspert ma uzupełnione dane firmy (Biała lista MF), do wyświetlenia
+    // w panelu admina używamy tych danych zamiast surowych pól nazwa/nip z LawFirm.
+    const buyer = resolveInvoiceBuyer(order.lawFirm)
+
+    return NextResponse.json({ ...order, buyer })
   } catch (error) {
     console.error("Error fetching order:", error)
     return NextResponse.json(

@@ -96,7 +96,9 @@
       "Bash(command -v php python3)",
       "Bash(pkill -f \"php -S 127.0.0.1:8642\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8642/index.html)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(grep -rn \"admin/transakcje/\\\\${\" app components --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(bun /tmp/claude-1000/-home-krystian-Projects-ps-map/fa370894-a13f-4007-8a89-d07ad7f31546/scratchpad/check-order.ts)"
     ]
   }
 }

@@ -36,7 +36,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import type { LawFirm } from "@/types"
 
 interface SubscriptionPlan {
   id: string
@@ -48,6 +47,25 @@ interface Invoice {
   id: string
   invoiceNumber: string
   status: string
+}
+
+interface OrderLawFirm {
+  id: string
+  nazwa: string | null
+  nip: string | null
+  user: {
+    email: string
+    imie: string | null
+    nazwisko: string | null
+  } | null
+}
+
+interface InvoiceBuyer {
+  buyerName: string
+  buyerNIP?: string
+  buyerAddress: string
+  buyerPostalCode: string
+  buyerCity: string
 }
 
 interface Order {
@@ -67,7 +85,8 @@ interface Order {
   updatedAt: string
   zaplaconoData: string | null
   daneFaktury: string | null
-  lawFirm: LawFirm
+  lawFirm: OrderLawFirm
+  buyer: InvoiceBuyer
   subscriptionPlan: SubscriptionPlan | null
   invoice: Invoice | null
 }
@@ -434,18 +453,30 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
             </CardHeader>
             <CardContent className="pt-6 space-y-4 text-sm">
               <div>
-                <span className="text-muted-foreground block text-xs">Nazwa firmy</span>
+                <span className="text-muted-foreground block text-xs">Nazwa / Nabywca</span>
                 <span className="font-semibold text-base block mt-0.5">
-                  {order.lawFirm.nazwa || order.lawFirm.nazwa || "—"}
+                  {order.buyer?.buyerName || order.lawFirm.nazwa || "—"}
                 </span>
               </div>
 
               <div>
                 <span className="text-muted-foreground block text-xs">NIP</span>
                 <span className="font-mono font-medium block mt-0.5 select-all">
-                  {order.lawFirm.nip || "—"}
+                  {order.buyer?.buyerNIP || order.lawFirm.nip || "—"}
                 </span>
               </div>
+
+              {(order.buyer?.buyerAddress || order.buyer?.buyerCity) && (
+                <div className="border-t pt-3">
+                  <span className="text-muted-foreground block text-xs">Adres</span>
+                  <span className="font-medium block mt-0.5">
+                    {order.buyer.buyerAddress || "—"}
+                    {order.buyer.buyerPostalCode || order.buyer.buyerCity
+                      ? `, ${order.buyer.buyerPostalCode} ${order.buyer.buyerCity}`.trim()
+                      : ""}
+                  </span>
+                </div>
+              )}
 
               <div className="border-t pt-3">
                 <span className="text-muted-foreground block text-xs">Email kontaktowy</span>

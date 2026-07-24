@@ -1,6 +1,7 @@
 "use client"
 
 import { LoginHistory } from "@/components/auth"
+import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/form"
 import { ImageCropper } from "@/components/ui/image-cropper"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
@@ -23,6 +25,7 @@ import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
 import {
+  Bell,
   Building,
   Image as ImageIcon,
   Info,
@@ -90,7 +93,7 @@ const containerVariants = {
 
 export default function ClientProfilePage() {
   const router = useRouter()
-  const { update } = useSession()
+  const { data: session, update } = useSession()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
@@ -104,6 +107,9 @@ export default function ClientProfilePage() {
   const [hasPassword, setHasPassword] = useState(true)
   const [isDisconnectingFacebook, setIsDisconnectingFacebook] = useState(false)
   const [isDisconnectingGoogle, setIsDisconnectingGoogle] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(false)
+  const [isLoadingSound, setIsLoadingSound] = useState(true)
+  const [isSavingSound, setIsSavingSound] = useState(false)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -161,6 +167,66 @@ export default function ClientProfilePage() {
       router.replace("/panel-klienta/profil", { scroll: false })
     }
   }, [router])
+
+  // Pobierz ustawienia powiadomień
+  useEffect(() => {
+    if (!session?.user?.id) return
+    let active = true
+    fetch("/api/notification-settings")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((settings) => {
+        if (active && settings) {
+          setSoundEnabled(!!settings.powiadomienieDzwiekowe)
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching notification settings:", error)
+        if (active) toast.error("Nie udało się pobrać ustawień powiadomień")
+      })
+      .finally(() => {
+        if (active) setIsLoadingSound(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [session?.user?.id])
+
+  const handleSoundToggle = async (checked: boolean) => {
+    const previous = soundEnabled
+    setSoundEnabled(checked)
+    setIsSavingSound(true)
+
+    try {
+      const response = await fetch("/api/notification-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ powiadomienieDzwiekowe: checked }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update settings")
+      }
+
+      // Powiadom globalny odtwarzacz dźwięku o zmianie ustawień (bez przeładowania)
+      window.dispatchEvent(
+        new CustomEvent(NOTIFICATION_SETTINGS_CHANGED_EVENT, {
+          detail: { powiadomienieDzwiekowe: checked },
+        })
+      )
+
+      toast.success(
+        checked
+          ? "Dźwięk powiadomień został włączony"
+          : "Dźwięk powiadomień został wyłączony"
+      )
+    } catch (error) {
+      console.error("Error saving notification settings:", error)
+      setSoundEnabled(previous)
+      toast.error("Nie udało się zapisać ustawień")
+    } finally {
+      setIsSavingSound(false)
+    }
+  }
 
   const fetchData = async () => {
     try {
@@ -692,6 +758,47 @@ export default function ClientProfilePage() {
                         Nie możesz odłączyć tego konta, ponieważ jest to Twoja jedyna metoda
                         logowania. Najpierw ustaw hasło do konta.
                       </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Powiadomienia */}
+              <Card variant="glass">
+                <CardHeader>
+                  <CardTitle className="font-playfair text-white text-base flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-primary" />
+                    Powiadomienia
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground text-xs">
+                    Ustaw sposób, w jaki chcesz być informowany o nowych zdarzeniach.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingSound ? (
+                    <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Ładowanie ustawień...
+                    </div>
+                  ) : (
+                    <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor="powiadomienieDzwiekowe"
+                          className="cursor-pointer font-semibold text-white text-xs"
+                        >
+                          Dźwięk powiadomień na czacie
+                        </Label>
+                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                          Odtwórz dźwięk ostrzegawczy po otrzymaniu nowej wiadomości.
+                        </p>
+                      </div>
+                      <Switch
+                        id="powiadomienieDzwiekowe"
+                        checked={soundEnabled}
+                        disabled={isSavingSound}
+                        onCheckedChange={handleSoundToggle}
+                      />
                     </div>
                   )}
                 </CardContent>
