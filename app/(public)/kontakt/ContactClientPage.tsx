@@ -39,14 +39,7 @@ const contactMethods = [
     value: "bok@prostasprawa.pl",
     href: "mailto:bok@prostasprawa.pl",
     hint: "Odpowiadamy zwykle w ciągu 24 h",
-  },
-  {
-    icon: MapPin,
-    label: "Polska Grupa Identyfikacji Firm Sp. z o.o.",
-    value: "Langiewicza 16/3, 25-381 Kielce",
-    href: "https://maps.google.com/maps?q=Langiewicza+16/3+25-381+Kielce",
-    hint: "NIP: 9592020678",
-  },
+  }
 ]
 
 const openingHours = [
@@ -229,53 +222,6 @@ export default function ContactClientPage() {
               <ContactForm />
             </motion.div>
           </div>
-        </section>
-
-        {/* Map */}
-        <section className="px-4 sm:px-6 lg:px-8 pb-16 md:pb-24">
-          <motion.div
-            {...fadeUp}
-            className="max-w-7xl mx-auto overflow-hidden rounded-2xl border border-neutral-800"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3">
-              <div className="bg-neutral-900 p-8 flex flex-col justify-center gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#d7b56d]/10 text-[#d7b56d]">
-                    <MapPin className="h-5 w-5" />
-                  </span>
-                  <h2 className="font-playfair text-2xl text-white">Polska Grupa Identyfikacji Firm Sp. z o.o.</h2>
-                </div>
-                <p className="text-neutral-400 text-sm leading-relaxed">
-                  ul. Langiewicza 16/3
-                  <br />
-                  25-381 Kielce<br />
-                  KRS: 0000768210<br />
-
-                  NIP: 9592020678<br />
-                  REGON: 382401289
-                  <br />
-                </p>
-                <a
-                  href="https://maps.google.com/maps?q=Langiewicza+16/3+25-381+Kielce"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-[#d7b56d] hover:underline"
-                >
-                  Wyznacz trasę <Send className="h-3.5 w-3.5" />
-                </a>
-              </div>
-              <div className="md:col-span-2 min-h-[320px]">
-                <iframe
-                  title="Mapa – siedziba ProstaSprawa.pl"
-                  src="https://maps.google.com/maps?q=Langiewicza%2016%2F3%2025-381%20Kielce&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                  className="h-full w-full grayscale-[30%]"
-                  style={{ border: 0, minHeight: 320 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </div>
-          </motion.div>
         </section>
 
         {/* Quick help */}

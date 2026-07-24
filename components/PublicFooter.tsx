@@ -221,20 +221,15 @@ export default function PublicFooter() {
             </h3>
 
             <div>Polska Grupa Identyfikacji Firm Sp. z o.o.</div>
+            <div className="text-xs text-neutral-400 font-light space-y-1 pt-1 leading-relaxed">
+              NIP: 9592020678
+            </div>
             <div className="flex items-center gap-2 text-xs md:text-sm font-light text-neutral-400">
               <Mail className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
               <a href="mailto:bok@prostasprawa.pl" className="hover:text-white transition-colors">
                 bok@prostasprawa.pl
               </a>
             </div>
-
-            <div className="text-xs text-neutral-400 font-light space-y-1 pt-1 leading-relaxed">
-              Langiewicza 16/3 <br />
-              25-381 Kielce<br />
-              NIP: 9592020678
-
-            </div>
-
             <div className="flex items-center gap-2 text-xs md:text-sm font-semibold text-[#d7b56d] pt-2">
               <Phone className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
               <a href="tel:+48534888555" className="hover:underline">
