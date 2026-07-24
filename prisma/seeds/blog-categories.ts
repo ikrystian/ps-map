@@ -22,11 +22,7 @@ const privateBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Rodzina",
-    children: [
-      "Adopcje i opieka nad dziećmi",
-      "Alimenty i rozwody",
-      "Podział majątku, kontakty z dziećmi",
-    ],
+    children: ["Adopcje i opieka nad dziećmi", "Alimenty i rozwody", "Podział majątku, kontakty z dziećmi"],
   },
   {
     nazwa: "Mediacje",
@@ -54,26 +50,15 @@ const privateBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Prawo OZE",
-    children: [
-      "Regulacje i licencjonowanie",
-      "Umowy i transakcje",
-      "Kwestie środowiskowe, zezwolenia",
-    ],
+    children: ["Regulacje i licencjonowanie", "Umowy i transakcje", "Kwestie środowiskowe, zezwolenia"],
   },
   {
     nazwa: "Prawo konsumenckie",
-    children: [
-      "Reklamacje i zwroty",
-      "Problemy z zakupami online",
-      "Umowy z dostawcami usług",
-    ],
+    children: ["Reklamacje i zwroty", "Problemy z zakupami online", "Umowy z dostawcami usług"],
   },
   {
     nazwa: "Prawo cyfrowe i internetowe",
-    children: [
-      "Ochrona danych osobowych w sieci",
-      "Problemy z umowami cyfrowymi (np. subskrypcje)",
-    ],
+    children: ["Ochrona danych osobowych w sieci", "Problemy z umowami cyfrowymi (np. subskrypcje)"],
   },
   {
     nazwa: "Prawo medyczne",
@@ -81,19 +66,12 @@ const privateBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Prawo administracyjne",
-    children: [
-      "Sprawy związane z decyzjami administracyjnymi",
-      "Odwołania od decyzji urzędów",
-    ],
+    children: ["Sprawy związane z decyzjami administracyjnymi", "Odwołania od decyzji urzędów"],
   },
   {
     nazwa: "Prawa lokatora i najemcy",
-    children: [
-      "Umowy",
-      "Problemy z wynajmem mieszkania",
-      "Konflikty z wynajmującym",
-    ],
-  },
+    children: ["Umowy", "Problemy z wynajmem mieszkania", "Konflikty z wynajmującym"],
+  }
 ];
 
 // SPRAWY FIRMOWE
@@ -124,19 +102,11 @@ const businessBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Przetargi",
-    children: [
-      "Postępowania przetargowe",
-      "Skargi i odwołania",
-      "Umowy w ramach procedur przetargowych",
-    ],
+    children: ["Postępowania przetargowe", "Skargi i odwołania", "Umowy w ramach procedur przetargowych"],
   },
   {
     nazwa: "Dotacje i finansowanie zewnętrzne",
-    children: [
-      "Dotacje unijne",
-      "Wsparcie rządowe",
-      "Proces aplikacyjny i rozliczenie",
-    ],
+    children: ["Dotacje unijne", "Wsparcie rządowe", "Proces aplikacyjny i rozliczenie"],
   },
   {
     nazwa: "Dane osobowe",
@@ -144,11 +114,7 @@ const businessBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Prawa autorskie",
-    children: [
-      "Ochrona i licencjonowanie",
-      "Naruszenia praw autorskich",
-      "Umowy dotyczące praw autorskich",
-    ],
+    children: ["Ochrona i licencjonowanie", "Naruszenia praw autorskich", "Umowy dotyczące praw autorskich"],
   },
   {
     nazwa: "Zdrowie i bezpieczeństwo w pracy",
@@ -156,20 +122,11 @@ const businessBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Finanse i inwestycje",
-    children: [
-      "Zarządzanie kapitałem",
-      "Pozyskiwanie finansowania",
-      "Analiza ryzyka inwestycyjnego",
-    ],
+    children: ["Zarządzanie kapitałem", "Pozyskiwanie finansowania", "Analiza ryzyka inwestycyjnego"],
   },
   {
     nazwa: "Nieruchomości komercyjne",
-    children: [
-      "Wynajem i zakup",
-      "Zarządzanie nieruchomościami",
-      "Inwestycje w nieruchomości",
-      "Obrót nieruchomościami (zbycie, dzierżawa, najem)",
-    ],
+    children: ["Wynajem i zakup", "Zarządzanie nieruchomościami", "Inwestycje w nieruchomości", "Obrót nieruchomościami (zbycie, dzierżawa, najem)"],
   },
   {
     nazwa: "Marketing i reklama",
@@ -177,11 +134,7 @@ const businessBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Technologie i innowacje",
-    children: [
-      "Ochrona własności intelektualnej",
-      "Cyfrowa transformacja",
-      "Bezpieczeństwo IT",
-    ],
+    children: ["Ochrona własności intelektualnej", "Cyfrowa transformacja", "Bezpieczeństwo IT"],
   },
   {
     nazwa: "Zarządzanie zasobami ludzkimi",
@@ -193,11 +146,7 @@ const businessBlogCategories: BlogCategoryInput[] = [
   },
   {
     nazwa: "Odnawialne Źródła Energii (OZE)",
-    children: [
-      "Umowy instalacyjne",
-      "Wsparcie prawne w uzyskiwaniu dotacji",
-      "Prawne aspekty użytkowania",
-    ],
+    children: ["Umowy instalacyjne", "Wsparcie prawne w uzyskiwaniu dotacji", "Prawne aspekty użytkowania"],
   },
   {
     nazwa: "Ochrona środowiska",
@@ -210,7 +159,7 @@ const businessBlogCategories: BlogCategoryInput[] = [
   {
     nazwa: "Prawo upadłościowe",
     children: ["Upadłości", "Likwidacja (sprzedaż majątku)"],
-  },
+  }
 ];
 
 export async function seedBlogCategories(prisma: PrismaClient) {

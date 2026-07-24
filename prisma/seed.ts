@@ -19,6 +19,11 @@ async function main() {
   // UWAGA: NIE usuwamy City ani Voivodeship — miasta (~43k) są importowane
   // osobno (import_postal_codes.py), a ich usunięcie osierociłoby powiązania.
   // ==========================================================================
+  await prisma.surveyAnswer.deleteMany()
+  await prisma.surveyResponse.deleteMany()
+  await prisma.surveyOption.deleteMany()
+  await prisma.surveyQuestion.deleteMany()
+  await prisma.survey.deleteMany()
   await prisma.advertisement.deleteMany()
   await prisma.adClient.deleteMany()
   await prisma.reviewReport.deleteMany()
