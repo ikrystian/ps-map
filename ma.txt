@@ -1,0 +1,18 @@
+================================================================================
+TYPY DZIAŁALNOŚCI EKSPERTÓW (FORMY PRAWNE PROWADZENIA DZIAŁALNOŚCI)
+(Źródło: prisma/seeds/experts.ts & schema.prisma - LawFirmType)
+================================================================================
+
+1. OSOBA_FIZYCZNA - Osoba fizyczna (Jednoosobowa działalność gospodarcza)
+2. SPOLKA_CYWILNA - Spółka cywilna
+3. SPOLKA_PARTNERSKA - Spółka partnerska
+4. SPOLKA_KOMANDYTOWA - Spółka komandytowa
+5. SPOLKA_JAWNA - Spółka jawna
+6. SPOLKA_ZOO - Spółka z ograniczoną odpowiedzialnością (Spółka z o.o.)
+7. INNY - Inny rodzaj działalności
+
+================================================================================
+KATEGORIE I SPECJALIZACJE DZIAŁALNOŚCI EKSPERTÓW
+(Źródło: prisma/seeds/expertise-categories.ts)
+================================================================================
+
