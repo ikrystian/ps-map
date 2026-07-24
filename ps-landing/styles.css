@@ -4304,3 +4304,447 @@ html {
         display: none;
     }
 }
+/* ============================================================
+   WOW 2.0 — choreografia premium
+   ============================================================ */
+
+/* ----- Navbar: zjazd przy wejściu ----- */
+.navbar {
+    animation: nav-drop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+@keyframes nav-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-110%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----- Hero: Ken Burns na tle ----- */
+.hero-bg-img {
+    transform-origin: 50% 30%;
+    animation: hero-kenburns 7s cubic-bezier(0.19, 0.6, 0.32, 1) both;
+}
+
+@keyframes hero-kenburns {
+    from {
+        transform: scale(1.16);
+    }
+
+    to {
+        transform: scale(1.02);
+    }
+}
+
+/* ----- Hero: filmowe ziarno ----- */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ----- Hero: maskowany reveal linii tytułu ----- */
+.title-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+}
+
+.title-line-inner {
+    display: inline-block;
+    transform: translateY(112%);
+    animation: title-line-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.title-line:nth-child(1) .title-line-inner {
+    animation-delay: 0.4s;
+}
+
+.title-line:nth-child(2) .title-line-inner {
+    animation-delay: 0.55s;
+}
+
+@keyframes title-line-up {
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ----- Hero: kaskada elementów mockupu ----- */
+.hero-right .mockup-search-bar {
+    opacity: 0;
+    animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+}
+
+.hero-right .case-item {
+    opacity: 0;
+    animation: hero-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-right .case-item:nth-child(1) {
+    animation-delay: 0.95s;
+}
+
+.hero-right .case-item:nth-child(2) {
+    animation-delay: 1.1s;
+}
+
+.hero-right .case-item:nth-child(3) {
+    animation-delay: 1.25s;
+}
+
+/* ----- Hero: animowana obwódka mockupu (conic) ----- */
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.live-cases-mockup {
+    position: relative;
+}
+
+.live-cases-mockup::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.2px;
+    background: conic-gradient(from var(--border-angle),
+            transparent 8%,
+            rgba(200, 168, 100, 0.55) 18%,
+            transparent 30%,
+            transparent 55%,
+            rgba(13, 161, 146, 0.45) 68%,
+            transparent 80%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: border-spin 9s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+@keyframes border-spin {
+    to {
+        --border-angle: 360deg;
+    }
+}
+
+/* ----- Hero: piszący się search + migający kursor ----- */
+.search-typing {
+    display: inline-flex;
+    align-items: center;
+    color: #777;
+}
+
+.search-caret {
+    display: inline-block;
+    width: 1px;
+    height: 13px;
+    margin-left: 3px;
+    background: #c8a864;
+    animation: caret-blink 1.1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* ----- Hero: smuga światła po aktywnej sprawie ----- */
+.case-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.case-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, rgba(200, 168, 100, 0.09), transparent);
+    transform: skewX(-18deg);
+    pointer-events: none;
+}
+
+.case-item.active::after {
+    animation: case-sweep 1.1s ease 0.15s;
+}
+
+@keyframes case-sweep {
+    to {
+        left: 135%;
+    }
+}
+
+.case-item.active {
+    transform: translateX(4px);
+}
+
+/* ----- Sekcja ciemna: dryfująca aurora ----- */
+.section-dark-bg {
+    overflow: hidden;
+}
+
+.section-dark-bg::before,
+.section-dark-bg::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.section-dark-bg::before {
+    width: 720px;
+    height: 720px;
+    top: -240px;
+    left: -200px;
+    background: radial-gradient(circle, rgba(13, 161, 146, 0.07) 0%, transparent 62%);
+    animation: glow-drift 24s ease-in-out infinite alternate;
+}
+
+.section-dark-bg::after {
+    width: 640px;
+    height: 640px;
+    bottom: -220px;
+    right: -180px;
+    background: radial-gradient(circle, rgba(200, 168, 100, 0.06) 0%, transparent 62%);
+    animation: glow-drift 30s ease-in-out infinite alternate-reverse;
+}
+
+.section-dark-bg>.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ----- Reveal kierunkowy: panele wjeżdżają z boków ----- */
+.gain-left.animate-on-scroll,
+.consultations-left.animate-on-scroll,
+.security-left.animate-on-scroll,
+.trust-left.animate-on-scroll,
+.why-us-left.animate-on-scroll,
+.diff-card-left.animate-on-scroll,
+.advisor-visual-card.animate-on-scroll {
+    transform: translate3d(-52px, 24px, 0);
+}
+
+.gain-right.animate-on-scroll,
+.consultations-right.animate-on-scroll,
+.security-right.animate-on-scroll,
+.trust-right.animate-on-scroll,
+.why-us-right.animate-on-scroll {
+    transform: translate3d(52px, 24px, 0);
+}
+
+.gain-left.animate-on-scroll.visible,
+.consultations-left.animate-on-scroll.visible,
+.security-left.animate-on-scroll.visible,
+.trust-left.animate-on-scroll.visible,
+.why-us-left.animate-on-scroll.visible,
+.diff-card-left.animate-on-scroll.visible,
+.advisor-visual-card.animate-on-scroll.visible,
+.gain-right.animate-on-scroll.visible,
+.consultations-right.animate-on-scroll.visible,
+.security-right.animate-on-scroll.visible,
+.trust-right.animate-on-scroll.visible,
+.why-us-right.animate-on-scroll.visible {
+    transform: translate3d(0, 0, 0);
+}
+
+/* ----- Kaskada elementów list wewnątrz reveal'owanych paneli ----- */
+@keyframes cascade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill) {
+    animation: cascade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(2) {
+    animation-delay: 0.19s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(3) {
+    animation-delay: 0.28s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(4) {
+    animation-delay: 0.37s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(5) {
+    animation-delay: 0.46s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(6) {
+    animation-delay: 0.55s;
+}
+
+.animate-on-scroll.visible :is(.check-item, .consultation-feature-item, .security-item, .why-item, .trust-feature-item, .diff-item, .points-item, .sec-check-item, .contact-row, .summary-pill):nth-child(7) {
+    animation-delay: 0.64s;
+}
+
+/* ----- Benefits: rysujące się ikony ----- */
+.fx-draw .benefit-icon svg :is(path, line, polyline, circle, rect) {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+.fx-draw .benefit-card.visible .benefit-icon svg :is(path, line, polyline, circle, rect) {
+    animation: icon-draw 1.2s ease-out 0.35s forwards;
+}
+
+@keyframes icon-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ----- Advisor: doradca najpierw "pisze", potem wysyła ----- */
+.chat-bubble {
+    min-height: 52px;
+}
+
+.chat-typing {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    display: flex;
+    gap: 5px;
+}
+
+.chat-typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(13, 161, 146, 0.65);
+    animation: typing-bounce 1.15s ease-in-out infinite;
+}
+
+.chat-typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.chat-typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typing-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.45;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+.advisor-visual-card .chat-bubble p,
+.advisor-visual-card .chat-time {
+    opacity: 0;
+}
+
+.advisor-visual-card.visible .chat-typing {
+    animation: chat-typing-off 0.25s ease 1.6s forwards;
+}
+
+@keyframes chat-typing-off {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.advisor-visual-card.visible .chat-bubble p {
+    animation: msg-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.75s both;
+}
+
+.advisor-visual-card.visible .chat-time {
+    animation: msg-in 0.4s ease 2s both;
+}
+
+@keyframes msg-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----- Scroll progress: poświata ----- */
+.scroll-progress {
+    box-shadow: 0 0 14px rgba(200, 168, 100, 0.45);
+}
+
+/* ----- Reduced motion / mobile ----- */
+@media (prefers-reduced-motion: reduce) {
+
+    .title-line-inner,
+    .hero-right .mockup-search-bar,
+    .hero-right .case-item,
+    .advisor-visual-card .chat-bubble p,
+    .advisor-visual-card .chat-time {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+
+    .search-caret,
+    .chat-typing {
+        display: none;
+    }
+
+    .hero::after {
+        display: none;
+    }
+}
+
+@media (max-width: 968px) {
+
+    .gain-left.animate-on-scroll,
+    .consultations-left.animate-on-scroll,
+    .security-left.animate-on-scroll,
+    .trust-left.animate-on-scroll,
+    .why-us-left.animate-on-scroll,
+    .diff-card-left.animate-on-scroll,
+    .advisor-visual-card.animate-on-scroll,
+    .gain-right.animate-on-scroll,
+    .consultations-right.animate-on-scroll,
+    .security-right.animate-on-scroll,
+    .trust-right.animate-on-scroll,
+    .why-us-right.animate-on-scroll {
+        transform: translate3d(0, 30px, 0);
+    }
+}

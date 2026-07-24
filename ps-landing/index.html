@@ -77,8 +77,9 @@
                     DLA PRAWNIKA I SPECJALISTY
                 </div>
                 <h1 class="hero-title">
-                    Sprawy, które mają sens.<br>
-                    <span class="text-shine">Bez prowizji, bez katalogu.</span>
+                    <span class="title-line"><span class="title-line-inner">Sprawy, które mają sens.</span></span>
+                    <span class="title-line"><span class="title-line-inner text-shine">Bez prowizji, bez
+                                katalogu.</span></span>
                 </h1>
                 <p class="hero-subtitle">
                     Wiesz, jak to zwykle wygląda. Wisisz w katalogu obok setki innych prawników i czekasz, aż ktoś
@@ -124,7 +125,8 @@
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="M21 21l-4.35-4.35" />
                             </svg>
-                            <span>Wyszukaj specjalizację...</span>
+                            <span class="search-typing"><span id="searchTypeText">Wyszukaj
+                                    specjalizację...</span><span class="search-caret" aria-hidden="true"></span></span>
                         </div>
 
                         <div class="case-list">
@@ -589,7 +591,7 @@
                                             <polyline points="12 6 12 12 16 14" />
                                         </svg>
                                         <span>Do rozpoczęcia spotkania:</span>
-                                        <strong class="timer-val">00h : 24m : 10s</strong>
+                                        <strong class="timer-val" id="consultTimer">00h : 24m : 10s</strong>
                                     </div>
                                     <div class="meet-link-row">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"
@@ -677,6 +679,9 @@
                         <!-- Advisor Chat Bubble -->
                         <div class="chat-bubble-card">
                             <div class="chat-bubble">
+                                <div class="chat-typing" aria-hidden="true">
+                                    <span></span><span></span><span></span>
+                                </div>
                                 <p>Cześć! Przeanalizowałam Twój profil i mam dla Ciebie wskazówkę. Uzupełnienie zakładki
                                     "Skill Law Focus" zwiększy widoczność Twoich ofert o blisko <strong>40%</strong>.
                                 </p>

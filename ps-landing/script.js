@@ -710,3 +710,94 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 })();
+
+/* ============================================================
+   WOW 2.0 — żywe mockupy i mikrointerakcje
+   ============================================================ */
+(function wowFx2() {
+    'use strict';
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+    // ===== Rysujące się ikony (pathLength=1 -> animacja dashoffset w CSS) =====
+    if (!reducedMotion) {
+        document.querySelectorAll('.benefit-icon svg :is(path, line, polyline, circle, rect)')
+            .forEach((el) => el.setAttribute('pathLength', '1'));
+        document.documentElement.classList.add('fx-draw');
+    }
+
+    // ===== Hero: piszący się search w mockupie =====
+    const typeEl = document.getElementById('searchTypeText');
+    if (typeEl && !reducedMotion) {
+        const phrases = [
+            'Prawo rodzinne',
+            'Prawo gospodarcze',
+            'Odszkodowania',
+            'Prawo pracy',
+            'Nieruchomości',
+            'Prawo spadkowe'
+        ];
+        let phraseIdx = 0;
+        let charIdx = 0;
+        let deleting = false;
+
+        function tick() {
+            const phrase = phrases[phraseIdx];
+            if (!deleting) {
+                charIdx++;
+                typeEl.textContent = phrase.slice(0, charIdx);
+                if (charIdx === phrase.length) {
+                    deleting = true;
+                    setTimeout(tick, 1800);
+                    return;
+                }
+                setTimeout(tick, 60 + Math.random() * 60);
+            } else {
+                charIdx--;
+                typeEl.textContent = phrase.slice(0, charIdx);
+                if (charIdx === 0) {
+                    deleting = false;
+                    phraseIdx = (phraseIdx + 1) % phrases.length;
+                    setTimeout(tick, 450);
+                    return;
+                }
+                setTimeout(tick, 28);
+            }
+        }
+
+        setTimeout(() => {
+            typeEl.textContent = '';
+            tick();
+        }, 2200);
+    }
+
+    // ===== Konsultacje: licznik odlicza na żywo =====
+    const timerEl = document.getElementById('consultTimer');
+    if (timerEl) {
+        let total = 24 * 60 + 10; // 24m 10s
+        const pad = (n) => String(n).padStart(2, '0');
+        setInterval(() => {
+            total = total > 0 ? total - 1 : 24 * 60 + 10;
+            const h = Math.floor(total / 3600);
+            const m = Math.floor((total % 3600) / 60);
+            const s = total % 60;
+            timerEl.textContent = `${pad(h)}h : ${pad(m)}m : ${pad(s)}s`;
+        }, 1000);
+    }
+
+    // ===== Magnetyczne przyciski CTA =====
+    if (finePointer && !reducedMotion) {
+        document.querySelectorAll('.btn-primary').forEach((btn) => {
+            btn.addEventListener('mousemove', (e) => {
+                const r = btn.getBoundingClientRect();
+                const x = e.clientX - r.left - r.width / 2;
+                const y = e.clientY - r.top - r.height / 2;
+                btn.style.transform = `translate(${(x * 0.14).toFixed(1)}px, ${(y * 0.22 - 2).toFixed(1)}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+    }
+})();

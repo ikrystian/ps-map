@@ -90,7 +90,9 @@
       "WebFetch(domain:crd.gov.pl)",
       "Bash(pm2 list *)",
       "Bash(pm2 describe *)",
-      "Bash(ps -o pid,ppid,cmd -p 19443)"
+      "Bash(ps -o pid,ppid,cmd -p 19443)",
+      "Bash(python3 *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8931/index.html)"
     ]
   }
 }
