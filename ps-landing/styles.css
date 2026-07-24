@@ -5575,6 +5575,142 @@ html {
     }
 }
 
+/* ============================================================
+   Mobile polish — poprawki układu na małych ekranach
+   ============================================================ */
+
+@media (max-width: 968px) {
+
+    /* Konsultacje: jedna kolumna zamiast ściśniętych dwóch */
+    .consultations-layout {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    .consultations-right {
+        justify-content: center;
+    }
+
+    .consultations-layout>* {
+        min-width: 0;
+    }
+
+    /* Bezpieczeństwo: karta pod tekstem zamiast obok */
+    .security-layout {
+        grid-template-columns: 1fr;
+        gap: 44px;
+    }
+
+    .security-right {
+        justify-content: center;
+    }
+
+    .timer-row {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 900px) {
+
+    /* Laptop: interfejs rozmowy układa się w kolumnę,
+       panel dokumentu wpada pod strumienie wideo */
+    .video-call-viewport {
+        flex-direction: column;
+    }
+
+    .video-streams-grid {
+        grid-template-rows: 230px 180px;
+        height: auto;
+    }
+
+    .video-app-header {
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 640px) {
+
+    /* Laptop: smuklejsza ramka na telefonach */
+    .laptop-screen-frame {
+        border-width: 8px;
+        border-radius: 14px 14px 0 0;
+    }
+
+    .laptop-keyboard-chassis {
+        height: 14px;
+        border-radius: 0 0 14px 14px;
+    }
+
+    .laptop-webcam {
+        width: 48px;
+        height: 8px;
+    }
+
+    /* Nagłówek rozmowy: tylko LIVE + tytuł + licznik */
+    .room-name,
+    .video-app-header .divider,
+    .encrypt-badge {
+        display: none;
+    }
+
+    .app-title {
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .video-call-viewport {
+        padding: 10px;
+    }
+
+    .video-streams-grid {
+        grid-template-rows: 200px 150px;
+        gap: 10px;
+    }
+
+    .laptop-showcase-desc {
+        font-size: 0.95rem;
+    }
+
+    .consultation-laptop-showcase {
+        margin-top: 56px;
+    }
+
+    /* Mockup konsultacji: ciaśniej, bez przepełnienia karty */
+    .mockup-body {
+        padding: 22px 16px;
+    }
+
+    .consultation-booking-preview {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+
+    /* Toolbar rozmowy mieści się na najwęższych ekranach */
+    .video-toolbar {
+        padding: 10px 8px;
+    }
+
+    .toolbar-center {
+        gap: 8px;
+    }
+
+    .tool-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .highlight-tool {
+        width: auto;
+        padding: 0 12px;
+    }
+
+    .end-call-tool {
+        margin-left: 2px;
+    }
+}
+
 /* Reduced motion — wyłącz choreografię laptopa */
 @media (prefers-reduced-motion: reduce) {
 
