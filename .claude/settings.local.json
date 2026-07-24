@@ -92,7 +92,10 @@
       "Bash(pm2 describe *)",
       "Bash(ps -o pid,ppid,cmd -p 19443)",
       "Bash(python3 *)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8931/index.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8931/index.html)",
+      "Bash(command -v php python3)",
+      "Bash(pkill -f \"php -S 127.0.0.1:8642\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8642/index.html)"
     ]
   }
 }

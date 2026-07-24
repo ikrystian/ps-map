@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Spotlight: poświata za kursorem na kartach =====
     const spotlightCards = document.querySelectorAll(
-        '.benefit-card, .advisor-feature-item, .consultation-feature-item, .trust-feature-item, .why-item'
+        '.benefit-card, .advisor-feature-item, .consultation-feature-item, .trust-feature-item, .why-item, .laptop-screen-frame'
     );
     spotlightCards.forEach((card) => {
         card.addEventListener('mousemove', (e) => {
