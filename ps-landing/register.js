@@ -877,7 +877,7 @@ function initCustomSelects() {
             checkSvg.setAttribute("height", "14");
             checkSvg.setAttribute("viewBox", "0 0 24 24");
             checkSvg.setAttribute("fill", "none");
-            checkSvg.setAttribute("stroke", "#c8a864");
+            checkSvg.setAttribute("stroke", "#0b8c7f");
             checkSvg.setAttribute("stroke-width", "2.5");
             checkSvg.style.display = isSelected ? "inline-block" : "none";
             checkSvg.style.flexShrink = "0";

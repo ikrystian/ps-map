@@ -3713,6 +3713,7 @@ h3 {
 
 .custom-select-trigger.active .select-chevron {
     transform: rotate(180deg);
+    color: #0b8c7f;
 }
 
 .custom-select-dropdown {
@@ -3723,7 +3724,7 @@ h3 {
     background: rgba(22, 22, 20, 0.98);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(200, 168, 100, 0.3);
+    border: 1px solid rgba(11, 140, 127, 0.3);
     border-radius: 12px;
     z-index: 200;
     display: none;
@@ -3746,7 +3747,7 @@ h3 {
     width: 100%;
     padding: 10px 14px;
     background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(200, 168, 100, 0.3);
+    border: 1px solid rgba(11, 140, 127, 0.3);
     border-radius: 8px;
     color: #e0ddd5;
     font-family: 'Inter', sans-serif;
@@ -3756,7 +3757,7 @@ h3 {
 }
 
 .dropdown-search-input:focus {
-    border-color: #c8a864;
+    border-color: #0b8c7f;
 }
 
 .dropdown-options-list {
@@ -3773,7 +3774,7 @@ h3 {
 }
 
 .dropdown-options-list::-webkit-scrollbar-thumb {
-    background: rgba(200, 168, 100, 0.3);
+    background: rgba(11, 140, 127, 0.3);
     border-radius: 10px;
 }
 
@@ -3803,12 +3804,12 @@ h3 {
 
 .select-option-item:hover,
 .select-option-item.highlighted {
-    background: rgba(200, 168, 100, 0.15);
+    background: rgba(11, 140, 127, 0.15);
     color: #fff;
 }
 
 .select-option-item.selected {
-    background: rgba(200, 168, 100, 0.2);
+    background: rgba(11, 140, 127, 0.2);
     color: #ffffff;
     font-weight: 500;
 }
@@ -3826,7 +3827,7 @@ h3 {
     padding: 10px 16px 6px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #c8a864;
+    color: #0b8c7f;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     background: rgba(0, 0, 0, 0.3);
@@ -3835,9 +3836,10 @@ h3 {
 }
 
 .custom-select-trigger:focus,
-.custom-select-trigger:focus-visible {
-    border-color: rgba(200, 168, 100, 0.4);
-    box-shadow: 0 0 0 3px rgba(200, 168, 100, 0.08);
+.custom-select-trigger:focus-visible,
+.custom-select-trigger.active {
+    border-color: rgba(11, 140, 127, 0.4);
+    box-shadow: 0 0 0 3px rgba(11, 140, 127, 0.12);
     outline: none;
 }
 
@@ -3858,7 +3860,7 @@ h3 {
 
 .select-option-item .option-postal-code {
     font-size: 0.8rem;
-    color: #c8a864;
+    color: #0b8c7f;
 }
 
 .select-option-item .option-voivodeship-name {
