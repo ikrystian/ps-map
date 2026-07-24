@@ -56,6 +56,8 @@ export async function POST(request: NextRequest) {
       include: {
         user: {
           select: {
+            imie: true,
+            nazwisko: true,
             adres: true,
             kodPocztowy: true,
             miasto: true,

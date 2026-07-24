@@ -30,6 +30,8 @@ export interface InvoiceBuyerSource {
   nazwa: string | null
   nip: string | null
   user?: {
+    imie: string | null
+    nazwisko: string | null
     adres: string | null
     kodPocztowy: string | null
     miasto: string | null
@@ -43,9 +45,11 @@ export interface InvoiceBuyerSource {
 }
 
 /**
- * Ustala dane nabywcy faktury. Jeżeli użytkownik ma uzupełnione dane firmy
- * (CompanyData pobrane z Białej listy MF), fakturę wystawiamy na ich podstawie.
- * W przeciwnym razie używane są dane z profilu kancelarii/użytkownika.
+ * Ustala dane nabywcy faktury. Jeżeli ekspert zarejestrował się "jako firma"
+ * i ma uzupełnione dane firmy (CompanyData pobrane z Białej listy MF), fakturę
+ * wystawiamy na te dane (nazwa + NIP firmy). W przeciwnym razie (rejestracja
+ * jako osoba prywatna) dane nabywcy to Osoba kontaktowa (imię i nazwisko)
+ * oraz Adres z profilu użytkownika.
  */
 export function resolveInvoiceBuyer(lawFirm: InvoiceBuyerSource): {
   buyerName: string
@@ -54,7 +58,12 @@ export function resolveInvoiceBuyer(lawFirm: InvoiceBuyerSource): {
   buyerPostalCode: string
   buyerCity: string
 } {
-  let buyerName = lawFirm.nazwa || ""
+  const contactName = [lawFirm.user?.imie, lawFirm.user?.nazwisko]
+    .filter(Boolean)
+    .join(" ")
+    .trim()
+
+  let buyerName = contactName || lawFirm.nazwa || ""
   let buyerNIP: string | undefined = lawFirm.nip || undefined
   let buyerAddress = lawFirm.user?.adres || ""
   let buyerPostalCode = lawFirm.user?.kodPocztowy || ""
@@ -97,6 +106,8 @@ export async function generateInvoiceForOrder(orderId: string) {
             nip: true,
             user: {
               select: {
+                imie: true,
+                nazwisko: true,
                 adres: true,
                 kodPocztowy: true,
                 miasto: true,

@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { generateInvoiceForOrder } from "@/lib/invoice-generator"
+import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -109,7 +109,21 @@ export async function POST(request: NextRequest) {
       where: { userId: session.user.id },
       include: {
         user: {
-          select: { adres: true, kodPocztowy: true, miasto: true },
+          select: {
+            imie: true,
+            nazwisko: true,
+            adres: true,
+            kodPocztowy: true,
+            miasto: true,
+            companyData: {
+              select: {
+                COMPANY_name: true,
+                COMPANY_nip: true,
+                COMPANY_residenceAddress: true,
+                COMPANY_workingAddress: true,
+              },
+            },
+          },
         },
       },
     })
@@ -195,13 +209,16 @@ export async function POST(request: NextRequest) {
 
     const finalDaneFaktury = daneFaktury
       ? JSON.stringify(daneFaktury)
-      : JSON.stringify({
-        nazwa: lawFirm.nazwa || "",
-        nip: lawFirm.nip || "",
-        adres: lawFirm.user?.adres || "",
-        kodPocztowy: lawFirm.user?.kodPocztowy || "",
-        miasto: lawFirm.user?.miasto || "",
-      })
+      : JSON.stringify((() => {
+        const buyer = resolveInvoiceBuyer(lawFirm)
+        return {
+          nazwa: buyer.buyerName,
+          nip: buyer.buyerNIP || "",
+          adres: buyer.buyerAddress,
+          kodPocztowy: buyer.buyerPostalCode,
+          miasto: buyer.buyerCity,
+        }
+      })())
 
     // Utwórz zamówienie
     const orderNumber = `PKT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
