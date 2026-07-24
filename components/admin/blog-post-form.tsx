@@ -35,6 +35,7 @@ import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
+import { BlogPostPreviewDialog } from "@/components/admin/blog-post-preview-dialog"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -64,14 +65,6 @@ type PostFormValues = z.infer<typeof postFormSchema>
 import type { BlogCategory } from "@/types"
 
 const postSchema = postFormSchema.refine((data) => {
-  if (data.isSponsored && !data.sponsoredLawFirmId) {
-    return false
-  }
-  return true
-}, {
-  message: "Musisz wybrać eksperta/eksperta dla wpisu sponsorowanego",
-  path: ["sponsoredLawFirmId"],
-}).refine((data) => {
   if (data.zaplanowany && !data.dataPublikacji) {
     return false
   }
@@ -132,6 +125,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
   const [generatingSeo, setGeneratingSeo] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
   const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
@@ -807,7 +801,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                                 name="sponsoredLawFirmId"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-xs font-semibold">Wybierz eksperta / eksperta *</FormLabel>
+                                    <FormLabel className="text-xs font-semibold">Wybierz eksperta / eksperta (opcjonalnie)</FormLabel>
                                     <Select
                                       onValueChange={field.onChange}
                                       value={field.value}
@@ -970,6 +964,15 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
               <Button
                 type="button"
                 variant="outline"
+                onClick={() => setPreviewOpen(true)}
+                className="h-9 gap-1.5"
+              >
+                <Eye className="h-4 w-4" />
+                Podgląd
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => router.push("/admin/blog")}
                 className="h-9"
               >
@@ -998,6 +1001,19 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
           </div>
         </form>
       </Form>
+
+      <BlogPostPreviewDialog
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        tytul={form.watch("tytul")}
+        tresc={form.watch("tresc")}
+        obrazekWyrozniajacy={form.watch("obrazekWyrozniajacy")}
+        categoryId={form.watch("categoryId")}
+        categories={categories}
+        isSponsored={form.watch("isSponsored")}
+        sponsoredLawFirmId={form.watch("sponsoredLawFirmId")}
+        sponsoredLawFirmName={lawFirms.find((firm) => firm.id === form.watch("sponsoredLawFirmId"))?.nazwa}
+      />
     </div>
   )
 }

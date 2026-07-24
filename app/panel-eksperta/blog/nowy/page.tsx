@@ -25,7 +25,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2 } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, Eye } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -33,6 +33,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { motion } from "framer-motion"
+import { BlogPostPreviewDialog } from "@/components/admin/blog-post-preview-dialog"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -87,6 +88,7 @@ export default function LawFirmNewBlogPostPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingCategories, setLoadingCategories] = useState(true)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const router = useRouter()
 
   const form = useForm<PostFormValues>({
@@ -322,6 +324,15 @@ export default function LawFirmNewBlogPostPage() {
                 <Button
                   type="button"
                   variant="outline"
+                  onClick={() => setPreviewOpen(true)}
+                  className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl gap-2 transition-all"
+                >
+                  <Eye className="h-4 w-4" />
+                  Podgląd
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => router.push("/panel-eksperta/blog")}
                   className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl transition-all"
                 >
@@ -499,6 +510,17 @@ export default function LawFirmNewBlogPostPage() {
           </motion.div>
         </form>
       </Form>
+
+      <BlogPostPreviewDialog
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        tytul={form.watch("tytul")}
+        tresc={form.watch("tresc")}
+        obrazekWyrozniajacy={form.watch("obrazekWyrozniajacy")}
+        categoryId={form.watch("categoryId")}
+        categories={categories}
+        authorName="Twój Profil"
+      />
     </div>
   )
 }
