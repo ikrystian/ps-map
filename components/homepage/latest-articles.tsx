@@ -38,7 +38,7 @@ function ArticleCard({ post, index }: { post: BlogPost; index: number }) {
         <div className="relative overflow-hidden rounded-2xl aspect-[5/4] md:aspect-[4/5] cursor-pointer shadow-2xl bg-neutral-900 transition-all duration-500">
           {/* Background Image with subtle zoom on hover */}
           <Image
-            src={post.obrazekWyrozniajacy || ""}
+            src={post.obrazekWyrozniajacy || "/images/blog-placeholder.jpg"}
             alt={post.tytul}
             fill
             className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"

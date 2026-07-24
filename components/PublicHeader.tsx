@@ -373,11 +373,11 @@ export default function PublicHeader({
           <Link href="/" className="flex items-center relative" id="main-logo">
             <Image className="hidden lg:block min-w-[150px]" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
             <Image className="block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
-            <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base" id="env">{process.env.ENV}</span>
+            <span className="self-end ml-1.5 lg:ml-0 lg:absolute lg:-right-3 lg:-bottom-3 text-primary font-bold text-sm lg:text-base" id="env">{process.env.ENV}</span>
           </Link>
 
           {/* Navigation Menu */}
-          <NavigationMenu className="hidden md:flex">
+          <NavigationMenu className="hidden xl:flex">
             <NavigationMenuList className="flex lg:gap-2">
               {/* Szukaj / Zamknij Animated Button */}
               <NavigationMenuItem>
@@ -826,14 +826,15 @@ export default function PublicHeader({
           </NavigationMenu>
 
           {/* Right Side - User Menu / Login & Hamburger */}
-          <div className="flex items-center gap-3 md:gap-4">
+          <div className="flex items-center gap-2 min-[400px]:gap-3 md:gap-4">
             {isAuthenticated && userRole ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 min-[400px]:gap-3">
                 {userRole === "CLIENT" && (
                   <AddCaseButton
                     href="/panel-klienta/sprawy/dodaj"
                     className="flex"
-                    labelClassName="lg:flex"
+                    labelClassName="hidden min-[390px]:block"
+                    iconClassName="min-[390px]:hidden"
                   />
                 )}
                 {(userRole === "CLIENT" || userRole === "LAW_FIRM") && (
@@ -853,14 +854,14 @@ export default function PublicHeader({
             ) : (
               <div className="flex items-center gap-4">
                 <AddCaseButton href="/panel-klienta/sprawy/dodaj" className="flex" />
-                <Link href="/logowanie" className="hidden md:flex">
+                <Link href="/logowanie" className="hidden xl:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
               </div>
             )}
 
             {/* Mobile Navigation Trigger */}
-            <div className="md:hidden">
+            <div className="xl:hidden">
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
                   <Button

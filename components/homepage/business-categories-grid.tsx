@@ -44,7 +44,7 @@ const BusinessCategoryCard = memo(({
     >
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 md:group-hover:scale-110"
-        style={{ backgroundImage: `url(${category.backgroundImageUrl || imageUrl})` }}
+        style={(category.backgroundImageUrl || imageUrl) ? { backgroundImage: `url(${category.backgroundImageUrl || imageUrl})` } : undefined}
       />
       <div className={cn(
         "absolute inset-0 bg-[#002c22] transition-opacity duration-300",
@@ -115,7 +115,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
           </div>
 
           <div className="text-right">
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="max-w-full h-auto min-h-11 whitespace-normal text-center">
               <Link href="/kategorie">
                 Zobacz wszystkie kategorie biznesowe
                 <ArrowRight className="ml-2 h-4 w-4" />

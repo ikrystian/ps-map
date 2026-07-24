@@ -172,7 +172,7 @@ export function MostConsultedCategories({
     ) {
       return firm.zdjecieGlowne;
     }
-    return "/images/placeholder.png";
+    return "/backgrounds/4.png";
   };
 
   // Zmienione zgodnie z instrukcją - pobieramy expertiseCategory zamiast getProfessionTitle

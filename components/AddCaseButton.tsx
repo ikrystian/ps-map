@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { Plus } from "lucide-react"
 import Link from "next/link"
 
 interface AddCaseButtonProps {
@@ -9,10 +10,11 @@ interface AddCaseButtonProps {
   className?: string
   innerClassName?: string
   labelClassName?: string
+  iconClassName?: string
   onClick?: () => void
 }
 
-export function AddCaseButton({ href, className, innerClassName, labelClassName, onClick }: AddCaseButtonProps) {
+export function AddCaseButton({ href, className, innerClassName, labelClassName, iconClassName, onClick }: AddCaseButtonProps) {
   return (
     <Link href={href} className={className} onClick={onClick}>
       <motion.div
@@ -24,7 +26,8 @@ export function AddCaseButton({ href, className, innerClassName, labelClassName,
           innerClassName
         )}
       >
-        <span className={cn(labelClassName)}>Dodaj sprawę</span>
+        {iconClassName && <Plus className={cn("h-4 w-4 shrink-0", iconClassName)} aria-hidden="true" />}
+        <span className={cn("whitespace-nowrap", labelClassName)}>Dodaj sprawę</span>
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"
           animate={{ x: ["-130%", "130%"] }}

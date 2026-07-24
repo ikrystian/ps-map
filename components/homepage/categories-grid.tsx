@@ -155,7 +155,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           </div>
 
           <div className="text-right">
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="max-w-full h-auto min-h-11 whitespace-normal text-center">
               <Link href="/kategorie">
                 Zobacz wszystkie kategorie
                 <ArrowRight className="ml-2 h-4 w-4" />
