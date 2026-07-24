@@ -314,26 +314,32 @@ export function MostConsultedCategories({
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
-                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-white/5">
-                        <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
-                          {firm.avgRating > 0
-                            ? firm.avgRating.toFixed(1).replace(".", ",")
-                            : "5,0"}
-                        </div>
-                        <div className="flex flex-col justify-center">
-                          <div className="flex gap-0.5">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]"
-                              />
-                            ))}
+                      {firm.reviewCount > 0 && (
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-white/5">
+                          <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
+                            {firm.avgRating.toFixed(1).replace(".", ",")}
                           </div>
-                          <span className="text-sm text-primary font-semibold mt-1">
-                            {firm.reviewCount || 11} opinii
-                          </span>
+                          <div className="flex flex-col justify-center">
+                            <div className="flex gap-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={cn(
+                                    "w-3.5 h-3.5",
+                                    i < Math.round(firm.avgRating)
+                                      ? "fill-[#f59e0b] text-[#f59e0b]"
+                                      : "fill-transparent text-zinc-600",
+                                  )}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-primary font-semibold mt-1">
+                              {firm.reviewCount}{" "}
+                              {firm.reviewCount === 1 ? "opinia" : "opinii"}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
 
                     <div className="p-6 text-center flex-grow flex flex-col justify-between">
