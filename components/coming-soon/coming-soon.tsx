@@ -550,13 +550,7 @@ export default function ComingSoon() {
           </svg>
           <a href="tel:+48534888555">+48 534 888 555</a>
         </div>
-        <div className="floating-contact-card__item">
-          <svg className="floating-contact-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <span>ul. Przykładowa 1, Warszawa</span>
-        </div>
+
       </aside>
     </>
   );
