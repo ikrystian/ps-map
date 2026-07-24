@@ -312,7 +312,7 @@ export function generateBannerHtml(bannerCode: string): string {
   return `<!-- ProstaSprawa Partner Banner -->
 <div id="${bannerCode}" class="ps-partner-banner">
   <a href="https://prosta-sprawa.pl" target="_blank" rel="noopener">
-    <img src="https://prosta-sprawa.pl/partner-banner.png" alt="Partnerzy ProstaSprawa.pl" />
+    <img src="https://prosta-sprawa.pl/images/public/banner.png" alt="Partnerzy ProstaSprawa.pl" />
   </a>
 </div>
 <!-- /ProstaSprawa Partner Banner -->`
@@ -328,7 +328,7 @@ export function generateBannerScript(bannerCode: string): string {
   var banner = document.createElement('div');
   banner.id = '${bannerCode}';
   banner.className = 'ps-partner-banner';
-  banner.innerHTML = '<a href="https://prosta-sprawa.pl" target="_blank" rel="noopener"><img src="https://prosta-sprawa.pl/partner-banner.png" alt="Partnerzy ProstaSprawa.pl" /></a>';
+  banner.innerHTML = '<a href="https://prosta-sprawa.pl" target="_blank" rel="noopener"><img src="https://prosta-sprawa.pl/images/public/banner.png" alt="Partnerzy ProstaSprawa.pl" /></a>';
   document.body.appendChild(banner);
 })();
 </script>
