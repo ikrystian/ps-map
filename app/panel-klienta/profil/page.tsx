@@ -1,6 +1,6 @@
 "use client"
 
-import { LoginHistory } from "@/components/auth"
+import { DeleteAccountSection, LoginHistory } from "@/components/auth"
 import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
@@ -1186,6 +1186,24 @@ export default function ClientProfilePage() {
           </CardHeader>
           <CardContent className="p-6">
             <LoginHistory noCard />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Zarządzanie kontem — usunięcie konta oznacza anonimizację danych (RODO art. 17) */}
+      <div className="relative z-10 pt-4">
+        <Card variant="glass" className="overflow-hidden">
+          <CardHeader className="border-b border-border/20 py-4 px-6">
+            <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              Zarządzanie kontem
+            </CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">
+              Usunięcie konta jest nieodwracalne — Twoje dane osobowe zostaną zanonimizowane.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <DeleteAccountSection variant="client" />
           </CardContent>
         </Card>
       </div>

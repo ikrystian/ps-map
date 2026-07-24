@@ -1,3 +1,4 @@
+import { purgeExpiredAccountRetention } from "./account-anonymization"
 import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./consultations"
 import { cleanupOldJobRuns, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
@@ -155,7 +156,21 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
-    // 10. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
+    // 10. Czyszczenie danych zanonimizowanych kont po upływie okresu retencji
+    //     (faktury, dowody księgowe, korespondencja) — raz na dobę.
+    {
+      name: "account-retention-purge",
+      description:
+        "Usuwanie danych zanonimizowanych kont po upływie okresu retencji wymaganego przepisami prawa",
+      intervalMs: 24 * HOUR,
+      options: { retries: 1, retryDelayMs: 5 * MINUTE },
+      fn: async () => {
+        const result = await purgeExpiredAccountRetention()
+        return { purged: result.purged, filesDeleted: result.filesDeleted }
+      },
+    },
+
+    // 11. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
     {
       name: "db-backup-gdrive",
       description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (2x dziennie)",

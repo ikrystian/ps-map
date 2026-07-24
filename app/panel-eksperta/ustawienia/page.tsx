@@ -1,20 +1,9 @@
 "use client"
 
-import { LoginHistory } from "@/components/auth"
+import { DeleteAccountSection, LoginHistory } from "@/components/auth"
 import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,8 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
-import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
-import { cn, clearAppCacheAndStorage } from "@/lib/utils"
+import { clearAppCacheAndStorage } from "@/lib/utils"
 import { motion } from "framer-motion"
 import {
   Calendar,
@@ -36,7 +24,6 @@ import {
   Mail,
   Save,
   ShieldCheck,
-  Trash2,
   User,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
@@ -111,8 +98,6 @@ export default function LawFirmSettingsPage() {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
-  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false)
-  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
 
   // Dane użytkownika
   const [userData, setUserData] = useState<UserData>({
@@ -235,28 +220,6 @@ export default function LawFirmSettingsPage() {
       toast.error("Nie udało się zapisać ustawień")
     } finally {
       setIsSavingSettings(false)
-    }
-  }
-
-  const handleDeleteAccount = async () => {
-    setIsDeletingAccount(true)
-    try {
-      const response = await fetch("/api/auth/me", {
-        method: "DELETE",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete account")
-      }
-
-      toast.success("Konto zostało usunięte")
-      await clearAppCacheAndStorage()
-      await signOut({ callbackUrl: "/" })
-    } catch (error) {
-      console.error("Error deleting account:", error)
-      toast.error("Nie udało się usunąć konta")
-    } finally {
-      setIsDeletingAccount(false)
     }
   }
 
@@ -439,30 +402,16 @@ export default function LawFirmSettingsPage() {
                     </Button>
                   </div>
 
-                  {/* Usuń konto */}
-                  <div className="flex items-center justify-between p-4 rounded-xl border border-rose-500/20 bg-rose-500/5 group hover:border-rose-500/40 transition-all duration-200">
-                    <div className="min-w-0">
-                      <h4 className="font-semibold text-rose-400 text-sm">Usuń konto</h4>
-                      <p className="text-xs text-muted-foreground/80 font-light mt-0.5">
-                        Bezpowrotnie usuń dane i zlikwiduj profil eksperta.
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setShowDeleteAccountConfirm(true)}
-                      className="shrink-0 h-10 px-5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl gap-2 transition-all"
-                    >
-                      <Trash2 className="h-4.5 w-4.5" />
-                      Usuń konto
-                    </Button>
-                  </div>
+                  {/* Usuń konto (anonimizacja danych osobowych — RODO art. 17) */}
+                  <DeleteAccountSection variant="expert" />
                 </div>
               </div>
 
               <Alert className="bg-secondary/5 border-secondary/20 text-secondary rounded-xl flex items-start gap-2.5">
                 <Info className="h-4 w-4 shrink-0 mt-0.5" />
                 <AlertDescription className="text-xs leading-relaxed font-light">
-                  Przed trwałym usunięciem konta upewnij się, że zrealizowałeś wszystkie opłacone punkty w portalu.
+                  Przed usunięciem konta upewnij się, że zrealizowałeś wszystkie opłacone punkty w portalu.
+                  Faktury i dowody księgowe pozostaną w systemie przez okres wymagany przepisami prawa.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -917,16 +866,6 @@ export default function LawFirmSettingsPage() {
 
 
 
-      <ConfirmDeleteDialog
-        open={showDeleteAccountConfirm}
-        onOpenChange={setShowDeleteAccountConfirm}
-        onConfirm={handleDeleteAccount}
-        isPending={isDeletingAccount}
-        title="Usuń konto"
-        description="Ta akcja jest całkowicie nieodwracalna. Wszystkie Twoje dane, profil eksperta w katalogu, złożone oferty, wiadomości oraz historia zostaną trwale usunięte z bazy danych."
-        confirmText="Tak, usuń moje konto"
-        cancelText="Anuluj"
-      />
     </div>
   )
 }

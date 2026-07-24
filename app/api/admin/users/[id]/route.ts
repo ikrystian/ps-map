@@ -1,3 +1,8 @@
+import {
+  AccountAlreadyAnonymizedError,
+  AccountAnonymizationForbiddenError,
+  anonymizeUserAccount,
+} from "@/lib/account-anonymization"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
@@ -261,7 +266,9 @@ export async function PUT(
   }
 }
 
-// DELETE /api/admin/users/[id] - Soft delete user (ADMIN only)
+// DELETE /api/admin/users/[id] - Anonimizacja konta użytkownika (ADMIN only).
+// Dane osobowe są nadpisywane, dane wymagane przepisami prawa (faktury, dowody
+// księgowe) pozostają do końca okresu retencji — patrz lib/account-anonymization.ts
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -300,20 +307,37 @@ export async function DELETE(
       )
     }
 
-    // Soft delete: Set deletedAt timestamp and set status to INACTIVE
-    await prisma.user.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-        status: "INACTIVE",
-      },
+    let reason: string | null = null
+    try {
+      const body = await request.json()
+      if (typeof body?.reason === "string") reason = body.reason.slice(0, 500)
+    } catch {
+      // Powód usunięcia jest opcjonalny.
+    }
+
+    const result = await anonymizeUserAccount({
+      userId: id,
+      requestedBy: "ADMIN",
+      requestedByUserId: session.user.id,
+      reason,
     })
 
     return NextResponse.json(
-      { message: "User deleted successfully" },
+      {
+        message: "Konto zostało usunięte, a dane osobowe zanonimizowane",
+        retentionUntil: result.retentionUntil,
+        legalBasis: result.legalBasis,
+        report: result.report,
+      },
       { status: 200 }
     )
   } catch (error) {
+    if (error instanceof AccountAlreadyAnonymizedError) {
+      return NextResponse.json({ error: "User is already deleted" }, { status: 400 })
+    }
+    if (error instanceof AccountAnonymizationForbiddenError) {
+      return NextResponse.json({ error: error.message }, { status: 403 })
+    }
     console.error("Error deleting user:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }

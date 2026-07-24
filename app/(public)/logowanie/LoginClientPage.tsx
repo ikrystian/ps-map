@@ -130,6 +130,8 @@ export default function LoginPage() {
         setError("Twoje konto oczekuje na zatwierdzenie. Skontaktuj się z administratorem.")
       } else if (oauthError === "InactiveAccount") {
         setError("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
+      } else if (oauthError === "DeletedAccount") {
+        setError("To konto zostało usunięte, a dane zanonimizowane. Załóż nowe konto, aby korzystać z serwisu.")
       } else {
         return // Don't clean up other unhandled errors
       }

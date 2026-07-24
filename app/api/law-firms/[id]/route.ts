@@ -1,3 +1,4 @@
+import { anonymizeUserAccount } from "@/lib/account-anonymization"
 import { auth } from "@/lib/auth"
 import { pickEditableCompanyDataFields } from "@/lib/biala-lista"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
@@ -513,8 +514,37 @@ export async function DELETE(
         )
       }
 
-      // Hard delete - actually remove from database
-      // This will cascade delete related records (offers, promotions, etc.) due to onDelete: Cascade
+      // Fizyczne usunięcie kaskadowo skasowałoby faktury i dowody księgowe,
+      // które muszą być przechowywane 5 lat (art. 74 ust. 2 pkt 4 ustawy
+      // o rachunkowości, art. 86 § 1 Ordynacji podatkowej). Gdy takie dokumenty
+      // istnieją, zamiast kasowania wykonujemy anonimizację konta.
+      const [invoicesCount, paidOrdersCount] = await Promise.all([
+        prisma.invoice.count({ where: { lawFirmId: id } }),
+        prisma.order.count({
+          where: { lawFirmId: id, statusPlatnosci: { in: ["ZAPLACONE", "ZWROT"] } },
+        }),
+      ])
+
+      if (invoicesCount > 0 || paidOrdersCount > 0) {
+        const result = await anonymizeUserAccount({
+          userId: existingLawFirm.userId,
+          requestedBy: "ADMIN",
+          requestedByUserId: session.user.id,
+          reason: "Usunięcie profilu eksperta przez administratora",
+        })
+
+        return NextResponse.json({
+          message:
+            "Konto zostało zanonimizowane — dokumentacja księgowa musi zostać zachowana przez okres wymagany przepisami prawa",
+          id,
+          type: "anonymized",
+          retentionUntil: result.retentionUntil,
+          legalBasis: result.legalBasis,
+        })
+      }
+
+      // Brak dokumentów księgowych — konto można usunąć fizycznie.
+      // Kaskada usuwa rekordy powiązane (oferty, promocje itd.).
       await prisma.lawFirm.delete({
         where: { id },
       })
@@ -533,8 +563,24 @@ export async function DELETE(
         id,
         type: "hard",
       })
+    } else if (isOwner) {
+      // Ekspert usuwa własne konto — pełna anonimizacja danych osobowych.
+      const result = await anonymizeUserAccount({
+        userId: existingLawFirm.userId,
+        requestedBy: "SELF",
+        reason: "Usunięcie profilu eksperta przez właściciela konta",
+      })
+
+      return NextResponse.json({
+        message: "Konto zostało usunięte, a dane osobowe zanonimizowane",
+        id,
+        type: "anonymized",
+        retentionUntil: result.retentionUntil,
+        legalBasis: result.legalBasis,
+      })
     } else {
-      // Soft delete - set aktywna to false
+      // Dezaktywacja profilu przez administratora (nie jest to żądanie usunięcia
+      // danych — konto zachowuje dane i może zostać przywrócone).
       await prisma.lawFirm.update({
         where: { id },
         data: {
@@ -542,17 +588,6 @@ export async function DELETE(
           updatedAt: new Date(),
         },
       })
-
-      // Also soft delete the user account if owner is deleting
-      if (isOwner) {
-        await prisma.user.update({
-          where: { id: existingLawFirm.userId },
-          data: {
-            deletedAt: new Date(),
-            status: "SUSPENDED",
-          },
-        })
-      }
 
       // Cancel all active promotions
       await prisma.promotion.updateMany({

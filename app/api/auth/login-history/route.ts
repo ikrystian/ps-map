@@ -16,7 +16,7 @@ export async function GET() {
     const loginHistory = await prisma.loginHistory.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
-      take: 20, // Zwracamy ostatnie 20 prób logowania
+      take: 10, // Zwracamy ostatnie 10 prób logowania
     })
 
     return NextResponse.json({ loginHistory })

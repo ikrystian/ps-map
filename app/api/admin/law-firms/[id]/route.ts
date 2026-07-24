@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { anonymizeUserAccount } from "@/lib/account-anonymization"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
@@ -482,6 +483,37 @@ export async function DELETE(
 
     if (!existingLawFirm) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
+    }
+
+    // Fizyczne usunięcie użytkownika kasuje kaskadowo faktury i dowody księgowe,
+    // które muszą być przechowywane 5 lat (art. 74 ust. 2 pkt 4 ustawy
+    // o rachunkowości, art. 86 § 1 Ordynacji podatkowej). Jeżeli takie dokumenty
+    // istnieją, konto jest anonimizowane zamiast usuwane.
+    const [invoicesCount, paidOrdersCount] = await Promise.all([
+      prisma.invoice.count({ where: { lawFirmId: id } }),
+      prisma.order.count({
+        where: { lawFirmId: id, statusPlatnosci: { in: ["ZAPLACONE", "ZWROT"] } },
+      }),
+    ])
+
+    if (invoicesCount > 0 || paidOrdersCount > 0) {
+      const result = await anonymizeUserAccount({
+        userId: existingLawFirm.userId,
+        requestedBy: "ADMIN",
+        requestedByUserId: session.user.id,
+        reason: "Usunięcie konta eksperta z panelu administratora",
+      })
+
+      return NextResponse.json(
+        {
+          message:
+            "Konto zostało zanonimizowane — dokumentacja księgowa musi zostać zachowana przez okres wymagany przepisami prawa",
+          type: "anonymized",
+          retentionUntil: result.retentionUntil,
+          legalBasis: result.legalBasis,
+        },
+        { status: 200 }
+      )
     }
 
     // Delete law firm and associated user in a transaction

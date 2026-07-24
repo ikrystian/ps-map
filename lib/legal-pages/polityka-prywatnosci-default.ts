@@ -123,7 +123,10 @@ export const POLITYKA_PRYWATNOSCI_DEFAULT: LegalPageContent = {
         "1. Użytkownik Serwisu ma prawo do: dostępu do treści swoich danych osobowych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia, wniesienia sprzeciwu wobec przetwarzania, cofnięcia zgody w każdej chwili (co nie ma wpływu na zgodność z prawem przetwarzania dokonanego w oparciu o zgodę przed jej cofnięciem).",
         "2. Zgłoszenie o wystąpieniu przez Użytkownika z uprawnieniem wynikającym z wymienionych praw należy przesłać na adres iod@prostasprawa.pl.",
         "3. Administrator spełnia lub odmawia spełnienia żądania niezwłocznie – maksymalnie w ciągu miesiąca od jego otrzymania.",
-        "4. Użytkownik ma prawo złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych, jeśli uzna, że przetwarzanie narusza jego prawa i wolności (RODO)."
+        "4. Użytkownik ma prawo złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych, jeśli uzna, że przetwarzanie narusza jego prawa i wolności (RODO).",
+        "5. Usunięcie konta w panelu Użytkownika jest realizacją prawa do usunięcia danych (art. 17 RODO). Konto zostaje trwale zamknięte, a dane osobowe – imię, nazwisko, adres, numer telefonu, adres e-mail, zdjęcia i dane firmowe – są nieodwracalnie anonimizowane. Dane logowania, hasło, powiązane konta zewnętrzne, zapis do newslettera oraz materiały profilowe są usuwane bezpowrotnie.",
+        "6. Zgodnie z art. 17 ust. 3 lit. b i e RODO część danych pozostaje w systemie także po usunięciu konta, ponieważ wymagają tego przepisy prawa: faktury i dowody księgowe – przez 5 lat od końca roku obrotowego (art. 74 ust. 2 pkt 4 ustawy o rachunkowości oraz art. 86 § 1 Ordynacji podatkowej), przy czym dane nabywcy na wystawionej fakturze nie mogą zostać zmienione (art. 106e ustawy o VAT), a dokumentacja transakcji, ofert i korespondencji – do upływu terminu przedawnienia roszczeń (art. 118 Kodeksu cywilnego). Dane te nie są w tym czasie wykorzystywane do żadnych innych celów.",
+        "7. Po upływie okresów wskazanych w ust. 6 dane zatrzymane na podstawie przepisów prawa są automatycznie anonimizowane lub usuwane."
       ]
     },
     {

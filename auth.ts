@@ -72,6 +72,11 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Nieprawidłowy email lub hasło")
         }
 
+        // Konto usunięte (dane zanonimizowane) — logowanie niemożliwe.
+        if (user.deletedAt) {
+          throw new Error("To konto zostało usunięte. Załóż nowe konto, aby korzystać z serwisu.")
+        }
+
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
           user.password
@@ -250,10 +255,17 @@ export const authOptions: NextAuthConfig = {
               role: true,
               image: true,
               numerTelefonu: true,
+              deletedAt: true,
               lawFirm: { select: { id: true } },
               client: { select: { id: true, imie: true, nazwisko: true } }
             },
           })
+
+          // Konto usunięte w trakcie trwania sesji — unieważnij token.
+          if (freshUser?.deletedAt) {
+            console.warn(`JWT refresh: user ${token.id} has been deleted, invalidating session`)
+            return null
+          }
 
           if (freshUser?.role === "CLIENT" && !freshUser.client) {
             const nameParts = freshUser.name?.split(" ") || []
@@ -350,6 +362,11 @@ export const authOptions: NextAuthConfig = {
               }).catch(() => { })
             }
             return false
+          }
+
+          // Konto usunięte (dane zanonimizowane) — logowanie niemożliwe
+          if (dbUser.deletedAt) {
+            return "/logowanie?error=DeletedAccount"
           }
 
           // Check if user is blocked or suspended

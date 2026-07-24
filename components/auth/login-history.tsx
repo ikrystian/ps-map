@@ -242,7 +242,7 @@ export function LoginHistory({ noCard = false }: { noCard?: boolean }) {
             Historia Logowań
           </CardTitle>
           <CardDescription>
-            Przejrzyj ostatnie 20 prób logowania do swojego konta
+            Przejrzyj ostatnie 10 prób logowania do swojego konta
           </CardDescription>
         </div>
         <Button
