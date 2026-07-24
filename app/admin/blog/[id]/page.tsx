@@ -5,7 +5,7 @@ import { BlogPostForm } from "@/components/admin/blog-post-form"
 
 export default function AdminEditBlogPostPage() {
   const params = useParams()
-  const postId = params.id as string
+  const postId = Array.isArray(params?.id) ? params.id[0] : (params?.id as string)
 
-  return <BlogPostForm postId={postId} />
+  return <BlogPostForm postId={postId} mode="admin" />
 }

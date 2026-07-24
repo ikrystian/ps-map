@@ -36,6 +36,7 @@ import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
 import { BlogPostPreviewDialog } from "@/components/admin/blog-post-preview-dialog"
+import { BlogCategoryPicker } from "@/components/admin/blog-category-picker"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -111,9 +112,12 @@ const itemVariants = {
 
 interface BlogPostFormProps {
   postId?: string
+  mode?: "admin" | "expert"
 }
 
-export function BlogPostForm({ postId }: BlogPostFormProps) {
+export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
+  const isExpert = mode === "expert"
+  const baseRedirectUrl = isExpert ? "/panel-eksperta/blog" : "/admin/blog"
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string }[]>([])
   const [loading, setLoading] = useState(false)
@@ -152,8 +156,10 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
 
   useEffect(() => {
     fetchCategories()
-    fetchLawFirms()
-  }, [])
+    if (!isExpert) {
+      fetchLawFirms()
+    }
+  }, [isExpert])
 
   useEffect(() => {
     if (postId) {
@@ -192,11 +198,12 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
 
   const fetchPost = async () => {
     try {
-      const response = await fetch(`/api/admin/blog/${postId}`)
+      const getUrl = isExpert ? `/api/law-firms/me/blog/${postId}` : `/api/admin/blog/${postId}`
+      const response = await fetch(getUrl)
 
       if (response.status === 401 || response.status === 403) {
         toast.error("Nie masz uprawnień do edycji tego wpisu")
-        router.push("/admin/blog")
+        router.push(baseRedirectUrl)
         return
       }
 
@@ -242,7 +249,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się pobrać wpisu")
-      router.push("/admin/blog")
+      router.push(baseRedirectUrl)
     } finally {
       setLoadingPost(false)
     }
@@ -287,8 +294,12 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
 
   const handleSubmit = async (values: PostFormValues) => {
     setLoading(true)
-    const url = postId ? `/api/admin/blog/${postId}` : "/api/admin/blog"
-    const method = postId ? "PATCH" : "POST"
+    const url = isExpert
+      ? (postId ? `/api/law-firms/me/blog/${postId}` : "/api/law-firms/me/blog")
+      : (postId ? `/api/admin/blog/${postId}` : "/api/admin/blog")
+    const method = isExpert
+      ? (postId ? "PUT" : "POST")
+      : (postId ? "PATCH" : "POST")
 
     try {
       const response = await fetch(url, {
@@ -319,7 +330,7 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
         } else {
           toast.success(values.opublikowany ? "Artykuł został opublikowany" : "Szkic został zapisany")
         }
-        router.push("/admin/blog")
+        router.push(baseRedirectUrl)
       } else {
         const error = await response.json()
         throw new Error(error.error || (postId ? "Błąd aktualizacji wpisu" : "Błąd tworzenia wpisu"))
@@ -347,18 +358,20 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild className="h-10 w-10 shrink-0">
-          <Link href="/admin/blog">
+          <Link href={baseRedirectUrl}>
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {postId ? "Edytuj artykuł (Admin)" : "Nowy artykuł (Admin)"}
+            {postId
+              ? (isExpert ? "Edytuj artykuł" : "Edytuj artykuł (Admin)")
+              : (isExpert ? "Nowy artykuł" : "Nowy artykuł (Admin)")}
           </h1>
           <p className="text-muted-foreground text-sm">
             {postId
-              ? "Zaktualizuj szczegóły wpisu blogowego administratora portalu."
-              : "Utwórz nowy wpis na blogu przypisany do administratora portalu."}
+              ? "Zaktualizuj szczegóły wpisu blogowego."
+              : (isExpert ? "Utwórz nowy wpis na blogu swojego profilu i dziel się swoją wiedzą." : "Utwórz nowy wpis na blogu przypisany do administratora portalu.")}
           </p>
         </div>
       </div>
@@ -411,27 +424,12 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-xs font-semibold">Kategoria</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
+                          <BlogCategoryPicker
+                            categories={categories}
                             value={field.value}
+                            onChange={field.onChange}
                             disabled={loadingCategories}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="h-11">
-                                <SelectValue placeholder="Wybierz kategorię" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {flattenCategoryTree(categories).map((category) => (
-                                <SelectItem key={category.id} value={category.id}>
-                                  <span style={{ paddingLeft: `${category.depth * 12}px` }}>
-                                    {category.depth > 0 && "— "}
-                                    {category.nazwa}
-                                  </span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -970,14 +968,14 @@ export function BlogPostForm({ postId }: BlogPostFormProps) {
                 <Eye className="h-4 w-4" />
                 Podgląd
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push("/admin/blog")}
-                className="h-9"
-              >
-                Anuluj
-              </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push(baseRedirectUrl)}
+                  className="h-11 px-6 font-medium"
+                >
+                  Anuluj
+                </Button>
               <Button type="submit" disabled={loading} className="h-9 font-semibold px-5">
                 {loading ? (
                   <>
