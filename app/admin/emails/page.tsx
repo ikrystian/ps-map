@@ -82,6 +82,7 @@ const emailTypes = [
   { value: "POTWIERDZENIE_EMAIL_SUBDOMENA", label: "Potwierdzenie email (subdomena)" },
   { value: "REJESTRACJA_SUBDOMENA_KLIENT", label: "Rejestracja - klient (subdomena)" },
   { value: "REJESTRACJA_SUBDOMENA_KANCELARIA", label: "Rejestracja - ekspert (subdomena)" },
+  { value: "NEWSLETTER_POTWIERDZENIE", label: "Newsletter - potwierdzenie zapisu" },
   { value: "CUSTOM", label: "Własny szablon" },
 ]
 
@@ -113,6 +114,7 @@ const availableVariables: Record<string, string[]> = {
   POTWIERDZENIE_EMAIL_SUBDOMENA: ["{imie}", "{email}", "{linkPotwierdzenia}", "{kod}"],
   REJESTRACJA_SUBDOMENA_KLIENT: ["{imie}", "{nazwisko}", "{email}", "{linkDodajSprawa}"],
   REJESTRACJA_SUBDOMENA_KANCELARIA: ["{nazwa}", "{email}", "{nip}", "{linkDoPanelu}"],
+  NEWSLETTER_POTWIERDZENIE: ["{email}", "{linkPotwierdzenia}"],
   CUSTOM: [],
 }
 
@@ -358,7 +360,7 @@ export default function EmailManagementPage() {
             </Button>
           </div>
 
-          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid xl:grid-cols-2 gap-4">
             {templates.map((template) => (
               <Card key={template.id}>
                 <CardHeader>

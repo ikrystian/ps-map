@@ -3,6 +3,7 @@ import { authTemplates } from './email-templates/auth-templates'
 import { billingTemplates } from './email-templates/billing-templates'
 import { caseTemplates } from './email-templates/case-templates'
 import { consultationTemplates } from './email-templates/consultation-templates'
+import { newsletterTemplates } from './email-templates/newsletter-templates'
 import { notificationTemplates } from './email-templates/notification-templates'
 
 export async function seedEmailTemplates(prisma: PrismaClient) {
@@ -14,6 +15,7 @@ export async function seedEmailTemplates(prisma: PrismaClient) {
     ...caseTemplates,
     ...consultationTemplates,
     ...notificationTemplates,
+    ...newsletterTemplates,
   ]
 
   await prisma.$transaction(

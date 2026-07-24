@@ -2065,6 +2065,7 @@ enum EmailType {
   POTWIERDZENIE_EMAIL_SUBDOMENA // Email z linkiem do potwierdzenia adresu email (subdomena)
   REJESTRACJA_SUBDOMENA_KLIENT // Email powitalny dla klienta (subdomena)
   REJESTRACJA_SUBDOMENA_KANCELARIA // Email powitalny dla ekspertów (subdomena)
+  NEWSLETTER_POTWIERDZENIE     // Email z linkiem do potwierdzenia zapisu do newslettera
 }
 
 // ============================================================================

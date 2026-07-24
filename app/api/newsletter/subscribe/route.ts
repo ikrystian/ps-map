@@ -1,6 +1,7 @@
-import { sendEmail } from "@/lib/email"
+import { generateNewsletterVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
+import { EmailType } from "@prisma/client"
 import crypto from "crypto"
 import { NextResponse } from "next/server"
 
@@ -41,30 +42,14 @@ export async function POST(req: Request) {
 
     const confirmationLink = `${process.env.NEXTAUTH_URL}/api/newsletter/confirm?token=${token}`
 
-    const emailContent = {
-      subject: "Potwierdź zapis do newslettera - Prosta Sprawa",
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333;">Witaj!</h1>
-          <p>Dziękujemy za chęć zapisu do newslettera Prosta Sprawa.</p>
-          <p>Aby potwierdzić subskrypcję i zacząć otrzymywać od nas wiadomości, kliknij v poniższy przycisk:</p>
-          <div style="margin: 30px 0;">
-            <a href="${confirmationLink}" style="background-color: #0070f3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Potwierdzam zapis</a>
-          </div>
-          <p>Jeśli to nie Ty prosiłeś o zapis, możesz zignorować tę wiadomość.</p>
-          <p>Link jest ważny przez 24 godziny.</p>
-          <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;" />
-          <p style="color: #666; font-size: 12px;">Wiadomość wysłana automatycznie przez serwis Prosta Sprawa.</p>
-        </div>
-      `,
-      text: `Witaj! Dziękujemy za chęć zapisu do newslettera Prosta Sprawa. Aby potwierdzić subskrypcję, kliknij w link: ${confirmationLink}`
-    }
-
-    await sendEmail({
+    await sendEmailWithTemplate({
       to: email,
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
+      templateType: EmailType.NEWSLETTER_POTWIERDZENIE,
+      variables: {
+        "{email}": email,
+        "{linkPotwierdzenia}": confirmationLink,
+      },
+      fallbackProvider: () => generateNewsletterVerificationEmail(confirmationLink, email),
     })
 
     return NextResponse.json({
