@@ -1,5 +1,6 @@
 import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 import { auth } from "@/lib/auth"
+import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -22,9 +23,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Pobierz dane eksperta
+    // Pobierz dane eksperta (wraz z zakresem usług i lokalizacji)
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
+      include: {
+        categories: { select: { categoryId: true } },
+        voivodeships: { select: { voivodeshipId: true } },
+        cities: { select: { cityId: true } },
+      },
     })
 
     if (!lawFirm) {
@@ -42,13 +48,15 @@ export async function GET(request: NextRequest) {
     startOfMonth.setDate(1)
     startOfMonth.setHours(0, 0, 0, 0)
 
-    // Pobierz ostatnie sprawy (dostępne dla ekspertów)
-    const recentCases = await prisma.case.findMany({
-      where: {
-        status: {
-          in: ["NOWA", "OFERTY_OTRZYMANE"],
-        },
+    // Pobierz ostatnie sprawy dostępne dla eksperta (zgodnie z jego zakresem kategorii, lokalizacji i dostępnością)
+    const recentCasesWhere = buildLawFirmCaseWhereInput(lawFirm, {
+      status: {
+        in: ["NOWA", "OFERTY_OTRZYMANE"],
       },
+    })
+
+    const recentCases = await prisma.case.findMany({
+      where: recentCasesWhere,
       include: {
         category: {
           select: {
@@ -104,13 +112,15 @@ export async function GET(request: NextRequest) {
       take: 5,
     })
 
-    // Statystyki tego miesiąca
-    const casesThisMonth = await prisma.case.count({
-      where: {
-        createdAt: {
-          gte: startOfMonth,
-        },
+    // Statystyki tego miesiąca w zakresie eksperta
+    const casesThisMonthWhere = buildLawFirmCaseWhereInput(lawFirm, {
+      createdAt: {
+        gte: startOfMonth,
       },
+    })
+
+    const casesThisMonth = await prisma.case.count({
+      where: casesThisMonthWhere,
     })
 
     const offersThisMonth = await prisma.offer.count({

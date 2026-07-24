@@ -260,9 +260,19 @@ export default function LawFirmDashboardPage() {
   const [citiesCount, setCitiesCount] = useState(0)
   const [keywordsCount, setKeywordsCount] = useState(0)
   const [isCalaPolska, setIsCalaPolska] = useState(false)
+  const [rejectedIds, setRejectedIds] = useState<Set<string>>(new Set())
 
   // Sprawdź uprawnienia i limity
   const { permissions, packageName, packageExpired, expiryDate, daysUntilExpiry } = usePermissions()
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("rejectedCases")
+      if (stored) {
+        setRejectedIds(new Set(JSON.parse(stored)))
+      }
+    } catch (e) {}
+  }, [])
 
   useEffect(() => {
     fetchDashboardData()
@@ -560,13 +570,16 @@ export default function LawFirmDashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            {recentCases.length === 0 ? (
+            {recentCases.filter((c) => !rejectedIds.has(c.id)).length === 0 ? (
               <p className="text-center text-zinc-500 py-6 text-sm font-light">
                 Brak nowych spraw do wyświetlenia w tym momencie.
               </p>
             ) : (
               <div className="space-y-3">
-                {recentCases.slice(0, 5).map((caseItem) => (
+                {recentCases
+                  .filter((c) => !rejectedIds.has(c.id))
+                  .slice(0, 5)
+                  .map((caseItem) => (
                   <Link
                     key={caseItem.id}
                     href={`/panel-eksperta/sprawy/${caseItem.id}`}

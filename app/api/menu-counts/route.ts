@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
@@ -54,59 +55,13 @@ export async function GET() {
         return NextResponse.json({ error: "Law firm profile not found" }, { status: 404 })
       }
 
-      // Replicate case scope logic to count available cases
-      const lawFirmCategoryIds = lawFirm.categories.map((c) => c.categoryId)
-      const lawFirmVoivodeshipIds = lawFirm.voivodeships.map((v) => v.voivodeshipId)
-      const lawFirmCityIds = lawFirm.cities.map((c) => c.cityId)
-
-      const scopeConditions: any[] = []
-
-      if (lawFirm.calaPolska) {
-        if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
-        }
-      } else {
-        const locationOr: any[] = []
-        if (lawFirmVoivodeshipIds.length > 0) {
-          locationOr.push({ voivodeshipId: { in: lawFirmVoivodeshipIds } })
-        }
-        if (lawFirmCityIds.length > 0) {
-          locationOr.push({ cityId: { in: lawFirmCityIds } })
-        }
-        if (locationOr.length > 0) {
-          scopeConditions.push(locationOr.length === 1 ? locationOr[0] : { OR: locationOr })
-        }
-        if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push({ categoryId: { in: lawFirmCategoryIds } })
-        }
-      }
-
-      const statusFilter = { status: { notIn: ["ANULOWANA"] } }
-      const whereCondition: any = scopeConditions.length > 0
-        ? { AND: [statusFilter, ...scopeConditions] }
-        : statusFilter
-
-      // Fetch matching cases with their offers to filter out cases accepted by other law firms
-      const allCases = await prisma.case.findMany({
-        where: whereCondition,
-        select: {
-          id: true,
-          offers: {
-            select: {
-              lawFirmId: true,
-              status: true,
-            }
-          }
-        }
+      const casesWhereInput = buildLawFirmCaseWhereInput(lawFirm, {
+        status: { notIn: ["ANULOWANA"] }
       })
 
-      const filteredCases = allCases.filter((caseItem: any) => {
-        const acceptedOffer = caseItem.offers.find((offer: any) => offer.status === "ZAAKCEPTOWANA")
-        if (!acceptedOffer) return true
-        return acceptedOffer.lawFirmId === lawFirm.id
+      const casesCount = await prisma.case.count({
+        where: casesWhereInput,
       })
-
-      const casesCount = filteredCases.length
 
       const [offersCount, consultationsCount] = await Promise.all([
         prisma.offer.count({

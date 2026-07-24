@@ -1,8 +1,9 @@
 import { auth } from "@/auth"
+import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
-import { EmailType } from "@prisma/client"
+import { EmailType, Prisma } from "@prisma/client"
 import fs from "fs"
 import { NextRequest, NextResponse } from "next/server"
 import path from "path"
@@ -82,59 +83,13 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
       }
 
-      // Zakres usług eksperta
-      const lawFirmCategoryIds = lawFirm.categories.map((c) => c.categoryId)
-      const lawFirmVoivodeshipIds = lawFirm.voivodeships.map((v) => v.voivodeshipId)
-      const lawFirmCityIds = lawFirm.cities.map((c) => c.cityId)
-
-      // Buduj filtr zakresu:
-      // - calaPolska=true: brak filtra lokalizacji, filtruj tylko po kategorii
-      // - calaPolska=false: AND(lokalizacja, kategoria)
-      //   lokalizacja = voivodeship OR city (z zakresu firmy)
-      //   Jeśli firma nie ma skonfigurowanej lokalizacji lub kategorii, dana oś nie jest filtrowana
-      const scopeConditions: any[] = []
-
-      // Sprawa pasuje, gdy dowolna z jej kategorii (główna lub dodatkowa) jest w zakresie firmy
-      const categoryScopeCondition = {
-        OR: [
-          { categoryId: { in: lawFirmCategoryIds } },
-          { categories: { some: { categoryId: { in: lawFirmCategoryIds } } } },
-        ],
-      }
-
-      if (lawFirm.calaPolska) {
-        // Cała Polska – tylko filtr kategorii (jeśli zadeklarowane)
-        if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push(categoryScopeCondition)
-        }
-      } else {
-        // Filtr lokalizacji: voivodeship OR city
-        const locationOr: any[] = []
-        if (lawFirmVoivodeshipIds.length > 0) {
-          locationOr.push({ voivodeshipId: { in: lawFirmVoivodeshipIds } })
-        }
-        if (lawFirmCityIds.length > 0) {
-          locationOr.push({ cityId: { in: lawFirmCityIds } })
-        }
-        if (locationOr.length > 0) {
-          scopeConditions.push(locationOr.length === 1 ? locationOr[0] : { OR: locationOr })
-        }
-
-        // Filtr kategorii (jeśli zadeklarowane)
-        if (lawFirmCategoryIds.length > 0) {
-          scopeConditions.push(categoryScopeCondition)
-        }
-      }
-
       // Filtr statusu
-      const statusFilter = includeAll
+      const statusFilter: Prisma.CaseWhereInput = includeAll
         ? { status: { notIn: ["ANULOWANA"] } }
         : { status: { in: ["NOWA", "OFERTY_OTRZYMANE"] } }
 
       // Złóż końcowy warunek WHERE
-      const whereCondition: any = scopeConditions.length > 0
-        ? { AND: [statusFilter, ...scopeConditions] }
-        : statusFilter
+      const whereCondition = buildLawFirmCaseWhereInput(lawFirm, statusFilter)
 
       // Pobierz wszystkie sprawy zgodnie z warunkiem
       const allCases = await prisma.case.findMany({
