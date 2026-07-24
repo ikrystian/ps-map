@@ -1065,28 +1065,17 @@ export default function PublicHeader({
                       >
                         O nas
                       </Link>
-                      {/* 
-                      <Link
-                        href="/z-nami-wygrywasz"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
-                        )}
-                      >
-                        Z nami wygrywasz
-                      </Link> */}
-                      <Link
-                        href="/kontakt"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
-                        )}
-                      >
-                        Z nami wygrywasz
-                      </Link>
-
+                      {
+                        <Link
+                          href="/z-nami-wygrywasz"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={cn(
+                            "block py-2 text-base font-medium transition-colors hover:text-primary",
+                            isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
+                          )}
+                        >
+                          Z nami wygrywasz
+                        </Link>}
                     </div>
                   </div>
 
