@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
+import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -124,6 +125,7 @@ export default function ClientPanelLayout({
             <p className="text-md font-semibold text-foreground">{session.user.name}</p>
             <p className="text-sm text-primary">Klient</p>
           </div>
+          <ImpersonationNotice className="mt-2" />
         </div>
       )}
       {navigation.map((item, index) => {
