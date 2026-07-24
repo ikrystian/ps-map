@@ -1,4 +1,4 @@
-import { sendEmail, sendEmailWithTemplate } from "@/lib/email"
+import { sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
 import { EmailType, NotificationType } from "@prisma/client"
 
@@ -130,10 +130,11 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
           }) : undefined,
         })
       } else {
+        const subject = emailSubject || tytul
         await sendEmail({
           to: user.email,
-          subject: emailSubject || tytul,
-          html: emailHtml || `<p>${tresc}</p>`,
+          subject,
+          html: wrapInBrandLayoutIfNeeded(emailHtml || `<p>${tresc}</p>`, subject),
           text: emailText || tresc,
         })
         emailSent = true
