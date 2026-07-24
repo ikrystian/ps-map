@@ -679,6 +679,187 @@ function initCityAutocomplete() {
     });
 }
 
+// ===== Weryfikacja numeru telefonu kodem SMS =====
+// Konto nie powstaje, dopóki numer nie zostanie potwierdzony — endpoint
+// /api/law-firms wymaga jednorazowego tokenu wydanego po poprawnym kodzie.
+// Modal budujemy w JS, żeby nie ruszać formularz.html.
+
+let phoneModalEl = null;
+
+function buildPhoneModal() {
+    if (phoneModalEl) return phoneModalEl;
+
+    const overlay = document.createElement("div");
+    overlay.className = "ps-phone-modal-overlay";
+    overlay.innerHTML = `
+        <div class="ps-phone-modal" role="dialog" aria-modal="true" aria-labelledby="psPhoneTitle">
+            <h3 id="psPhoneTitle">Weryfikacja numeru telefonu</h3>
+            <p class="ps-phone-desc">Wysyłamy kod SMS na podany numer telefonu…</p>
+            <input class="ps-phone-code" type="text" inputmode="numeric" maxlength="6"
+                   autocomplete="one-time-code" placeholder="000000" aria-label="Kod z SMS">
+            <p class="ps-phone-error" role="alert"></p>
+            <div class="ps-phone-actions">
+                <button type="button" class="ps-phone-cancel">Anuluj</button>
+                <button type="button" class="ps-phone-resend">Wyślij ponownie</button>
+                <button type="button" class="ps-phone-confirm">Potwierdź</button>
+            </div>
+        </div>
+    `;
+
+    const style = document.createElement("style");
+    style.textContent = `
+        .ps-phone-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55);
+            display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px; }
+        .ps-phone-modal-overlay.active { display: flex; }
+        .ps-phone-modal { background: #fff; border-radius: 12px; padding: 28px 24px; max-width: 400px;
+            width: 100%; text-align: center; font-family: inherit; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+        .ps-phone-modal h3 { margin: 0 0 8px; font-size: 20px; }
+        .ps-phone-desc { margin: 0 0 18px; color: #555; font-size: 14px; line-height: 1.5; }
+        .ps-phone-code { width: 100%; padding: 12px; font-size: 24px; letter-spacing: 8px;
+            text-align: center; border: 1px solid #ccc; border-radius: 8px; }
+        .ps-phone-error { color: #d32f2f; font-size: 13px; min-height: 18px; margin: 10px 0 0; }
+        .ps-phone-actions { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+        .ps-phone-actions button { padding: 10px 18px; border-radius: 8px; border: 1px solid #ccc;
+            background: #fff; cursor: pointer; font-size: 14px; }
+        .ps-phone-actions button:disabled { opacity: .5; cursor: not-allowed; }
+        .ps-phone-confirm { background: #1a3d7c; color: #fff; border-color: #1a3d7c; }
+    `;
+
+    document.head.appendChild(style);
+    document.body.appendChild(overlay);
+    phoneModalEl = overlay;
+    return overlay;
+}
+
+/**
+ * Pokazuje modal, wysyła kod i czeka na potwierdzenie.
+ * @returns {Promise<string|null>} token weryfikacji albo null, gdy użytkownik anulował.
+ */
+function verifyPhoneNumber(phone) {
+    const overlay = buildPhoneModal();
+    const desc = overlay.querySelector(".ps-phone-desc");
+    const codeInput = overlay.querySelector(".ps-phone-code");
+    const errorEl = overlay.querySelector(".ps-phone-error");
+    const cancelBtn = overlay.querySelector(".ps-phone-cancel");
+    const resendBtn = overlay.querySelector(".ps-phone-resend");
+    const confirmBtn = overlay.querySelector(".ps-phone-confirm");
+
+    codeInput.value = "";
+    errorEl.textContent = "";
+    overlay.classList.add("active");
+    codeInput.focus();
+
+    return new Promise((resolve) => {
+        let cooldownTimer = null;
+
+        function cleanup(result) {
+            clearInterval(cooldownTimer);
+            overlay.classList.remove("active");
+            cancelBtn.onclick = null;
+            resendBtn.onclick = null;
+            confirmBtn.onclick = null;
+            codeInput.onkeydown = null;
+            resolve(result);
+        }
+
+        function startCooldown(seconds) {
+            clearInterval(cooldownTimer);
+            let left = seconds;
+            resendBtn.disabled = true;
+            resendBtn.textContent = `Wyślij ponownie (${left}s)`;
+            cooldownTimer = setInterval(() => {
+                left -= 1;
+                if (left <= 0) {
+                    clearInterval(cooldownTimer);
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = "Wyślij ponownie";
+                } else {
+                    resendBtn.textContent = `Wyślij ponownie (${left}s)`;
+                }
+            }, 1000);
+        }
+
+        async function sendCode() {
+            errorEl.textContent = "";
+            resendBtn.disabled = true;
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/phone-verification/send`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone }),
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    errorEl.textContent = data.error || "Nie udało się wysłać kodu SMS.";
+                    startCooldown(data.retryAfterSeconds || 45);
+                    return;
+                }
+
+                desc.textContent = data.maskedPhone
+                    ? `Kod wysłaliśmy SMS-em na numer ${data.maskedPhone}. Wpisz go poniżej, aby dokończyć rejestrację.`
+                    : "Kod został wysłany. Wpisz go poniżej.";
+                startCooldown(45);
+            } catch (err) {
+                errorEl.textContent = "Nie udało się wysłać kodu SMS. Sprawdź połączenie.";
+                resendBtn.disabled = false;
+            }
+        }
+
+        async function confirmCode() {
+            const code = codeInput.value.trim();
+            if (code.length !== 6) {
+                errorEl.textContent = "Wpisz 6-cyfrowy kod z SMS-a.";
+                return;
+            }
+
+            errorEl.textContent = "";
+            confirmBtn.disabled = true;
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/phone-verification/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone, code }),
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    const suffix = typeof data.attemptsLeft === "number" && data.attemptsLeft > 0
+                        ? ` Pozostało prób: ${data.attemptsLeft}.`
+                        : "";
+                    errorEl.textContent = (data.error || "Weryfikacja nie powiodła się.") + suffix;
+                    codeInput.value = "";
+                    codeInput.focus();
+                    if (data.canResend) {
+                        clearInterval(cooldownTimer);
+                        resendBtn.disabled = false;
+                        resendBtn.textContent = "Wyślij ponownie";
+                    }
+                    return;
+                }
+
+                cleanup(data.token);
+            } catch (err) {
+                errorEl.textContent = "Weryfikacja nie powiodła się. Sprawdź połączenie.";
+            } finally {
+                confirmBtn.disabled = false;
+            }
+        }
+
+        cancelBtn.onclick = () => cleanup(null);
+        resendBtn.onclick = () => { void sendCode(); };
+        confirmBtn.onclick = () => { void confirmCode(); };
+        codeInput.onkeydown = (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                void confirmCode();
+            }
+        };
+
+        void sendCode();
+    });
+}
+
 // ===== Wysyłka =====
 async function submitForm(e) {
     e.preventDefault();
@@ -687,6 +868,17 @@ async function submitForm(e) {
     if (errorEl) errorEl.textContent = "";
 
     if (!validateActiveStep()) return;
+
+    // Numer telefonu potwierdzamy zanim cokolwiek poleci do API — bez tokenu
+    // endpoint rejestracji odrzuci żądanie. Robimy to przed reCAPTCHA, żeby jej
+    // token nie zdążył wygasnąć, gdy użytkownik przepisuje kod z SMS-a.
+    const phoneVerificationToken = await verifyPhoneNumber(
+        document.getElementById("numerTelefonu").value.trim()
+    );
+    if (!phoneVerificationToken) {
+        if (errorEl) errorEl.textContent = "Rejestracja wymaga potwierdzenia numeru telefonu kodem SMS.";
+        return;
+    }
 
     const voivodeshipId = wojewodztwoSelect.value;
     const categoryId = glownaSpecjalizacjaSelect.value;
@@ -719,6 +911,7 @@ async function submitForm(e) {
         email: document.getElementById("email").value.trim(),
         password: passwordInput.value,
         recaptchaToken,
+        phoneVerificationToken,
         typ: "INNY",
         typInny: typInnyInput.value || null,
         expertiseCategoryId: expertiseCategoryIdInput.value || null,

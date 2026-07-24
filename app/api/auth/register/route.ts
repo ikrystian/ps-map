@@ -1,4 +1,5 @@
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
+import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/lib/phone-verification"
 import { prisma } from "@/lib/prisma"
 
 import { verifyRecaptchaToken } from "@/lib/recaptcha"
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
 
     const body = await request.json()
-    const { email, password, isSocialRegistration, role: requestedRole, recaptchaToken, userData = {} } = body
+    const { email, password, isSocialRegistration, role: requestedRole, recaptchaToken, userData = {}, phoneVerificationToken } = body
 
     if (!isSocialRegistration) {
       const recaptchaResult = await verifyRecaptchaToken(recaptchaToken, "register_client")
@@ -44,6 +45,25 @@ export async function POST(request: NextRequest) {
     if (!email || (!password && !isSocialRegistration)) {
       return NextResponse.json(
         { error: "Email i hasło są wymagane" },
+        { status: 400 }
+      )
+    }
+
+    // Weryfikacja numeru telefonu kodem SMS — MUSI przejść zanim powstanie konto
+    // i zanim wyjdzie mail potwierdzający. Token pochodzi z /api/auth/phone-verification/verify
+    // i jest jednorazowy; sprawdzamy też, czy dotyczy numeru podanego w formularzu.
+    const submittedPhone =
+      (body.client || userData.client)?.telefon ?? userData.lawFirm?.numerTelefonu ?? null
+
+    const phoneCheck = await consumePhoneVerificationToken(phoneVerificationToken, submittedPhone)
+    if (!phoneCheck.success) {
+      return NextResponse.json(
+        {
+          error:
+            PHONE_VERIFICATION_MESSAGES[phoneCheck.error || ""] ||
+            "Numer telefonu nie został zweryfikowany.",
+          phoneVerificationRequired: true,
+        },
         { status: 400 }
       )
     }
@@ -179,7 +199,9 @@ export async function POST(request: NextRequest) {
         data: {
           imie: clientData.imie || null,
           nazwisko: clientData.nazwisko || null,
-          numerTelefonu: clientData.telefon || null,
+          // Numer w postaci znormalizowanej (E.164) — dokładnie ten, który przeszedł weryfikację SMS.
+          numerTelefonu: phoneCheck.phone || clientData.telefon || null,
+          telefonZweryfikowany: new Date(),
           adres: clientData.adres || null,
           voivodeshipId: clientData.voivodeshipId || null,
           miasto: clientData.miasto || null,
@@ -270,7 +292,8 @@ export async function POST(request: NextRequest) {
         data: {
           imie: userData.lawFirm.imieKontakt || "Do uzupełnienia",
           nazwisko: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
-          numerTelefonu: userData.lawFirm.numerTelefonu || "000000000",
+          numerTelefonu: phoneCheck.phone || userData.lawFirm.numerTelefonu || "000000000",
+          telefonZweryfikowany: new Date(),
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",

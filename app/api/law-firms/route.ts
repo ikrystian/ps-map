@@ -1,5 +1,6 @@
 import { pickCompanyDataFields } from "@/lib/biala-lista"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
+import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/lib/phone-verification"
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
@@ -487,6 +488,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Weryfikacja numeru telefonu kodem SMS — MUSI przejść zanim powstanie konto
+    // i zanim wyjdzie mail potwierdzający. Dotyczy również pre-rejestracji z landing
+    // page (skipEmailVerification): tam mail nie leci, więc SMS jest jedynym
+    // potwierdzeniem, że po drugiej stronie jest realna osoba.
+    const phoneCheck = await consumePhoneVerificationToken(
+      body.phoneVerificationToken,
+      body.numerTelefonu
+    )
+    if (!phoneCheck.success) {
+      return NextResponse.json(
+        {
+          error:
+            PHONE_VERIFICATION_MESSAGES[phoneCheck.error || ""] ||
+            "Numer telefonu nie został zweryfikowany.",
+          phoneVerificationRequired: true,
+        },
+        { status: 400 }
+      )
+    }
+
+    // Dalej zapisujemy numer w postaci znormalizowanej (E.164) — dokładnie tej,
+    // która przeszła weryfikację SMS.
+    body.numerTelefonu = phoneCheck.phone
+
     // Sprawdź, czy email już istnieje
     const existingUser = await prisma.user.findUnique({
       where: { email: body.email },
@@ -587,6 +612,7 @@ export async function POST(request: NextRequest) {
             imie: body.imieKontakt,
             nazwisko: body.nazwiskoKontakt,
             numerTelefonu: body.numerTelefonu,
+            telefonZweryfikowany: new Date(),
             numerTelefonu2: body.numerTelefonu2 || null,
             adres: body.adres,
             kodPocztowy: body.kodPocztowy,
@@ -605,6 +631,7 @@ export async function POST(request: NextRequest) {
             imie: body.imieKontakt,
             nazwisko: body.nazwiskoKontakt,
             numerTelefonu: body.numerTelefonu,
+            telefonZweryfikowany: new Date(),
             numerTelefonu2: body.numerTelefonu2 || null,
             adres: body.adres,
             kodPocztowy: body.kodPocztowy,

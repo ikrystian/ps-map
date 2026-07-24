@@ -1,6 +1,6 @@
 "use client"
 
-import { AuthLayout } from "@/components/auth"
+import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -63,6 +63,7 @@ export default function ClientRegistrationPage() {
   const [isLoadingCities, setIsLoadingCities] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPhoneVerification, setShowPhoneVerification] = useState(false)
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -352,7 +353,9 @@ export default function ClientRegistrationPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Krok 1: walidacja formularza otwiera modal z kodem SMS. Konto powstaje
+  // dopiero po potwierdzeniu numeru (patrz submitRegistration).
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
@@ -362,6 +365,13 @@ export default function ClientRegistrationPage() {
       return
     }
 
+    setShowPhoneVerification(true)
+  }
+
+  // Krok 2: numer potwierdzony — wysyłamy właściwą rejestrację z tokenem.
+  const submitRegistration = async (phoneVerificationToken: string) => {
+    setShowPhoneVerification(false)
+    setError("")
     setIsLoading(true)
 
     try {
@@ -377,6 +387,7 @@ export default function ClientRegistrationPage() {
           password: session?.user ? undefined : formData.password,
           isSocialRegistration: !!session?.user,
           recaptchaToken,
+          phoneVerificationToken,
           role: "CLIENT",
           name: formData.clientType === "BUSINESS" && formData.nazwa.trim()
             ? formData.nazwa.trim()
@@ -866,6 +877,13 @@ export default function ClientRegistrationPage() {
           </form>
         </CardContent>
       </Card>
+
+      <PhoneVerificationDialog
+        open={showPhoneVerification}
+        phone={formData.telefon}
+        onOpenChange={setShowPhoneVerification}
+        onVerified={submitRegistration}
+      />
     </AuthLayout>
   )
 }

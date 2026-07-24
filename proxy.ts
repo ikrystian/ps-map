@@ -10,6 +10,10 @@ const CORS_PATHS = [
   "/api/categories",
   "/api/expertise-categories",
   "/api/cities",
+  // Weryfikacja numeru telefonu kodem SMS — wymagana przed rejestracją także
+  // w pre-rejestracji z landing page.
+  "/api/auth/phone-verification/send",
+  "/api/auth/phone-verification/verify",
 ]
 
 function corsHeaders(origin: string): Record<string, string> {

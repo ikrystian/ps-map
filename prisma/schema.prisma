@@ -35,6 +35,9 @@ model User {
   nazwisko      String?
   numerTelefonu String?
   numerTelefonu2 String?
+  // Data potwierdzenia numeru głównego kodem SMS (weryfikacja przy rejestracji).
+  // null = numer niezweryfikowany (np. konta założone przed wdrożeniem weryfikacji).
+  telefonZweryfikowany DateTime?
 
   // Adres (przeniesiony z LawFirm)
   adres         String?
@@ -137,6 +140,25 @@ model CaseOtpVerification {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// Jednorazowy kod (OTP) wysyłany SMS-em w celu weryfikacji numeru telefonu
+// PRZED utworzeniem konta (rejestracja klienta i eksperta). Nie ma tu relacji do
+// User — na tym etapie użytkownik jeszcze nie istnieje, kluczem jest sam numer
+// w formacie E.164. Po poprawnym kodzie rekord dostaje `token`, który formularz
+// dołącza do właściwego requestu rejestracji; endpoint rejestracji go konsumuje.
+model PhoneVerification {
+  id         String    @id @default(uuid())
+  phone      String    // Numer w formacie E.164, np. +48790466488
+  code       String
+  token      String?   @unique // Wydawany dopiero po poprawnym wpisaniu kodu
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  consumed   Boolean   @default(false) // true = token wykorzystany przy rejestracji
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  @@index([phone])
 }
 
 // ============================================================================

@@ -23,7 +23,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
-import { AuthLayout } from "@/components/auth"
+import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -123,6 +123,7 @@ export default function LawFirmRegistrationPage() {
   // Odczytaj krok z URL lub localStorage
   const [currentStep, setCurrentStep] = useState(1)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showPhoneVerification, setShowPhoneVerification] = useState(false)
 
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -526,7 +527,9 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Ostatni krok kreatora otwiera modal z kodem SMS. Konto powstaje dopiero
+  // po potwierdzeniu numeru (patrz submitRegistration).
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
@@ -539,6 +542,13 @@ export default function LawFirmRegistrationPage() {
       return
     }
 
+    setShowPhoneVerification(true)
+  }
+
+  // Numer potwierdzony — wysyłamy właściwą rejestrację z tokenem.
+  const submitRegistration = async (phoneVerificationToken: string) => {
+    setShowPhoneVerification(false)
+    setError("")
     setIsLoading(true)
 
     try {
@@ -553,6 +563,7 @@ export default function LawFirmRegistrationPage() {
           email: formData.email,
           password: formData.password,
           recaptchaToken,
+          phoneVerificationToken,
           typ: formData.typ,
           typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
@@ -1562,6 +1573,13 @@ export default function LawFirmRegistrationPage() {
           </form>
         </CardContent>
       </Card>
+
+      <PhoneVerificationDialog
+        open={showPhoneVerification}
+        phone={formData.numerTelefonu}
+        onOpenChange={setShowPhoneVerification}
+        onVerified={submitRegistration}
+      />
     </AuthLayout>
   )
 }
