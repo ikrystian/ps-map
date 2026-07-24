@@ -207,6 +207,12 @@ export async function GET(request: NextRequest) {
         description: "Tryb 'Coming Soon' - zastępuje stronę główną stroną zapowiedzi (pozostałe podstrony pozostają dostępne)",
       }
     }
+    if (!settingsObject.caseCreationOtpEnabled) {
+      settingsObject.caseCreationOtpEnabled = {
+        value: "false",
+        description: "Czy wymagać od klienta dodatkowej weryfikacji jednorazowym kodem wysłanym mailem przed utworzeniem nowej sprawy",
+      }
+    }
 
 
     // SMTP settings

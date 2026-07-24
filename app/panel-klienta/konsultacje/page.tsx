@@ -206,7 +206,7 @@ export default function ClientConsultationsPage() {
             className="border border-border/10 bg-zinc-950/20 hover:border-primary/30 hover:bg-zinc-950/30 transition-all p-5 rounded-lg relative overflow-hidden group"
           >
             <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
-              <div className="flex gap-4 flex-1 min-w-0">
+              <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
                   <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-md border border-border/40">
                     {booking.lawFirm?.logo && (

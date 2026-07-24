@@ -212,6 +212,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  caseCreationOtpEnabled?: {
+    value: string
+    description: string | null
+  }
 }
 
 
@@ -284,6 +288,9 @@ export default function AdminSettingsPage() {
   // Coming Soon Mode
   const [comingSoonMode, setComingSoonMode] = useState("false")
 
+  // Weryfikacja OTP przy dodawaniu sprawy
+  const [caseCreationOtpEnabled, setCaseCreationOtpEnabled] = useState("false")
+
 
   useEffect(() => {
     fetchSettings()
@@ -344,6 +351,9 @@ export default function AdminSettingsPage() {
 
         // Coming Soon Mode
         setComingSoonMode(data.comingSoonMode?.value || "false")
+
+        // Weryfikacja OTP przy dodawaniu sprawy
+        setCaseCreationOtpEnabled(data.caseCreationOtpEnabled?.value || "false")
 
         // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
         setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
@@ -651,6 +661,10 @@ export default function AdminSettingsPage() {
               value: comingSoonMode,
               description: "Tryb 'Coming Soon' - zastępuje stronę główną stroną zapowiedzi (pozostałe podstrony pozostają dostępne)",
             },
+            caseCreationOtpEnabled: {
+              value: caseCreationOtpEnabled,
+              description: "Czy wymagać od klienta dodatkowej weryfikacji jednorazowym kodem wysłanym mailem przed utworzeniem nowej sprawy",
+            },
           },
         }),
       })
@@ -907,6 +921,33 @@ export default function AdminSettingsPage() {
                   id="enableUserSelectionOnLogin"
                   checked={enableUserSelectionOnLogin === "true"}
                   onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Weryfikacja OTP przy dodawaniu sprawy */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Weryfikacja dodawania sprawy</CardTitle>
+              <CardDescription>
+                Dodatkowe zabezpieczenie formularza dodawania sprawy (/panel-klienta/sprawy/dodaj) w panelu klienta.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
+                <div className="space-y-0.5">
+                  <Label htmlFor="caseCreationOtpEnabled" className="text-base font-semibold">
+                    Weryfikacja kodem email przed dodaniem sprawy
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu klient przed utworzeniem sprawy musi podać jednorazowy kod przesłany na jego adres email. Kod jest ważny przez 10 minut.
+                  </p>
+                </div>
+                <Switch
+                  id="caseCreationOtpEnabled"
+                  checked={caseCreationOtpEnabled === "true"}
+                  onCheckedChange={(checked) => setCaseCreationOtpEnabled(checked ? "true" : "false")}
                 />
               </div>
             </CardContent>

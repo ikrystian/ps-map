@@ -490,6 +490,52 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 }
 
 /**
+ * Generuje HTML dla emaila z jednorazowym kodem weryfikacyjnym (OTP)
+ * wysyłanym przed utworzeniem sprawy przez klienta (dodatkowa weryfikacja,
+ * włączana w ustawieniach panelu administratora).
+ */
+export function generateCaseOtpEmail(code: string, userName?: string): { subject: string; html: string; text: string } {
+  const subject = 'Kod weryfikacyjny do dodania sprawy - ProstaSprawa'
+  const greeting = userName ? `Witaj ${userName},` : 'Witaj,'
+
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Kod weryfikacyjny</h2>
+    <p style="margin: 0 0 16px 0;">${greeting}</p>
+    <p style="margin: 0 0 24px 0;">Aby dokończyć dodawanie sprawy w serwisie ProstaSprawa, wpisz poniższy kod weryfikacyjny w formularzu:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <span style="display: inline-block; background-color: #122421; border: 1px solid #00b49e; color: #00b49e; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 32px; font-weight: 700; letter-spacing: 8px; padding: 16px 28px; border-radius: 8px;">${code}</span>
+    </div>
+    <div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 16px; margin: 24px 0;">
+      <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 4px;">⚠️ Ważne:</strong>
+      <span style="font-size: 14px; color: #d4d4d4;">Kod jest ważny przez 10 minut i może zostać użyty tylko raz.</span>
+    </div>
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #a3a3a3;">Jeśli nie próbowałeś dodać sprawy, zignoruj tę wiadomość — nikt nie będzie mógł dokończyć operacji bez podania tego kodu.</p>
+  `
+
+  const html = getBrandEmailLayout(contentHtml, "Twój kod weryfikacyjny do dodania sprawy w ProstaSprawa.")
+
+  const text = `
+Kod weryfikacyjny do dodania sprawy - ProstaSprawa
+
+${greeting}
+
+Aby dokończyć dodawanie sprawy w serwisie ProstaSprawa, wpisz poniższy kod weryfikacyjny w formularzu:
+
+${code}
+
+WAŻNE: Kod jest ważny przez 10 minut i może zostać użyty tylko raz.
+
+Jeśli nie próbowałeś dodać sprawy, zignoruj tę wiadomość.
+
+---
+Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
+© ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject, html, text }
+}
+
+/**
  * Generuje HTML dla emaila aktywacji promocji
  */
 export function generatePromotionActivatedEmail(

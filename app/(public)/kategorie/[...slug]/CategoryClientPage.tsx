@@ -986,7 +986,9 @@ export default function CategoryClientPage() {
               </>
             ) : (
               <div className="text-center py-12">
-                <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                <div>
+                  <img src="/images/undraw_share-results_lfh5.svg" />
+                </div>
                 <h3 className="text-lg font-semibold mb-2">nie znaleziono eksperta</h3>
                 <p className="text-muted-foreground mb-4">
                   Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników

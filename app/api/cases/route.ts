@@ -1,12 +1,17 @@
 import { auth } from "@/auth"
 import { buildLawFirmCaseWhereInput } from "@/lib/cases"
-import { sendEmailWithTemplate } from "@/lib/email"
+import { generateCaseOtpEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { EmailType, Prisma } from "@prisma/client"
+import crypto from "crypto"
 import fs from "fs"
 import { NextRequest, NextResponse } from "next/server"
 import path from "path"
+
+const CASE_OTP_TTL_MS = 10 * 60 * 1000
+const CASE_OTP_MAX_ATTEMPTS = 5
 
 function logErrorToFile(context: string, error: any) {
   try {
@@ -217,6 +222,70 @@ export async function POST(request: NextRequest) {
       !body.akceptujeKlauzule
     ) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    // Dodatkowa weryfikacja kodem email (OTP) przed utworzeniem sprawy — opcja z ustawień panelu administratora
+    const otpSetting = await prisma.settings.findUnique({ where: { key: "caseCreationOtpEnabled" } })
+    const caseOtpEnabled = otpSetting?.value === "true"
+
+    if (caseOtpEnabled) {
+      const submittedOtpCode = typeof body.otpCode === "string" ? body.otpCode.trim() : ""
+
+      if (!submittedOtpCode) {
+        // Krok 1: brak kodu w żądaniu — wygeneruj nowy kod, wyślij mailem i poinformuj frontend
+        const rl = rateLimit(`case-otp-request:${session.user.id}:${getClientIp(request)}`, { limit: 5, windowMs: 15 * 60 * 1000 })
+        if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
+
+        // Unieważnij poprzednie, jeszcze niewykorzystane kody tego użytkownika
+        await prisma.caseOtpVerification.updateMany({
+          where: { userId: session.user.id, consumed: false },
+          data: { consumed: true },
+        })
+
+        const code = crypto.randomInt(100000, 1000000).toString()
+        await prisma.caseOtpVerification.create({
+          data: {
+            userId: session.user.id,
+            code,
+            expiresAt: new Date(Date.now() + CASE_OTP_TTL_MS),
+          },
+        })
+
+        try {
+          const { subject, html, text } = generateCaseOtpEmail(code, `${client.imie} ${client.nazwisko}`.trim())
+          await sendEmail({ to: session.user.email!, subject, html, text })
+        } catch (emailError) {
+          console.error("Failed to send case OTP email:", emailError)
+          return NextResponse.json({ error: "Nie udało się wysłać kodu weryfikacyjnego. Spróbuj ponownie." }, { status: 500 })
+        }
+
+        return NextResponse.json({ requiresOtp: true, message: "Kod weryfikacyjny został wysłany na Twój adres email." }, { status: 200 })
+      }
+
+      // Krok 2: kod podany w żądaniu — zweryfikuj go przed utworzeniem sprawy
+      const rlVerify = rateLimit(`case-otp-verify:${session.user.id}:${getClientIp(request)}`, { limit: 10, windowMs: 15 * 60 * 1000 })
+      if (!rlVerify.success) return tooManyRequestsResponse(rlVerify.retryAfterSeconds)
+
+      const otpRecord = await prisma.caseOtpVerification.findFirst({
+        where: { userId: session.user.id, consumed: false },
+        orderBy: { createdAt: "desc" },
+      })
+
+      if (!otpRecord || otpRecord.expiresAt < new Date()) {
+        return NextResponse.json({ error: "Kod weryfikacyjny wygasł. Wygeneruj nowy kod.", otpExpired: true }, { status: 400 })
+      }
+
+      if (otpRecord.attempts >= CASE_OTP_MAX_ATTEMPTS) {
+        await prisma.caseOtpVerification.update({ where: { id: otpRecord.id }, data: { consumed: true } })
+        return NextResponse.json({ error: "Przekroczono limit prób. Wygeneruj nowy kod.", otpExpired: true }, { status: 400 })
+      }
+
+      if (otpRecord.code !== submittedOtpCode) {
+        await prisma.caseOtpVerification.update({ where: { id: otpRecord.id }, data: { attempts: { increment: 1 } } })
+        return NextResponse.json({ error: "Nieprawidłowy kod weryfikacyjny.", invalidOtp: true }, { status: 400 })
+      }
+
+      await prisma.caseOtpVerification.update({ where: { id: otpRecord.id }, data: { consumed: true } })
     }
 
     // Znajdź kategorie po ID lub po slugu (np. dla dawnych slugów w formularzach)

@@ -73,6 +73,9 @@ model User {
   // Zgłoszenia błędów (ekspert)
   bugReports          BugReport[]
 
+  // Kody OTP przy dodawaniu sprawy
+  caseOtpVerifications CaseOtpVerification[]
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -116,6 +119,21 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Jednorazowy kod (OTP) wysyłany mailem do klienta w celu dodatkowej weryfikacji
+// przed utworzeniem sprawy (opcja włączana w ustawieniach panelu administratora, patrz Settings.key = "caseCreationOtpEnabled")
+model CaseOtpVerification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 enum UserRole {

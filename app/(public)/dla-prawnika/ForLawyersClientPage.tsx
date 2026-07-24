@@ -68,7 +68,7 @@ export default function ForLawyersClientPage() {
                     <img src="/backgrounds/1.png" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 z-[1]" />
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(32,32,29,0.3)_0%,rgba(32,32,29,0.6)_70%,#20201d_100%)] z-[3]" />
                 </div>
-                <div className="relative z-10 w-full mx-auto max-w-[1160px] px-4 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-[60px] items-center lg:py-0 lg:pt-[120px] lg:pb-[60px]">
+                <div className="relative z-10 w-full mx-auto max-w-[1160px] px-4 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-[60px] items-center py-6 lg:py-0 lg:pt-[120px] lg:pb-[60px]">
                     <div className="text-left flex flex-col items-start text-center lg:text-left lg:items-start animate-on-scroll">
                         <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[3px] text-gold mb-6">
                             <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse-dot" />

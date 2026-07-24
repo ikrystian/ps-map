@@ -282,7 +282,7 @@ export default function ConsultationsPage() {
             className="border border-border/10 bg-zinc-950/20 hover:border-primary/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
           >
             <div className="flex flex-col gap-5 lg:flex-row lg:justify-between lg:items-center">
-              <div className="flex gap-4 flex-1 min-w-0">
+              <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Avatar className="h-32 w-32 sm:h-32 sm:w-32 rounded-xl flex-shrink-0 border border-border/40">
                   {booking.client?.user?.image && (
                     <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />

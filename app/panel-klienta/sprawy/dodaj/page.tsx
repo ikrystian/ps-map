@@ -56,6 +56,7 @@ import {
   User,
   Building2,
   Landmark,
+  Mail,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -125,6 +126,11 @@ export default function ClientAddCasePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdCaseId, setCreatedCaseId] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -516,35 +522,99 @@ export default function ClientAddCasePage() {
     }
   };
 
+  const submitCase = (otpCodeValue?: string) =>
+    fetch("/api/cases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,
+        oczekiwanyTerminRealizacji:
+          formData.oczekiwanyTerminRealizacji || null,
+        budzetOd: !formData.doNegocjacji && formData.budzetOd ? parseFloat(formData.budzetOd) : null,
+        budzetDo: !formData.doNegocjacji && formData.budzetDo ? parseFloat(formData.budzetDo) : null,
+        ...(otpCodeValue ? { otpCode: otpCodeValue } : {}),
+      }),
+    });
+
   const handleSubmit = async () => {
     if (!validateStep(5)) return;
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/cases", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          oczekiwanyTerminRealizacji:
-            formData.oczekiwanyTerminRealizacji || null,
-          budzetOd: !formData.doNegocjacji && formData.budzetOd ? parseFloat(formData.budzetOd) : null,
-          budzetDo: !formData.doNegocjacji && formData.budzetDo ? parseFloat(formData.budzetDo) : null,
-        }),
-      });
+      const response = await submitCase();
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && data?.requiresOtp) {
+        setOtpCode("");
+        setOtpError(null);
+        setShowOtpDialog(true);
+        toast.success("Wysłaliśmy kod weryfikacyjny na Twój adres email.");
+        return;
+      }
 
       if (response.ok) {
-        const data = await response.json();
         setCreatedCaseId(data.id);
         setShowSuccessDialog(true);
       } else {
-        toast.error("Błąd podczas dodawania sprawy");
+        toast.error(data?.error || "Błąd podczas dodawania sprawy");
       }
     } catch (error) {
       console.error("Error submitting case:", error);
       toast.error("Wystąpił błąd podczas dodawania sprawy");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otpCode.trim().length !== 6) return;
+
+    setIsVerifyingOtp(true);
+    setOtpError(null);
+    try {
+      const response = await submitCase(otpCode.trim());
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && !data?.requiresOtp) {
+        setShowOtpDialog(false);
+        setCreatedCaseId(data.id);
+        setShowSuccessDialog(true);
+        return;
+      }
+
+      if (data?.otpExpired) {
+        setOtpError("Kod wygasł. Wyślij nowy kod.");
+      } else if (data?.invalidOtp) {
+        setOtpError("Nieprawidłowy kod weryfikacyjny.");
+      } else {
+        setOtpError(data?.error || "Nie udało się zweryfikować kodu.");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      setOtpError("Wystąpił błąd podczas weryfikacji kodu.");
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setIsResendingOtp(true);
+    setOtpError(null);
+    try {
+      const response = await submitCase();
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && data?.requiresOtp) {
+        setOtpCode("");
+        toast.success("Wysłaliśmy nowy kod weryfikacyjny.");
+      } else {
+        setOtpError(data?.error || "Nie udało się wysłać nowego kodu.");
+      }
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      setOtpError("Nie udało się wysłać nowego kodu.");
+    } finally {
+      setIsResendingOtp(false);
     }
   };
 
@@ -1716,6 +1786,82 @@ export default function ClientAddCasePage() {
             >
               Zobacz sprawę
               <ChevronRight className="h-4 w-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Popup weryfikacji kodem email (OTP) przed utworzeniem sprawy */}
+      <Dialog
+        open={showOtpDialog}
+        onOpenChange={(open) => {
+          setShowOtpDialog(open);
+          if (!open) {
+            setOtpCode("");
+            setOtpError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-6 text-center">
+          <DialogHeader className="items-center">
+            <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
+              <Mail className="h-8 w-8 text-primary" />
+            </div>
+            <DialogTitle className="text-xl font-bold font-playfair text-white">
+              Podaj kod weryfikacyjny
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">
+              Wysłaliśmy 6-cyfrowy kod na Twój adres email. Wpisz go poniżej, aby dokończyć dodawanie sprawy. Kod jest ważny przez 10 minut.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4 space-y-2">
+            <Input
+              value={otpCode}
+              onChange={(e) => {
+                setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+                setOtpError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleVerifyOtp();
+              }}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              placeholder="000000"
+              className="text-center text-2xl tracking-[0.5em] h-14 font-semibold"
+              autoFocus
+            />
+            {otpError && (
+              <p className="text-sm text-destructive">{otpError}</p>
+            )}
+          </div>
+
+          <DialogFooter className="mt-4 flex flex-col gap-2.5">
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleVerifyOtp}
+              disabled={otpCode.trim().length !== 6 || isVerifyingOtp}
+              className="h-11 px-5 shadow-md shadow-primary/20 w-full"
+            >
+              {isVerifyingOtp ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                  Weryfikacja...
+                </>
+              ) : (
+                "Potwierdź i utwórz sprawę"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleResendOtp}
+              disabled={isResendingOtp}
+              className="h-9 text-sm text-muted-foreground"
+            >
+              {isResendingOtp ? "Wysyłanie..." : "Wyślij kod ponownie"}
             </Button>
           </DialogFooter>
         </DialogContent>

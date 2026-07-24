@@ -210,7 +210,12 @@ export default function PublicFooter() {
                   Prywatność
                 </Link>
               </li>
-
+              <li>
+                <Link href="/reklama" className="text-neutral-400 hover:text-[#d7b56d] transition-colors font-medium">
+                  <GoldCheck />
+                  Reklama
+                </Link>
+              </li>
             </ul>
           </div>
 
