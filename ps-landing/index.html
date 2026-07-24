@@ -17,6 +17,9 @@
 </head>
 
 <body>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -59,19 +62,23 @@
 
     <!-- Section 1: Hero -->
     <section class="hero" id="hero">
-        <div class="hero-bg">
+        <div class="hero-bg" id="heroBg">
             <img src="backgrounds/1.png" alt="" class="hero-bg-img">
             <div class="hero-overlay"></div>
         </div>
+        <div class="hero-decor" id="heroDecor" aria-hidden="true">
+            <div class="hero-glow hero-glow-teal"></div>
+            <div class="hero-glow hero-glow-gold"></div>
+        </div>
         <div class="container hero-container-layout">
-            <div class="hero-left animate-on-scroll">
+            <div class="hero-left">
                 <div class="hero-badge">
                     <span class="badge-dot"></span>
                     DLA PRAWNIKA I SPECJALISTY
                 </div>
                 <h1 class="hero-title">
                     Sprawy, które mają sens.<br>
-                    Bez prowizji, bez katalogu.
+                    <span class="text-shine">Bez prowizji, bez katalogu.</span>
                 </h1>
                 <p class="hero-subtitle">
                     Wiesz, jak to zwykle wygląda. Wisisz w katalogu obok setki innych prawników i czekasz, aż ktoś
@@ -98,7 +105,7 @@
             </div>
 
             <!-- Right Pane: Live Cases Mockup -->
-            <div class="hero-right animate-on-scroll" data-delay="150">
+            <div class="hero-right">
                 <div class="live-cases-mockup">
                     <div class="mockup-header">
                         <div class="mockup-dots">
@@ -191,6 +198,10 @@
                 </div>
             </div>
         </div>
+        <a href="#benefits" class="scroll-indicator" id="scrollIndicator" aria-label="Przewiń w dół">
+            <span class="scroll-indicator-label">Przewiń</span>
+            <span class="scroll-indicator-track"><span class="scroll-indicator-dot"></span></span>
+        </a>
     </section>
 
     <!-- Section 2: Benefits -->
@@ -285,7 +296,7 @@
             <div class="container gain-clients-layout">
                 <!-- Left Pane: Interactive statistics mockup card -->
                 <div class="gain-left animate-on-scroll">
-                    <div class="analytics-mockup">
+                    <div class="analytics-mockup" data-tilt="5">
                         <div class="analytics-header">
                             <div class="mockup-dots">
                                 <span class="dot-red"></span>
@@ -298,39 +309,41 @@
                             <div class="analytics-main-row">
                                 <div class="analytics-main-value">
                                     <span class="label">MIESIĘCZNY PRZYCHÓD</span>
-                                    <span class="val">+24 800 PLN</span>
+                                    <span class="val" data-count="24800" data-prefix="+" data-suffix=" PLN">+24 800
+                                        PLN</span>
                                     <span class="growth"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="3">
                                             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                                             <polyline points="17 6 23 6 23 12" />
-                                        </svg> +34.2% m/m</span>
+                                        </svg> <span data-count="34.2" data-decimals="1" data-prefix="+"
+                                            data-suffix="% m/m">+34.2% m/m</span></span>
                                 </div>
                                 <div class="analytics-circle-container">
                                     <svg class="analytics-circle" viewBox="0 0 36 36">
                                         <path class="circle-bg"
                                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                        <path class="circle" stroke-dasharray="88, 100"
+                                        <path class="circle" stroke-dasharray="88, 100" data-circle
                                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                     </svg>
-                                    <div class="circle-percentage">88%</div>
+                                    <div class="circle-percentage" data-count="88" data-suffix="%">88%</div>
                                 </div>
                             </div>
                             <div class="analytics-stats-grid">
                                 <div class="mini-stat">
                                     <span class="m-label">Otrzymane zapytania</span>
-                                    <span class="m-val">48</span>
+                                    <span class="m-val" data-count="48">48</span>
                                 </div>
                                 <div class="mini-stat">
                                     <span class="m-label">Wygrane zlecenia</span>
-                                    <span class="m-val">12</span>
+                                    <span class="m-val" data-count="12">12</span>
                                 </div>
                                 <div class="mini-stat">
                                     <span class="m-label">Średni współczynnik konwersji</span>
-                                    <span class="m-val">25.0%</span>
+                                    <span class="m-val" data-count="25" data-decimals="1" data-suffix="%">25.0%</span>
                                 </div>
                                 <div class="mini-stat">
                                     <span class="m-label">Zadowoleni klienci</span>
-                                    <span class="m-val">100%</span>
+                                    <span class="m-val" data-count="100" data-suffix="%">100%</span>
                                 </div>
                             </div>
                         </div>
@@ -492,7 +505,7 @@
 
                 <!-- Visual Mockup Pane -->
                 <div class="consultations-right animate-on-scroll" data-delay="150">
-                    <div class="consultation-mockup-card">
+                    <div class="consultation-mockup-card" data-tilt="5">
                         <div class="mockup-header">
                             <div class="mockup-dots">
                                 <span class="dot-red"></span>
@@ -633,7 +646,7 @@
 
             <div class="advisor-layout">
                 <!-- Left Pane: Interactive Mockup/Dashboard -->
-                <div class="advisor-visual-card animate-on-scroll" data-delay="0">
+                <div class="advisor-visual-card animate-on-scroll" data-delay="0" data-tilt="4">
                     <div class="mockup-header">
                         <div class="mockup-dots">
                             <span class="dot-red"></span>
@@ -677,15 +690,16 @@
                                 <span class="stat-label">Moc profilu</span>
                                 <div class="progress-ring-container">
                                     <div class="progress-bar-wrapper">
-                                        <div class="progress-bar-fill" style="width: 85%;"></div>
+                                        <div class="progress-bar-fill" data-bar style="width: 85%;"></div>
                                     </div>
-                                    <span class="stat-value">85%</span>
+                                    <span class="stat-value" data-count="85" data-suffix="%">85%</span>
                                 </div>
                                 <span class="stat-tip">Uzupełnij certyfikaty (+15%)</span>
                             </div>
                             <div class="stat-mini-card">
                                 <span class="stat-label">Widoczność ofert</span>
-                                <span class="stat-big-value text-gold">+148%</span>
+                                <span class="stat-big-value text-gold" data-count="148" data-prefix="+"
+                                    data-suffix="%">+148%</span>
                                 <span class="stat-subtext">Wzrost w tym tygodniu</span>
                             </div>
                         </div>
@@ -861,7 +875,7 @@
 
                 <!-- Right Visual: Security Mockup -->
                 <div class="security-right animate-on-scroll" data-delay="150">
-                    <div class="security-card-visual">
+                    <div class="security-card-visual" data-tilt="5">
                         <div class="mockup-header">
                             <div class="mockup-dots">
                                 <span class="dot-red"></span>
@@ -1074,7 +1088,7 @@
 
                 <!-- Right Visual: Trust Badges Mockup -->
                 <div class="trust-right animate-on-scroll" data-delay="150">
-                    <div class="trust-card-visual">
+                    <div class="trust-card-visual" data-tilt="5">
                         <div class="mockup-header">
                             <div class="mockup-dots">
                                 <span class="dot-red"></span>
