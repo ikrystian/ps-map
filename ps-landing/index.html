@@ -21,10 +21,11 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
-                <img src="logo.svg" alt="">
+                <img src="logo.svg" style="max-width: 280px;" alt="">
             </a>
             <div class="nav-links">
                 <a href="#benefits" class="nav-link">Korzyści</a>
+                <a href="#consultations" class="nav-link">Konsultacje online</a>
                 <a href="#features" class="nav-link">Funkcje</a>
                 <a href="#advisor" class="nav-link">Doradca</a>
                 <a href="#why-us" class="nav-link">Dlaczego my</a>
@@ -48,6 +49,7 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <a href="#benefits" class="mobile-link">Korzyści</a>
+        <a href="#consultations" class="mobile-link">Konsultacje online</a>
         <a href="#features" class="mobile-link">Funkcje</a>
         <a href="#advisor" class="mobile-link">Doradca</a>
         <a href="#why-us" class="mobile-link">Dlaczego my</a>
@@ -402,6 +404,217 @@
                 </div>
             </div>
         </div>
+
+        <!-- Sub-section: Spotkania Online -->
+        <div class="online-consultations" id="consultations">
+            <div class="consultations-glow-bg"></div>
+            <div class="container consultations-layout">
+                <div class="consultations-left animate-on-scroll">
+                    <span class="section-label">SPOTKANIA ONLINE</span>
+                    <h2 class="section-title-light">
+                        Rozmowę umawiasz raz,<br>bez dzwonienia w tę i z powrotem
+                    </h2>
+                    <p class="section-subtitle-left">
+                        Zwykle ustalenie jednej rozmowy to dwa telefony i seria maili. Tu klient wchodzi w Twój
+                        kalendarz, klika wolną godzinę i ma termin zarezerwowany. Ty w tej sprawie nie ruszasz palcem.
+                    </p>
+
+                    <div class="consultations-features-grid">
+                        <div class="consultation-feature-item">
+                            <div class="consultation-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Wolne terminy w kalendarzu</h4>
+                                <p>Zaznaczasz godziny, w których pracujesz, i na tym Twoja rola się kończy. Klient widzi
+                                    tylko to, co wolne, i sam wybiera.</p>
+                            </div>
+                        </div>
+
+                        <div class="consultation-feature-item">
+                            <div class="consultation-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                                    <line x1="2" y1="10" x2="22" y2="10" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Płatność przy rezerwacji</h4>
+                                <p>Klient płaci w chwili, gdy rezerwuje. Kto zapłacił, ten przychodzi, więc puste
+                                    okienka po kimś, kto „się rozmyślił”, praktycznie znikają.</p>
+                            </div>
+                        </div>
+
+                        <div class="consultation-feature-item">
+                            <div class="consultation-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 7l-7 5 7 5V7z" />
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Link do Google Meet sam wskakuje</h4>
+                                <p>Generuje się 30 minut przed rozmową. Nie szukasz go po mailach, nie wysyłasz na
+                                    ostatnią chwilę. Wchodzisz i rozmawiasz.</p>
+                            </div>
+                        </div>
+
+                        <div class="consultation-feature-item">
+                            <div class="consultation-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Przypomnienie dostają obie strony</h4>
+                                <p>Na maila i w dashboardzie, Ty i klient. Mniej sytuacji, w których ktoś zwyczajnie
+                                    zapomniał, że miał dziś termin.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="consultations-cta-row">
+                        <a href="formularz.html" class="btn-primary">
+                            <span>Załóż profil</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Visual Mockup Pane -->
+                <div class="consultations-right animate-on-scroll" data-delay="150">
+                    <div class="consultation-mockup-card">
+                        <div class="mockup-header">
+                            <div class="mockup-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <div class="mockup-title">KALENDARZ & REZERWACJA ONLINE</div>
+                        </div>
+                        <div class="mockup-body">
+                            <!-- Settings Banner -->
+                            <div class="consultation-mockup-settings">
+                                <div class="settings-title-row">
+                                    <span class="settings-label">Dostępne godziny</span>
+                                    <span class="status-badge-active"><span class="badge-dot"></span> Rezerwacja
+                                        natychmiastowa</span>
+                                </div>
+                                <div class="schedule-days-bar">
+                                    <span class="day-pill active">Pon - Pt 09:00 - 17:00</span>
+                                    <span class="day-pill">Sob 10:00 - 14:00</span>
+                                </div>
+                                <div class="settings-prices">
+                                    <div class="price-chip">
+                                        <span class="chip-duration">Szybka porada (15 min)</span>
+                                        <span class="chip-val">100 PLN</span>
+                                    </div>
+                                    <div class="price-chip highlight">
+                                        <span class="chip-duration">Konsultacja (30 min)</span>
+                                        <span class="chip-val">150 PLN</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Consultation Preview -->
+                            <div class="consultation-booking-preview">
+                                <div class="booking-top-row">
+                                    <div class="client-info">
+                                        <div class="client-avatar">JK</div>
+                                        <div>
+                                            <h4 class="client-name">Jan Kowalski</h4>
+                                            <span class="booking-topic">Rozwód & podział majątku</span>
+                                        </div>
+                                    </div>
+                                    <span class="booking-status-badge">Zaakceptowana</span>
+                                </div>
+
+                                <div class="booking-meta-row">
+                                    <div class="meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                        </svg>
+                                        <span>Dzisiaj, 15:30</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <polyline points="12 6 12 12 16 14" />
+                                        </svg>
+                                        <span>30 min</span>
+                                    </div>
+                                    <div class="meta-item text-green">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                        </svg>
+                                        <span>Opłacone</span>
+                                    </div>
+                                </div>
+
+                                <!-- Timer & Video Link Box -->
+                                <div class="consultation-timer-box">
+                                    <div class="timer-row">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0da192"
+                                            stroke-width="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <polyline points="12 6 12 12 16 14" />
+                                        </svg>
+                                        <span>Do rozpoczęcia spotkania:</span>
+                                        <strong class="timer-val">00h : 24m : 10s</strong>
+                                    </div>
+                                    <div class="meet-link-row">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"
+                                            stroke-width="2">
+                                            <path d="M23 7l-7 5 7 5V7z" />
+                                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                                        </svg>
+                                        <span class="meet-text">Google Meet:</span>
+                                        <span class="meet-url">meet.google.com/ps-consult-982</span>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="booking-actions-row">
+                                    <button class="mockup-btn-chat">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                        </svg>
+                                        Napisz wiadomość
+                                    </button>
+                                    <button class="mockup-btn-join">
+                                        Dołącz do spotkania
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Mockup Summary Badges -->
+                            <div class="mockup-summary-pills">
+                                <span class="summary-pill">⚡ Automat w kalendarzu</span>
+                                <span class="summary-pill">💳 Płatność przy rezerwacji</span>
+                                <span class="summary-pill">🔔 Przypomnienie SMS/Mail</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Section 3 & 4: Advisor -->
@@ -580,6 +793,125 @@
         </div>
     </section>
 
+    <!-- Section: Security & Privacy -->
+    <section class="security-section" id="security">
+        <div class="container">
+            <div class="security-layout">
+                <div class="security-left animate-on-scroll">
+                    <span class="section-label">TWOJE ROZMOWY ZOSTAJĄ MIĘDZY WAMI</span>
+                    <h2 class="section-title">
+                        Dane klienta i czat<br>są szyfrowane
+                    </h2>
+                    <p class="section-subtitle-left">
+                        Klient przychodzi z rzeczami, których nie powie byle komu. Zostają między Wami.
+                    </p>
+
+                    <ul class="security-list">
+                        <li class="security-item">
+                            <div class="security-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <strong>Szyfrowana rozmowa i dokumenty</strong> – czat i pliki, które klient wrzuca, są
+                                szyfrowane. Nie krążą po zwykłym mailu ani po komunikatorze, gdzie nie wiadomo, kto ma
+                                do nich wgląd.
+                            </div>
+                        </li>
+
+                        <li class="security-item">
+                            <div class="security-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <strong>Zabezpieczenia po naszej stronie</strong> – nie musisz nic konfigurować ani znać
+                                się na technice. Bierzemy to na siebie, Ty po prostu pracujesz.
+                            </div>
+                        </li>
+
+                        <li class="security-item">
+                            <div class="security-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                            </div>
+                            <div>
+                                <strong>Zgodne z tajemnicą zawodową</strong> – jeśli wiąże Cię tajemnica zawodowa, bez
+                                szyfrowania nie ma o czym rozmawiać. U nas ten warunek jest spełniony, więc spokojnie
+                                przenosisz kontakt z klientem do sieci.
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="security-cta-row">
+                        <a href="formularz.html" class="btn-primary">
+                            <span>Załóż profil</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Visual: Security Mockup -->
+                <div class="security-right animate-on-scroll" data-delay="150">
+                    <div class="security-card-visual">
+                        <div class="mockup-header">
+                            <div class="mockup-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <div class="mockup-title">BEZPIECZEŃSTWO & TAJEMNICA ZAWODOWA</div>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="security-badge-main">
+                                <div class="shield-pulse-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#0da192" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="security-status-title">Szyfrowanie End-to-End SSL/TLS</h4>
+                                    <span class="security-status-subtitle">Chronione protokołem AES-256</span>
+                                </div>
+                            </div>
+
+                            <div class="security-checklist-box">
+                                <div class="sec-check-item">
+                                    <span class="sec-icon-green">✓</span>
+                                    <span>Prywatny czat ekspercki z klientem</span>
+                                </div>
+                                <div class="sec-check-item">
+                                    <span class="sec-icon-green">✓</span>
+                                    <span>Bezpieczna wymiana dokumentów (PDF, DOCX)</span>
+                                </div>
+                                <div class="sec-check-item">
+                                    <span class="sec-icon-green">✓</span>
+                                    <span>Zgodność z Tajemnicą Zawodową & RODO</span>
+                                </div>
+                                <div class="sec-check-item">
+                                    <span class="sec-icon-green">✓</span>
+                                    <span>Brak dostępu osób trzecich</span>
+                                </div>
+                            </div>
+
+                            <div class="security-footer-note">
+                                🔒 Dedykowana infrastruktura chroniąca prywatność Twoją i klienta.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Section 5: Differentiators -->
     <section class="differentiators" id="differentiators">
         <div class="container">
@@ -646,6 +978,13 @@
                     <li class="why-item">
                         <div class="why-bullet"></div>
                         <div>
+                            <strong>Punkty za aktywność</strong> – im więcej realnie robisz na platformie, choćby
+                            wypełniając ankiety, tym więcej punktów zbierasz. A punkty podbijają Cię wyżej w wynikach.
+                        </div>
+                    </li>
+                    <li class="why-item">
+                        <div class="why-bullet"></div>
+                        <div>
                             <strong>Pakiety pod siebie</strong> – dobierasz pakiet dopasowany do swoich potrzeb, a
                             najwyższy daje nielimitowany dostęp do spraw.
                         </div>
@@ -660,6 +999,133 @@
                         </div>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Trust Signals -->
+    <section class="trust-section" id="trust">
+        <div class="container">
+            <div class="trust-layout">
+                <div class="trust-left animate-on-scroll">
+                    <span class="section-label">ZAUFANIE OD PIERWSZEGO KLIKNIĘCIA</span>
+                    <h2 class="section-title">
+                        Sygnały, które przekonują<br>klienta, żeby się odezwał
+                    </h2>
+                    <p class="section-subtitle-left">
+                        Klient ogląda profil kilka sekund i w tym czasie decyduje, czy pisze do Ciebie, czy do
+                        następnego z listy.
+                    </p>
+
+                    <div class="trust-features-grid">
+                        <div class="trust-feature-item">
+                            <div class="trust-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Opinie od klientów</h4>
+                                <p>Ktoś, kto się waha, czyta, co napisali inni. Zebrane opinie robią tę robotę za
+                                    Ciebie, nawet kiedy akurat nie siedzisz przy komputerze.</p>
+                            </div>
+                        </div>
+
+                        <div class="trust-feature-item">
+                            <div class="trust-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Odznaka „zweryfikowany”</h4>
+                                <p>Klient od razu widzi, że trafił na fachowca z papierami, a nie na przypadkowe konto.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="trust-feature-item">
+                            <div class="trust-feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>„Odpowiada zwykle w 24 h”</h4>
+                                <p>Ten znacznik bierze się z tego, jak realnie działasz, a nie z tego, ile zapłaciłeś.
+                                    Dlatego masz go też na darmowym koncie. Wiarygodności u nas się nie kupuje.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trust-cta-row">
+                        <a href="formularz.html" class="btn-primary">
+                            <span>Załóż profil</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Visual: Trust Badges Mockup -->
+                <div class="trust-right animate-on-scroll" data-delay="150">
+                    <div class="trust-card-visual">
+                        <div class="mockup-header">
+                            <div class="mockup-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <div class="mockup-title">KARTA WIZYTÓWKI & SYGNAŁY ZAUFANIA</div>
+                        </div>
+                        <div class="mockup-body">
+                            <!-- Expert Header Mockup -->
+                            <div class="trust-expert-card">
+                                <div class="expert-top">
+                                    <div class="expert-avatar-box">
+                                        <div class="expert-avatar">PS</div>
+                                        <span class="verified-badge-icon" title="Zweryfikowany Prawnik">✓</span>
+                                    </div>
+                                    <div class="expert-details">
+                                        <div class="expert-name-row">
+                                            <h4 class="expert-name">r. pr. Piotr Stankiewicz</h4>
+                                            <span class="verified-pill">● Zweryfikowany profil</span>
+                                        </div>
+                                        <span class="expert-spec">Prawo Cywilne i Gospodarcze</span>
+                                        <div class="expert-rating-row">
+                                            <span class="stars">★★★★★</span>
+                                            <span class="rating-val">5.0</span>
+                                            <span class="reviews-count">(34 opinie klientów)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="trust-metrics-bar">
+                                    <div class="trust-metric">
+                                        <span class="metric-icon">⚡</span>
+                                        <span class="metric-text">Odpowiada zwykle w <strong>24 h</strong></span>
+                                    </div>
+                                    <div class="trust-metric">
+                                        <span class="metric-icon">🏆</span>
+                                        <span class="metric-text">Skuteczność: <strong>98%</strong></span>
+                                    </div>
+                                </div>
+
+                                <!-- Mini Review Quote -->
+                                <div class="trust-review-quote">
+                                    <p>„Świetny kontakt, rzeczowe podejście do sprawy rozwodowej. Odpowiedź otrzymałem w
+                                        niespełna 2 godziny!”</p>
+                                    <span class="quote-author">— Marek K., Klient zweryfikowany</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
