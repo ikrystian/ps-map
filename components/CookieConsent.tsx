@@ -31,7 +31,13 @@ export default function CookieConsentBanner() {
           enabled: true,
           readOnly: true,
         },
-        analytics: {},
+        analytics: {
+          // Wycofanie zgody usuwa pliki cookies Google Analytics i Hotjar.
+          autoClear: {
+            cookies: [{ name: /^_ga/ }, { name: /^_gid/ }, { name: /^_hj/ }],
+            reloadPage: true,
+          },
+        },
         marketing: {},
       },
       language: {
