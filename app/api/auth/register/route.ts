@@ -1,5 +1,7 @@
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
+
+import { verifyRecaptchaToken } from "@/lib/recaptcha"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { EmailType, UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
@@ -12,7 +14,17 @@ export async function POST(request: NextRequest) {
     if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
 
     const body = await request.json()
-    const { email, password, isSocialRegistration, role: requestedRole, userData = {} } = body
+    const { email, password, isSocialRegistration, role: requestedRole, recaptchaToken, userData = {} } = body
+
+    if (!isSocialRegistration) {
+      const recaptchaResult = await verifyRecaptchaToken(recaptchaToken, "register_client")
+      if (!recaptchaResult.success) {
+        return NextResponse.json(
+          { error: recaptchaResult.error || "Weryfikacja reCAPTCHA nie powiodła się" },
+          { status: 400 }
+        )
+      }
+    }
 
     // Bezpieczeństwo: rola NIE może być ustawiana dowolnie z publicznego endpointu.
     // Dozwolona jest wyłącznie rejestracja jako CLIENT lub LAW_FIRM — nigdy ADMIN.

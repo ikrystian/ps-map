@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
   env: {
     ENV: process.env.ENV || "local",
     DEPLOY_TIME: process.env.DEPLOY_TIME || "",
+    GOOGLE_RECAPCHA_KEY: process.env.GOOGLE_RECAPCHA_KEY || "",
+    NEXT_PUBLIC_GOOGLE_RECAPCHA_KEY: process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_KEY || process.env.GOOGLE_RECAPCHA_KEY || "",
   },
   images: {
     remotePatterns: [

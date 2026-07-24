@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Voivodeship } from "@/types"
+import { useRecaptcha } from "@/lib/recaptcha-client"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -30,6 +31,7 @@ const clientCitiesCache: Record<string, any[]> = {}
 export default function ClientRegistrationPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
+  const { executeRecaptcha } = useRecaptcha()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -353,6 +355,8 @@ export default function ClientRegistrationPage() {
     setIsLoading(true)
 
     try {
+      const recaptchaToken = await executeRecaptcha("register_client")
+
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -362,6 +366,7 @@ export default function ClientRegistrationPage() {
           email: formData.email,
           password: session?.user ? undefined : formData.password,
           isSocialRegistration: !!session?.user,
+          recaptchaToken,
           role: "CLIENT",
           name: formData.clientType === "BUSINESS" && formData.nazwa.trim()
             ? formData.nazwa.trim()

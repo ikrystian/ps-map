@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { toast } from "@/components/ui/sonner"
+import { useRecaptcha } from "@/lib/recaptcha-client"
 import { cn } from "@/lib/utils"
 import { Check, ChevronsUpDown, Eye, EyeOff, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
@@ -34,6 +35,7 @@ interface DevUser {
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { executeRecaptcha } = useRecaptcha()
   const rawCallbackUrl = searchParams.get("callbackUrl")
   // Akceptuj tylko ścieżki względne (ochrona przed open redirect)
   const callbackUrl =
@@ -184,11 +186,12 @@ export default function LoginPage() {
     setError("")
 
     try {
+      const recaptchaToken = await executeRecaptcha("login")
       // 1. Sprawdzenie pre-login
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email, password: user.password }),
+        body: JSON.stringify({ email: user.email, password: user.password, recaptchaToken }),
       })
 
       if (!checkResponse.ok) {
@@ -225,11 +228,12 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
+      const recaptchaToken = await executeRecaptcha("login")
       // 1. Sprawdzenie pre-login w celu pobrania dokładnego błędu w języku polskim
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, recaptchaToken }),
       })
 
       if (!checkResponse.ok) {

@@ -682,9 +682,29 @@ async function submitForm(e) {
     const voivodeshipId = wojewodztwoSelect.value;
     const categoryId = glownaSpecjalizacjaSelect.value;
 
+    let recaptchaToken = null;
+    try {
+        if (typeof window.grecaptcha !== "undefined") {
+            recaptchaToken = await new Promise((resolve) => {
+                window.grecaptcha.ready(async () => {
+                    try {
+                        const token = await window.grecaptcha.execute("6LciQGMtAAAAAJi1UM1J6DMg4a4KOJl4fgKL3R0a", { action: "register_ekspert" });
+                        resolve(token);
+                    } catch (err) {
+                        console.error("reCAPTCHA execute error:", err);
+                        resolve(null);
+                    }
+                });
+            });
+        }
+    } catch (err) {
+        console.error("reCAPTCHA token error:", err);
+    }
+
     const payload = {
         email: document.getElementById("email").value.trim(),
         password: passwordInput.value,
+        recaptchaToken,
         typ: "INNY",
         typInny: typInnyInput.value || null,
         expertiseCategoryId: expertiseCategoryIdInput.value || null,
