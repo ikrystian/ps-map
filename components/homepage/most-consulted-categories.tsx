@@ -232,10 +232,11 @@ export function MostConsultedCategories({
       <div className="relative min-h-[460px]">
         <div
           ref={sliderRef}
-          className="flex gap-6 overflow-x-auto pb-4"
+          className="flex gap-6 overflow-x-auto pb-4 snap-x snap-proximity touch-pan-x"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
             paddingLeft: "calc(max(1rem, (100vw - 1500px) / 2))",
             paddingRight: "2rem",
           }}
@@ -303,7 +304,7 @@ export function MostConsultedCategories({
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />

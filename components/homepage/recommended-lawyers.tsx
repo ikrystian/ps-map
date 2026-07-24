@@ -186,10 +186,11 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
       <div id="items-in-category-slider" className="relative px-4 container mx-auto min-h-[460px]">
         <div
           ref={sliderRef}
-          className="item-in-category-slider w-full overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth"
+          className="item-in-category-slider w-full overflow-x-auto scrollbar-none snap-x snap-proximity scroll-smooth touch-pan-x"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
           }}
         >
           <AnimatePresence mode="wait">

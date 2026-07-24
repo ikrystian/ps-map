@@ -71,73 +71,71 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
           </button>
 
           {/* Slider content area */}
-          <div className="overflow-hidden">
-            <div
-              ref={sliderRef}
-              className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-4 snap-x snap-mandatory"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {experts.map((firm, index) => {
-                const profession = firm.expertiseCategory?.nazwa || firm.categories?.[0]?.nazwa || ""
-                const voivodeship = firm.voivodeship?.nazwa;
+          <div
+            ref={sliderRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-4 snap-x snap-proximity touch-pan-x"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+          >
+            {experts.map((firm, index) => {
+              const profession = firm.expertiseCategory?.nazwa || firm.categories?.[0]?.nazwa || ""
+              const voivodeship = firm.voivodeship?.nazwa;
 
-                return (
-                  <div
-                    key={firm.id}
-                    className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
-                  >
-                    {/* Image Section */}
-                    <div className="relative h-[140px] md:h-[290px] w-full overflow-hidden bg-zinc-950">
-                      {/* Gold emblem badge top-left */}
-                      <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-[#161616]/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
-                        <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M18.86 11.18c-.46-1.58-1.5-2.88-2.92-3.66-.46-.25-1-.18-1.39.17l-1.92 1.76c-.34.31-.85.38-1.26.17l-1.96-1.01c-.55-.28-1.22.04-1.34.65l-.54 2.76c-.08.41.13.82.5 1.01l2.09 1.07c.33.17.48.56.35.91l-.99 2.65c-.19.51.13 1.08.68 1.15h4.15c.42 0 .79-.27.92-.67l1.78-5.34c.26-.78.36-1.61.27-2.43zM12 9.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
-                        </svg>
-                      </div>
-
-                      {/* Expert Portrait */}
-                      <img
-                        src={getFirmImage(firm as LawFirm, index) || "/backgrounds/4.png"}
-                        alt={firm.nazwa}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-
-                      {/* Dark bottom-fade gradient blending into the card background */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
+              return (
+                <div
+                  key={firm.id}
+                  className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
+                >
+                  {/* Image Section */}
+                  <div className="relative h-[140px] md:h-[290px] w-full overflow-hidden bg-zinc-950">
+                    {/* Gold emblem badge top-left */}
+                    <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-[#161616]/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
+                      <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.86 11.18c-.46-1.58-1.5-2.88-2.92-3.66-.46-.25-1-.18-1.39.17l-1.92 1.76c-.34.31-.85.38-1.26.17l-1.96-1.01c-.55-.28-1.22.04-1.34.65l-.54 2.76c-.08.41.13.82.5 1.01l2.09 1.07c.33.17.48.56.35.91l-.99 2.65c-.19.51.13 1.08.68 1.15h4.15c.42 0 .79-.27.92-.67l1.78-5.34c.26-.78.36-1.61.27-2.43zM12 9.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
+                      </svg>
                     </div>
 
-                    {/* Center floating up-right diagonal arrow button (Placed outside the overflow-hidden container to prevent clipping) */}
-                    <Link
-                      href={`/ekspert/${firm.slug}`}
-                      className="absolute top-[118px] md:top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
-                      title="Zobacz profil"
-                    >
-                      <ArrowUpRight className="w-5 h-5 text-white" />
-                    </Link>
+                    {/* Expert Portrait */}
+                    <img
+                      src={getFirmImage(firm as LawFirm, index) || "/backgrounds/4.png"}
+                      alt={firm.nazwa}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
 
-                    {/* Content Section */}
-                    <div className="pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
-                      {/* Profession Subtitle */}
-                      <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase block">
-                        {profession}
-                      </span>
-
-                      {/* Name */}
-                      <h3 className=" font-medium text-[18px] leading-tight text-white mb-2 max-w-[90%] line-clamp-2 min-h-[2.8rem] flex items-center justify-center group-hover:text-[#008073] transition-colors duration-200">
-                        <Link href={`/ekspert/${firm.slug}`}>
-                          {firm.nazwa}
-                        </Link>
-                      </h3>
-
-                      {/* Location details */}
-                      <p className="text-[11px] font-semibold text-[#cda567] tracking-wider mt-1">
-                        {firm.miasto}, {voivodeship}
-                      </p>
-                    </div>
+                    {/* Dark bottom-fade gradient blending into the card background */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
                   </div>
-                )
-              })}
-            </div>
+
+                  {/* Center floating up-right diagonal arrow button */}
+                  <Link
+                    href={`/ekspert/${firm.slug}`}
+                    className="absolute top-[118px] md:top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
+                    title="Zobacz profil"
+                  >
+                    <ArrowUpRight className="w-5 h-5 text-white" />
+                  </Link>
+
+                  {/* Content Section */}
+                  <div className="pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
+                    {/* Profession Subtitle */}
+                    <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase block">
+                      {profession}
+                    </span>
+
+                    {/* Name */}
+                    <h3 className=" font-medium text-[18px] leading-tight text-white mb-2 max-w-[90%] line-clamp-2 min-h-[2.8rem] flex items-center justify-center group-hover:text-[#008073] transition-colors duration-200">
+                      <Link href={`/ekspert/${firm.slug}`}>
+                        {firm.nazwa}
+                      </Link>
+                    </h3>
+
+                    {/* Location details */}
+                    <p className="text-[11px] font-semibold text-[#cda567] tracking-wider mt-1">
+                      {firm.miasto}, {voivodeship}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
           {/* Right Arrow Button */}

@@ -371,9 +371,9 @@ export default function PublicHeader({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <Image className="hidden lg:block min-w-[150px]" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
-            <span className="self-end ml-1.5 lg:ml-0 lg:absolute lg:-right-3 lg:-bottom-3 text-primary font-bold text-sm lg:text-base" id="env">{process.env.ENV}</span>
+            <Image className="block min-w-[150px] sm:hidden lg:block min-w-[150px]" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="hidden sm:block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
+            <span className="hidden sm:block self-end ml-1.5 lg:ml-0 lg:absolute lg:-right-3 lg:-bottom-3 text-primary font-bold text-sm lg:text-base" id="env">{process.env.ENV}</span>
           </Link>
 
           {/* Navigation Menu */}
