@@ -233,7 +233,7 @@ export default function TeamExpertsSection() {
                     {/* Header */}
                     <div className="flex items-center gap-4">
                       <Avatar className="h-14 w-14 border border-zinc-800/60 transition-transform duration-500 group-hover:scale-105">
-                        <AvatarImage src={avatarSrc || ""} alt={displayName} />
+                        <AvatarImage src={avatarSrc || undefined} alt={displayName} />
                         <AvatarFallback className="bg-gradient-to-br from-zinc-800 to-zinc-900 text-primary font-medium text-lg uppercase">
                           {initials}
                         </AvatarFallback>
