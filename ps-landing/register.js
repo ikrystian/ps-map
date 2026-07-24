@@ -683,22 +683,27 @@ async function submitForm(e) {
     const categoryId = glownaSpecjalizacjaSelect.value;
 
     let recaptchaToken = null;
-    try {
-        if (typeof window.grecaptcha !== "undefined") {
-            recaptchaToken = await new Promise((resolve) => {
-                window.grecaptcha.ready(async () => {
-                    try {
-                        const token = await window.grecaptcha.execute("6LciQGMtAAAAAJi1UM1J6DMg4a4KOJl4fgKL3R0a", { action: "register_ekspert" });
-                        resolve(token);
-                    } catch (err) {
-                        console.error("reCAPTCHA execute error:", err);
-                        resolve(null);
-                    }
+    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (isLocalhost) {
+        recaptchaToken = "localhost_bypass_token";
+    } else {
+        try {
+            if (typeof window.grecaptcha !== "undefined") {
+                recaptchaToken = await new Promise((resolve) => {
+                    window.grecaptcha.ready(async () => {
+                        try {
+                            const token = await window.grecaptcha.execute("6LciQGMtAAAAAJi1UM1J6DMg4a4KOJl4fgKL3R0a", { action: "register_ekspert" });
+                            resolve(token);
+                        } catch (err) {
+                            console.error("reCAPTCHA execute error:", err);
+                            resolve(null);
+                        }
+                    });
                 });
-            });
+            }
+        } catch (err) {
+            console.error("reCAPTCHA token error:", err);
         }
-    } catch (err) {
-        console.error("reCAPTCHA token error:", err);
     }
 
     const payload = {

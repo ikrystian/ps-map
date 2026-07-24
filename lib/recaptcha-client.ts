@@ -17,8 +17,20 @@ export const RECAPTCHA_SITE_KEY =
   process.env.GOOGLE_RECAPCHA_KEY ||
   "6LciQGMtAAAAAJi1UM1J6DMg4a4KOJl4fgKL3R0a"
 
+export function isLocalhostEnv(): boolean {
+  if (typeof window === "undefined") return false
+  const hostname = window.location.hostname
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.endsWith(".local") ||
+    hostname.endsWith(".test")
+  )
+}
+
 export function loadRecaptchaScript(): void {
   if (typeof window === "undefined") return
+  if (isLocalhostEnv()) return
   const siteKey = RECAPTCHA_SITE_KEY
   if (!siteKey) return
 
@@ -34,6 +46,9 @@ export function loadRecaptchaScript(): void {
 
 export async function executeRecaptchaToken(action: string): Promise<string | null> {
   if (typeof window === "undefined") return null
+  if (isLocalhostEnv()) {
+    return "localhost_bypass_token"
+  }
   const siteKey = RECAPTCHA_SITE_KEY
   if (!siteKey) {
     console.warn("reCAPTCHA site key is missing")
