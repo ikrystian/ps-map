@@ -213,4 +213,135 @@ Zespół Prosta Sprawa`,
     },
     triggery: ['email_verification_requested'],
   },
+  {
+    typ: EmailType.POTWIERDZENIE_EMAIL_SUBDOMENA,
+    nazwa: 'Potwierdzenie adresu email (subdomena)',
+    temat: 'Potwierdź swój adres email - Prosta Sprawa',
+    tresc: `Witaj {imie},
+
+Dziękujemy za rejestrację w serwisie Prosta Sprawa.
+
+Aby dokończyć proces rejestracji, potwierdź swój adres email klikając w poniższy link:
+{linkPotwierdzenia}
+
+Twój kod weryfikacyjny: {kod}
+
+Link jest ważny przez 24 godziny.
+
+Jeśli nie zakładałeś konta w Prosta Sprawa, zignoruj tę wiadomość.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Potwierdź swój adres e-mail</h2>
+<p style="margin: 0 0 16px 0;">Witaj {imie},</p>
+<p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację w portalu <strong>ProstaSprawa</strong>. Jesteśmy dumni, że z nami jesteś.</p>
+<p style="margin: 0 0 24px 0;">Aby w pełni aktywować konto i zacząć korzystać z serwisu, potwierdź swój adres e-mail klikając poniższy przycisk:</p>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{linkPotwierdzenia}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Potwierdź adres e-mail</a>
+</div>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
+  <span style="font-size: 14px; color: #a3a3a3; font-weight: 500; display: block; margin-bottom: 8px;">Twój kod weryfikacyjny:</span>
+  <strong style="font-size: 26px; letter-spacing: 4px; color: #00b49e; font-family: monospace;">{kod}</strong>
+</div>
+
+<div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 16px; margin: 24px 0;">
+  <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 4px;">⚠️ Ważne informacje:</strong>
+  <span style="font-size: 14px; color: #d4d4d4; line-height: 1.5; display: block;">Link oraz kod weryfikacyjny są ważne przez 24 godziny. Jeśli nie zakładałeś konta, po prostu zignoruj ten e-mail.</span>
+</div>`,
+    zmienne: ['{imie}', '{email}', '{linkPotwierdzenia}', '{kod}'],
+    opisZmiennych: {
+      '{imie}': 'Imię użytkownika',
+      '{email}': 'Adres email',
+      '{linkPotwierdzenia}': 'Link do potwierdzenia adresu email',
+      '{kod}': '6-cyfrowy kod weryfikacyjny',
+    },
+    triggery: ['email_verification_requested_subdomain'],
+  },
+  {
+    typ: EmailType.REJESTRACJA_SUBDOMENA_KLIENT,
+    nazwa: 'Witamy nowego klienta (subdomena)',
+    temat: 'Witamy w Prosta Sprawa!',
+    tresc: `Witaj {imie}!
+
+Dziękujemy za rejestrację w serwisie Prosta Sprawa - platformie łączącej klientów z najlepszymi ekspertami prawnymi w Polsce.
+
+Twoje konto zostało utworzone pomyślnie:
+Email: {email}
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h1 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 20px; text-align: center;">Witamy w ProstaSprawa!</h1>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{imie}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Dziękujemy za rejestrację w serwisie <strong>ProstaSprawa</strong> – nowoczesnej platformie pomagającej szybko, wygodnie i bezstresowo rozwiązywać sprawy prawne łącząc Cię ze sprawdzonymi ekspertami.</p>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <strong style="color: #ffffff; font-weight: 600; display: block; margin-bottom: 8px;">Dane Twojego konta:</strong>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">E-mail:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{email}</td>
+    </tr>
+  </table>
+</div>`,
+    zmienne: ['{imie}', '{nazwisko}', '{email}', '{linkDodajSprawa}'],
+    opisZmiennych: {
+      '{imie}': 'Imię użytkownika',
+      '{nazwisko}': 'Nazwisko użytkownika',
+      '{email}': 'Adres email',
+      '{linkDodajSprawa}': 'Link do formularza dodawania sprawy',
+    },
+    triggery: ['user_registered_client_subdomain'],
+  },
+  {
+    typ: EmailType.REJESTRACJA_SUBDOMENA_KANCELARIA,
+    nazwa: 'Witamy nowego eksperta (subdomena)',
+    temat: 'Witamy w Prosta Sprawa - Panel Eksperta',
+    tresc: `Witamy {nazwa}!
+
+Dziękujemy za dołączenie do platformy Prosta Sprawa. Twoja rejestracja przebiegła pomyślnie.
+
+Dane eksperta:
+Nazwa: {nazwa}
+Email: {email}
+NIP: {nip}
+
+Status konta: Oczekuje na weryfikację
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h1 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 26px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 20px; text-align: center;">Witamy w ProstaSprawa!</h1>
+<p style="margin: 0 0 16px 0;">Witamy eksperta <strong>{nazwa}</strong>,</p>
+<p style="margin: 0 0 16px 0;">Cieszymy się, że dołączasz do grona profesjonalistów świadczących usługi prawne za pośrednictwem serwisu <strong>ProstaSprawa</strong>. Twoja rejestracja przebiegła pomyślnie.</p>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #222222; padding-bottom: 8px;">Dane Twojego konta:</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">Nazwa:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{nazwa}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">E-mail:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600; border-top: 1px solid #222222;">{email}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">NIP:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600; border-top: 1px solid #222222;">{nip}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Status:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #f59e0b; font-weight: 600; border-top: 1px solid #222222;">⏳ Oczekuje na weryfikację</td>
+    </tr>
+  </table>
+</div>`,
+    zmienne: ['{email}', '{nip}', '{linkDoPanelu}'],
+    opisZmiennych: {
+      '{email}': 'Adres email',
+      '{nip}': 'Numer NIP',
+      '{linkDoPanelu}': 'Link do panelu eksperta',
+    },
+    triggery: ['user_registered_law_firm_subdomain'],
+  },
 ]

@@ -79,6 +79,9 @@ const emailTypes = [
   { value: "KONSULTACJA_ANULOWANA", label: "Konsultacja - anulowana" },
   { value: "PRZYPOMNIENIE_KONSULTACJI", label: "Konsultacja - przypomnienie (1h przed)" },
   { value: "LINK_KONSULTACJI", label: "Konsultacja - link Google Meet (5 min przed)" },
+  { value: "POTWIERDZENIE_EMAIL_SUBDOMENA", label: "Potwierdzenie email (subdomena)" },
+  { value: "REJESTRACJA_SUBDOMENA_KLIENT", label: "Rejestracja - klient (subdomena)" },
+  { value: "REJESTRACJA_SUBDOMENA_KANCELARIA", label: "Rejestracja - ekspert (subdomena)" },
   { value: "CUSTOM", label: "Własny szablon" },
 ]
 
@@ -107,6 +110,9 @@ const availableVariables: Record<string, string[]> = {
   KONSULTACJA_ANULOWANA: ["{odbiorca}", "{inicjator}", "{linkDoPanelu}"],
   PRZYPOMNIENIE_KONSULTACJI: ["{odbiorca}", "{ekspert}", "{klient}", "{termin}", "{linkDoSpotkania}", "{linkDoPanelu}"],
   LINK_KONSULTACJI: ["{odbiorca}", "{ekspert}", "{klient}", "{termin}", "{linkDoSpotkania}", "{linkDoPanelu}"],
+  POTWIERDZENIE_EMAIL_SUBDOMENA: ["{imie}", "{email}", "{linkPotwierdzenia}", "{kod}"],
+  REJESTRACJA_SUBDOMENA_KLIENT: ["{imie}", "{nazwisko}", "{email}", "{linkDodajSprawa}"],
+  REJESTRACJA_SUBDOMENA_KANCELARIA: ["{nazwa}", "{email}", "{nip}", "{linkDoPanelu}"],
   CUSTOM: [],
 }
 

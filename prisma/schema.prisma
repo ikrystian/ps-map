@@ -2062,6 +2062,9 @@ enum EmailType {
   KONSULTACJA_ANULOWANA        // Email o anulowaniu konsultacji
   PRZYPOMNIENIE_KONSULTACJI    // Email z przypomnieniem o nadchodzącej konsultacji
   LINK_KONSULTACJI             // Email z linkiem Google Meet do konsultacji
+  POTWIERDZENIE_EMAIL_SUBDOMENA // Email z linkiem do potwierdzenia adresu email (subdomena)
+  REJESTRACJA_SUBDOMENA_KLIENT // Email powitalny dla klienta (subdomena)
+  REJESTRACJA_SUBDOMENA_KANCELARIA // Email powitalny dla ekspertów (subdomena)
 }
 
 // ============================================================================
