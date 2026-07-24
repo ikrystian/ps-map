@@ -327,7 +327,7 @@ export function LocalSeoLinks({
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
             {headingTitle}
           </h2>
-          <p className="text-xl text-muted-foreground">{headingSubtitle}</p>
+          <p className="text-base md:text-lg text-muted-foreground">{headingSubtitle}</p>
         </div>
 
         {/* Tryb grupowany — kategoria jako nagłówek + linki lokalizacji */}

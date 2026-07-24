@@ -116,7 +116,7 @@ export default function PublicFooter() {
         <div className="grid grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-4 xl:gap-8 lg:gap-12">
 
           {/* Column 1: Logo & About (~35% / 4 cols) */}
-          <div className="space-y-4 lg:col-span-4">
+          <div className="space-y-4 col-span-2 lg:col-span-4">
             <Link href="/" className="inline-block">
               <Image
                 src="/logo.svg"
@@ -215,7 +215,7 @@ export default function PublicFooter() {
           </div>
 
           {/* Column 4: Kontakt (~25% / 3 cols) */}
-          <div className="space-y-3 lg:col-span-3">
+          <div className="space-y-3 col-span-2 lg:col-span-3">
             <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
               Kontakt
             </h3>

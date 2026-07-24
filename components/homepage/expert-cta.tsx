@@ -27,7 +27,7 @@ export function ExpertCTA() {
             className="lg:col-span-7 flex flex-col items-start text-left"
           >
             {/* Heading */}
-            <h2 className="text-4xl md:text-5xl lg:text-5xl font-light font-playfair tracking-tight leading-tight text-white mb-6">
+            <h2 className="text-3xl md:text-5xl font-light font-playfair tracking-tight leading-tight text-white mb-6">
               <span className="italic">Daj się </span>
               <span className="font-bold text-white">poznać</span>
               <span className="italic"> jako Ekspert Prawa</span>

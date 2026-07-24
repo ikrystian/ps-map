@@ -61,7 +61,6 @@ export function MostConsultedCategories({
   // Filtrujemy zakładki po aktywnych ID z ustawień
   const activeTabs = useMemo(() => {
     let tabs = categories.filter((c) => consultedCategoryIds?.includes(c.id));
-    console.log(tabs)
     // Fallback if no configuration is found
     if (tabs.length === 0) {
       tabs = categories.slice(0, 6);
@@ -184,11 +183,11 @@ export function MostConsultedCategories({
   };
 
   return (
-    <section className="py-20 xl:py-24 bg-darker text-white overflow-hidden">
+    <section className="py-8 lg:py-20 xl:py-24 bg-darker text-white overflow-hidden">
       {/* Header + Tabs stay within the container */}
       <div className="container mx-auto px-4 max-w-8xl">
         <div className="flex items-center gap-6 mb-12">
-          <h2 className="text-xl md:text-3xl font-light text-zinc-100 whitespace-nowrap font-playfair">
+          <h2 className="text-2xl md:text-3xl font-light text-zinc-100 sm:whitespace-nowrap font-playfair">
             Najczęściej konsultowane kategorie
           </h2>
           <div className="flex-grow border-t border-zinc-800/80" />
@@ -209,7 +208,7 @@ export function MostConsultedCategories({
                     sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
                   }
                 }}
-                className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-[150px] md:w-auto md:shrink ${isActive
+                className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-auto md:shrink ${isActive
                   ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
                   : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
                   }`}
@@ -304,7 +303,7 @@ export function MostConsultedCategories({
                 return (
                   <div
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 1overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
                     <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
@@ -355,7 +354,7 @@ export function MostConsultedCategories({
                         </p>
                       </div>
 
-                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80border-zinc-500/100">
+                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80">
                         <div className="flex gap-2">
                           <ContactButton
                             icon={Phone}

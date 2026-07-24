@@ -40,7 +40,7 @@ export function VoivodeshipsList() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
             Znajdź eksperta w swoim województwie
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground">
             Eksperci prawni dostępni w całej Polsce
           </p>
         </div>

@@ -76,7 +76,7 @@ export function HeroSection() {
             transition={{ duration: 0.5 }}
             className="mb-8 flex justify-center"
           >
-            <Badge variant="outline" className="px-5 py-2 border-primary/40 text-primary-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs font-semibold tracking-widest uppercase">
+            <Badge variant="outline" className="px-5 py-2 border-primary/40 text-primary-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs font-semibold tracking-widest uppercase text-center">
               Twoje wsparcie prawne w zasięgu ręki
             </Badge>
           </motion.div>
@@ -101,7 +101,7 @@ export function HeroSection() {
             <h2 className="text-2xl md:text-4xl font-light mb-6 font-playfair text-neutral-200">
               Rozwiązujemy Twoje <TypedPhrases /> w kilku krokach.
             </h2>
-            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed ">
+            <p className="text-base md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed ">
               Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników.
               Szybko, bezpiecznie i na Twoich zasadach.
             </p>
@@ -112,11 +112,11 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row gap-6 mb-20 justify-center items-center px-4"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-6 mb-14 sm:mb-20 justify-center items-center px-4"
           >
             <button
               onClick={() => document.getElementById("categories-private")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
+              className="group flex items-center justify-center w-full max-w-[280px] sm:w-auto sm:min-w-[280px] h-14 sm:h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-base sm:text-lg rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
             >
               Sprawy prywatne
               <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -124,7 +124,7 @@ export function HeroSection() {
 
             <button
               onClick={() => document.getElementById("categories-business")?.scrollIntoView({ behavior: "smooth" })}
-              className="group flex items-center justify-center min-w-[280px] h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-lg rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
+              className="group flex items-center justify-center w-full max-w-[280px] sm:w-auto sm:min-w-[280px] h-14 sm:h-[72px] bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-white font-medium text-base sm:text-lg rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/5"
             >
               Sprawy firmowe
               <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -143,8 +143,8 @@ export function HeroSection() {
                 <Users className="h-5 w-5 text-primary" />
               </div>
               <div className="text-left">
-                <p className="text-white font-bold leading-none">1000+</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Ekspertów</p>
+                <p className="text-white font-bold text-xl leading-none">1000+</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-widest mt-1">Ekspertów</p>
               </div>
             </div>
 
@@ -153,8 +153,8 @@ export function HeroSection() {
                 <ShieldCheck className="h-5 w-5 text-teal-500" />
               </div>
               <div className="text-left">
-                <p className="text-white font-bold leading-none">100%</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Bezpieczeństwa</p>
+                <p className="text-white font-bold text-xl leading-none">100%</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-widest mt-1">Bezpieczeństwa</p>
               </div>
             </div>
 
@@ -163,8 +163,8 @@ export function HeroSection() {
                 <ArrowRight className="h-5 w-5 text-secondary" />
               </div>
               <div className="text-left">
-                <p className="text-white font-bold leading-none">98%</p>
-                <p className="text-sm text-neutral-500 uppercase tracking-widest mt-1">Skuteczności</p>
+                <p className="text-white font-bold text-xl leading-none">98%</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-widest mt-1">Skuteczności</p>
               </div>
             </div>
           </motion.div>

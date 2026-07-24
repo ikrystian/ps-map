@@ -396,7 +396,7 @@ export default function PublicHeader({
                       )}
                     >
                       <Search className="h-4 w-4 text-neutral-400" />
-                      <span className="hidden min-[1200px] lg:block">Szukaj</span>
+                      <span className="hidden min-[1200px]:block">Szukaj</span>
                     </motion.button>
                   ) : (
                     <motion.button

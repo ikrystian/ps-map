@@ -77,7 +77,7 @@ const BenefitIcon = ({ src, alt }: { src: string; alt: string }) => {
         alt={alt}
         width={100}
         height={100}
-        className="w-30 h-30 transition-all duration-300 group-hover:brightness-0 group-hover:invert"
+        className="w-24 h-24 md:w-30 md:h-30 transition-all duration-300 group-hover:brightness-0 group-hover:invert"
       />
     </div>
   )

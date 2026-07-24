@@ -52,7 +52,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
         {/* Title row with modern line design */}
         <div className="flex items-center justify-between gap-6 mb-4 lg:mb-16 px-1">
-          <h2 className="font-playfair text-2xl md:text-3xl lg:text-[34px] font-normal text-white tracking-wide whitespace-nowrap">
+          <h2 className="font-playfair text-2xl md:text-3xl lg:text-[34px] font-normal text-white tracking-wide sm:whitespace-nowrap">
             Nowi eksperci już dostępni
           </h2>
           <div className="hidden md:block flex-grow border-t border-zinc-800/80" />
@@ -87,7 +87,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                     className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
                   >
                     {/* Image Section */}
-                    <div className="relative h-[120] md:h-[290px] w-full overflow-hidden bg-zinc-950">
+                    <div className="relative h-[140px] md:h-[290px] w-full overflow-hidden bg-zinc-950">
                       {/* Gold emblem badge top-left */}
                       <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-[#161616]/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
                         <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
@@ -109,14 +109,14 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                     {/* Center floating up-right diagonal arrow button (Placed outside the overflow-hidden container to prevent clipping) */}
                     <Link
                       href={`/ekspert/${firm.slug}`}
-                      className="absolute top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
+                      className="absolute top-[118px] md:top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
                       title="Zobacz profil"
                     >
                       <ArrowUpRight className="w-5 h-5 text-white" />
                     </Link>
 
                     {/* Content Section */}
-                    <div className="pt-3 md:pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
+                    <div className="pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
                       {/* Profession Subtitle */}
                       <span className="text-[11px] font-bold text-zinc-400 tracking-[0.18em] uppercase block">
                         {profession}

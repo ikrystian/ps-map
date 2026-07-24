@@ -104,7 +104,7 @@ export function NewsletterSection() {
                   required
                 />
                 <div className="w-36 min-w-36 flex mr-1">
-                  <InteractiveHoverButton type="submit" className="no-wrap white-space-nowrap">Zapisz się</InteractiveHoverButton>
+                  <InteractiveHoverButton type="submit" className="whitespace-nowrap">Zapisz się</InteractiveHoverButton>
                 </div>
               </div>
 

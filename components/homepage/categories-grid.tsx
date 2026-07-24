@@ -64,7 +64,7 @@ const CategoryCard = memo(
               return Icon ? <Icon className="h-10 w-10 text-white hidden md:block" /> : null;
             })()
           ) : null}
-          <h3 className="text-white text-md md:text-xl font-bold text-center">{category.nazwa}</h3>
+          <h3 className="text-white text-base md:text-xl font-bold text-center">{category.nazwa}</h3>
         </div>
       </Link>
     );
@@ -133,7 +133,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           </div>
           <div className="mb-12">
             <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-xl md:text-3xl  font-light text-zinc-100 whitespace-nowrap font-playfair" id="categories-private">
+              <h2 className="text-2xl md:text-3xl  font-light text-zinc-100 sm:whitespace-nowrap font-playfair" id="categories-private">
                 Popularne sprawy prywatne
               </h2>
               <div className="flex-grow border-t border-zinc-800/80" />
