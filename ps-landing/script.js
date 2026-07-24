@@ -786,6 +786,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
+    // ===== Licznik czasu videorozmowy w laptopie =====
+    const videoTimerEl = document.getElementById('videoCallTimer');
+    if (videoTimerEl) {
+        let callSeconds = 18 * 60 + 42; // Starts at 18:42
+        const pad = (n) => String(n).padStart(2, '0');
+        setInterval(() => {
+            callSeconds++;
+            const h = Math.floor(callSeconds / 3600);
+            const m = Math.floor((callSeconds % 3600) / 60);
+            const s = callSeconds % 60;
+            videoTimerEl.textContent = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+        }, 1000);
+    }
+
     // ===== Magnetyczne przyciski CTA =====
     if (finePointer && !reducedMotion) {
         document.querySelectorAll('.btn-primary').forEach((btn) => {
