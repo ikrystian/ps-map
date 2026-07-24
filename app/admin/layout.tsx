@@ -69,7 +69,7 @@ const navigation: { title: string; items: NavItem[] }[] = [
   {
     title: "Użytkownicy i eksperci",
     items: [
-      { name: "Użytkownicy", href: "/admin/users", icon: Users },
+      { name: "Klienci", href: "/admin/users", icon: Users },
       { name: "Eksperci", href: "/admin/law-firms", icon: Building2 },
       { name: "Import ekspertów", href: "/admin/import-ekspertow", icon: Upload, isSubmenu: true },
       { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },

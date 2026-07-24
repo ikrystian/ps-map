@@ -77,7 +77,6 @@ export default function AdminUsersPage() {
   const [isSendingVerification, setIsSendingVerification] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [roleFilter, setRoleFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({
@@ -98,7 +97,7 @@ export default function AdminUsersPage() {
       })
 
       if (searchQuery) params.append("search", searchQuery)
-      if (roleFilter) params.append("role", roleFilter)
+      params.append("role", "CLIENT")
       if (statusFilter) params.append("status", statusFilter)
 
       const response = await fetch(`/api/admin/users?${params.toString()}`)
@@ -118,7 +117,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [currentPage, searchQuery, roleFilter, statusFilter])
+  }, [currentPage, searchQuery, statusFilter])
 
   // Toggle user block status
   const handleToggleBlock = async (user: User) => {
@@ -305,7 +304,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <AdminHeaderSetter title="Zarządzanie użytkownikami" subtitle="Zarządzaj użytkownikami systemu" />
+      <AdminHeaderSetter title="Zarządzanie klientami" subtitle="Zarządzaj klientami systemu" />
       <div className="flex items-center justify-end gap-2">
         <Button
           variant="outline"
@@ -317,7 +316,7 @@ export default function AdminUsersPage() {
         <Button asChild>
           <Link href="/admin/users/new">
             <UserPlus className="mr-2 h-4 w-4" />
-            Dodaj użytkownika
+            Dodaj klienta
           </Link>
         </Button>
       </div>
@@ -340,20 +339,6 @@ export default function AdminUsersPage() {
                 />
               </div>
             </div>
-            <Select value={roleFilter} onValueChange={(value) => {
-              setRoleFilter(value === "all" ? "" : value)
-              setCurrentPage(1)
-            }}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filtruj po roli" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszyskie role</SelectItem>
-                <SelectItem value="CLIENT">Klient</SelectItem>
-                <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={(value) => {
               setStatusFilter(value === "all" ? "" : value)
               setCurrentPage(1)
@@ -380,7 +365,7 @@ export default function AdminUsersPage() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Users ({pagination.total})</CardTitle>
+          <CardTitle>Klienci ({pagination.total})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -389,7 +374,6 @@ export default function AdminUsersPage() {
                 <TableHead>Avatar</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Profile</TableHead>
                 <TableHead>Created</TableHead>
@@ -420,11 +404,6 @@ export default function AdminUsersPage() {
                       {user.name || "—"}
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleBadgeVariant(user.role)}>
-                        {formatRole(user.role)}
-                      </Badge>
-                    </TableCell>
                     <TableCell>
                       <Badge variant={getEffectiveStatusBadge(user).variant}>
                         {getEffectiveStatusBadge(user).label}
@@ -492,7 +471,7 @@ export default function AdminUsersPage() {
           {pagination.pages > 1 && (
             <div className="flex items-center justify-between mt-4">
               <div className="text-sm text-muted-foreground">
-                Page {pagination.page} of {pagination.pages} ({pagination.total} total users)
+                Strona {pagination.page} z {pagination.pages} (łącznie {pagination.total} klientów)
               </div>
               <div className="flex gap-2">
                 <Button
@@ -501,7 +480,7 @@ export default function AdminUsersPage() {
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
-                  Previous
+                  Poprzednia
                 </Button>
                 <Button
                   variant="outline"
@@ -509,7 +488,7 @@ export default function AdminUsersPage() {
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === pagination.pages}
                 >
-                  Next
+                  Następna
                 </Button>
               </div>
             </div>
@@ -523,8 +502,8 @@ export default function AdminUsersPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will soft delete the user account for{" "}
-              <strong>{selectedUser?.email}</strong>. The user will no longer be able to
+              This will soft delete the client account for{" "}
+              <strong>{selectedUser?.email}</strong>. The client will no longer be able to
               access the system, but their data will be preserved.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -536,7 +515,7 @@ export default function AdminUsersPage() {
               onClick={handleDeleteUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete User
+              Delete Client
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
