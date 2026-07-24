@@ -39,6 +39,7 @@
     "@editorjs/underline": "^1.2.1",
     "@editorjs/warning": "^1.4.1",
     "@hookform/resolvers": "^5.4.0",
+    "@hotjar/browser": "^1.0.9",
     "@libsql/client": "^0.17.4",
     "@pdf-lib/fontkit": "^1.1.1",
     "@prisma/adapter-libsql": "^7.8.0",

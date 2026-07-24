@@ -67,7 +67,7 @@ export default function CookieConsentBanner() {
                 {
                   title: "Analityczne pliki cookies",
                   description:
-                    "Pozwalają nam zliczać wizyty i źródła ruchu, dzięki czemu możemy mierzyć i ulepszać wydajność naszego serwisu. Pomagają nam ustalić, które strony są najpopularniejsze.",
+                    "Pozwalają nam zliczać wizyty i źródła ruchu, dzięki czemu możemy mierzyć i ulepszać wydajność naszego serwisu. Pomagają nam ustalić, które strony są najpopularniejsze. W tej kategorii korzystamy z narzędzi Google Analytics oraz Hotjar (mapy ciepła i nagrania sesji w formie zanonimizowanej). Bez Twojej zgody narzędzia te nie są uruchamiane.",
                   linkedCategory: "analytics",
                 },
                 {

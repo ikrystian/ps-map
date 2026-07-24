@@ -3,6 +3,7 @@ import { BugReportWidget } from "@/components/BugReportWidget";
 import { ChatAssistant } from "@/components/ChatAssistant";
 import CookieConsentBanner from "@/components/CookieConsent";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { HotjarAnalytics } from "@/components/Hotjar";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -211,6 +212,7 @@ export default async function RootLayout({
           {showChat && <ChatAssistant />}
           <BugReportWidget />
           <CookieConsentBanner />
+          <HotjarAnalytics />
         </Providers>
       </body>
     </html>
