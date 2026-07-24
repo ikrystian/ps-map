@@ -180,6 +180,7 @@ export async function POST(request: NextRequest) {
           imie: clientData.imie || null,
           nazwisko: clientData.nazwisko || null,
           numerTelefonu: clientData.telefon || null,
+          adres: clientData.adres || null,
           voivodeshipId: clientData.voivodeshipId || null,
           miasto: clientData.miasto || null,
           kodPocztowy: clientData.kodPocztowy || null,

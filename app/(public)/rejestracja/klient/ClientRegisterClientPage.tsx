@@ -39,6 +39,7 @@ export default function ClientRegistrationPage() {
     imie: "",
     nazwisko: "",
     telefon: "",
+    adres: "",
     kodPocztowy: "",
     miasto: "",
     voivodeshipId: "",
@@ -282,12 +283,21 @@ export default function ClientRegistrationPage() {
       }
     }
 
-    // Telefon (opcjonalny, ale jeśli wpisany, to musi być poprawny)
-    if (formData.telefon && formData.telefon.trim()) {
+    // Telefon
+    if (!formData.telefon.trim()) {
+      newErrors.telefon = "Numer telefonu jest wymagany"
+    } else {
       const phoneRegex = /^[+0-9\s-]{9,15}$/
       if (!phoneRegex.test(formData.telefon)) {
         newErrors.telefon = "Podaj poprawny numer telefonu (9-15 cyfr)"
       }
+    }
+
+    // Adres
+    if (!formData.adres.trim()) {
+      newErrors.adres = "Adres jest wymagany"
+    } else if (formData.adres.trim().length < 3) {
+      newErrors.adres = "Adres musi mieć co najmniej 3 znaki"
     }
 
     // Walidacja NIP dla firm, jeśli podano
@@ -376,6 +386,7 @@ export default function ClientRegistrationPage() {
             imie: formData.imie,
             nazwisko: formData.nazwisko,
             telefon: formData.telefon,
+            adres: formData.adres,
             miasto: formData.miasto,
             kodPocztowy: formData.kodPocztowy || null,
             voivodeshipId: formData.voivodeshipId || null,
@@ -516,7 +527,7 @@ export default function ClientRegistrationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="telefon" className={cn(errors.telefon && "text-destructive")}>Telefon</Label>
+                <Label htmlFor="telefon" className={cn(errors.telefon && "text-destructive")}>Telefon *</Label>
                 <Input
                   id="telefon"
                   type="tel"
@@ -527,6 +538,22 @@ export default function ClientRegistrationPage() {
                 />
                 {errors.telefon && (
                   <p className="text-xs text-destructive mt-1">{errors.telefon}</p>
+                )}
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="adres" className={cn(errors.adres && "text-destructive")}>Adres (ulica i numer) *</Label>
+                <Input
+                  id="adres"
+                  type="text"
+                  placeholder="Np. ul. Warszawska 1/2"
+                  value={formData.adres}
+                  onChange={(e) => handleChange("adres", e.target.value)}
+                  disabled={isLoading}
+                  className={cn("h-11", errors.adres && "border-destructive focus-visible:ring-destructive")}
+                />
+                {errors.adres && (
+                  <p className="text-xs text-destructive mt-1">{errors.adres}</p>
                 )}
               </div>
 

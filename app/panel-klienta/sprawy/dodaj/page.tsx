@@ -232,7 +232,8 @@ export default function ClientAddCasePage() {
         }
       }
     }
-  }, [isCategoryModalOpen, formData.categoryIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCategoryModalOpen]);
 
   // Dynamic fetch and caching for cities
   useEffect(() => {
@@ -328,12 +329,21 @@ export default function ClientAddCasePage() {
   };
 
   const toggleCategory = (categoryId: string) => {
+    const isCurrentlySelected = formData.categoryIds.includes(categoryId);
     setFormData((prev) => ({
       ...prev,
-      categoryIds: prev.categoryIds.includes(categoryId)
+      categoryIds: isCurrentlySelected
         ? prev.categoryIds.filter((id) => id !== categoryId)
         : [...prev.categoryIds, categoryId],
     }));
+
+    // Po zaznaczeniu kategorii automatycznie wybierz jej dziedzinę nadrzędną
+    if (!isCurrentlySelected) {
+      const selectedCat = categories.find((cat: any) => cat.id === categoryId);
+      if (selectedCat) {
+        setSelectedParentIdForModal(selectedCat.parentId || selectedCat.id);
+      }
+    }
   };
 
   // AI (deepseek przez OpenRouter) analizuje opis sprawy i dobiera kategorie za klienta

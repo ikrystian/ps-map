@@ -940,7 +940,7 @@ export default function ClientProfilePage() {
                     <MapPin className="h-5 w-5 text-primary" />
                     Adres korespondencyjny
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground text-xs">Uzupełnij swój adres zamieszkania.</CardDescription>
+                  <CardDescription className="text-muted-foreground text-xs">Uzupełnij swój adres.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
