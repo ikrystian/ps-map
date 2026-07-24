@@ -158,6 +158,9 @@ export default function ClientAddCasePage() {
   const [selectedCityName, setSelectedCityName] = useState("");
   const [showMoreGDPR, setShowMoreGDPR] = useState(false);
 
+  // Komunikaty walidacyjne przy polach - pokazywane dopiero po kliknięciu "Dalej"
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [formData, setFormData] = useState<FormData>({
     typSprawy: "",
     categoryIds: [],
@@ -177,8 +180,18 @@ export default function ClientAddCasePage() {
     akceptujeKlauzule: false,
   });
 
+  const clearError = (field: string) => {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    clearError(field);
   };
 
   useEffect(() => {
@@ -330,6 +343,7 @@ export default function ClientAddCasePage() {
 
   const toggleCategory = (categoryId: string) => {
     const isCurrentlySelected = formData.categoryIds.includes(categoryId);
+    clearError("categoryIds");
     setFormData((prev) => ({
       ...prev,
       categoryIds: isCurrentlySelected
@@ -496,40 +510,112 @@ export default function ClientAddCasePage() {
     fetchUserData();
   }, []);
 
+  // Kolejność pól w krokach - używana do przewinięcia do pierwszego błędu
+  const stepFieldOrder: Record<number, string[]> = {
+    1: ["typSprawy"],
+    2: ["nazwaSprawy", "opisSprawy"],
+    3: ["categoryIds", "cityId"],
+    4: [],
+    5: [
+      "imieNazwisko",
+      "telefonKontakt",
+      "preferowanyKontakt",
+      "akceptujeKlauzule",
+    ],
+  };
+
+  const getStepErrors = (step: number): Record<string, string> => {
+    const stepErrors: Record<string, string> = {};
+
+    switch (step) {
+      case 1:
+        if (!formData.typSprawy) {
+          stepErrors.typSprawy =
+            "Wybierz typ sprawy, aby przejść do następnego kroku";
+        }
+        break;
+      case 2:
+        if (!formData.nazwaSprawy.trim()) {
+          stepErrors.nazwaSprawy = "Podaj nazwę sprawy";
+        }
+        if (!formData.opisSprawy.trim()) {
+          stepErrors.opisSprawy = "Opisz swoją sprawę (minimum 50 znaków)";
+        } else if (formData.opisSprawy.length < 50) {
+          stepErrors.opisSprawy = `Opis musi mieć co najmniej 50 znaków - brakuje jeszcze ${
+            50 - formData.opisSprawy.length
+          }`;
+        }
+        break;
+      case 3:
+        if (formData.categoryIds.length === 0) {
+          stepErrors.categoryIds = "Wybierz co najmniej jedną kategorię sprawy";
+        }
+        if (!formData.cityId || !formData.voivodeshipId) {
+          stepErrors.cityId = "Wybierz miasto, którego dotyczy sprawa";
+        }
+        break;
+      case 4:
+        // Termin i budżet są opcjonalne
+        break;
+      case 5:
+        if (!formData.imieNazwisko.trim()) {
+          stepErrors.imieNazwisko = "Podaj imię i nazwisko lub nazwę podmiotu";
+        }
+        if (!formData.telefonKontakt.trim()) {
+          stepErrors.telefonKontakt = "Podaj numer telefonu kontaktowego";
+        }
+        if (!formData.preferowanyKontakt) {
+          stepErrors.preferowanyKontakt = "Wybierz preferowaną formę kontaktu";
+        }
+        if (!formData.akceptujeKlauzule) {
+          stepErrors.akceptujeKlauzule =
+            "Zaakceptuj klauzulę informacyjną i regulamin, aby dodać sprawę";
+        }
+        break;
+    }
+
+    return stepErrors;
+  };
+
+  // Waliduje krok i pokazuje komunikaty przy polach, jeśli czegoś brakuje
+  const validateStepWithFeedback = (step: number): boolean => {
+    const stepErrors = getStepErrors(step);
+    setErrors(stepErrors);
+
+    const errorFields = Object.keys(stepErrors);
+    if (errorFields.length === 0) return true;
+
+    toast.error(
+      errorFields.length === 1
+        ? stepErrors[errorFields[0]]
+        : "Uzupełnij zaznaczone pola, aby przejść dalej",
+    );
+
+    // Przewiń do pierwszego pola z błędem
+    const firstErrorField = (stepFieldOrder[step] || errorFields).find(
+      (field) => stepErrors[field],
+    );
+    if (firstErrorField) {
+      requestAnimationFrame(() => {
+        document
+          .getElementById(`field-${firstErrorField}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+
+    return false;
+  };
+
   const handleNext = () => {
-    if (validateStep(currentStep)) {
+    if (validateStepWithFeedback(currentStep)) {
+      setErrors({});
       setCurrentStep((prev) => Math.min(prev + 1, 5));
     }
   };
 
   const handlePrevious = () => {
+    setErrors({});
     setCurrentStep((prev) => Math.max(prev - 1, 1));
-  };
-
-  const validateStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        return !!formData.typSprawy;
-      case 2:
-        return !!formData.nazwaSprawy && formData.opisSprawy.length >= 50;
-      case 3:
-        return (
-          formData.categoryIds.length > 0 &&
-          !!formData.voivodeshipId &&
-          !!formData.cityId
-        );
-      case 4:
-        return true; // Termin i budżet są opcjonalne
-      case 5:
-        return (
-          !!formData.imieNazwisko &&
-          !!formData.telefonKontakt &&
-          !!formData.preferowanyKontakt &&
-          formData.akceptujeKlauzule
-        );
-      default:
-        return false;
-    }
   };
 
   const submitCase = (otpCodeValue?: string) =>
@@ -547,7 +633,7 @@ export default function ClientAddCasePage() {
     });
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStepWithFeedback(5)) return;
 
     setIsSubmitting(true);
     try {
@@ -678,8 +764,13 @@ export default function ClientAddCasePage() {
 
   const renderStep1 = () => (
     <div className="space-y-6">
-      <div>
-        <Label className="text-muted-foreground text-sm font-semibold mb-4 block">
+      <div id="field-typSprawy">
+        <Label
+          className={cn(
+            "text-muted-foreground text-sm font-semibold mb-4 block",
+            errors.typSprawy && "text-destructive",
+          )}
+        >
           Wybierz typ sprawy *
         </Label>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -715,7 +806,9 @@ export default function ClientAddCasePage() {
                   "cursor-pointer border transition-all duration-300 rounded-lg relative overflow-hidden p-6 group hover:bg-background-sec/20 flex flex-col justify-between h-full min-h-[160px]",
                   isSelected
                     ? "border-primary bg-primary/5 shadow-lg shadow-primary/5"
-                    : "border-border/30 bg-background-sec/10 hover:border-border/60",
+                    : errors.typSprawy
+                      ? "border-destructive/60 bg-background-sec/10 hover:border-destructive"
+                      : "border-border/30 bg-background-sec/10 hover:border-border/60",
                 )}
                 onClick={() => {
                   updateFormData("typSprawy", option.value);
@@ -762,6 +855,9 @@ export default function ClientAddCasePage() {
             );
           })}
         </div>
+        {errors.typSprawy && (
+          <p className="text-xs text-destructive mt-2">{errors.typSprawy}</p>
+        )}
       </div>
     </div>
   );
@@ -781,8 +877,13 @@ export default function ClientAddCasePage() {
 
     return (
       <div className="space-y-5">
-        <div>
-          <Label className="text-muted-foreground text-xs font-semibold mb-2 block">
+        <div id="field-categoryIds">
+          <Label
+            className={cn(
+              "text-muted-foreground text-xs font-semibold mb-2 block",
+              errors.categoryIds && "text-destructive",
+            )}
+          >
             Kategorie sprawy * (możesz wybrać więcej niż jedną)
           </Label>
           <Dialog
@@ -838,7 +939,12 @@ export default function ClientAddCasePage() {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="w-full flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-border/20 hover:border-primary/40 rounded-lg hover:bg-background-sec/20 transition-all text-center group"
+                  className={cn(
+                    "w-full flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed rounded-lg hover:bg-background-sec/20 transition-all text-center group",
+                    errors.categoryIds
+                      ? "border-destructive/60 hover:border-destructive"
+                      : "border-border/20 hover:border-primary/40",
+                  )}
                 >
                   <div className="h-11 w-11 rounded-md bg-background-sec border border-border/10 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20 flex items-center justify-center text-muted-foreground transition-all mb-3">
                     <Search className="h-5 w-5" />
@@ -1094,6 +1200,12 @@ export default function ClientAddCasePage() {
             </DialogContent>
           </Dialog>
 
+          {errors.categoryIds && (
+            <p className="text-xs text-destructive mt-2">
+              {errors.categoryIds}
+            </p>
+          )}
+
           {/* Automatyczny dobór kategorii przez AI na podstawie opisu z kroku 2 */}
           <button
             type="button"
@@ -1133,10 +1245,13 @@ export default function ClientAddCasePage() {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2" id="field-cityId">
           <Label
             htmlFor="cityId"
-            className="text-muted-foreground text-xs font-semibold"
+            className={cn(
+              "text-muted-foreground text-xs font-semibold",
+              errors.cityId && "text-destructive",
+            )}
           >
             Miasto *
           </Label>
@@ -1145,7 +1260,12 @@ export default function ClientAddCasePage() {
               <Button
                 variant="outline"
                 role="combobox"
-                className="h-11 w-full bg-background-sec/20 border-border/30 rounded-lg text-muted-foreground text-sm font-normal text-left justify-between mt-1.5"
+                className={cn(
+                  "h-11 w-full bg-background-sec/20 rounded-lg text-muted-foreground text-sm font-normal text-left justify-between mt-1.5",
+                  errors.cityId
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : "border-border/30",
+                )}
               >
                 <span className="truncate">
                   {selectedCityName || "Wybierz miasto..."}
@@ -1199,6 +1319,7 @@ export default function ClientAddCasePage() {
                               cityId: city.id,
                               voivodeshipId: city.voivodeship?.slug || "",
                             }));
+                            clearError("cityId");
                             setSelectedCityName(city.nazwa);
                             setLocationOpen(false);
                           }}
@@ -1226,6 +1347,9 @@ export default function ClientAddCasePage() {
               </Command>
             </PopoverContent>
           </Popover>
+          {errors.cityId && (
+            <p className="text-xs text-destructive mt-1">{errors.cityId}</p>
+          )}
         </div>
       </div>
     );
@@ -1233,10 +1357,13 @@ export default function ClientAddCasePage() {
 
   const renderDescriptionStep = () => (
     <div className="space-y-5">
-      <div>
+      <div id="field-nazwaSprawy">
         <Label
           htmlFor="nazwaSprawy"
-          className="text-muted-foreground text-xs font-semibold"
+          className={cn(
+            "text-muted-foreground text-xs font-semibold",
+            errors.nazwaSprawy && "text-destructive",
+          )}
         >
           Nazwa sprawy *
         </Label>
@@ -1245,14 +1372,24 @@ export default function ClientAddCasePage() {
           value={formData.nazwaSprawy}
           onChange={(e) => updateFormData("nazwaSprawy", e.target.value)}
           placeholder="np. Sporządzenie umowy najmu lokalu komercyjnego"
-          className="h-11 mt-1.5"
+          className={cn(
+            "h-11 mt-1.5",
+            errors.nazwaSprawy &&
+              "border-destructive focus-visible:ring-destructive",
+          )}
         />
+        {errors.nazwaSprawy && (
+          <p className="text-xs text-destructive mt-1">{errors.nazwaSprawy}</p>
+        )}
       </div>
 
-      <div>
+      <div id="field-opisSprawy">
         <Label
           htmlFor="opisSprawy"
-          className="text-muted-foreground text-xs font-semibold"
+          className={cn(
+            "text-muted-foreground text-xs font-semibold",
+            errors.opisSprawy && "text-destructive",
+          )}
         >
           Opis sprawy * (minimum 50 znaków)
         </Label>
@@ -1262,8 +1399,15 @@ export default function ClientAddCasePage() {
           onChange={(e) => updateFormData("opisSprawy", e.target.value)}
           placeholder="Opisz szczegółowo stan faktyczny, kluczowe okoliczności, cele oraz pytania prawne, na które szukasz odpowiedzi..."
           rows={8}
-          className="mt-1.5 resize-none"
+          className={cn(
+            "mt-1.5 resize-none",
+            errors.opisSprawy &&
+              "border-destructive focus-visible:ring-destructive",
+          )}
         />
+        {errors.opisSprawy && (
+          <p className="text-xs text-destructive mt-1.5">{errors.opisSprawy}</p>
+        )}
         <div className="flex justify-between items-center mt-2.5">
           <span className="text-sm text-muted-foreground/70 font-light">
             Opisz problem prawny jak najdokładniej.
@@ -1706,7 +1850,6 @@ export default function ClientAddCasePage() {
                   type="button"
                   variant="primary"
                   onClick={handleNext}
-                  disabled={!validateStep(currentStep)}
                   className="h-11 px-6 shadow-md shadow-primary/20 group gap-1.5"
                 >
                   Dalej
@@ -1717,7 +1860,7 @@ export default function ClientAddCasePage() {
                   type="button"
                   variant="primary"
                   onClick={handleSubmit}
-                  disabled={!validateStep(5) || isSubmitting}
+                  disabled={isSubmitting}
                   className="h-11 px-6 shadow-md shadow-primary/20 group gap-1.5"
                 >
                   {isSubmitting ? (
