@@ -517,3 +517,196 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+/* ============================================================
+   WOW Enhancements
+   ============================================================ */
+(function wowFx() {
+    'use strict';
+
+    // Tryb testowy: ?fxtest natychmiast pokazuje wszystkie elementy (podgląd/screenshoty)
+    const instantReveal = new URLSearchParams(location.search).has('fxtest');
+    if (instantReveal) {
+        document.documentElement.style.scrollBehavior = 'auto';
+        document.querySelectorAll('.animate-on-scroll').forEach((el) => el.classList.add('visible'));
+        document.querySelectorAll('.rank-chart').forEach((el) => el.classList.add('visible'));
+        if (location.hash) {
+            const target = document.querySelector(location.hash);
+            if (target) {
+                [100, 600, 1500, 3000].forEach((t) => setTimeout(() => target.scrollIntoView(), t));
+            }
+        }
+    }
+
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+    // ===== Scroll Progress, Hero Parallax & Scroll Indicator =====
+    const scrollProgressEl = document.getElementById('scrollProgress');
+    const heroBgEl = document.getElementById('heroBg');
+    const scrollIndicatorEl = document.getElementById('scrollIndicator');
+    let scrollTicking = false;
+
+    function handleScrollFx() {
+        const y = window.scrollY;
+        if (scrollProgressEl) {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            if (max > 0) {
+                scrollProgressEl.style.transform = `scaleX(${Math.min(y / max, 1)})`;
+            }
+        }
+        if (heroBgEl) {
+            if (y < window.innerHeight * 1.2) {
+                const ty = Math.min(y * 0.18, 160);
+                heroBgEl.style.transform = `translate3d(0, ${ty.toFixed(1)}px, 0)`;
+            }
+        }
+        if (scrollIndicatorEl) {
+            scrollIndicatorEl.classList.toggle('hidden', y > 120);
+        }
+        scrollTicking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+            requestAnimationFrame(handleScrollFx);
+            scrollTicking = true;
+        }
+    }, { passive: true });
+    handleScrollFx();
+
+    // ===== Hero: parallax orbsów za kursorem =====
+    const heroSection = document.querySelector('.hero');
+    const heroDecorEl = document.getElementById('heroDecor');
+    if (heroSection && heroDecorEl && finePointer) {
+        heroSection.addEventListener('mousemove', (e) => {
+            const r = heroSection.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            heroDecorEl.style.transform = `translate3d(${(x * 26).toFixed(1)}px, ${(y * 26).toFixed(1)}px, 0)`;
+        });
+        heroSection.addEventListener('mouseleave', () => {
+            heroDecorEl.style.transform = '';
+        });
+    }
+
+    // ===== Tilt 3D na kartach mockupów =====
+    if (finePointer) {
+        document.querySelectorAll('[data-tilt]').forEach((el) => {
+            const strength = parseFloat(el.dataset.tilt) || 5;
+            el.addEventListener('mouseenter', () => {
+                el.style.transition = 'transform 0.12s ease-out';
+            });
+            el.addEventListener('mousemove', (e) => {
+                const r = el.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                el.style.transform = `perspective(950px) rotateX(${(-y * strength).toFixed(2)}deg) rotateY(${(x * strength).toFixed(2)}deg)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                el.style.transform = '';
+            });
+        });
+    }
+
+    // ===== Spotlight: poświata za kursorem na kartach =====
+    const spotlightCards = document.querySelectorAll(
+        '.benefit-card, .advisor-feature-item, .consultation-feature-item, .trust-feature-item, .why-item'
+    );
+    spotlightCards.forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+            card.style.setProperty('--my', `${e.clientY - r.top}px`);
+        });
+    });
+
+    // ===== Animowane liczniki, paski i wykresy =====
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+
+    function animateCount(el) {
+        const target = parseFloat(el.dataset.count);
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1700;
+        const start = performance.now();
+
+        function frame(now) {
+            const p = Math.min((now - start) / duration, 1);
+            const v = target * easeOutCubic(p);
+            const text = decimals > 0 ? v.toFixed(decimals) : Math.round(v).toLocaleString('pl-PL');
+            el.textContent = prefix + text + suffix;
+            if (p < 1) {
+                requestAnimationFrame(frame);
+            } else {
+                el.textContent = prefix + (decimals > 0 ? target.toFixed(decimals) : target.toLocaleString('pl-PL')) + suffix;
+            }
+        }
+        requestAnimationFrame(frame);
+    }
+
+    const countEls = document.querySelectorAll('[data-count]');
+    const barEls = document.querySelectorAll('[data-bar]');
+    const circleEl = document.querySelector('[data-circle]');
+    const rankChartEl = document.querySelector('.rank-chart');
+
+    if (countEls.length || barEls.length || circleEl || rankChartEl) {
+        // Stany początkowe
+        barEls.forEach((bar) => {
+            bar.dataset.targetWidth = bar.style.width || '0%';
+            bar.style.width = '0%';
+        });
+        let circleTarget = 0;
+        if (circleEl) {
+            const dash = circleEl.getAttribute('stroke-dasharray') || '0, 100';
+            circleTarget = parseFloat(dash.split(',')[0]) || 0;
+            circleEl.setAttribute('stroke-dasharray', '0, 100');
+        }
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                statsObserver.unobserve(el);
+
+                if (el.hasAttribute('data-count')) {
+                    animateCount(el);
+                }
+
+                if (el.hasAttribute('data-bar')) {
+                    requestAnimationFrame(() => {
+                        el.style.width = el.dataset.targetWidth;
+                    });
+                }
+
+                if (el.hasAttribute('data-circle')) {
+                    const target = parseFloat(el.dataset.circleTarget || '0');
+                    const duration = 1700;
+                    const start = performance.now();
+                    (function frame(now) {
+                        const p = Math.min((now - start) / duration, 1);
+                        el.setAttribute('stroke-dasharray', `${(target * easeOutCubic(p)).toFixed(1)}, 100`);
+                        if (p < 1) requestAnimationFrame(frame);
+                    })(start);
+                }
+
+                if (el.classList.contains('rank-chart')) {
+                    el.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.4 });
+
+        countEls.forEach((el) => statsObserver.observe(el));
+        barEls.forEach((el) => statsObserver.observe(el));
+        if (circleEl) {
+            circleEl.dataset.circleTarget = circleTarget;
+            statsObserver.observe(circleEl);
+        }
+        if (rankChartEl) {
+            statsObserver.observe(rankChartEl);
+        }
+    }
+})();
