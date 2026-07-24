@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://prosta-sprawa.pl",
+        "HTTP-Referer": "https://prostasprawa.pl",
         "X-Title": "Prosta Sprawa",
       },
       body: JSON.stringify({

@@ -310,7 +310,7 @@ export default function InvoicePrintPage() {
               <div>ul. Przykładowa 123</div>
               <div>00-001 Warszawa</div>
               <div>NIP: 1234567890</div>
-              <div>Email: kontakt@prosta-sprawa.pl</div>
+              <div>Email: kontakt@prostasprawa.pl</div>
               <div>Tel: +48 123 456 789</div>
             </div>
           </div>
@@ -419,7 +419,7 @@ export default function InvoicePrintPage() {
             Faktura wystawiona automatycznie przez system Prosta Sprawa.
           </p>
           <p>
-            W przypadku pytań prosimy o kontakt: kontakt@prosta-sprawa.pl
+            W przypadku pytań prosimy o kontakt: kontakt@prostasprawa.pl
           </p>
         </div>
       </div>

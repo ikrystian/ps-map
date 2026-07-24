@@ -89,7 +89,7 @@ ${opisSprawy.slice(0, 8000)}`
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://prosta-sprawa.pl",
+        "HTTP-Referer": "https://prostasprawa.pl",
         "X-Title": "Prosta Sprawa",
       },
       body: JSON.stringify({
@@ -129,8 +129,8 @@ ${opisSprawy.slice(0, 8000)}`
     const categoriesById = new Map(categories.map((cat) => [cat.id, cat]))
     const suggestedIds = Array.isArray(parsed.categoryIds)
       ? [...new Set(parsed.categoryIds.filter((id): id is string => typeof id === "string"))]
-          .filter((id) => categoriesById.has(id))
-          .slice(0, 3)
+        .filter((id) => categoriesById.has(id))
+        .slice(0, 3)
       : []
 
     if (suggestedIds.length === 0) {

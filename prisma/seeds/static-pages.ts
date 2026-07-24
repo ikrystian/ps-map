@@ -6,11 +6,11 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
   await originalPrisma.$transaction(async (prisma) => {
     // 1. Create Modules
     const regulaminModule = await prisma.module.create({
-    data: {
-      name: 'Regulamin - Zawartość główna',
-      description: 'Domyślna treść regulaminu platformy Prosta Sprawa',
-      type: ModuleType.EDITABLE_HTML,
-      code: `
+      data: {
+        name: 'Regulamin - Zawartość główna',
+        description: 'Domyślna treść regulaminu platformy Prosta Sprawa',
+        type: ModuleType.EDITABLE_HTML,
+        code: `
 <div class="container mx-auto px-4 py-12 max-w-5xl">
   <!-- Header -->
   <div class="text-center mb-12">
@@ -58,7 +58,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       <h3 class="text-xl font-bold mb-4 text-white">§1. Definicje</h3>
       <p class="mb-3">Użyte w Regulaminie pojęcia oznaczają:</p>
       <ul class="space-y-2 pl-4 list-disc">
-        <li><strong>1. Platforma</strong> - serwis internetowy Prosta Sprawa dostępny pod adresem www.prosta-sprawa.pl</li>
+        <li><strong>1. Platforma</strong> - serwis internetowy Prosta Sprawa dostępny pod adresem www.prostasprawa.pl</li>
         <li><strong>2. Usługodawca</strong> - właściciel platformy Prosta Sprawa z siedzibą w Warszawie</li>
         <li><strong>3. Użytkownik</strong> - każda osoba korzystająca z Platformy</li>
         <li><strong>4. Klient</strong> - osoba fizyczna, firma lub organizacja poszukująca pomocy prawnej</li>
@@ -153,7 +153,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 
     <div id="reklamacje" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
       <h3 class="text-xl font-bold mb-4 text-white">§11. Reklamacje</h3>
-      <p class="mb-2"><strong>1.</strong> Reklamacje dotyczące działania Platformy można zgłaszać pod adresem e-mail: kontakt@prosta-sprawa.pl.</p>
+      <p class="mb-2"><strong>1.</strong> Reklamacje dotyczące działania Platformy można zgłaszać pod adresem e-mail: kontakt@prostasprawa.pl.</p>
     </div>
 
     <div id="koncowe" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
@@ -167,22 +167,22 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
     <p class="font-semibold mb-2 text-white">Pytania dotyczące Regulaminu?</p>
     <p class="text-sm text-neutral-400 mb-4">Skontaktuj się z nami:</p>
     <div class="flex justify-center gap-4 text-sm">
-      <a href="mailto:kontakt@prosta-sprawa.pl" class="text-[#E2B13C] hover:underline">kontakt@prosta-sprawa.pl</a>
+      <a href="mailto:kontakt@prostasprawa.pl" class="text-[#E2B13C] hover:underline">kontakt@prostasprawa.pl</a>
       <span class="text-neutral-600">|</span>
       <a href="tel:+48123456789" class="text-[#E2B13C] hover:underline">+48 123 456 789</a>
     </div>
   </div>
 </div>
 `
-    }
-  })
+      }
+    })
 
-  const politykaModule = await prisma.module.create({
-    data: {
-      name: 'Polityka prywatności - Zawartość główna',
-      description: 'Domyślna treść polityki prywatności platformy Prosta Sprawa',
-      type: ModuleType.EDITABLE_HTML,
-      code: `
+    const politykaModule = await prisma.module.create({
+      data: {
+        name: 'Polityka prywatności - Zawartość główna',
+        description: 'Domyślna treść polityki prywatności platformy Prosta Sprawa',
+        type: ModuleType.EDITABLE_HTML,
+        code: `
 <div class="container mx-auto px-4 py-12 max-w-5xl">
   <!-- Header -->
   <div class="text-center mb-12">
@@ -229,7 +229,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       </p>
       <div class="bg-neutral-950 p-4 border border-neutral-800 rounded-lg text-sm">
         <p class="font-semibold mb-2 text-white">Dane kontaktowe:</p>
-        <p>Email: iod@prosta-sprawa.pl</p>
+        <p>Email: iod@prostasprawa.pl</p>
         <p>Adres: ul. Przykładowa 123, 00-001 Warszawa</p>
       </div>
     </div>
@@ -277,15 +277,15 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
   </div>
 </div>
 `
-    }
-  })
+      }
+    })
 
-  const oNasHeroModule = await prisma.module.create({
-    data: {
-      name: 'O nas - Hero i Misja',
-      description: 'Główna sekcja hero oraz misja portalu na stronie O nas',
-      type: ModuleType.EDITABLE_HTML,
-      code: `
+    const oNasHeroModule = await prisma.module.create({
+      data: {
+        name: 'O nas - Hero i Misja',
+        description: 'Główna sekcja hero oraz misja portalu na stronie O nas',
+        type: ModuleType.EDITABLE_HTML,
+        code: `
 <div class="container mx-auto px-4 py-12 max-w-6xl">
   <!-- Hero Section -->
   <div class="text-center mb-16">
@@ -333,15 +333,15 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
   </div>
 </div>
 `
-    }
-  })
+      }
+    })
 
-  const oNasValuesModule = await prisma.module.create({
-    data: {
-      name: 'O nas - Wartości i Historia',
-      description: 'Historia firmy oraz sekcja z głównymi wartościami',
-      type: ModuleType.EDITABLE_HTML,
-      code: `
+    const oNasValuesModule = await prisma.module.create({
+      data: {
+        name: 'O nas - Wartości i Historia',
+        description: 'Historia firmy oraz sekcja z głównymi wartościami',
+        type: ModuleType.EDITABLE_HTML,
+        code: `
 <div class="container mx-auto px-4 py-6 max-w-6xl">
   <!-- Our Story -->
   <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-8 mb-12 shadow-sm text-neutral-300">
@@ -403,15 +403,15 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
   </div>
 </div>
 `
-    }
-  })
+      }
+    })
 
-  const kontaktModule = await prisma.module.create({
-    data: {
-      name: 'Kontakt - Formularz i Dane',
-      description: 'Sekcja z formularzem kontaktowym, danymi adresowymi i mapą',
-      type: ModuleType.EDITABLE_HTML,
-      code: `
+    const kontaktModule = await prisma.module.create({
+      data: {
+        name: 'Kontakt - Formularz i Dane',
+        description: 'Sekcja z formularzem kontaktowym, danymi adresowymi i mapą',
+        type: ModuleType.EDITABLE_HTML,
+        code: `
 <div class="container mx-auto px-4 py-12 max-w-6xl">
   <!-- Header -->
   <div class="text-center mb-12">
@@ -430,8 +430,8 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
         </svg>
       </div>
       <h3 class="font-semibold text-white mb-2">Email</h3>
-      <a href="mailto:kontakt@prosta-sprawa.pl" class="text-neutral-400 hover:text-[#E2B13C] block text-sm mb-1">kontakt@prosta-sprawa.pl</a>
-      <a href="mailto:pomoc@prosta-sprawa.pl" class="text-neutral-400 hover:text-[#E2B13C] block text-sm">pomoc@prosta-sprawa.pl</a>
+      <a href="mailto:kontakt@prostasprawa.pl" class="text-neutral-400 hover:text-[#E2B13C] block text-sm mb-1">kontakt@prostasprawa.pl</a>
+      <a href="mailto:pomoc@prostasprawa.pl" class="text-neutral-400 hover:text-[#E2B13C] block text-sm">pomoc@prostasprawa.pl</a>
     </div>
 
     <!-- Info Card 2 -->
@@ -517,99 +517,99 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
   </div>
 </div>
 `
-    }
-  })
+      }
+    })
 
-  // 2. Create Pages
-  console.log('Creating page entities...')
+    // 2. Create Pages
+    console.log('Creating page entities...')
 
-  // Page 1: Regulamin
-  const regulaminPage = await prisma.page.create({
-    data: {
-      title: 'Regulamin platformy',
-      slug: 'regulamin',
-      metaTitle: 'Regulamin Platformy - Prosta Sprawa',
-      metaDescription: 'Zasady korzystania z platformy łączącej klientów z ekspertami prawnymi Prosta Sprawa.',
-      published: true,
-      publishedAt: new Date(),
-    }
-  })
+    // Page 1: Regulamin
+    const regulaminPage = await prisma.page.create({
+      data: {
+        title: 'Regulamin platformy',
+        slug: 'regulamin',
+        metaTitle: 'Regulamin Platformy - Prosta Sprawa',
+        metaDescription: 'Zasady korzystania z platformy łączącej klientów z ekspertami prawnymi Prosta Sprawa.',
+        published: true,
+        publishedAt: new Date(),
+      }
+    })
 
-  await prisma.pageModule.create({
-    data: {
-      pageId: regulaminPage.id,
-      moduleId: regulaminModule.id,
-      order: 0
-    }
-  })
+    await prisma.pageModule.create({
+      data: {
+        pageId: regulaminPage.id,
+        moduleId: regulaminModule.id,
+        order: 0
+      }
+    })
 
-  // Page 2: Polityka prywatności
-  const politykaPage = await prisma.page.create({
-    data: {
-      title: 'Polityka prywatności',
-      slug: 'polityka-prywatnosci',
-      metaTitle: 'Polityka Prywatności - Prosta Sprawa',
-      metaDescription: 'Dowiedz się jak przetwarzamy i dbamy o bezpieczeństwo Twoich danych osobowych w Prosta Sprawa.',
-      published: true,
-      publishedAt: new Date(),
-    }
-  })
+    // Page 2: Polityka prywatności
+    const politykaPage = await prisma.page.create({
+      data: {
+        title: 'Polityka prywatności',
+        slug: 'polityka-prywatnosci',
+        metaTitle: 'Polityka Prywatności - Prosta Sprawa',
+        metaDescription: 'Dowiedz się jak przetwarzamy i dbamy o bezpieczeństwo Twoich danych osobowych w Prosta Sprawa.',
+        published: true,
+        publishedAt: new Date(),
+      }
+    })
 
-  await prisma.pageModule.create({
-    data: {
-      pageId: politykaPage.id,
-      moduleId: politykaModule.id,
-      order: 0
-    }
-  })
+    await prisma.pageModule.create({
+      data: {
+        pageId: politykaPage.id,
+        moduleId: politykaModule.id,
+        order: 0
+      }
+    })
 
-  // Page 3: O nas
-  const oNasPage = await prisma.page.create({
-    data: {
-      title: 'O nas',
-      slug: 'o-nas',
-      metaTitle: 'O nas - Poznaj Prosta Sprawa',
-      metaDescription: 'Kim jesteśmy? Poznaj naszą historię, misję oraz wartości stojące za platformą Prosta Sprawa.',
-      published: true,
-      publishedAt: new Date(),
-    }
-  })
+    // Page 3: O nas
+    const oNasPage = await prisma.page.create({
+      data: {
+        title: 'O nas',
+        slug: 'o-nas',
+        metaTitle: 'O nas - Poznaj Prosta Sprawa',
+        metaDescription: 'Kim jesteśmy? Poznaj naszą historię, misję oraz wartości stojące za platformą Prosta Sprawa.',
+        published: true,
+        publishedAt: new Date(),
+      }
+    })
 
-  await prisma.pageModule.create({
-    data: {
-      pageId: oNasPage.id,
-      moduleId: oNasHeroModule.id,
-      order: 0
-    }
-  })
+    await prisma.pageModule.create({
+      data: {
+        pageId: oNasPage.id,
+        moduleId: oNasHeroModule.id,
+        order: 0
+      }
+    })
 
-  await prisma.pageModule.create({
-    data: {
-      pageId: oNasPage.id,
-      moduleId: oNasValuesModule.id,
-      order: 1
-    }
-  })
+    await prisma.pageModule.create({
+      data: {
+        pageId: oNasPage.id,
+        moduleId: oNasValuesModule.id,
+        order: 1
+      }
+    })
 
-  // Page 4: Kontakt
-  const kontaktPage = await prisma.page.create({
-    data: {
-      title: 'Kontakt',
-      slug: 'kontakt',
-      metaTitle: 'Kontakt - Napisz do nas',
-      metaDescription: 'Masz pytania lub potrzebujesz pomocy? Skontaktuj się z nami poprzez formularz kontaktowy lub telefonicznie.',
-      published: true,
-      publishedAt: new Date(),
-    }
-  })
+    // Page 4: Kontakt
+    const kontaktPage = await prisma.page.create({
+      data: {
+        title: 'Kontakt',
+        slug: 'kontakt',
+        metaTitle: 'Kontakt - Napisz do nas',
+        metaDescription: 'Masz pytania lub potrzebujesz pomocy? Skontaktuj się z nami poprzez formularz kontaktowy lub telefonicznie.',
+        published: true,
+        publishedAt: new Date(),
+      }
+    })
 
-  await prisma.pageModule.create({
-    data: {
-      pageId: kontaktPage.id,
-      moduleId: kontaktModule.id,
-      order: 0
-    }
-  })
+    await prisma.pageModule.create({
+      data: {
+        pageId: kontaktPage.id,
+        moduleId: kontaktModule.id,
+        order: 0
+      }
+    })
   })
 
   console.log('✅ Static pages and modules seeded successfully!')

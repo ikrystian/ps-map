@@ -24,7 +24,7 @@ const SELLER = {
   name: "Prosta Sprawa Sp. z o.o.",
   address: "ul. Przykładowa 123",
   postalCity: "00-001 Warszawa",
-  email: "kontakt@prosta-sprawa.pl",
+  email: "kontakt@prostasprawa.pl",
   phone: "+48 123 456 789",
   bankAccount: "12 3456 7890 1234 5678 9012 3456",
 }

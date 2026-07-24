@@ -113,11 +113,10 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                   key={device}
                   type="button"
                   onClick={() => setViewportDevice(device)}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
-                    viewportDevice === device
+                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewportDevice === device
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                       : "text-slate-400 hover:text-slate-200"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
                   <span>{label}</span>
@@ -169,7 +168,7 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                     <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
                   </div>
                   <div className="mx-auto max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-md py-0.5 px-3 text-sm text-slate-500 text-center truncate">
-                    https://prosta-sprawa.pl/modules/{module.name.toLowerCase().replace(/\s+/g, "-")}
+                    https://prostasprawa.pl/modules/{module.name.toLowerCase().replace(/\s+/g, "-")}
                   </div>
                 </div>
 
