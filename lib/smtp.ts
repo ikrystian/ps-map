@@ -25,6 +25,7 @@ interface EmailOptions {
   subject: string
   text?: string
   html?: string
+  replyTo?: string
 }
 
 export interface SMTPResponse {
@@ -66,6 +67,7 @@ export async function sendSMTPEmail(
       subject: options.subject,
       text: options.text,
       html: options.html,
+      replyTo: options.replyTo,
     })
 
     log.push(`S: Message sent: ${info.messageId}`)

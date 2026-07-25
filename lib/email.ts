@@ -21,6 +21,8 @@ interface SendEmailParams {
   text?: string
   templateType?: string
   variables?: Record<string, string>
+  /** Adres, na który trafi odpowiedź po kliknięciu "Odpowiedz" (np. nadawca formularza kontaktowego) */
+  replyTo?: string
 }
 
 /**
@@ -98,7 +100,7 @@ export async function sendEmailWithTemplate({
  * W środowisku development bez konfiguracji SMTP - loguje do konsoli
  * W produkcji lub z konfiguracją SMTP - wysyła prawdziwy email
  */
-export async function sendEmail({ to, subject, html, text, templateType, variables }: SendEmailParams): Promise<boolean> {
+export async function sendEmail({ to, subject, html, text, templateType, variables, replyTo }: SendEmailParams): Promise<boolean> {
   let smtpLog = ''
   let errorMessage: string | undefined = undefined
   let status: EmailLogStatus = EmailLogStatus.FAILED
@@ -185,6 +187,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
         subject,
         html,
         text: text || html.replace(/<[^>]*>/g, ''),
+        replyTo,
       }
     )
 
@@ -246,9 +249,9 @@ export function getBrandEmailLayout(
       finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${domainUrl}/panel-klienta" class="header-link"`)
 
       // Podmień linki w stopce na poprawne URL-e systemowe
-      finalHtml = finalHtml.replace('href="#">Terms of Service</a>', `href="${domainUrl}/terms">Terms of Service</a>`)
-      finalHtml = finalHtml.replace('href="#">Privacy Policy</a>', `href="${domainUrl}/privacy">Privacy Policy</a>`)
-      finalHtml = finalHtml.replace('href="#">Cookie Settings</a>', `href="${domainUrl}/cookies">Ciasteczka</a>`)
+      finalHtml = finalHtml.replace('href="#">Regulamin</a>', `href="${domainUrl}/terms">Regulamin</a>`)
+      finalHtml = finalHtml.replace('href="#">Polityka prywatności</a>', `href="${domainUrl}/privacy">Polityka prywatności</a>`)
+      finalHtml = finalHtml.replace('href="#">Ustawienia cookies</a>', `href="${domainUrl}/#cookies">Ustawienia cookies</a>`)
       finalHtml = finalHtml.replace('src="', `src="${domainUrl}`)
       // Podmień ikony w stopce na poprawne odnośniki
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${domainUrl}" class="footer-icon" aria-label="Website"`)
@@ -1006,6 +1009,95 @@ Odpowiedz na email: ${senderEmail}
 ---
 Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 © ${new Date().getFullYear()} ProstaSprawa. Wszelkie prawa zastrzeżone.
+  `.trim()
+
+  return { subject: emailSubject, html, text }
+}
+
+/** Etykiety tematów formularza kontaktowego (enum ContactSubject) */
+const CONTACT_SUBJECT_LABELS: Record<string, string> = {
+  INFORMACJA: 'Zapytanie ogólne',
+  WSPARCIE: 'Wsparcie techniczne',
+  WSPOLPRACA: 'Współpraca',
+  REKLAMACJA: 'Reklamacja',
+  INNE: 'Inny temat',
+}
+
+/**
+ * Generuje HTML dla emaila z zapytaniem z formularza kontaktowego,
+ * wysyłanego na skrzynkę BOK (zapytania nieskierowane do konkretnego eksperta).
+ */
+export function generateContactFormBokEmail({
+  senderName,
+  senderEmail,
+  senderPhone,
+  subject,
+  message,
+  messageId,
+}: {
+  senderName: string
+  senderEmail: string
+  senderPhone?: string | null
+  subject: string
+  message: string
+  messageId?: string
+}): { subject: string; html: string; text: string } {
+  const subjectLabel = CONTACT_SUBJECT_LABELS[subject] || subject
+  const emailSubject = `[Kontakt] ${subjectLabel} - ${senderName}`
+  const receivedAt = new Date().toLocaleString('pl-PL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  const row = (label: string, value: string, first = false) => `
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;${first ? '' : ' border-top: 1px solid #222222;'}" width="30%">${label}</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;${first ? '' : ' border-top: 1px solid #222222;'}" width="70%">${value}</td>
+        </tr>`
+
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Nowe zapytanie z formularza kontaktowego</h2>
+    <p style="margin: 0 0 20px 0;">Przez formularz kontaktowy na stronie ProstaSprawa wpłynęło nowe zapytanie:</p>
+
+    <div style="background-color: #122421; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        ${row('Nadawca:', senderName, true)}
+        ${row('Email:', `<a href="mailto:${senderEmail}" style="color: #00b49e; text-decoration: underline;">${senderEmail}</a>`)}
+        ${senderPhone ? row('Telefon:', `<a href="tel:${senderPhone}" style="color: #00b49e; text-decoration: underline;">${senderPhone}</a>`) : ''}
+        ${row('Temat:', subjectLabel)}
+        ${row('Data zgłoszenia:', receivedAt)}
+        ${messageId ? row('ID zgłoszenia:', messageId) : ''}
+      </table>
+    </div>
+
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #ffffff; margin-top: 24px; margin-bottom: 12px;">Treść wiadomości:</h3>
+    <div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 20px; margin: 16px 0; color: #e5e5e5; line-height: 1.6; white-space: pre-wrap;">${message}</div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="mailto:${senderEmail}?subject=${encodeURIComponent(`Re: ${subjectLabel} - ProstaSprawa`)}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Odpowiedz nadawcy</a>
+    </div>
+
+    <p style="margin: 20px 0 0 0; font-size: 13px; color: #a3a3a3;">Odpowiedź na tę wiadomość zostanie wysłana bezpośrednio na adres nadawcy (${senderEmail}).</p>
+  `
+
+  const html = getBrandEmailLayout(contentHtml, `${subjectLabel} od ${senderName} (${senderEmail})`)
+
+  const text = `
+Nowe zapytanie z formularza kontaktowego - ProstaSprawa
+
+Nadawca: ${senderName}
+Email: ${senderEmail}
+${senderPhone ? `Telefon: ${senderPhone}\n` : ''}Temat: ${subjectLabel}
+Data zgłoszenia: ${receivedAt}
+${messageId ? `ID zgłoszenia: ${messageId}\n` : ''}
+Treść wiadomości:
+${message}
+
+---
+Odpowiedź na tę wiadomość zostanie wysłana bezpośrednio na adres nadawcy (${senderEmail}).
   `.trim()
 
   return { subject: emailSubject, html, text }

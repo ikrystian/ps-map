@@ -1,9 +1,12 @@
-import { generateContactFormEmail } from "@/lib/email"
+import { generateContactFormBokEmail, generateContactFormEmail, sendEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { ContactSubject } from "@prisma/client"
 import { NextRequest } from "next/server"
+
+/** Skrzynka BOK, na którą trafiają zapytania z formularza kontaktowego */
+const BOK_EMAIL = process.env.CONTACT_FORM_EMAIL || "bok@prostasprawa.pl"
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,6 +108,31 @@ export async function POST(request: NextRequest) {
         emailHtml: emailData?.html,
         emailText: emailData?.text,
       })
+    } else {
+      // Zapytanie ogólne (formularze /kontakt, /reklama) - wyślij na skrzynkę BOK.
+      // replyTo = adres nadawcy, żeby odpowiedź z BOK trafiła wprost do niego.
+      const bokEmail = generateContactFormBokEmail({
+        senderName: imieNazwisko,
+        senderEmail: email,
+        senderPhone: telefon,
+        subject: subjectEnum,
+        message: tresc,
+        messageId: message.id,
+      })
+
+      const sent = await sendEmail({
+        to: BOK_EMAIL,
+        subject: bokEmail.subject,
+        html: bokEmail.html,
+        text: bokEmail.text,
+        replyTo: email,
+        templateType: "KONTAKT_BOK",
+      })
+
+      if (!sent) {
+        // Wiadomość jest już zapisana w bazie - nie przerywamy odpowiedzi dla użytkownika
+        console.error(`Nie udało się wysłać zapytania kontaktowego ${message.id} na ${BOK_EMAIL}`)
+      }
     }
 
     return Response.json(

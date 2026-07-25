@@ -1,0 +1,18 @@
+    ./publish_posts.py
+
+  Możesz również podać własny punkt końcowy API lub opóźnienie:
+
+    ./publish_posts.py --endpoint http://localhost:3000/api/blog/posts --delay 2.5
+
+  #### 2. Generowanie i wysyłanie nowego artykułu na podstawie linku URL:
+
+    export OPENROUTER_API_KEY="twój-klucz-openrouter"
+    ./publish_posts.py --url https://przykladowa-strona.pl/artykuł-zrodlowy
+
+  lub przekazując klucz bezpośrednio w parametrze:
+
+    ./publish_posts.py --url https://przykladowa-strona.pl/artykuł-zrodlowy --openrouter-key "twój-klucz-openrouter"
+
+  #### 3. Weryfikacja bez wysyłania do bazy (--dry-run):
+
+    ./publish_posts.py --dry-run

@@ -272,6 +272,7 @@ export default function PublicFooter() {
             </p>
             <button
               type="button"
+              id="cookies"
               onClick={openCookiePreferences}
               className="font-light hover:text-[#d7b56d] transition-colors"
             >
