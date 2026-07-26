@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { anonymizeUserAccount } from "@/lib/account-anonymization"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
+import { generateSlug } from "@/lib/utils"
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
 
@@ -28,13 +29,29 @@ export async function GET(
             role: true,
             status: true,
             emailVerified: true,
+            telefonZweryfikowany: true,
             createdAt: true,
             updatedAt: true,
             lastLogin: true,
             ...USER_CONTACT_SELECT,
+            // Dane firmy z Białej listy podane przy rejestracji „jako firma”
+            companyData: {
+              select: {
+                COMPANY_name: true,
+                COMPANY_nip: true,
+                COMPANY_regon: true,
+                COMPANY_krs: true,
+                COMPANY_statusVat: true,
+                COMPANY_residenceAddress: true,
+                COMPANY_workingAddress: true,
+              },
+            },
           },
         },
         expertiseCategory: true,
+        mainCategory: {
+          select: { id: true, nazwa: true },
+        },
         accountManager: {
           select: {
             id: true,
@@ -50,9 +67,22 @@ export async function GET(
             voivodeship: true,
           },
         },
+        cities: {
+          include: {
+            city: true,
+          },
+        },
+        counties: {
+          include: {
+            county: true,
+          },
+        },
         categories: {
           include: {
             category: true,
+          },
+          orderBy: {
+            kolejnosc: "asc",
           },
         },
         services: {
@@ -265,8 +295,71 @@ export async function PUT(
       }
     }
 
+    // Slug profilu publicznego. Puste pole = wygeneruj z nazwy i dodaj sufiks
+    // z NIP-u, tak jak przy rejestracji i tworzeniu eksperta przez admina.
+    let normalizedSlug: string | undefined
+    if (body.slug !== undefined) {
+      normalizedSlug = generateSlug(String(body.slug || ""))
+
+      if (!normalizedSlug) {
+        const nazwaForSlug = body.nazwa ?? existingLawFirm.nazwa
+        const nipForSlug = body.nip
+          ? String(body.nip).replace(/[-\s]/g, "")
+          : existingLawFirm.nip
+        const suffix = nipForSlug ? nipForSlug.slice(-4) : id.slice(0, 4)
+        normalizedSlug = `${generateSlug(nazwaForSlug)}-${suffix}`
+      }
+
+      if (normalizedSlug !== existingLawFirm.slug) {
+        const duplicateSlug = await prisma.lawFirm.findFirst({
+          where: { slug: normalizedSlug, id: { not: id } },
+          select: { id: true },
+        })
+
+        if (duplicateSlug) {
+          return NextResponse.json(
+            { error: "Slug is already taken by another law firm" },
+            { status: 409 }
+          )
+        }
+      }
+    }
+
+    // Specjalizacja z drzewa kategorii eksperckich: `typInny` przechowuje
+    // czytelną ścieżkę (np. „Prawnicy > Adwokat”) i musi być spójna z ID.
+    // Odrzucamy tylko *nową* niespójność — profile sprzed wprowadzenia
+    // `expertiseCategoryId` mają samą ścieżkę i muszą dać się zapisywać.
+    if (
+      body.expertiseCategoryId !== undefined &&
+      !body.expertiseCategoryId &&
+      body.typInny &&
+      body.typInny !== existingLawFirm.typInny
+    ) {
+      return NextResponse.json(
+        { error: "Nie wybrano specjalizacji — dokończ wybór kategorii" },
+        { status: 400 }
+      )
+    }
+
+    // Główna kategoria musi należeć do listy specjalizacji eksperta
+    if (body.categoryIds !== undefined && Array.isArray(body.categoryIds)) {
+      const mainId =
+        body.mainCategoryId !== undefined
+          ? body.mainCategoryId
+          : existingLawFirm.mainCategoryId
+
+      if (mainId && !body.categoryIds.includes(mainId)) {
+        return NextResponse.json(
+          { error: "Główna kategoria musi być na liście wybranych specjalizacji" },
+          { status: 400 }
+        )
+      }
+    }
+
     // Build update data for law firm
     const lawFirmUpdateData: any = {}
+
+    if (normalizedSlug) lawFirmUpdateData.slug = normalizedSlug
 
     // Type and basic info
     if (body.typ !== undefined) lawFirmUpdateData.typ = body.typ
@@ -283,12 +376,42 @@ export async function PUT(
     const userContactUpdateData: any = {}
     if (body.imieKontakt !== undefined) userContactUpdateData.imie = body.imieKontakt
     if (body.nazwiskoKontakt !== undefined) userContactUpdateData.nazwisko = body.nazwiskoKontakt
-    if (body.numerTelefonu !== undefined) userContactUpdateData.numerTelefonu = body.numerTelefonu
+    if (body.numerTelefonu !== undefined) {
+      userContactUpdateData.numerTelefonu = body.numerTelefonu
+      // Numer potwierdza użytkownik kodem SMS przy rejestracji. Podmiana numeru
+      // przez admina unieważnia to potwierdzenie.
+      if (body.numerTelefonu !== existingLawFirm.user.numerTelefonu) {
+        userContactUpdateData.telefonZweryfikowany = null
+      }
+    }
     if (body.numerTelefonu2 !== undefined) userContactUpdateData.numerTelefonu2 = body.numerTelefonu2
     if (body.adres !== undefined) userContactUpdateData.adres = body.adres
     if (body.kodPocztowy !== undefined) userContactUpdateData.kodPocztowy = body.kodPocztowy
     if (body.miasto !== undefined) userContactUpdateData.miasto = body.miasto
     if (body.voivodeshipId !== undefined) userContactUpdateData.voivodeshipId = body.voivodeshipId
+    if (body.latitude !== undefined) {
+      userContactUpdateData.latitude =
+        body.latitude === "" || body.latitude === null ? null : Number(body.latitude)
+    }
+    if (body.longitude !== undefined) {
+      userContactUpdateData.longitude =
+        body.longitude === "" || body.longitude === null ? null : Number(body.longitude)
+    }
+
+    // `User.name` jest tym, co widzi ekspert w nagłówku swojego panelu —
+    // musi nadążać za zmianą imienia/nazwiska.
+    if (body.imieKontakt !== undefined || body.nazwiskoKontakt !== undefined) {
+      const imie = body.imieKontakt ?? existingLawFirm.user.imie ?? ""
+      const nazwisko = body.nazwiskoKontakt ?? existingLawFirm.user.nazwisko ?? ""
+      userContactUpdateData.name = `${imie} ${nazwisko}`.trim() || null
+    }
+
+    // Ręczne potwierdzenie adresu e-mail (bez niego użytkownik nie zaloguje się)
+    if (body.emailVerified !== undefined) {
+      userContactUpdateData.emailVerified = body.emailVerified
+        ? existingLawFirm.user.emailVerified ?? new Date()
+        : null
+    }
 
     // Profile
     if (body.opis !== undefined) lawFirmUpdateData.opis = body.opis
@@ -330,6 +453,17 @@ export async function PUT(
     if (body.calaPolska !== undefined) lawFirmUpdateData.calaPolska = body.calaPolska
     if (body.onlineOnly !== undefined) lawFirmUpdateData.onlineOnly = body.onlineOnly
 
+    // Status biegłego sądowego (odznaka na profilu publicznym)
+    if (body.bieglySadowy !== undefined) lawFirmUpdateData.bieglySadowy = body.bieglySadowy
+    if (body.bieglySadowyNazwaSadu !== undefined) {
+      lawFirmUpdateData.bieglySadowyNazwaSadu = body.bieglySadowyNazwaSadu || null
+    }
+
+    // Główna kategoria (specjalizacja wiodąca)
+    if (body.mainCategoryId !== undefined) {
+      lawFirmUpdateData.mainCategoryId = body.mainCategoryId || null
+    }
+
     // Offer type
     if (body.typOferty !== undefined) lawFirmUpdateData.typOferty = body.typOferty
 
@@ -346,12 +480,20 @@ export async function PUT(
     }
     if (body.packageDurationDays !== undefined) {
       lawFirmUpdateData.packageDurationDays = body.packageDurationDays || null
-      // Jeśli ustawiona liczba dni i data początkowa, automatycznie oblicz datę końca
-      if (body.packageDurationDays && body.dataPakietuOd) {
+      // Liczba dni wylicza datę końca tylko wtedy, gdy nie ma jej wprost albo gdy
+      // zmieniła się data startu. Bezwarunkowe przeliczanie po cichu kasowało
+      // datę końca ustawioną ręcznie przez admina przy każdym kolejnym zapisie.
+      const previousStart = existingLawFirm.dataPakietuOd
+        ? new Date(existingLawFirm.dataPakietuOd).toISOString().split("T")[0]
+        : ""
+      const startChanged = body.dataPakietuOd !== previousStart
+
+      if (body.packageDurationDays && body.dataPakietuOd && (!body.dataPakietuDo || startChanged)) {
         const startDate = new Date(body.dataPakietuOd)
         lawFirmUpdateData.dataPakietuDo = new Date(startDate.getTime() + body.packageDurationDays * 24 * 60 * 60 * 1000)
       }
     }
+    if (body.autoRenewal !== undefined) lawFirmUpdateData.autoRenewal = body.autoRenewal
 
     // Statistics
     if (body.wyswietleniaProfilu !== undefined) lawFirmUpdateData.wyswietleniaProfilu = body.wyswietleniaProfilu
@@ -391,6 +533,73 @@ export async function PUT(
           },
         },
       })
+
+      // Ręczna korekta salda musi zostawić ślad w księdze punktowej — inaczej
+      // `balanceAfter` w historii transakcji rozjeżdża się z faktycznym saldem.
+      if (body.punktySaldo !== undefined && body.punktySaldo !== existingLawFirm.punktySaldo) {
+        await tx.pointTransaction.create({
+          data: {
+            lawFirmId: id,
+            amount: body.punktySaldo - existingLawFirm.punktySaldo,
+            balanceAfter: body.punktySaldo,
+            type: "ADMIN_ADJUSTMENT",
+            description: `Korekta salda z panelu administratora (${existingLawFirm.punktySaldo} → ${body.punktySaldo})`,
+          },
+        })
+      }
+
+      // Specjalizacje prawne. Udziały procentowe (Skill Law Focus) przenosimy
+      // z dotychczasowych wpisów, żeby edycja listy ich nie kasowała.
+      if (body.categoryIds !== undefined && Array.isArray(body.categoryIds)) {
+        const previous = await tx.lawFirmCategory.findMany({
+          where: { lawFirmId: id },
+          select: { categoryId: true, percentage: true },
+        })
+        const previousPercentage = new Map<string, number>(
+          previous.map((c: { categoryId: string; percentage: number }) => [c.categoryId, c.percentage])
+        )
+
+        await tx.lawFirmCategory.deleteMany({ where: { lawFirmId: id } })
+
+        if (body.categoryIds.length > 0) {
+          await tx.lawFirmCategory.createMany({
+            data: body.categoryIds.map((categoryId: string, index: number) => ({
+              lawFirmId: id,
+              categoryId,
+              kolejnosc: index,
+              percentage: previousPercentage.get(categoryId) ?? 0,
+            })),
+          })
+        }
+      }
+
+      // Obszar działania — województwa
+      if (body.voivodeshipsIds !== undefined && Array.isArray(body.voivodeshipsIds)) {
+        await tx.lawFirmVoivodeship.deleteMany({ where: { lawFirmId: id } })
+
+        if (body.voivodeshipsIds.length > 0) {
+          await tx.lawFirmVoivodeship.createMany({
+            data: body.voivodeshipsIds.map((voivodeshipId: string) => ({
+              lawFirmId: id,
+              voivodeshipId,
+            })),
+          })
+        }
+      }
+
+      // Obszar działania — miasta
+      if (body.citiesIds !== undefined && Array.isArray(body.citiesIds)) {
+        await tx.lawFirmCity.deleteMany({ where: { lawFirmId: id } })
+
+        if (body.citiesIds.length > 0) {
+          await tx.lawFirmCity.createMany({
+            data: body.citiesIds.map((cityId: string) => ({
+              lawFirmId: id,
+              cityId,
+            })),
+          })
+        }
+      }
 
       // Update user if email or password is provided
       const userUpdateData: any = { ...userContactUpdateData }

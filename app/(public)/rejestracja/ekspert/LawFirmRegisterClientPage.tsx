@@ -27,6 +27,7 @@ import { useEffect, useState } from "react"
 import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -1362,24 +1363,22 @@ export default function LawFirmRegistrationPage() {
                         : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                       fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
                     )}
-                    onClick={() => {
-                      setFormData(prev => ({ ...prev, zgodaRegulamin: !prev.zgodaRegulamin }))
-                      if (fieldErrors.zgodaRegulamin) {
-                        const newErrors = { ...fieldErrors }
-                        delete newErrors.zgodaRegulamin
-                        setFieldErrors(newErrors)
-                      }
-                    }}
                   >
-                    <div className={cn(
-                      "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                      formData.zgodaRegulamin ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
-                      fieldErrors.zgodaRegulamin && "border-destructive"
-                    )}>
-                      {formData.zgodaRegulamin && <Check className="w-3.5 h-3.5" />}
-                    </div>
+                    <Checkbox
+                      id="zgodaRegulamin"
+                      checked={formData.zgodaRegulamin}
+                      onCheckedChange={(checked) => {
+                        setFormData(prev => ({ ...prev, zgodaRegulamin: !!checked }))
+                        if (fieldErrors.zgodaRegulamin) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.zgodaRegulamin
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className="mt-0.5"
+                    />
                     <div className="flex-1">
-                      <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaRegulamin && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                      <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaRegulamin && "text-destructive")}>
                         Akceptuję <Link href="/regulamin" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>regulamin portalu</Link> *
                       </label>
                       {fieldErrors.zgodaRegulamin && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaRegulamin}</p>}
@@ -1394,24 +1393,22 @@ export default function LawFirmRegistrationPage() {
                         : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                       fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
                     )}
-                    onClick={() => {
-                      setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !prev.zgodaPrzetwarzanie }))
-                      if (fieldErrors.zgodaPrzetwarzanie) {
-                        const newErrors = { ...fieldErrors }
-                        delete newErrors.zgodaPrzetwarzanie
-                        setFieldErrors(newErrors)
-                      }
-                    }}
                   >
-                    <div className={cn(
-                      "w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
-                      formData.zgodaPrzetwarzanie ? "border-primary bg-primary text-white" : "border-muted-foreground/30",
-                      fieldErrors.zgodaPrzetwarzanie && "border-destructive"
-                    )}>
-                      {formData.zgodaPrzetwarzanie && <Check className="w-3.5 h-3.5" />}
-                    </div>
+                    <Checkbox
+                      id="zgodaPrzetwarzanie"
+                      checked={formData.zgodaPrzetwarzanie}
+                      onCheckedChange={(checked) => {
+                        setFormData(prev => ({ ...prev, zgodaPrzetwarzanie: !!checked }))
+                        if (fieldErrors.zgodaPrzetwarzanie) {
+                          const newErrors = { ...fieldErrors }
+                          delete newErrors.zgodaPrzetwarzanie
+                          setFieldErrors(newErrors)
+                        }
+                      }}
+                      className="mt-0.5"
+                    />
                     <div className="flex-1">
-                      <label htmlFor="zgodaPrzetwarzanie" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaPrzetwarzanie && "text-destructive")} onClick={(e) => e.stopPropagation()}>
+                      <label htmlFor="zgodaPrzetwarzanie" className={cn("text-sm leading-tight cursor-pointer", fieldErrors.zgodaPrzetwarzanie && "text-destructive")}>
                         Zgadzam się na <Link href="/polityka-prywatnosci" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>przetwarzanie moich danych osobowych</Link> w celu realizacji usług *
                       </label>
                       {fieldErrors.zgodaPrzetwarzanie && <p className="text-xs text-destructive mt-1">{fieldErrors.zgodaPrzetwarzanie}</p>}

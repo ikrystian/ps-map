@@ -51,25 +51,11 @@ export async function POST(request: NextRequest) {
       subjectEnum = temat as ContactSubject
     }
 
-    // Ustal źródło wiadomości (np. KONTAKT, REKLAMA)
-    const zrodlo = zrodloBody || (tresc.includes("[Zapytanie z Landing Page Reklama]") ? "REKLAMA" : "KONTAKT")
-
-    // Zapisz wiadomość w bazie danych
-    const message = await prisma.contactForm.create({
-      data: {
-        imieNazwisko,
-        email,
-        telefon: telefon || null,
-        temat: subjectEnum,
-        wiadomosc: tresc,
-        zrodlo,
-      },
-    })
-
-    // Jeśli podano lawFirmId, powiąż/wyślij powiadomienie do ekspercie
+    // Wiadomość skierowana do konkretnego eksperta (formularz na /ekspert/[slug])
+    // musi mieć potwierdzonego adresata, zanim zapiszemy ją w bazie.
+    let lawFirm = null
     if (lawFirmId) {
-      // Sprawdź czy ekspert istnieje
-      const lawFirm = await prisma.lawFirm.findUnique({
+      lawFirm = await prisma.lawFirm.findUnique({
         where: { id: lawFirmId },
         select: {
           nazwa: true,
@@ -88,7 +74,28 @@ export async function POST(request: NextRequest) {
           { status: 404 }
         )
       }
+    }
 
+    // Ustal źródło wiadomości (EKSPERT, KONTAKT, REKLAMA)
+    const zrodlo = lawFirmId
+      ? "EKSPERT"
+      : zrodloBody || (tresc.includes("[Zapytanie z Landing Page Reklama]") ? "REKLAMA" : "KONTAKT")
+
+    // Zapisz wiadomość w bazie danych
+    const message = await prisma.contactForm.create({
+      data: {
+        imieNazwisko,
+        email,
+        telefon: telefon || null,
+        temat: subjectEnum,
+        wiadomosc: tresc,
+        zrodlo,
+        lawFirmId: lawFirmId || null,
+      },
+    })
+
+    // Powiadom eksperta o nowej wiadomości
+    if (lawFirm) {
       // Utwórz powiadomienie dla ekspertów (wraz z weryfikacją wysłania maila)
       let emailData
       if (lawFirm.user?.email) {

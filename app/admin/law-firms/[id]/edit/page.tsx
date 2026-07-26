@@ -55,7 +55,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 import {
   lawFirmSchema,
@@ -63,6 +63,8 @@ import {
   type Voivodeship,
   type AccountManager,
   type NotificationSettings,
+  type CategoryOption,
+  type CityOption,
 } from "./types"
 
 type ExpertiseCategoryItem = {
@@ -74,11 +76,20 @@ type ExpertiseCategoryItem = {
 import { AdminNotificationSettingsCard } from "./components/AdminNotificationSettingsCard"
 import { AdminStatisticsCard } from "./components/AdminStatisticsCard"
 import {
+  AccountMetaCard,
+  CompanyDataCard,
+  RelatedDataCard,
+  type AccountMeta,
+  type CompanyData,
+  type RelatedData,
+} from "./components/AdminReadOnlyCards"
+import {
   TagsEditor,
   GalleryEditor,
   BusinessHoursEditor,
   EducationEditor
 } from "./components/InteractiveEditors"
+import { CategoriesSelector, CoverageAreaSelector } from "./components/RelationEditors"
 
 export default function EditLawFirmPage() {
   const params = useParams()
@@ -88,11 +99,19 @@ export default function EditLawFirmPage() {
   const [selectedCatId, setSelectedCatId] = useState("")
   const [selectedSubcatId, setSelectedSubcatId] = useState("")
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
+  const [knownCities, setKnownCities] = useState<CityOption[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettings | null>(null)
   const [userId, setUserId] = useState<string>("")
-  const [userEmailVerified, setUserEmailVerified] = useState<string | Date | null>(null)
+  const [companyData, setCompanyData] = useState<CompanyData | null>(null)
+  const [accountMeta, setAccountMeta] = useState<AccountMeta>({})
+  const [relatedData, setRelatedData] = useState<RelatedData>({
+    services: [],
+    certificates: [],
+    counts: {},
+  })
   const [statistics, setStatistics] = useState({
     wyswietleniaProfilu: 0,
     zlozoneOferty: 0,
@@ -124,6 +143,7 @@ export default function EditLawFirmPage() {
       email: "",
       password: "",
       userStatus: "ACTIVE",
+      emailVerified: false,
       typ: "OSOBA_FIZYCZNA",
       typInny: "",
       nazwa: "",
@@ -139,6 +159,8 @@ export default function EditLawFirmPage() {
       kodPocztowy: "",
       miasto: "",
       voivodeshipId: "",
+      latitude: null,
+      longitude: null,
       opis: "",
       logo: "",
       zdjecieGlowne: "",
@@ -163,14 +185,21 @@ export default function EditLawFirmPage() {
       oraStatus: false,
       unikatowyOpisUslugi: "",
       slowaKluczowe: "",
+      categoryIds: [],
+      mainCategoryId: "",
+      bieglySadowy: false,
+      bieglySadowyNazwaSadu: "",
       calaPolska: false,
       onlineOnly: false,
+      voivodeshipsIds: [],
+      citiesIds: [],
       typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "",
       punktySaldo: 0,
       dataPakietuOd: "",
       dataPakietuDo: "",
       packageDurationDays: undefined,
+      autoRenewal: false,
       zgodaRegulamin: false,
       zgodaPrzetwarzanie: false,
       zweryfikowana: false,
@@ -345,8 +374,26 @@ export default function EditLawFirmPage() {
         console.error("Error fetching expertise categories:", error)
       }
     }
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories")
+        if (response.ok) {
+          const data = await response.json()
+          setCategories(
+            (Array.isArray(data) ? data : []).map((category: any) => ({
+              id: category.id,
+              nazwa: category.nazwa,
+              parentId: category.parentId ?? null,
+            }))
+          )
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error)
+      }
+    }
     fetchVoivodeships()
     fetchExpertiseCategories()
+    fetchCategories()
   }, [])
 
   // Pre-select category path when expertise categories and form value are both available
@@ -405,21 +452,26 @@ export default function EditLawFirmPage() {
             email: lawFirm.user.email,
             password: "",
             userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED",
+            emailVerified: Boolean(lawFirm.user.emailVerified),
             typ: lawFirm.typ,
             typInny: lawFirm.typInny || "",
             nazwa: lawFirm.nazwa,
             slug: lawFirm.slug || "",
-            nip: lawFirm.nip,
+            // Pola nullable muszą trafić do formularza jako "" — inaczej Zod
+            // odrzuca null, a input przechodzi z controlled na uncontrolled.
+            nip: lawFirm.nip || "",
             regon: lawFirm.regon || "",
             krs: lawFirm.krs || "",
-            imieKontakt: lawFirm.imieKontakt,
-            nazwiskoKontakt: lawFirm.nazwiskoKontakt,
-            numerTelefonu: lawFirm.numerTelefonu,
+            imieKontakt: lawFirm.imieKontakt || "",
+            nazwiskoKontakt: lawFirm.nazwiskoKontakt || "",
+            numerTelefonu: lawFirm.numerTelefonu || "",
             numerTelefonu2: lawFirm.numerTelefonu2 || "",
-            adres: lawFirm.adres,
-            kodPocztowy: lawFirm.kodPocztowy,
-            miasto: lawFirm.miasto,
-            voivodeshipId: lawFirm.voivodeshipId,
+            adres: lawFirm.adres || "",
+            kodPocztowy: lawFirm.kodPocztowy || "",
+            miasto: lawFirm.miasto || "",
+            voivodeshipId: lawFirm.voivodeshipId || "",
+            latitude: lawFirm.latitude ?? null,
+            longitude: lawFirm.longitude ?? null,
             opis: lawFirm.opis || "",
             logo: lawFirm.logo || "",
             zdjecieGlowne: lawFirm.zdjecieGlowne || "",
@@ -444,14 +496,21 @@ export default function EditLawFirmPage() {
             oraStatus: lawFirm.oraStatus || false,
             unikatowyOpisUslugi: lawFirm.unikatowyOpisUslugi || "",
             slowaKluczowe: lawFirm.slowaKluczowe || "",
+            categoryIds: (lawFirm.categories || []).map((c: any) => c.categoryId ?? c.category?.id),
+            mainCategoryId: lawFirm.mainCategoryId || "",
+            bieglySadowy: lawFirm.bieglySadowy || false,
+            bieglySadowyNazwaSadu: lawFirm.bieglySadowyNazwaSadu || "",
             calaPolska: lawFirm.calaPolska || false,
             onlineOnly: lawFirm.onlineOnly || false,
+            voivodeshipsIds: (lawFirm.voivodeships || []).map((v: any) => v.voivodeshipId ?? v.voivodeship?.id),
+            citiesIds: (lawFirm.cities || []).map((c: any) => c.cityId ?? c.city?.id),
             typOferty: lawFirm.typOferty,
             pakietSubskrypcji: lawFirm.pakietSubskrypcji || "",
             punktySaldo: lawFirm.punktySaldo,
             dataPakietuOd: lawFirm.dataPakietuOd ? new Date(lawFirm.dataPakietuOd).toISOString().split("T")[0] : "",
             dataPakietuDo: lawFirm.dataPakietuDo ? new Date(lawFirm.dataPakietuDo).toISOString().split("T")[0] : "",
             packageDurationDays: lawFirm.packageDurationDays || undefined,
+            autoRenewal: lawFirm.autoRenewal || false,
             zgodaRegulamin: lawFirm.zgodaRegulamin || false,
             zgodaPrzetwarzanie: lawFirm.zgodaPrzetwarzanie || false,
             zweryfikowana: lawFirm.zweryfikowana,
@@ -469,7 +528,28 @@ export default function EditLawFirmPage() {
           })
 
           setUserId(lawFirm.user.id)
-          setUserEmailVerified(lawFirm.user.emailVerified ?? null)
+          setCompanyData(lawFirm.user.companyData ?? null)
+          setAccountMeta({
+            userCreatedAt: lawFirm.user.createdAt ?? null,
+            lawFirmCreatedAt: lawFirm.createdAt ?? null,
+            lawFirmUpdatedAt: lawFirm.updatedAt ?? null,
+            lastLogin: lawFirm.user.lastLogin ?? null,
+            telefonZweryfikowany: lawFirm.user.telefonZweryfikowany ?? null,
+          })
+          setRelatedData({
+            services: lawFirm.services || [],
+            certificates: lawFirm.certificates || [],
+            counts: lawFirm._count || {},
+          })
+          // Nazwy miast spoza bieżącej listy wyników wyszukiwania — bez nich
+          // już przypisane miasta wyświetliłyby się jako puste etykiety.
+          setKnownCities(
+            (lawFirm.cities || []).map((c: any) => ({
+              id: c.city?.id ?? c.cityId,
+              nazwa: c.city?.nazwa ?? "",
+              voivodeshipId: c.city?.voivodeshipId ?? "",
+            }))
+          )
 
           try {
             const settingsResponse = await fetch(`/api/admin/users/${lawFirm.user.id}/notification-settings`)
@@ -502,7 +582,7 @@ export default function EditLawFirmPage() {
       general: [
         "typ",
         "typInny",
-        "nazwa",
+        "expertiseCategoryId",
         "nazwa",
         "slug",
         "nip",
@@ -513,8 +593,12 @@ export default function EditLawFirmPage() {
         "kodPocztowy",
         "miasto",
         "voivodeshipId",
+        "latitude",
+        "longitude",
         "calaPolska",
         "onlineOnly",
+        "voivodeshipsIds",
+        "citiesIds",
         "statusGodzinyOtwarcia",
         "godzinyOtwarcia",
       ],
@@ -534,6 +618,7 @@ export default function EditLawFirmPage() {
         "email",
         "password",
         "userStatus",
+        "emailVerified",
         "typOferty",
         "pakietSubskrypcji",
         "punktySaldo",
@@ -543,6 +628,7 @@ export default function EditLawFirmPage() {
         "dataPakietuOd",
         "dataPakietuDo",
         "packageDurationDays",
+        "autoRenewal",
         "zgodaRegulamin",
         "zgodaPrzetwarzanie",
       ],
@@ -553,9 +639,13 @@ export default function EditLawFirmPage() {
         "oraStatus",
         "oraMiasto",
         "oraWpis",
+        "bieglySadowy",
+        "bieglySadowyNazwaSadu",
         "edukacja",
         "unikatowyOpisUslugi",
         "slowaKluczowe",
+        "categoryIds",
+        "mainCategoryId",
       ],
       multimedia: [
         "logo",
@@ -583,6 +673,14 @@ export default function EditLawFirmPage() {
   }
 
   const handleSubmit = async (values: LawFirmFormValues) => {
+    // Wybrana kategoria bez wskazanej specjalizacji wyczyściłaby powiązanie
+    // eksperta z drzewem kategorii — blokujemy zapis zamiast cicho kasować.
+    if (selectedCatId && !values.expertiseCategoryId) {
+      setActiveTab("general")
+      toast.error("Dokończ wybór specjalizacji w sekcji „Kategoria specjalizacji”")
+      return
+    }
+
     try {
       setIsSubmitting(true)
       const updateData: any = {
@@ -612,7 +710,16 @@ export default function EditLawFirmPage() {
       })
 
       if (response.ok) {
-        toast.success("Ekspert została zaktualizowana pomyślnie")
+        const updated = await response.json()
+        // Slug i data końca pakietu mogą zostać znormalizowane po stronie API —
+        // wczytujemy je z odpowiedzi, żeby formularz nie pokazywał starej wartości.
+        form.setValue("slug", updated.slug || "", { shouldDirty: false })
+        form.setValue(
+          "dataPakietuDo",
+          updated.dataPakietuDo ? new Date(updated.dataPakietuDo).toISOString().split("T")[0] : "",
+          { shouldDirty: false }
+        )
+        toast.success("Dane eksperta zostały zaktualizowane")
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd podczas aktualizacji eksperta")
@@ -685,12 +792,14 @@ export default function EditLawFirmPage() {
 
             {/* Tab Contents */}
             <div className="flex-1 min-w-0">
-              <AnimatePresence mode="wait">
+              {/* Bez AnimatePresence: tryb "wait" wstrzymywał montowanie nowej
+                  zakładki do końca animacji wyjścia i przy cięższych panelach
+                  potrafił zostawić pusty obszar treści. Zmiana `key` i tak
+                  odtwarza animację wejścia. */}
                 <motion.div
                   key={activeTab}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.18 }}
                   className="space-y-6"
                 >
@@ -719,7 +828,11 @@ export default function EditLawFirmPage() {
                                   onValueChange={(val) => {
                                     setSelectedCatId(val)
                                     setSelectedSubcatId("")
+                                    // `typInny` to czytelna ścieżka tej samej specjalizacji —
+                                    // musi zniknąć razem z ID, inaczej w profilu zostaje
+                                    // ścieżka z poprzedniej kategorii.
                                     form.setValue("expertiseCategoryId", "")
+                                    form.setValue("typInny", "")
                                     form.setValue("typ", "INNY")
                                   }}
                                 >
@@ -751,6 +864,7 @@ export default function EditLawFirmPage() {
                                           onValueChange={(val) => {
                                             setSelectedSubcatId(val)
                                             form.setValue("expertiseCategoryId", "")
+                                            form.setValue("typInny", "")
                                           }}
                                         >
                                           <SelectTrigger>
@@ -793,6 +907,21 @@ export default function EditLawFirmPage() {
                                     </>
                                   )
                                 })()}
+
+                                {selectedCatId && !form.watch("expertiseCategoryId") && (
+                                  <div className="flex items-start gap-2 p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-sm text-destructive">
+                                    <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                                    <span>
+                                      Wybrano kategorię, ale nie wskazano specjalizacji. Dokończ wybór — inaczej zapis zostanie zablokowany.
+                                    </span>
+                                  </div>
+                                )}
+
+                                {form.watch("typInny") && (
+                                  <p className="text-xs text-muted-foreground">
+                                    Aktualna ścieżka specjalizacji: <span className="font-medium">{form.watch("typInny")}</span>
+                                  </p>
+                                )}
                               </div>
                             )}
                           </div>
@@ -966,6 +1095,54 @@ export default function EditLawFirmPage() {
                               </FormItem>
                             )}
                           />
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="latitude"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Szerokość geograficzna (opcjonalnie)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      step="any"
+                                      placeholder="np. 52.2297"
+                                      value={field.value ?? ""}
+                                      onChange={(e) =>
+                                        field.onChange(e.target.value === "" ? null : parseFloat(e.target.value))
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="longitude"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Długość geograficzna (opcjonalnie)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      step="any"
+                                      placeholder="np. 21.0122"
+                                      value={field.value ?? ""}
+                                      onChange={(e) =>
+                                        field.onChange(e.target.value === "" ? null : parseFloat(e.target.value))
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormDescription className="text-xs">
+                                    Współrzędne nie są wyliczane automatycznie po zmianie adresu — w razie potrzeby uzupełnij je ręcznie.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </CardContent>
                       </Card>
 
@@ -1021,6 +1198,32 @@ export default function EditLawFirmPage() {
                               )}
                             />
                           </div>
+
+                          {!form.watch("calaPolska") && (
+                            <CoverageAreaSelector
+                              voivodeships={voivodeships}
+                              voivodeshipsIds={form.watch("voivodeshipsIds")}
+                              citiesIds={form.watch("citiesIds")}
+                              knownCities={knownCities}
+                              onVoivodeshipsChange={(ids) =>
+                                form.setValue("voivodeshipsIds", ids, { shouldDirty: true })
+                              }
+                              onCitiesChange={(ids) => form.setValue("citiesIds", ids, { shouldDirty: true })}
+                              onCitiesLoaded={(loaded) =>
+                                setKnownCities((prev) => {
+                                  const merged = new Map(prev.map((c) => [c.id, c]))
+                                  loaded.forEach((c) => merged.set(c.id, c))
+                                  return Array.from(merged.values())
+                                })
+                              }
+                            />
+                          )}
+
+                          {form.watch("calaPolska") && (
+                            <p className="text-sm text-muted-foreground">
+                              Zaznaczono „Cała Polska” — lista województw i miast nie ma zastosowania.
+                            </p>
+                          )}
                         </CardContent>
                       </Card>
 
@@ -1337,24 +1540,56 @@ export default function EditLawFirmPage() {
                             )}
                           />
 
+                          <FormField
+                            control={form.control}
+                            name="emailVerified"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-lg bg-muted/20">
+                                <FormControl>
+                                  <Checkbox
+                                    id="chk-email-verified"
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel htmlFor="chk-email-verified" className="cursor-pointer">
+                                    Adres e-mail potwierdzony
+                                  </FormLabel>
+                                  <FormDescription>
+                                    {field.value
+                                      ? "Użytkownik może się zalogować."
+                                      : "Bez potwierdzenia użytkownik nie zaloguje się — zaznacz, aby potwierdzić ręcznie."}
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
                           <div>
-                            <FormLabel>Weryfikacja e-mail</FormLabel>
+                            <FormLabel>Weryfikacja numeru telefonu</FormLabel>
                             <div className="mt-2">
-                              {userEmailVerified ? (
+                              {accountMeta.telefonZweryfikowany ? (
                                 <Badge variant="default">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  Potwierdzony ({new Date(userEmailVerified).toLocaleDateString("pl-PL")})
+                                  Potwierdzony kodem SMS ({new Date(accountMeta.telefonZweryfikowany).toLocaleDateString("pl-PL")})
                                 </Badge>
                               ) : (
                                 <Badge variant="outline">
                                   <AlertCircle className="h-3 w-3 mr-1" />
-                                  Niepotwierdzony — użytkownik nie może się zalogować
+                                  Numer niepotwierdzony kodem SMS
                                 </Badge>
                               )}
                             </div>
+                            <p className="text-xs text-muted-foreground mt-2">
+                              Zmiana numeru telefonu w zakładce „Kontakt &amp; Social” unieważnia potwierdzenie.
+                            </p>
                           </div>
                         </CardContent>
                       </Card>
+
+                      <AccountMetaCard meta={accountMeta} />
+                      <CompanyDataCard companyData={companyData} />
 
                       {/* Settings & Sub */}
                       <Card className="shadow-sm border-border">
@@ -1435,6 +1670,9 @@ export default function EditLawFirmPage() {
                                       onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                                     />
                                   </FormControl>
+                                  <FormDescription className="text-xs">
+                                    Zmiana salda zostanie zapisana w historii jako korekta administratora.
+                                  </FormDescription>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -1484,13 +1722,37 @@ export default function EditLawFirmPage() {
                                     />
                                   </FormControl>
                                   <p className="text-xs text-muted-foreground">
-                                    Jeśli ustawisz tę wartość, data końca subskrypcji będzie automatycznie obliczona jako data rozpoczęcia + liczba dni.
+                                    Data końca zostanie wyliczona (start + liczba dni) tylko wtedy, gdy pole „Koniec subskrypcji” jest puste lub zmieniasz datę startu. Ręcznie wpisana data ma pierwszeństwo.
                                   </p>
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
                           </div>
+
+                          <FormField
+                            control={form.control}
+                            name="autoRenewal"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-lg">
+                                <FormControl>
+                                  <Checkbox
+                                    id="chk-auto-renewal"
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel htmlFor="chk-auto-renewal" className="cursor-pointer">
+                                    Automatyczne przedłużanie pakietu
+                                  </FormLabel>
+                                  <FormDescription>
+                                    Pakiet zostanie odnowiony po upływie daty końca subskrypcji.
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
 
                           <div className="flex flex-col sm:flex-row gap-6 p-4 border border-border rounded-lg bg-muted/10">
                             <FormField
@@ -1507,7 +1769,7 @@ export default function EditLawFirmPage() {
                                   </FormControl>
                                   <FormLabel htmlFor="chk-zweryfikowana" className="cursor-pointer text-sm font-semibold flex items-center gap-1.5">
                                     <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    Zweryfikowana
+                                    Zweryfikowany
                                   </FormLabel>
                                 </FormItem>
                               )}
@@ -1526,7 +1788,7 @@ export default function EditLawFirmPage() {
                                   </FormControl>
                                   <FormLabel htmlFor="chk-aktywna" className="cursor-pointer text-sm font-semibold flex items-center gap-1.5">
                                     <span className={`h-2.5 w-2.5 rounded-full ${field.value ? "bg-green-500 animate-ping" : "bg-gray-400"}`} />
-                                    Ekspert Aktywna
+                                    Ekspert aktywny
                                   </FormLabel>
                                 </FormItem>
                               )}
@@ -1742,6 +2004,94 @@ export default function EditLawFirmPage() {
                               </div>
                             )}
                           </div>
+
+                          {/* Biegły sądowy */}
+                          <div className="space-y-4 p-4 border rounded-lg bg-muted/5">
+                            <div className="flex items-center gap-2 pb-2 border-b">
+                              <FormField
+                                control={form.control}
+                                name="bieglySadowy"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        id="chk-biegly"
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                      />
+                                    </FormControl>
+                                    <FormLabel htmlFor="chk-biegly" className="text-sm font-semibold cursor-pointer">
+                                      Biegły sądowy
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            {form.watch("bieglySadowy") && (
+                              <FormField
+                                control={form.control}
+                                name="bieglySadowyNazwaSadu"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Sąd, przy którym ekspert jest biegłym</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="np. Sąd Okręgowy w Warszawie" {...field} />
+                                    </FormControl>
+                                    <FormDescription className="text-xs">
+                                      Odznaka biegłego jest widoczna na profilu publicznym i w wyszukiwarce.
+                                      {!field.value?.trim() && " Bez nazwy sądu odznaka wyświetli się bez doprecyzowania."}
+                                    </FormDescription>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Specjalizacje prawne */}
+                      <Card className="shadow-sm border-border">
+                        <CardHeader className="flex flex-row items-center gap-3 border-b py-4">
+                          <Briefcase className="h-5 w-5 text-primary" />
+                          <div>
+                            <CardTitle className="text-lg">Specjalizacje prawne</CardTitle>
+                            <CardDescription>
+                              Kategorie, w których ekspert widnieje w wyszukiwarce i otrzymuje zapytania
+                            </CardDescription>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4 pt-6">
+                          <FormField
+                            control={form.control}
+                            name="categoryIds"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <CategoriesSelector
+                                    categories={categories}
+                                    value={field.value}
+                                    mainCategoryId={form.watch("mainCategoryId") || ""}
+                                    onChange={field.onChange}
+                                    onMainCategoryChange={(id) =>
+                                      form.setValue("mainCategoryId", id, { shouldDirty: true, shouldValidate: true })
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="mainCategoryId"
+                            render={() => (
+                              <FormItem>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </CardContent>
                       </Card>
 
@@ -1815,7 +2165,7 @@ export default function EditLawFirmPage() {
 
                         {/* Logo */}
                         <div className="space-y-3 border-b pb-6">
-                          <h4 className="text-sm font-semibold">Logo ekspercie</h4>
+                          <h4 className="text-sm font-semibold">Logo eksperta</h4>
                           <FormField
                             control={form.control}
                             name="logo"
@@ -2094,11 +2444,11 @@ export default function EditLawFirmPage() {
                   {activeTab === "stats" && (
                     <>
                       <AdminStatisticsCard statistics={statistics} />
+                      <RelatedDataCard data={relatedData} />
                       <AdminNotificationSettingsCard notificationSettings={notificationSettings} />
                     </>
                   )}
                 </motion.div>
-              </AnimatePresence>
             </div>
           </div>
 

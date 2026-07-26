@@ -54,10 +54,11 @@ interface Page {
 export default function AdminPagesPage() {
   const [pages, setPages] = useState<Page[]>([])
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedPage, setSelectedPage] = useState<Page | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [publishedFilter, setPublishedFilter] = useState<string>("")
+  const [publishedFilter, setPublishedFilter] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({
     total: 0,
@@ -74,7 +75,7 @@ export default function AdminPagesPage() {
         page: currentPage.toString(),
         limit: "20",
         ...(searchQuery && { search: searchQuery }),
-        ...(publishedFilter !== "" && { published: publishedFilter }),
+        ...(publishedFilter !== "all" && publishedFilter !== "" && { published: publishedFilter }),
       })
 
       const response = await fetch(`/api/admin/pages?${params}`)
@@ -92,6 +93,10 @@ export default function AdminPagesPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     fetchPages()
@@ -164,7 +169,7 @@ export default function AdminPagesPage() {
                 <SelectValue placeholder="Status publikacji" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Wszystkie</SelectItem>
+                <SelectItem value="all">Wszystkie</SelectItem>
                 <SelectItem value="true">Opublikowane</SelectItem>
                 <SelectItem value="false">Nieopublikowane</SelectItem>
               </SelectContent>
@@ -172,7 +177,7 @@ export default function AdminPagesPage() {
             <Button
               variant="outline"
               onClick={fetchPages}
-              disabled={loading}
+              disabled={mounted ? loading : false}
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Odśwież
@@ -274,14 +279,14 @@ export default function AdminPagesPage() {
                   <Button
                     variant="outline"
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1 || loading}
+                    disabled={currentPage === 1 || (mounted && loading)}
                   >
                     Poprzednia
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setCurrentPage(prev => Math.min(pagination.pages, prev + 1))}
-                    disabled={currentPage === pagination.pages || loading}
+                    disabled={currentPage === pagination.pages || (mounted && loading)}
                   >
                     Następna
                   </Button>

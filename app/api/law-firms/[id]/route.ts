@@ -248,7 +248,11 @@ export async function PUT(
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
-      const nipSuffix = existingLawFirm.nip.slice(-4)
+      // NIP jest opcjonalny (admin może go wyczyścić) — bez fallbacku
+      // generowanie sluga wywracało zapis profilu na TypeError.
+      const nipSuffix = existingLawFirm.nip
+        ? existingLawFirm.nip.slice(-4)
+        : existingLawFirm.id.slice(0, 4)
       updateData.slug = `${slug}-${nipSuffix}`
     } else if (body.nazwa) {
       // If nazwa hasn't changed, still update it (for consistency)

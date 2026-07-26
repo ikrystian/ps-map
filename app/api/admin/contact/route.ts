@@ -24,12 +24,24 @@ export async function GET(request: NextRequest) {
 
     const where: Prisma.ContactFormWhereInput = {}
 
-    // Filtrowanie wg źródła (/kontakt vs /reklama)
+    // Filtrowanie wg źródła (/kontakt vs /reklama vs /ekspert/[slug])
     if (zrodlo && zrodlo !== "all") {
       if (zrodlo === "REKLAMA") {
         where.OR = [
           { zrodlo: "REKLAMA" },
           { zrodlo: null, wiadomosc: { contains: "[Zapytanie z Landing Page Reklama]" } },
+        ]
+      } else if (zrodlo === "EKSPERT") {
+        where.OR = [
+          { zrodlo: "EKSPERT" },
+          { lawFirmId: { not: null } },
+        ]
+      } else if (zrodlo === "OGOLNE") {
+        // Wszystkie zapytania ogólne (/kontakt + /reklama), bez wiadomości do ekspertów.
+        // Warunek na zrodlo jawnie dopuszcza NULL (starsze rekordy bez ustawionego źródła).
+        where.AND = [
+          { lawFirmId: null },
+          { OR: [{ zrodlo: { not: "EKSPERT" } }, { zrodlo: null }] },
         ]
       } else if (zrodlo === "KONTAKT") {
         where.AND = [
@@ -44,6 +56,7 @@ export async function GET(request: NextRequest) {
               wiadomosc: { contains: "[Zapytanie z Landing Page Reklama]" },
             },
           },
+          { lawFirmId: null },
         ]
       }
     }
@@ -67,6 +80,7 @@ export async function GET(request: NextRequest) {
         { email: { contains: search } },
         { telefon: { contains: search } },
         { wiadomosc: { contains: search } },
+        { lawFirm: { nazwa: { contains: search } } },
       ]
 
       if (where.OR) {
@@ -80,17 +94,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Statystyki ogólne (niezależne od paginacji)
-    const [items, total, unansweredCount, kontaktCount, reklamaCount] = await Promise.all([
+    const [items, total, unansweredCount, kontaktCount, reklamaCount, ekspertCount] = await Promise.all([
       prisma.contactForm.findMany({
         where,
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
+        include: {
+          lawFirm: {
+            select: {
+              id: true,
+              nazwa: true,
+              slug: true,
+            },
+          },
+        },
       }),
       prisma.contactForm.count({ where }),
       prisma.contactForm.count({ where: { odpowiedziano: false } }),
       prisma.contactForm.count({
         where: {
+          lawFirmId: null,
           OR: [
             { zrodlo: "KONTAKT" },
             {
@@ -105,6 +129,14 @@ export async function GET(request: NextRequest) {
           OR: [
             { zrodlo: "REKLAMA" },
             { zrodlo: null, wiadomosc: { contains: "[Zapytanie z Landing Page Reklama]" } },
+          ],
+        },
+      }),
+      prisma.contactForm.count({
+        where: {
+          OR: [
+            { zrodlo: "EKSPERT" },
+            { lawFirmId: { not: null } },
           ],
         },
       }),
@@ -123,6 +155,7 @@ export async function GET(request: NextRequest) {
         unanswered: unansweredCount,
         kontaktCount,
         reklamaCount,
+        ekspertCount,
       },
     })
   } catch (error) {

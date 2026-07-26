@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { verifyRecaptchaToken } from "@/lib/recaptcha"
-import { EmailType } from "@prisma/client"
+import { recordRegistrationAudit } from "@/lib/rodo-audit"
+import { EmailType, UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { NextRequest, NextResponse } from "next/server"
@@ -945,6 +946,21 @@ Zgoda na dane: ${body.zgodaPrzetwarzanie ? 'Tak' : 'Nie'}
         console.error('Failed to send welcome email to user:', welcomeErr)
       }
     }
+
+    // Zapis audytu rejestracji i zgód RODO dla eksperta
+    const telemetry = body.telemetry || body.clientTelemetry || {}
+    const consents = {
+      zgodaRegulamin: body.zgodaRegulamin ?? false,
+      zgodaPrzetwarzanie: body.zgodaPrzetwarzanie ?? false,
+    }
+
+    await recordRegistrationAudit({
+      userId: result.user.id,
+      role: UserRole.LAW_FIRM,
+      request,
+      telemetry,
+      consents,
+    })
 
     return NextResponse.json(
       {

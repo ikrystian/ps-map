@@ -5,6 +5,7 @@ export const lawFirmSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
+  emailVerified: z.boolean(),
 
   // Basic info
   typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
@@ -27,6 +28,8 @@ export const lawFirmSchema = z.object({
   kodPocztowy: z.string().min(1, "Postal code is required"),
   miasto: z.string().min(1, "City is required"),
   voivodeshipId: z.string().min(1, "Voivodeship is required"),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 
   // Profile
   opis: z.string().optional(),
@@ -66,9 +69,19 @@ export const lawFirmSchema = z.object({
   unikatowyOpisUslugi: z.string().optional(),
   slowaKluczowe: z.string().optional(),
 
+  // Specjalizacje prawne (LawFirmCategory) + specjalizacja wiodąca
+  categoryIds: z.array(z.string()),
+  mainCategoryId: z.string().optional(),
+
+  // Biegły sądowy — odznaka na profilu publicznym
+  bieglySadowy: z.boolean(),
+  bieglySadowyNazwaSadu: z.string().optional(),
+
   // Coverage area
   calaPolska: z.boolean(),
   onlineOnly: z.boolean(),
+  voivodeshipsIds: z.array(z.string()),
+  citiesIds: z.array(z.string()),
 
   // Type and subscription
   typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
@@ -77,6 +90,7 @@ export const lawFirmSchema = z.object({
   dataPakietuOd: z.string().optional(),
   dataPakietuDo: z.string().optional(),
   packageDurationDays: z.number().optional(),
+  autoRenewal: z.boolean(),
 
   // Consents
   zgodaRegulamin: z.boolean(),
@@ -88,12 +102,37 @@ export const lawFirmSchema = z.object({
 
   // Account Manager
   accountManagerId: z.string().optional(),
+}).superRefine((data, ctx) => {
+  // Specjalizacja wiodąca musi należeć do wybranych specjalizacji — inaczej
+  // profil publiczny wskazuje kategorię, której ekspert nie obsługuje.
+  if (data.mainCategoryId && !data.categoryIds.includes(data.mainCategoryId)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["mainCategoryId"],
+      message: "Specjalizacja wiodąca musi być na liście wybranych specjalizacji",
+    })
+  }
+
+  // Nazwa sądu celowo nie jest wymagana — ekspert może zapisać samą odznakę
+  // w swoim panelu, a admin musi móc edytować takie profile.
 })
 
 export type LawFirmFormValues = z.infer<typeof lawFirmSchema>
 
 import type { Voivodeship } from "@/types"
 export type { Voivodeship }
+
+export interface CategoryOption {
+  id: string
+  nazwa: string
+  parentId: string | null
+}
+
+export interface CityOption {
+  id: string
+  nazwa: string
+  voivodeshipId: string
+}
 
 export interface AccountManager {
   id: string

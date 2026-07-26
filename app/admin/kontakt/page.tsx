@@ -40,10 +40,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { PaginationData } from "@/types/pagination"
 import {
+  Briefcase,
   CheckCircle,
   Clock,
+  ExternalLink,
   Eye,
   Filter,
   Inbox,
@@ -68,6 +71,12 @@ interface ContactMessage {
   zrodlo: string | null
   odpowiedziano: boolean
   createdAt: string
+  lawFirmId: string | null
+  lawFirm: {
+    id: string
+    nazwa: string
+    slug: string
+  } | null
 }
 
 interface StatsData {
@@ -75,7 +84,11 @@ interface StatsData {
   unanswered: number
   kontaktCount: number
   reklamaCount: number
+  ekspertCount: number
 }
+
+/** Zakładki: zapytania ogólne (/kontakt, /reklama) vs wiadomości do ekspertów (/ekspert/[slug]) */
+type MessageTab = "ogolne" | "eksperci"
 
 const subjectLabels: Record<string, { label: string; className: string }> = {
   INFORMACJA: { label: "Informacja", className: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
@@ -99,9 +112,11 @@ export default function AdminContactMessagesPage() {
     unanswered: 0,
     kontaktCount: 0,
     reklamaCount: 0,
+    ekspertCount: 0,
   })
 
-  // Filters
+  // Tabs & Filters
+  const [activeTab, setActiveTab] = useState<MessageTab>("ogolne")
   const [searchQuery, setSearchQuery] = useState("")
   const [zrodloFilter, setZrodloFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -119,8 +134,17 @@ export default function AdminContactMessagesPage() {
         page: page.toString(),
         limit: "20",
       })
+      // Zakładka "eksperci" zawsze zawęża wyniki do wiadomości z profili ekspertów,
+      // zakładka "ogolne" - do zapytań bez przypisanego eksperta.
+      const zrodloParam =
+        activeTab === "eksperci"
+          ? "EKSPERT"
+          : zrodloFilter !== "all"
+            ? zrodloFilter
+            : "OGOLNE"
+
       if (searchQuery) params.append("search", searchQuery)
-      if (zrodloFilter !== "all") params.append("zrodlo", zrodloFilter)
+      params.append("zrodlo", zrodloParam)
       if (statusFilter !== "all") params.append("status", statusFilter)
       if (tematFilter !== "all") params.append("temat", tematFilter)
 
@@ -139,7 +163,7 @@ export default function AdminContactMessagesPage() {
     } finally {
       setLoading(false)
     }
-  }, [searchQuery, zrodloFilter, statusFilter, tematFilter])
+  }, [activeTab, searchQuery, zrodloFilter, statusFilter, tematFilter])
 
   useEffect(() => {
     fetchMessages(1)
@@ -213,6 +237,17 @@ export default function AdminContactMessagesPage() {
   }
 
   const getSourceBadge = (msg: ContactMessage) => {
+    const isEkspert = msg.zrodlo === "EKSPERT" || !!msg.lawFirmId
+
+    if (isEkspert) {
+      return (
+        <Badge variant="outline" className="bg-violet-500/10 text-violet-400 border-violet-500/30 gap-1 font-medium">
+          <Briefcase className="w-3 h-3" />
+          /ekspert
+        </Badge>
+      )
+    }
+
     const isReklama =
       msg.zrodlo === "REKLAMA" ||
       msg.wiadomosc?.includes("[Zapytanie z Landing Page Reklama]")
@@ -234,6 +269,9 @@ export default function AdminContactMessagesPage() {
     )
   }
 
+  // Zakładka ekspertów nie ma kolumn ze statusem i akcjami
+  const columnCount = activeTab === "eksperci" ? 6 : 7
+
   const formatDate = (dateStr: string) => {
     try {
       const date = new Date(dateStr)
@@ -253,12 +291,12 @@ export default function AdminContactMessagesPage() {
     <>
       <AdminHeaderSetter
         title="Wiadomości kontaktowe"
-        subtitle="Zarządzanie zapytaniami przesłanymi z formularzy /kontakt oraz /reklama"
+        subtitle="Zarządzanie zapytaniami z formularzy /kontakt, /reklama oraz z profili ekspertów"
       />
 
       <div className="space-y-6">
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Card className="border-border bg-card">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -310,7 +348,34 @@ export default function AdminContactMessagesPage() {
               <p className="text-xs text-muted-foreground mt-1">Zapytania reklamowe i B2B</p>
             </CardContent>
           </Card>
+
+          <Card className="border-border bg-card">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Wiadomości do ekspertów
+              </CardTitle>
+              <Briefcase className="h-5 w-5 text-violet-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-violet-400">{stats.ekspertCount}</div>
+              <p className="text-xs text-muted-foreground mt-1">Zapytania z profili /ekspert</p>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Tabs: zapytania ogólne vs wiadomości do ekspertów */}
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as MessageTab)}>
+          <TabsList className="grid w-full grid-cols-2 max-w-[520px]">
+            <TabsTrigger value="ogolne">
+              <Mail className="w-4 h-4 mr-2" />
+              Zapytania ogólne ({stats.kontaktCount + stats.reklamaCount})
+            </TabsTrigger>
+            <TabsTrigger value="eksperci">
+              <Briefcase className="w-4 h-4 mr-2" />
+              Do ekspertów ({stats.ekspertCount})
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* Filters */}
         <Card className="border-border bg-card">
@@ -320,7 +385,11 @@ export default function AdminContactMessagesPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Szukaj wg nadawcy, e-maila, telefonu lub treści..."
+                  placeholder={
+                    activeTab === "eksperci"
+                      ? "Szukaj wg nadawcy, e-maila, telefonu, treści lub eksperta..."
+                      : "Szukaj wg nadawcy, e-maila, telefonu lub treści..."
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 bg-background"
@@ -329,18 +398,20 @@ export default function AdminContactMessagesPage() {
 
               {/* Selects */}
               <div className="flex flex-wrap items-center gap-3">
-                <div className="w-[170px]">
-                  <Select value={zrodloFilter} onValueChange={setZrodloFilter}>
-                    <SelectTrigger className="bg-background">
-                      <SelectValue placeholder="Źródło" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Wszystkie źródła</SelectItem>
-                      <SelectItem value="KONTAKT">Strona /kontakt</SelectItem>
-                      <SelectItem value="REKLAMA">Strona /reklama</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {activeTab === "ogolne" && (
+                  <div className="w-[170px]">
+                    <Select value={zrodloFilter} onValueChange={setZrodloFilter}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Źródło" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Wszystkie źródła</SelectItem>
+                        <SelectItem value="KONTAKT">Strona /kontakt</SelectItem>
+                        <SelectItem value="REKLAMA">Strona /reklama</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div className="w-[180px]">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -392,31 +463,46 @@ export default function AdminContactMessagesPage() {
                 <TableRow>
                   <TableHead className="w-[140px]">Data</TableHead>
                   <TableHead>Nadawca</TableHead>
+                  {activeTab === "eksperci" && (
+                    <TableHead className="w-[200px]">Adresat (ekspert)</TableHead>
+                  )}
                   <TableHead className="w-[110px]">Źródło</TableHead>
                   <TableHead className="w-[130px]">Temat</TableHead>
                   <TableHead>Treść wiadomości</TableHead>
-                  <TableHead className="w-[130px]">Status</TableHead>
-                  <TableHead className="text-right w-[120px]">Akcje</TableHead>
+                  {activeTab !== "eksperci" && (
+                    <>
+                      <TableHead className="w-[130px]">Status</TableHead>
+                      <TableHead className="text-right w-[120px]">Akcje</TableHead>
+                    </>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                    <TableCell colSpan={columnCount} className="h-32 text-center text-muted-foreground">
                       Ładowanie wiadomości...
                     </TableCell>
                   </TableRow>
                 ) : messages.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
-                      Brak wiadomości spełniających podane kryteria.
+                    <TableCell colSpan={columnCount} className="h-32 text-center text-muted-foreground">
+                      {activeTab === "eksperci"
+                        ? "Brak wiadomości wysłanych do ekspertów spełniających podane kryteria."
+                        : "Brak wiadomości spełniających podane kryteria."}
                     </TableCell>
                   </TableRow>
                 ) : (
                   messages.map((msg) => {
                     const subjectInfo = subjectLabels[msg.temat] || subjectLabels.INNE
                     return (
-                      <TableRow key={msg.id} className="hover:bg-muted/50 transition-colors">
+                      <TableRow
+                        key={msg.id}
+                        className={`hover:bg-muted/50 transition-colors ${activeTab === "eksperci" ? "cursor-pointer" : ""}`}
+                        onClick={() => {
+                          if (activeTab === "eksperci") setSelectedMessage(msg)
+                        }}
+                      >
                         <TableCell className="text-xs font-medium text-muted-foreground whitespace-nowrap">
                           {formatDate(msg.createdAt)}
                         </TableCell>
@@ -427,6 +513,7 @@ export default function AdminContactMessagesPage() {
                           <div className="flex flex-col text-xs text-muted-foreground gap-0.5 mt-0.5">
                             <a
                               href={`mailto:${msg.email}`}
+                              onClick={(e) => e.stopPropagation()}
                               className="hover:text-primary hover:underline flex items-center gap-1"
                             >
                               <Mail className="w-3 h-3 text-muted-foreground/70" />
@@ -435,6 +522,7 @@ export default function AdminContactMessagesPage() {
                             {msg.telefon && (
                               <a
                                 href={`tel:${msg.telefon}`}
+                                onClick={(e) => e.stopPropagation()}
                                 className="hover:text-primary hover:underline flex items-center gap-1"
                               >
                                 <Phone className="w-3 h-3 text-muted-foreground/70" />
@@ -443,6 +531,28 @@ export default function AdminContactMessagesPage() {
                             )}
                           </div>
                         </TableCell>
+                        {activeTab === "eksperci" && (
+                          <TableCell>
+                            {msg.lawFirm ? (
+                              <a
+                                href={`/ekspert/${msg.lawFirm.slug}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-400 hover:underline"
+                                title="Otwórz profil eksperta"
+                              >
+                                <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                                <span className="line-clamp-2">{msg.lawFirm.nazwa}</span>
+                                <ExternalLink className="w-3 h-3 shrink-0 opacity-70" />
+                              </a>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                — Ekspert usunięty —
+                              </span>
+                            )}
+                          </TableCell>
+                        )}
                         <TableCell>{getSourceBadge(msg)}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className={subjectInfo.className}>
@@ -454,64 +564,68 @@ export default function AdminContactMessagesPage() {
                             {msg.wiadomosc}
                           </p>
                         </TableCell>
-                        <TableCell>
-                          {msg.odpowiedziano ? (
-                            <Badge
-                              variant="outline"
-                              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 gap-1 cursor-pointer"
-                              onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
-                            >
-                              <CheckCircle className="w-3 h-3" />
-                              Odpowiedziano
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="bg-amber-500/10 text-amber-400 border-amber-500/30 gap-1 cursor-pointer"
-                              onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
-                            >
-                              <Clock className="w-3 h-3" />
-                              Oczekuje
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setSelectedMessage(msg)}
-                              title="Szczegóły"
-                              className="h-8 w-8"
-                            >
-                              <Eye className="h-4 w-4 text-primary" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
-                              disabled={processingId === msg.id}
-                              title={msg.odpowiedziano ? "Oznacz jako nieodpowiedziane" : "Oznacz jako odpowiedziane"}
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                            >
+                        {activeTab !== "eksperci" && (
+                          <>
+                            <TableCell>
                               {msg.odpowiedziano ? (
-                                <XCircle className="h-4 w-4 text-amber-400" />
+                                <Badge
+                                  variant="outline"
+                                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 gap-1 cursor-pointer"
+                                  onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
+                                >
+                                  <CheckCircle className="w-3 h-3" />
+                                  Odpowiedziano
+                                </Badge>
                               ) : (
-                                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                                <Badge
+                                  variant="outline"
+                                  className="bg-amber-500/10 text-amber-400 border-amber-500/30 gap-1 cursor-pointer"
+                                  onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
+                                >
+                                  <Clock className="w-3 h-3" />
+                                  Oczekuje
+                                </Badge>
                               )}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setDeleteMessageId(msg.id)}
-                              disabled={processingId === msg.id}
-                              title="Usuń"
-                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setSelectedMessage(msg)}
+                                  title="Szczegóły"
+                                  className="h-8 w-8"
+                                >
+                                  <Eye className="h-4 w-4 text-primary" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => toggleAnsweredStatus(msg.id, msg.odpowiedziano)}
+                                  disabled={processingId === msg.id}
+                                  title={msg.odpowiedziano ? "Oznacz jako nieodpowiedziane" : "Oznacz jako odpowiedziane"}
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                >
+                                  {msg.odpowiedziano ? (
+                                    <XCircle className="h-4 w-4 text-amber-400" />
+                                  ) : (
+                                    <CheckCircle className="h-4 w-4 text-emerald-400" />
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setDeleteMessageId(msg.id)}
+                                  disabled={processingId === msg.id}
+                                  title="Usuń"
+                                  className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
                       </TableRow>
                     )
                   })
@@ -585,6 +699,31 @@ export default function AdminContactMessagesPage() {
               </DialogHeader>
 
               <div className="space-y-4 py-3">
+                {/* Adresat wiadomości - tylko dla zapytań z profilu eksperta */}
+                {(selectedMessage.zrodlo === "EKSPERT" || selectedMessage.lawFirmId) && (
+                  <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 p-3 text-sm">
+                    <span className="text-xs text-muted-foreground uppercase block font-semibold mb-1">
+                      Wiadomość skierowana do eksperta
+                    </span>
+                    {selectedMessage.lawFirm ? (
+                      <a
+                        href={`/ekspert/${selectedMessage.lawFirm.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 font-semibold text-violet-400 hover:underline"
+                      >
+                        <Briefcase className="w-4 h-4" />
+                        {selectedMessage.lawFirm.nazwa}
+                        <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        — Profil eksperta został usunięty —
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {/* Contact info card */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-lg border border-border bg-muted/30 p-3 text-sm">
                   <div>
@@ -649,7 +788,11 @@ export default function AdminContactMessagesPage() {
                 <div className="flex items-center gap-2">
                   <a
                     href={`mailto:${selectedMessage.email}?subject=Re: Odpowiedź na wiadomość ze strony ${
-                      selectedMessage.zrodlo === "REKLAMA" ? "reklamy" : "kontaktowej"
+                      selectedMessage.zrodlo === "REKLAMA"
+                        ? "reklamy"
+                        : selectedMessage.zrodlo === "EKSPERT" || selectedMessage.lawFirmId
+                          ? "profilu eksperta"
+                          : "kontaktowej"
                     }`}
                     target="_blank"
                     rel="noreferrer"
