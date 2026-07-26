@@ -25,33 +25,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { AnimatedNavIcon } from "@/components/AnimatedNavIcon"
 import {
-  AcademicCapIcon,
-  ArrowRightStartOnRectangleIcon,
-  ArrowTopRightOnSquareIcon,
-  ArrowTrendingUpIcon,
-  BanknotesIcon,
-  BookOpenIcon,
-  BriefcaseIcon,
-  ChartBarIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  CreditCardIcon,
-  CubeIcon,
-  DocumentTextIcon,
-  NewspaperIcon,
-  RectangleStackIcon,
-  Squares2X2Icon,
-  StarIcon,
-  TrophyIcon,
-  UserIcon,
-  WrenchIcon,
-} from "@heroicons-animated/react"
-import {
+  Award,
+  BarChart3,
+  BookOpen,
+  Briefcase,
   ChevronLeft,
   ChevronRight,
+  Coins,
+  CreditCard,
+  ExternalLink,
+  FileStack,
+  FileText,
+  LayoutDashboard,
+  LogOut,
   Menu,
+  MessageSquare,
+  Package,
+  Settings,
+  Star,
+  TrendingUp,
+  Trophy,
+  User,
+  Wrench,
 } from "lucide-react"
 
 // Pogrupowana nawigacja — sekcje porządkują panel i poprawiają UX.
@@ -60,45 +56,45 @@ const navigationGroups = [
   {
     label: null,
     items: [
-      { name: "Panel użytkownika", href: "/panel-eksperta", icon: Squares2X2Icon },
+      { name: "Panel użytkownika", href: "/panel-eksperta", icon: LayoutDashboard },
     ],
   },
   {
     label: "Obsługa spraw",
     items: [
-      { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: BriefcaseIcon },
-      { name: "Oferty", href: "/panel-eksperta/oferty", icon: DocumentTextIcon },
-      { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpenIcon },
-      { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: ChatBubbleLeftRightIcon },
+      { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: Briefcase },
+      { name: "Oferty", href: "/panel-eksperta/oferty", icon: FileText },
+      { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpen },
+      { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: MessageSquare },
     ],
   },
   {
     label: "Wizytówka",
     items: [
-      { name: "Edycja profilu", href: "/panel-eksperta/profil", icon: UserIcon },
-      { name: "Podgląd profilu", href: "/ekspert/[slug]", icon: ArrowTopRightOnSquareIcon },
-      { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: WrenchIcon },
-      { name: "Blog", href: "/panel-eksperta/blog", icon: NewspaperIcon },
-      { name: "Opinie", href: "/panel-eksperta/opinie", icon: StarIcon },
-      { name: "Certyfikaty", href: "/panel-eksperta/certyfikaty", icon: AcademicCapIcon },
-      { name: "Dokumenty", href: "/panel-eksperta/dokumenty", icon: RectangleStackIcon },
+      { name: "Edycja profilu", href: "/panel-eksperta/profil", icon: User },
+      { name: "Podgląd profilu", href: "/ekspert/[slug]", icon: ExternalLink },
+      { name: "Zakres usług", href: "/panel-eksperta/zakres-uslug", icon: Wrench },
+      { name: "Blog", href: "/panel-eksperta/blog", icon: BookOpen },
+      { name: "Opinie", href: "/panel-eksperta/opinie", icon: Star },
+      { name: "Certyfikaty", href: "/panel-eksperta/certyfikaty", icon: Award },
+      { name: "Dokumenty", href: "/panel-eksperta/dokumenty", icon: FileStack },
     ],
   },
   {
     label: "Promocja i wyniki",
     items: [
-      { name: "Promowanie", href: "/panel-eksperta/promowanie", icon: ArrowTrendingUpIcon },
-      { name: "Pozycja ogłoszeń", href: "/panel-eksperta/pozycja-ogloszenia", icon: TrophyIcon },
-      { name: "Statystyki", href: "/panel-eksperta/statystyki", icon: ChartBarIcon },
+      { name: "Promowanie", href: "/panel-eksperta/promowanie", icon: TrendingUp },
+      { name: "Pozycja ogłoszeń", href: "/panel-eksperta/pozycja-ogloszenia", icon: Trophy },
+      { name: "Statystyki", href: "/panel-eksperta/statystyki", icon: BarChart3 },
     ],
   },
   {
     label: "Konto i płatności",
     items: [
-      { name: "Punkty", href: "/panel-eksperta/punkty", icon: BanknotesIcon },
-      { name: "Pakiet", href: "/panel-eksperta/pakiet", icon: CubeIcon },
-      { name: "Subskrypcje i płatności", href: "/panel-eksperta/subskrypcje-i-platnosci", icon: CreditCardIcon },
-      { name: "Ustawienia", href: "/panel-eksperta/ustawienia", icon: Cog6ToothIcon },
+      { name: "Punkty", href: "/panel-eksperta/punkty", icon: Coins },
+      { name: "Pakiet", href: "/panel-eksperta/pakiet", icon: Package },
+      { name: "Subskrypcje i płatności", href: "/panel-eksperta/subskrypcje-i-platnosci", icon: CreditCard },
+      { name: "Ustawienia", href: "/panel-eksperta/ustawienia", icon: Settings },
     ],
   },
 ]
@@ -252,7 +248,6 @@ export default function LawFirmPanelLayout({
     <nav
       className="flex-1 space-y-1 overflow-y-auto p-4 bg-background-sec relative"
       id="left-nav"
-      onMouseLeave={() => setHoveredIndex(null)}
       onClick={() => {
         if (inSheet) {
           setIsMobileOpen(false)
@@ -310,8 +305,6 @@ export default function LawFirmPanelLayout({
                 href={href}
                 target={isProfilePreview ? "_blank" : undefined}
                 rel={isProfilePreview ? "noopener noreferrer" : undefined}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
                 className={cn(
                   "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
                   isActive
@@ -321,30 +314,10 @@ export default function LawFirmPanelLayout({
                 )}
                 title={!inSheet && isCollapsed ? item.name : undefined}
               >
-                <AnimatePresence>
-                  {hoveredIndex === index && !isActive && (
-                    <motion.span
-                      layoutId="expert-sidebar-hover-pill"
-                      className="absolute inset-0 -z-10 rounded-lg bg-accent/80 border-l-[3px] border-primary/60"
-                      initial={{ opacity: 0, scale: 0.96 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.96 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 380,
-                        damping: 30,
-                      }}
-                    />
-                  )}
-                </AnimatePresence>
+
 
                 <div className="flex items-center justify-center flex-shrink-0">
-                  <AnimatedNavIcon
-                    icon={item.icon}
-                    isHovered={hoveredIndex === index}
-                    size={20}
-                    className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")}
-                  />
+                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
                 </div>
 
                 {/* Text label with elegant fade-slide */}
@@ -399,7 +372,6 @@ export default function LawFirmPanelLayout({
       <Button
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length + 1)}
-        onMouseLeave={() => setHoveredIndex(null)}
         className={cn(
           "group w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
@@ -424,14 +396,21 @@ export default function LawFirmPanelLayout({
           )}
         </AnimatePresence>
 
-        <div className="flex items-center justify-center flex-shrink-0">
-          <AnimatedNavIcon
-            icon={ArrowRightStartOnRectangleIcon}
-            isHovered={hoveredIndex === navigation.length + 1}
-            size={24}
-            className="h-6 w-6 transition-colors duration-200 text-muted-foreground group-hover:text-white"
-          />
-        </div>
+        <motion.div
+          animate={{
+            scale: hoveredIndex === navigation.length + 1 ? 1.1 : 1,
+            x: hoveredIndex === navigation.length + 1 && (!inSheet && !isCollapsed) ? 2 : 0,
+            rotate: hoveredIndex === navigation.length + 1 ? [0, -5, 5, 0] : 0,
+          }}
+          transition={{
+            scale: { type: "spring", stiffness: 400, damping: 20 },
+            x: { type: "spring", stiffness: 400, damping: 20 },
+            rotate: { duration: 0.4, ease: "easeInOut" }
+          }}
+          className="flex items-center justify-center flex-shrink-0"
+        >
+          <LogOut className="h-5 w-5" />
+        </motion.div>
 
         {(inSheet || !isCollapsed) && (
           <motion.span
