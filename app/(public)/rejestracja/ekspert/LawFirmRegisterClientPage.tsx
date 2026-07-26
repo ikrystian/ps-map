@@ -1350,9 +1350,9 @@ export default function LawFirmRegistrationPage() {
                 <div className="space-y-4 pt-4 border-t border-border/50">
                   <div
                     className={cn(
-                      "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                      "flex items-start space-x-3 p-3 rounded-lg border-1 transition-all cursor-pointer",
                       formData.zgodaRegulamin
-                        ? "bg-primary/5 border-primary shadow-sm"
+                        ? "bg-primary/5 border-primary/30 shadow-sm"
                         : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                       fieldErrors.zgodaRegulamin && "border-destructive bg-destructive/5"
                     )}
@@ -1380,9 +1380,9 @@ export default function LawFirmRegistrationPage() {
 
                   <div
                     className={cn(
-                      "flex items-start space-x-3 p-3 rounded-lg border-2 transition-all cursor-pointer",
+                      "flex items-start space-x-3 p-3 rounded-lg border-1 transition-all cursor-pointer",
                       formData.zgodaPrzetwarzanie
-                        ? "bg-primary/5 border-primary shadow-sm"
+                        ? "bg-primary/5 border-primary/30 shadow-sm"
                         : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50",
                       fieldErrors.zgodaPrzetwarzanie && "border-destructive bg-destructive/5"
                     )}

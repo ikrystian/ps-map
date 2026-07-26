@@ -106,7 +106,8 @@
       "WebFetch(domain:animate-ui.com)",
       "Bash(grep -vE '/\\(icon|animate-ui-icon\\)\\\\.tsx$')",
       "Bash(/api\" /home/krystian/Projects/ps-map/app/\\\\\\(public\\\\\\)/ekspert/\\\\[slug\\\\]/ExpertProfileClientPage.tsx /home/krystian/Projects/ps-map/components/ekspert/*.tsx | head -30)",
-      "Bash(grep -rn \"fetch\\(\\\\\"/api\\\\|fetch\\(`/api\" /home/krystian/Projects/ps-map/app/\\\\\\(public\\\\\\)/ekspert/\\\\[slug\\\\]/ExpertProfileClientPage.tsx /home/krystian/Projects/ps-map/components/ekspert/*.tsx | head -30)"
+      "Bash(grep -rn \"fetch\\(\\\\\"/api\\\\|fetch\\(`/api\" /home/krystian/Projects/ps-map/app/\\\\\\(public\\\\\\)/ekspert/\\\\[slug\\\\]/ExpertProfileClientPage.tsx /home/krystian/Projects/ps-map/components/ekspert/*.tsx | head -30)",
+      "Bash(echo \"exit=$?\")"
     ]
   }
 }

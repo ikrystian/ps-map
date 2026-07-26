@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { ExpertiseCategoryPicker } from "@/components/filters/ExpertiseCategoryPicker"
+import { VoivodeshipPicker } from "@/components/filters/VoivodeshipPicker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -112,18 +114,6 @@ export default function SearchLawyerPage() {
   // Expertise categories filter state
   const [selectedExpertiseCategory, setSelectedExpertiseCategory] = useState("all")
   const [expertiseCategories, setExpertiseCategories] = useState<any[]>([])
-
-  // Helper to flatten nested categories
-  const getFlattenedExpertiseCategories = (cats: any[], depth = 0): any[] => {
-    const list: any[] = []
-    for (const cat of cats) {
-      list.push({ id: cat.id, name: cat.nazwa, depth })
-      if (cat.children && cat.children.length > 0) {
-        list.push(...getFlattenedExpertiseCategories(cat.children, depth + 1))
-      }
-    }
-    return list
-  }
 
   // Initialize filters from URL
   useEffect(() => {
@@ -432,22 +422,16 @@ export default function SearchLawyerPage() {
                     {/* Expertise Category */}
                     <div className="space-y-2">
                       <Label className="text-xs">Specjalizacja ekspercka</Label>
-                      <Select value={selectedExpertiseCategory} onValueChange={setSelectedExpertiseCategory}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Wszystkie specjalizacje" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Wszystkie specjalizacje</SelectItem>
-                          {getFlattenedExpertiseCategories(expertiseCategories).map((item) => (
-                            <SelectItem key={item.id} value={item.id} className="cursor-pointer">
-                              <span className="font-normal">
-                                {"\u00A0".repeat(item.depth * 3)}
-                                {item.name}
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <ExpertiseCategoryPicker
+                        categories={expertiseCategories}
+                        value={selectedExpertiseCategory}
+                        onChange={(val) => {
+                          setSelectedExpertiseCategory(val)
+                          setPage(1)
+                        }}
+                        placeholder="Wszystkie specjalizacje"
+                        className="h-10"
+                      />
                     </div>
 
                     {/* Lokalizacja — warunkowa w zależności od geographicHierarchy */}
@@ -513,19 +497,13 @@ export default function SearchLawyerPage() {
                       <>
                         <div className="space-y-2">
                           <Label className="text-xs">Województwo</Label>
-                          <Select value={selectedVoivodeship} onValueChange={handleVoivodeshipChange}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Wszystkie" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">Wszystkie</SelectItem>
-                              {voivodeships.map((voivodeship) => (
-                                <SelectItem key={voivodeship.id} value={voivodeship.slug || ""}>
-                                  {voivodeship.nazwa}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <VoivodeshipPicker
+                            voivodeships={voivodeships}
+                            value={selectedVoivodeship}
+                            onChange={handleVoivodeshipChange}
+                            placeholder="Wszystkie"
+                            className="h-10"
+                          />
                         </div>
 
                         {geographicHierarchy === "cities" && (

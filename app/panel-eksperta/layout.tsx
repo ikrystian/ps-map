@@ -306,10 +306,10 @@ export default function LawFirmPanelLayout({
                 target={isProfilePreview ? "_blank" : undefined}
                 rel={isProfilePreview ? "noopener noreferrer" : undefined}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
+                  "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 outline-none",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                    : "text-muted-foreground hover:text-white",
+                    : "text-muted-foreground hover:text-white hover:bg-black/25",
                   !inSheet && isCollapsed && "justify-center"
                 )}
                 title={!inSheet && isCollapsed ? item.name : undefined}
