@@ -1251,7 +1251,7 @@ export default function LawFirmRegistrationPage() {
                 {!session ? (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className={cn(fieldErrors.email && "text-destructive")}>Email logowania (Twój login) *</Label>
+                      <Label htmlFor="email" className={cn(fieldErrors.email && "text-destructive")}>E-mail *</Label>
                       <Input
                         id="email"
                         type="email"
