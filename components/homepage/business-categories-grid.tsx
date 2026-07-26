@@ -12,6 +12,25 @@ interface BusinessCategoriesGridProps {
   categories: Category[]
 }
 
+// Link jako komponent motion — kafelek musi zostać bezpośrednim dzieckiem
+// gridu, bo .business-categories-grid pozycjonuje kafelki przez `> *:nth-child()`.
+const MotionLink = motion.create(Link)
+
+// Kafelki wjeżdżają jeden po drugim, zamiast pojawiać się całą siatką naraz.
+const gridVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+}
+
 const BusinessCategoryCard = memo(({
   category,
   index,
@@ -30,8 +49,9 @@ const BusinessCategoryCard = memo(({
   aspectRatio?: string,
 }) => {
   return (
-    <Link
+    <MotionLink
       href={`/kategorie/${category.slug}`}
+      variants={cardVariants}
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
       data-area={gridArea}
@@ -61,7 +81,7 @@ const BusinessCategoryCard = memo(({
         ) : null}
         <h3 className="text-white text-base md:text-xl font-bold text-center">{category.nazwa}</h3>
       </div>
-    </Link>
+    </MotionLink>
   )
 })
 
@@ -98,8 +118,12 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
           </div>
 
           {/* Desktop Grid Layout */}
-          <div
+          <motion.div
             className="business-categories-grid"
+            variants={gridVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
           >
             {activeCategories.map((category, index) => (
               <BusinessCategoryCard
@@ -112,7 +136,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
                 imageUrl={category.backgroundImageUrl}
               />
             ))}
-          </div>
+          </motion.div>
 
           <div className="text-right">
             <Button asChild variant="outline" size="lg" className="max-w-full h-auto min-h-11 whitespace-normal text-center">

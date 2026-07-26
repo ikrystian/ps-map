@@ -12,6 +12,25 @@ interface CategoriesGridProps {
   categories: Category[];
 }
 
+// Link jako komponent motion — kafelek musi zostać bezpośrednim dzieckiem
+// gridu, bo .categories-grid pozycjonuje kafelki selektorami `> *:nth-child()`.
+const MotionLink = motion.create(Link);
+
+// Kafelki wjeżdżają jeden po drugim, zamiast pojawiać się całą siatką naraz.
+const gridVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+};
+
 const CategoryCard = memo(
   ({
     category,
@@ -29,8 +48,9 @@ const CategoryCard = memo(
     dataArea?: string;
   }) => {
     return (
-      <Link
+      <MotionLink
         href={`/kategorie/${category.slug}`}
+        variants={cardVariants}
         onMouseEnter={() => setHovered(index)}
         onMouseLeave={() => setHovered(null)}
         data-area={dataArea}
@@ -66,7 +86,7 @@ const CategoryCard = memo(
           ) : null}
           <h3 className="text-white text-base md:text-xl font-bold text-center">{category.nazwa}</h3>
         </div>
-      </Link>
+      </MotionLink>
     );
   },
 );
@@ -140,7 +160,13 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
             </div>
           </div>
           {/* Unified responsive grid — layout handled via CSS (.categories-grid in globals.css) */}
-          <div className="categories-grid">
+          <motion.div
+            className="categories-grid"
+            variants={gridVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
             {activeCategories.map((category, index) => (
               <CategoryCard
                 key={category.id}
@@ -152,7 +178,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
                 dataArea={gridAreas[index]}
               />
             ))}
-          </div>
+          </motion.div>
 
           <div className="text-right">
             <Button asChild variant="outline" size="lg" className="max-w-full h-auto min-h-11 whitespace-normal text-center">
