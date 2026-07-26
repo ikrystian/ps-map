@@ -273,6 +273,17 @@ export default function LawFirmBlogPage() {
                                 size="icon"
                                 asChild
                                 className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
+                                title="Podgląd wpisu (w nowej karcie)"
+                              >
+                                <a href={`/blog/${post.slug}?preview=true`} target="_blank" rel="noopener noreferrer">
+                                  <Eye className="h-4 w-4" />
+                                </a>
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                asChild
+                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                 title="Edytuj wpis"
                               >
                                 <Link href={`/panel-eksperta/blog/${post.id}`}>

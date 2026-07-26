@@ -5,7 +5,6 @@ import { seedBlogCategories } from './seeds/blog-categories'
 import { seedCategories } from './seeds/categories'
 import { seedEmailTemplates } from './seeds/email-templates';
 import { seedExpertiseCategories } from './seeds/expertise-categories';
-import { seedExperts } from './seeds/experts';
 import { seedPromotionConfigs } from './seeds/promotions'
 import { seedStaticPages } from './seeds/static-pages'
 import { seedVoivodeships } from './seeds/voivodeships'
@@ -100,11 +99,6 @@ async function main() {
   await seedEmailTemplates(prisma)
   await seedHelp(prisma)
   // await seedAdvertisements(prisma)
-
-  // ==========================================================================
-  // SEEDERY RELACYJNE (wymagają słowników powyżej)
-  // ==========================================================================
-  //await seedExperts(prisma)          // 300 realistycznych ekspertów @bpcoders.pl
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym
 

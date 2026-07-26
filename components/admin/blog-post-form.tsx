@@ -35,7 +35,6 @@ import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
-import { BlogPostPreviewDialog } from "@/components/admin/blog-post-preview-dialog"
 import { BlogCategoryPicker } from "@/components/admin/blog-category-picker"
 
 const RichTextEditor = dynamic(
@@ -118,9 +117,11 @@ interface BlogPostFormProps {
 export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   const isExpert = mode === "expert"
   const baseRedirectUrl = isExpert ? "/panel-eksperta/blog" : "/admin/blog"
+  const [currentPostId, setCurrentPostId] = useState<string | undefined>(postId)
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [lawFirms, setLawFirms] = useState<{ id: string; nazwa: string }[]>([])
   const [loading, setLoading] = useState(false)
+  const [previewLoading, setPreviewLoading] = useState(false)
   const [loadingPost, setLoadingPost] = useState(!!postId)
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [loadingLawFirms, setLoadingLawFirms] = useState(false)
@@ -129,7 +130,6 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
   const [generatingSeo, setGeneratingSeo] = useState(false)
-  const [previewOpen, setPreviewOpen] = useState(false)
 
   // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
   const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
@@ -198,7 +198,8 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
 
   const fetchPost = async () => {
     try {
-      const getUrl = isExpert ? `/api/law-firms/me/blog/${postId}` : `/api/admin/blog/${postId}`
+      const activeId = currentPostId || postId
+      const getUrl = isExpert ? `/api/law-firms/me/blog/${activeId}` : `/api/admin/blog/${activeId}`
       const response = await fetch(getUrl)
 
       if (response.status === 401 || response.status === 403) {
@@ -292,14 +293,85 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
     }
   }
 
+  const handlePreview = async () => {
+    const isValid = await form.trigger(["tytul", "tresc"])
+    if (!isValid) {
+      toast.error("Wypełnij tytuł i treść artykułu, aby otworzyć podgląd")
+      return
+    }
+
+    setPreviewLoading(true)
+    const previewWindow = typeof window !== "undefined" ? window.open("about:blank", "_blank") : null
+
+    try {
+      const values = form.getValues()
+      const activeId = currentPostId || postId
+      const url = isExpert
+        ? (activeId ? `/api/law-firms/me/blog/${activeId}` : "/api/law-firms/me/blog")
+        : (activeId ? `/api/admin/blog/${activeId}` : "/api/admin/blog")
+      const method = isExpert
+        ? (activeId ? "PUT" : "POST")
+        : (activeId ? "PATCH" : "POST")
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          categoryId: values.categoryId || null,
+          obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
+          tagi: values.tagi,
+          metaTitle: values.metaTitle || null,
+          metaDescription: values.metaDescription || null,
+          opublikowany: values.opublikowany || values.zaplanowany,
+          dataPublikacji: values.zaplanowany && values.dataPublikacji
+            ? new Date(values.dataPublikacji).toISOString()
+            : null,
+          sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
+        }),
+      })
+
+      if (response.ok) {
+        const savedPost = await response.json()
+
+        if (!activeId && savedPost.id) {
+          setCurrentPostId(savedPost.id)
+          const newEditUrl = isExpert ? `/panel-eksperta/blog/${savedPost.id}` : `/admin/blog/${savedPost.id}`
+          window.history.replaceState(null, "", newEditUrl)
+        }
+
+        const previewUrl = `/blog/${savedPost.slug}?preview=true`
+        if (previewWindow) {
+          previewWindow.location.href = previewUrl
+        } else {
+          window.open(previewUrl, "_blank")
+        }
+
+        toast.success("Zapisano wersję roboczą i otwarto podgląd w nowej karcie")
+      } else {
+        const error = await response.json()
+        if (previewWindow) previewWindow.close()
+        throw new Error(error.error || "Nie udało się zapisać wpisu do podglądu")
+      }
+    } catch (error) {
+      if (previewWindow) previewWindow.close()
+      toast.error(error instanceof Error ? error.message : "Nie udało się otworzyć podglądu")
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
   const handleSubmit = async (values: PostFormValues) => {
     setLoading(true)
+    const activeId = currentPostId || postId
     const url = isExpert
-      ? (postId ? `/api/law-firms/me/blog/${postId}` : "/api/law-firms/me/blog")
-      : (postId ? `/api/admin/blog/${postId}` : "/api/admin/blog")
+      ? (activeId ? `/api/law-firms/me/blog/${activeId}` : "/api/law-firms/me/blog")
+      : (activeId ? `/api/admin/blog/${activeId}` : "/api/admin/blog")
     const method = isExpert
-      ? (postId ? "PUT" : "POST")
-      : (postId ? "PATCH" : "POST")
+      ? (activeId ? "PUT" : "POST")
+      : (activeId ? "PATCH" : "POST")
 
     try {
       const response = await fetch(url, {
@@ -323,7 +395,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
       })
 
       if (response.ok) {
-        if (postId) {
+        if (activeId) {
           toast.success("Artykuł został zaktualizowany")
         } else if (values.zaplanowany) {
           toast.success("Publikacja artykułu została zaplanowana")
@@ -333,10 +405,10 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
         router.push(baseRedirectUrl)
       } else {
         const error = await response.json()
-        throw new Error(error.error || (postId ? "Błąd aktualizacji wpisu" : "Błąd tworzenia wpisu"))
+        throw new Error(error.error || (activeId ? "Błąd aktualizacji wpisu" : "Błąd tworzenia wpisu"))
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : (postId ? "Nie udało się zaktualizować artykułu" : "Nie udało się zapisać artykułu"))
+      toast.error(error instanceof Error ? error.message : (activeId ? "Nie udało się zaktualizować artykułu" : "Nie udało się zapisać artykułu"))
     } finally {
       setLoading(false)
     }
@@ -962,20 +1034,25 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setPreviewOpen(true)}
+                disabled={previewLoading}
+                onClick={handlePreview}
                 className="h-9 gap-1.5"
               >
-                <Eye className="h-4 w-4" />
+                {previewLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
                 Podgląd
               </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push(baseRedirectUrl)}
-                  className="h-11 px-6 font-medium"
-                >
-                  Anuluj
-                </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push(baseRedirectUrl)}
+                className="h-9 px-4 font-medium text-xs"
+              >
+                Anuluj
+              </Button>
               <Button type="submit" disabled={loading} className="h-9 font-semibold px-5">
                 {loading ? (
                   <>
@@ -985,7 +1062,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                 ) : (
                   <>
                     <Save className="mr-2 h-4 w-4" />
-                    {postId
+                    {currentPostId || postId
                       ? "Zapisz zmiany"
                       : form.watch("zaplanowany")
                         ? "Zaplanuj publikację"
@@ -999,19 +1076,6 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
           </div>
         </form>
       </Form>
-
-      <BlogPostPreviewDialog
-        isOpen={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        tytul={form.watch("tytul")}
-        tresc={form.watch("tresc")}
-        obrazekWyrozniajacy={form.watch("obrazekWyrozniajacy")}
-        categoryId={form.watch("categoryId")}
-        categories={categories}
-        isSponsored={form.watch("isSponsored")}
-        sponsoredLawFirmId={form.watch("sponsoredLawFirmId")}
-        sponsoredLawFirmName={lawFirms.find((firm) => firm.id === form.watch("sponsoredLawFirmId"))?.nazwa}
-      />
     </div>
   )
 }

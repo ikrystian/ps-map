@@ -255,8 +255,7 @@ export default function AdminBlogPage() {
   }
 
   const openPreviewDialog = (post: BlogPost) => {
-    setSelectedPost(post)
-    setIsPreviewOpen(true)
+    window.open(`/blog/${post.slug}?preview=true`, "_blank")
   }
 
   const formatDate = (dateString?: string | Date | null) => {

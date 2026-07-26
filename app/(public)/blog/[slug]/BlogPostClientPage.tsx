@@ -171,8 +171,18 @@ export default function BlogPostPage() {
     </Fragment>
   ));
 
+  const isUnpublished = Boolean(post && (!post.opublikowany || (post.dataPublikacji && new Date(post.dataPublikacji) > new Date())));
+
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
+      {/* Draft Preview Banner */}
+      {isUnpublished && (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 text-amber-300 py-3 px-4 text-center text-xs font-semibold flex items-center justify-center gap-2 backdrop-blur-md sticky top-[65px] z-40">
+          <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+          <span>Tryb podglądu (Szkic) — ten artykuł nie jest opublikowany i jest widoczny tylko dla Ciebie (autora).</span>
+        </div>
+      )}
+
       {/* Reading progress bar */}
       <motion.div
         className="fixed top-[65px] left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-secondary to-primary origin-left z-50 shadow-xs"
