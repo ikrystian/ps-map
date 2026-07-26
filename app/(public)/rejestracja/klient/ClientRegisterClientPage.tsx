@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { getBrowserTelemetry } from "@/lib/rodo-audit"
 import { Check, ChevronDown, Eye, EyeOff } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
@@ -389,6 +390,7 @@ export default function ClientRegistrationPage() {
           recaptchaToken,
           phoneVerificationToken,
           role: "CLIENT",
+          telemetry: getBrowserTelemetry(),
           name: formData.clientType === "BUSINESS" && formData.nazwa.trim()
             ? formData.nazwa.trim()
             : `${formData.imie} ${formData.nazwisko}`,

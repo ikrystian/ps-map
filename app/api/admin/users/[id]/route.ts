@@ -71,6 +71,7 @@ export async function GET(
             },
           },
         },
+        registrationAudit: true,
         _count: {
           select: {
             sentMessages: true,

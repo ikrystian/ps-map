@@ -82,6 +82,9 @@ model User {
   // Rejestr anonimizacji konta (RODO art. 17)
   accountDeletion AccountDeletion?
 
+  // Rejestr audytu rejestracji i zgód RODO (RODO art. 5 ust. 2 - rozliczalność)
+  registrationAudit RegistrationAuditLog?
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -410,6 +413,7 @@ model LawFirm {
   badges                     LawFirmBadge[]
   orderOverrides             OrderOverride[]
   surveyResponses            SurveyResponse[]
+  contactForms               ContactForm[]         // Wiadomości z formularza na profilu eksperta
 
   @@index([userId])
   @@index([nip])
@@ -1730,14 +1734,19 @@ model ContactForm {
   wiadomosc     String
   zalacznik     String?  // URL do załącznika
 
-  zrodlo        String?  @default("KONTAKT")
+  zrodlo        String?  @default("KONTAKT") // KONTAKT | REKLAMA | EKSPERT
   odpowiedziano Boolean  @default(false)
+
+  // Adresat wiadomości wysłanej z profilu eksperta (/ekspert/[slug])
+  lawFirmId     String?
+  lawFirm       LawFirm? @relation(fields: [lawFirmId], references: [id], onDelete: SetNull)
 
   createdAt     DateTime @default(now())
 
   @@index([odpowiedziano])
   @@index([createdAt])
   @@index([zrodlo])
+  @@index([lawFirmId])
 }
 
 enum ContactSubject {
@@ -2024,6 +2033,76 @@ model SystemLog {
   @@index([action])
   @@index([userId])
   @@index([createdAt])
+}
+
+// ============================================================================
+// AUDYT REJESTRACJI I ZGÓD RODO (art. 5 ust. 2 RODO — rozliczalność)
+// ============================================================================
+
+model RegistrationAuditLog {
+  id                  String    @id @default(uuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role                UserRole
+
+  // Zgody RODO / Regulamin
+  zgodaRegulamin      Boolean   @default(false)
+  zgodaNewsletter     Boolean   @default(false)
+  zgodaMarketing      Boolean   @default(false)
+  zgodaPrzetwarzanie  Boolean   @default(false)
+
+  // Dane sieciowe i nagłówki HTTP
+  ipAddress           String?
+  userAgent           String?
+  acceptLanguage      String?
+  referer             String?
+  secChUa             String?
+  secChUaPlatform     String?
+  secChUaMobile       String?
+
+  // Wykryte/parsowane środowisko użytkownika
+  browser             String?   // np. "Chrome", "Firefox", "Safari"
+  browserVersion      String?   // np. "120.0.0.0"
+  os                  String?   // np. "Windows", "macOS", "Android", "iOS", "Linux"
+  osVersion           String?   // np. "10", "14.1"
+  deviceType          String?   // "Desktop", "Mobile", "Tablet"
+
+  // Metadane klienta (zmienne z przeglądarki pobrane przez JS)
+  screenResolution    String?   // np. "1920x1080 (24-bit)"
+  viewportSize        String?   // np. "1440x900"
+  devicePixelRatio    Float?    // np. 1.25, 2
+  language            String?   // np. "pl-PL"
+  languages           String?   // np. "pl-PL, pl, en-US, en"
+  timezone            String?   // np. "Europe/Warsaw"
+  timezoneOffset      Int?      // np. -120 (minuty różnicy od UTC)
+  platform            String?   // np. "Linux x86_64", "Win32"
+  hardwareConcurrency Int?      // np. 8 (liczba rdzeni procesora)
+  deviceMemory        Float?    // np. 8 (szacowana pamięć RAM w GB)
+  touchSupport        Boolean   @default(false)
+  cookieEnabled       Boolean   @default(true)
+  doNotTrack          String?   // np. "1", "0", "unspecified"
+  onlineStatus        Boolean   @default(true)
+  connectionType      String?
+
+  // Skąd trafił użytkownik (URL rejestracji i kampania)
+  registrationUrl     String?
+  documentReferrer    String?
+  utmSource           String?
+  utmMedium           String?
+  utmCampaign         String?
+  utmTerm             String?
+  utmContent          String?
+
+  // Kompletne surowe dane w JSON (pewna rozliczalność w przypadku kontroli UODO)
+  rawMetadata         String?
+
+  createdAt           DateTime  @default(now())
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([createdAt])
+  @@index([role])
 }
 
 enum LogLevel {

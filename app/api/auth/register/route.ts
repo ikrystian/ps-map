@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 
 import { verifyRecaptchaToken } from "@/lib/recaptcha"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
+import { recordRegistrationAudit } from "@/lib/rodo-audit"
 import { EmailType, UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
@@ -337,6 +338,23 @@ export async function POST(request: NextRequest) {
         console.error('Failed to send law firm welcome email:', emailError)
       }
     }
+
+    // Zapis audytu rejestracji i zgód RODO
+    const telemetry = body.telemetry || body.clientTelemetry || {}
+    const consents = {
+      zgodaRegulamin: clientData?.zgodaRegulamin ?? userData.lawFirm?.zgodaRegulamin ?? false,
+      zgodaNewsletter: clientData?.zgodaNewsletter ?? false,
+      zgodaMarketing: clientData?.zgodaMarketing ?? false,
+      zgodaPrzetwarzanie: userData.lawFirm?.zgodaPrzetwarzanie ?? false,
+    }
+
+    await recordRegistrationAudit({
+      userId: user.id,
+      role: user.role,
+      request,
+      telemetry,
+      consents,
+    })
 
     return NextResponse.json(
       {

@@ -21,6 +21,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { getBrowserTelemetry } from "@/lib/rodo-audit"
 import { useEffect, useState } from "react"
 
 import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
@@ -564,6 +565,7 @@ export default function LawFirmRegistrationPage() {
           password: formData.password,
           recaptchaToken,
           phoneVerificationToken,
+          telemetry: getBrowserTelemetry(),
           typ: formData.typ,
           typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
