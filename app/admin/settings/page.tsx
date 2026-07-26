@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Settings as SettingsIcon } from "lucide-react"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Settings as SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -105,6 +105,23 @@ interface Settings {
     description: string | null
   }
   enableUserSelectionOnLogin?: {
+    value: string
+    description: string | null
+  }
+  smsMode?: {
+    value: string
+    description: string | null
+  }
+  smsapiSender?: {
+    value: string
+    description: string | null
+  }
+  smsapiToken?: {
+    value: string
+    description: string | null
+  }
+  /** Stan wyliczony po stronie serwera (tylko do odczytu, JSON). */
+  smsapiStatus?: {
     value: string
     description: string | null
   }
@@ -218,6 +235,17 @@ interface Settings {
   }
 }
 
+/** Stan konfiguracji SMS wyliczony przez serwer (klucz `smsapiStatus`). */
+interface SmsApiStatus {
+  /** Czy przy obecnych ustawieniach SMS-y NIE są realnie wysyłane. */
+  simulated: boolean
+  /** Skąd pochodzi token: z panelu, z ENV, albo go nie ma. */
+  tokenSource: "settings" | "env" | "none"
+  sender: string
+  apiUrl: string
+  nodeEnv: string
+}
+
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null)
@@ -259,6 +287,12 @@ export default function AdminSettingsPage() {
   const [emailFrom, setEmailFrom] = useState("")
   const [emailFromName, setEmailFromName] = useState("")
   const [emailLogToMails, setEmailLogToMails] = useState("false")
+
+  // Weryfikacja SMS (SMSAPI)
+  const [smsMode, setSmsMode] = useState("auto")
+  const [smsapiSender, setSmsapiSender] = useState("Test")
+  const [smsapiToken, setSmsapiToken] = useState("")
+  const [smsapiStatus, setSmsapiStatus] = useState<SmsApiStatus | null>(null)
 
   // Stopka — dolny pasek
   const [footerCopyrightText, setFooterCopyrightText] = useState("2026 © ProstaSprawa.pl")
@@ -342,6 +376,16 @@ export default function AdminSettingsPage() {
         setEmailFrom(data.emailFrom?.value || "")
         setEmailFromName(data.emailFromName?.value || "")
         setEmailLogToMails(data.emailLogToMails?.value || "false")
+
+        // Weryfikacja SMS (SMSAPI)
+        setSmsMode(data.smsMode?.value || "auto")
+        setSmsapiSender(data.smsapiSender?.value || "Test")
+        setSmsapiToken(data.smsapiToken?.value || "")
+        try {
+          setSmsapiStatus(data.smsapiStatus ? JSON.parse(data.smsapiStatus.value) : null)
+        } catch {
+          setSmsapiStatus(null)
+        }
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
 
@@ -454,6 +498,18 @@ export default function AdminSettingsPage() {
         toast.error("Port serwera SMTP musi być liczbą od 1 do 65535")
         return
       }
+    }
+
+    // Tryb produkcyjny bez tokenu = zablokowana rejestracja (SMS nie wyjdzie).
+    // Token może pochodzić z ENV, więc bierzemy pod uwagę też stan z serwera.
+    const smsTokenAvailable = Boolean(smsapiToken.trim()) || smsapiStatus?.tokenSource === "env"
+    if (smsMode === "production" && !smsTokenAvailable) {
+      toast.error("Tryb produkcyjny SMS wymaga tokenu SMSAPI (pole poniżej lub SMSAPI_TOKEN w ENV)")
+      return
+    }
+    if (smsMode !== "simulation" && smsapiSender.trim().length > 11) {
+      toast.error("Nazwa nadawcy SMS może mieć maksymalnie 11 znaków")
+      return
     }
 
     setSaving(true)
@@ -616,6 +672,19 @@ export default function AdminSettingsPage() {
             emailLogToMails: {
               value: emailLogToMails,
               description: "Czy przekierowywać wszystkie e-maile do logów (/mails) zamiast wysyłać przez SMTP",
+            },
+            smsMode: {
+              value: smsMode,
+              description:
+                "Tryb wysyłki SMS: auto (decyduje środowisko), simulation (SMS nie wychodzi, kod widoczny w UI), production (realna wysyłka)",
+            },
+            smsapiSender: {
+              value: smsapiSender.trim(),
+              description: "Nazwa nadawcy SMS zweryfikowana w panelu SMSAPI (maks. 11 znaków)",
+            },
+            smsapiToken: {
+              value: smsapiToken.trim(),
+              description: "Token OAuth z panelu SMSAPI (pusty = używany jest SMSAPI_TOKEN z ENV)",
             },
             homepageConsultedCategories: {
               value: JSON.stringify(homepageConsultedCategories),
@@ -780,6 +849,10 @@ export default function AdminSettingsPage() {
             <TabsTrigger value="email" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
               <Mail className="h-4 w-4" />
               <span>E-mail (SMTP)</span>
+            </TabsTrigger>
+            <TabsTrigger value="sms" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <MessageSquare className="h-4 w-4" />
+              <span>SMS</span>
             </TabsTrigger>
             <TabsTrigger value="payments" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
               <CreditCard className="h-4 w-4" />
@@ -1711,7 +1784,155 @@ export default function AdminSettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* ============== TAB 6: PŁATNOŚCI I KSEF ============== */}
+        {/* ============== TAB 6: SMS (SMSAPI) ============== */}
+        <TabsContent value="sms" className="space-y-6 m-0">
+          <Card className="border-emerald-500/20 bg-emerald-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                Weryfikacja SMS (SMSAPI)
+              </CardTitle>
+              <CardDescription>
+                Kod SMS wysyłany przy rejestracji klienta i eksperta. Ustawienia z tego panelu
+                mają pierwszeństwo nad zmiennymi środowiskowymi.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label className="font-semibold text-foreground">Tryb wysyłki</Label>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <Button
+                    type="button"
+                    variant={smsMode === "auto" ? "default" : "outline"}
+                    onClick={() => setSmsMode("auto")}
+                  >
+                    AUTOMATYCZNY
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={smsMode === "simulation" ? "default" : "outline"}
+                    className={smsMode === "simulation" ? "" : "text-amber-600 hover:text-amber-700 dark:text-amber-400"}
+                    onClick={() => setSmsMode("simulation")}
+                  >
+                    SYMULACJA
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={smsMode === "production" ? "default" : "outline"}
+                    className={smsMode === "production" ? "" : "text-red-600 hover:text-red-700 dark:text-red-400"}
+                    onClick={() => setSmsMode("production")}
+                  >
+                    PRODUKCJA
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold">Automatyczny</span> — o trybie decyduje środowisko:
+                  na produkcji SMS-y wychodzą realnie, poza nią (lub bez tokenu) działa symulacja.
+                </p>
+              </div>
+
+              {smsMode === "simulation" && (
+                <div className="rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-4 text-sm text-amber-800 dark:text-amber-400">
+                  <span className="font-semibold">Tryb symulacji:</span> SMS-y nie są wysyłane
+                  (bramka nie jest odpytywana, punkty się nie zużywają). Treść wiadomości z kodem
+                  trafia do logów serwera <span className="font-mono">[SMSAPI:SYMULACJA]</span> i jest
+                  pokazywana wprost w okienku weryfikacji na stronie rejestracji.
+                </div>
+              )}
+
+              {smsMode === "simulation" && smsapiStatus?.nodeEnv === "production" && (
+                <div className="rounded-lg border border-red-500/40 bg-red-500/[0.08] p-4 text-sm text-red-700 dark:text-red-400">
+                  <span className="font-semibold">Uwaga — to jest środowisko produkcyjne.</span> Przy
+                  włączonej symulacji numery telefonów nie są faktycznie weryfikowane, a kod
+                  weryfikacyjny widzi każdy, kto wypełni formularz rejestracji.
+                </div>
+              )}
+
+              {smsMode === "production" && (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/[0.06] p-4 text-sm text-emerald-700 dark:text-emerald-400">
+                  <span className="font-semibold">Tryb produkcyjny:</span> każdy SMS zużywa punkty
+                  na koncie SMSAPI. Nazwa nadawcy musi być zweryfikowana w panelu SMSAPI — konta
+                  trial mają dostępną wyłącznie nazwę <span className="font-mono">Test</span>.
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="smsapiSender" className="font-semibold text-foreground">
+                    Nazwa nadawcy
+                  </Label>
+                  <Input
+                    id="smsapiSender"
+                    type="text"
+                    value={smsapiSender}
+                    onChange={(e) => setSmsapiSender(e.target.value)}
+                    placeholder="np. ProstaSprawa"
+                    maxLength={11}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Maks. 11 znaków, musi być zarejestrowana w panelu SMSAPI.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="smsapiToken" className="font-semibold text-foreground">
+                    Token SMSAPI
+                  </Label>
+                  <Input
+                    id="smsapiToken"
+                    type="password"
+                    value={smsapiToken}
+                    onChange={(e) => setSmsapiToken(e.target.value)}
+                    placeholder={
+                      smsapiStatus?.tokenSource === "env"
+                        ? "Używany token z ENV — wpisz, aby nadpisać"
+                        : "Wklej token OAuth z panelu SMSAPI…"
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Token z panelu <span className="font-mono">smsapi.com</span> (nie .pl — token z
+                    .pl zwraca <span className="font-mono">authorization_failed</span>). Puste pole =
+                    używany jest <span className="font-mono">SMSAPI_TOKEN</span> z ENV.
+                  </p>
+                </div>
+              </div>
+
+              {smsapiStatus && (
+                <div className="rounded-lg border border-border/60 bg-muted/20 p-4 text-sm">
+                  <p className="mb-2 font-semibold text-foreground">Stan po ostatnim zapisie</p>
+                  <ul className="space-y-1 text-muted-foreground">
+                    <li>
+                      Wysyłka:{" "}
+                      <span className={smsapiStatus.simulated ? "font-semibold text-amber-600 dark:text-amber-400" : "font-semibold text-emerald-600 dark:text-emerald-400"}>
+                        {smsapiStatus.simulated ? "symulacja (SMS nie wychodzi)" : "realna przez SMSAPI"}
+                      </span>
+                    </li>
+                    <li>
+                      Token:{" "}
+                      <span className="font-medium text-foreground">
+                        {smsapiStatus.tokenSource === "settings"
+                          ? "z panelu administratora"
+                          : smsapiStatus.tokenSource === "env"
+                            ? "z ENV (SMSAPI_TOKEN)"
+                            : "brak — realna wysyłka niemożliwa"}
+                      </span>
+                    </li>
+                    <li>
+                      Nadawca: <span className="font-mono text-foreground">{smsapiStatus.sender}</span>
+                    </li>
+                    <li>
+                      Bramka: <span className="font-mono text-foreground">{smsapiStatus.apiUrl}</span>
+                      {" · "}
+                      Środowisko: <span className="font-mono text-foreground">{smsapiStatus.nodeEnv}</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 7: PŁATNOŚCI I KSEF ============== */}
         <TabsContent value="payments" className="space-y-6 m-0">
           {/* Metody płatności */}
           <Card>

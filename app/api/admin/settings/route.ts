@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
+import { getSmsConfig } from "@/lib/smsapi"
 import { NextRequest, NextResponse } from "next/server"
+
+/** Klucze wyliczane w GET — nie wolno ich zapisać przez PUT. */
+const READ_ONLY_KEYS = new Set(["smsapiStatus"])
 
 // GET - Pobierz ustawienia
 export async function GET(request: NextRequest) {
@@ -261,6 +265,39 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ---- Weryfikacja SMS (SMSAPI) ----
+    if (!settingsObject.smsMode) {
+      settingsObject.smsMode = {
+        value: "auto",
+        description:
+          "Tryb wysyłki SMS: auto (decyduje środowisko), simulation (SMS nie wychodzi, kod widoczny w UI), production (realna wysyłka)",
+      }
+    }
+    if (!settingsObject.smsapiSender) {
+      settingsObject.smsapiSender = {
+        value: process.env.SMSAPI_SENDER || "Test",
+        description: "Nazwa nadawcy SMS zweryfikowana w panelu SMSAPI (maks. 11 znaków)",
+      }
+    }
+    if (!settingsObject.smsapiToken) {
+      settingsObject.smsapiToken = {
+        value: "",
+        description: "Token OAuth z panelu SMSAPI (pusty = używany jest SMSAPI_TOKEN z ENV)",
+      }
+    }
+
+    // Pola tylko do odczytu — stan wyliczony, nie ustawienie. PUT je odrzuca.
+    const smsConfig = await getSmsConfig()
+    settingsObject.smsapiStatus = {
+      value: JSON.stringify({
+        simulated: smsConfig.simulated,
+        tokenSource: smsConfig.tokenSource,
+        sender: smsConfig.sender,
+        apiUrl: smsConfig.apiUrl,
+        nodeEnv: process.env.NODE_ENV || "development",
+      }),
+      description: "Stan konfiguracji SMS wyliczony z ustawień i ENV (tylko do odczytu)",
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -295,22 +332,24 @@ export async function PUT(request: NextRequest) {
     }
 
     // Przygotuj obietnice dla każdego ustawienia
-    const updatePromises = Object.entries(settings).map(([key, data]) => {
-      const { value, description } = data as { value: string; description?: string }
+    const updatePromises = Object.entries(settings)
+      .filter(([key]) => !READ_ONLY_KEYS.has(key))
+      .map(([key, data]) => {
+        const { value, description } = data as { value: string; description?: string }
 
-      return prisma.settings.upsert({
-        where: { key },
-        update: {
-          value,
-          description: description || null,
-        },
-        create: {
-          key,
-          value,
-          description: description || null,
-        },
+        return prisma.settings.upsert({
+          where: { key },
+          update: {
+            value,
+            description: description || null,
+          },
+          create: {
+            key,
+            value,
+            description: description || null,
+          },
+        })
       })
-    })
 
     // Zaktualizuj wszystkie ustawienia w transakcji dla lepszej wydajności
     await prisma.$transaction(updatePromises)

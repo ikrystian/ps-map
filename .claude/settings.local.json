@@ -101,7 +101,8 @@
       "Bash(bun /tmp/claude-1000/-home-krystian-Projects-ps-map/fa370894-a13f-4007-8a89-d07ad7f31546/scratchpad/check-order.ts)",
       "WebSearch",
       "WebFetch(domain:www.smsapi.pl)",
-      "WebFetch(domain:www.smsapi.com)"
+      "WebFetch(domain:www.smsapi.com)",
+      "Bash(bun /tmp/claude-1000/-home-krystian-Projects-ps-map/8ade1869-ae30-4b6d-a734-8be5c8ff9e95/scratchpad/set-sms-mode.ts simulation)"
     ]
   }
 }

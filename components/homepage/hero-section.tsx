@@ -76,8 +76,8 @@ export function HeroSection() {
             transition={{ duration: 0.5 }}
             className="mb-8 flex justify-center"
           >
-            <Badge variant="outline" className="px-5 py-2 border-primary/40 text-primary-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs font-semibold tracking-widest uppercase text-center">
-              Twoje wsparcie prawne w zasięgu ręki
+            <Badge variant="outline" className="font-light px-5 py-2 border-primary/40 text-primary-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs tracking-widest uppercase text-center">
+              Twoje <span className="font-bold mx-1"> wsparcie prawne </span>  w zasięgu ręki
             </Badge>
           </motion.div>
 

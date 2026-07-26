@@ -33,6 +33,8 @@ export interface RequestVerificationResult {
   expiresInSeconds?: number
   /** true, gdy SMS nie poszedł realnie (dev) — UI pokazuje wtedy podpowiedź. */
   simulated?: boolean
+  /** Wpis z konsoli serwera (z kodem) — tylko w symulacji, do pokazania w UI. */
+  simulatedMessage?: string
 }
 
 export interface ConfirmVerificationResult {
@@ -111,6 +113,7 @@ export async function requestPhoneVerification(
     phone,
     expiresInSeconds: CODE_TTL_MINUTES * 60,
     simulated: smsResult.simulated,
+    simulatedMessage: smsResult.simulatedMessage,
   }
 }
 

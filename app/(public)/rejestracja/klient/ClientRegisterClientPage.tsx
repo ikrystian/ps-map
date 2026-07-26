@@ -834,7 +834,7 @@ export default function ClientRegistrationPage() {
                   disabled={isLoading}
                   className={cn(errors.zgodaRegulamin && "border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive")}
                 />
-                <label htmlFor="zgodaRegulamin" className={cn("text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer", errors.zgodaRegulamin && "text-destructive")}>
+                <label htmlFor="zgodaRegulamin" className={cn("relative top-[1px] text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer", errors.zgodaRegulamin && "text-destructive")}>
                   Akceptuję <Link href="/regulamin" className="text-primary hover:underline">regulamin</Link> i <Link href="/polityka-prywatnosci" className="text-primary hover:underline">politykę prywatności</Link> *
                 </label>
               </div>
@@ -852,7 +852,7 @@ export default function ClientRegistrationPage() {
                 }
                 disabled={isLoading}
               />
-              <label htmlFor="zgodaNewsletter" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label htmlFor="zgodaNewsletter" className="relative top-[1px] text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Chcę otrzymywać newsletter
               </label>
             </div>
@@ -866,7 +866,7 @@ export default function ClientRegistrationPage() {
                 }
                 disabled={isLoading}
               />
-              <label htmlFor="zgodaMarketing" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label htmlFor="zgodaMarketing" className="relative top-[1px] text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Chcę otrzymywać informacje marketingowe
               </label>
             </div>

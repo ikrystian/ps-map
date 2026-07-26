@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { Loader2, ShieldCheck } from "lucide-react"
+import { Loader2, ShieldCheck, Terminal } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 const CODE_LENGTH = 6
@@ -41,6 +41,8 @@ export function PhoneVerificationDialog({
   const [maskedPhone, setMaskedPhone] = useState("")
   const [error, setError] = useState("")
   const [info, setInfo] = useState("")
+  /** Wpis z konsoli serwera w trybie symulacji SMS (dev) — zawiera kod. */
+  const [simulatedMessage, setSimulatedMessage] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
   const [cooldown, setCooldown] = useState(0)
@@ -54,6 +56,7 @@ export function PhoneVerificationDialog({
   const sendCode = useCallback(async () => {
     setError("")
     setInfo("")
+    setSimulatedMessage("")
     setIsSending(true)
 
     try {
@@ -74,9 +77,10 @@ export function PhoneVerificationDialog({
 
       setMaskedPhone(data.maskedPhone || "")
       setCooldown(45)
+      setSimulatedMessage(typeof data.simulatedMessage === "string" ? data.simulatedMessage : "")
       setInfo(
         data.simulated
-          ? "Tryb deweloperski: SMS nie został wysłany, kod znajdziesz w logach serwera."
+          ? "Tryb deweloperski: SMS nie został wysłany — treść poniżej."
           : "Kod został wysłany."
       )
     } catch {
@@ -98,6 +102,7 @@ export function PhoneVerificationDialog({
     setDigits(Array(CODE_LENGTH).fill(""))
     setError("")
     setInfo("")
+    setSimulatedMessage("")
     void sendCode()
   }, [open, phone, sendCode])
 
@@ -237,6 +242,20 @@ export function PhoneVerificationDialog({
 
           {error && <p className="text-center text-sm text-destructive">{error}</p>}
           {!error && info && <p className="text-center text-sm text-muted-foreground">{info}</p>}
+
+          {/* Tryb symulacji SMS (dev): pokazujemy to samo, co ląduje w konsoli
+              serwera, żeby nie trzeba było jej podglądać przy testach. */}
+          {simulatedMessage && (
+            <div className="rounded-md border border-dashed border-amber-500/60 bg-amber-500/10 p-3">
+              <p className="flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-500">
+                <Terminal className="h-3.5 w-3.5" />
+                Tryb symulacji — log serwera
+              </p>
+              <p className="mt-1.5 break-all font-mono text-xs text-amber-900 dark:text-amber-200">
+                {simulatedMessage}
+              </p>
+            </div>
+          )}
 
           <div className="text-center text-sm">
             {cooldown > 0 ? (

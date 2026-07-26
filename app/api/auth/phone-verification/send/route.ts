@@ -47,6 +47,10 @@ export async function POST(request: NextRequest) {
       maskedPhone: result.phone ? maskPhoneNumber(result.phone) : undefined,
       expiresInSeconds: result.expiresInSeconds,
       simulated: result.simulated,
+      // Treść „SMS-a" (z kodem) wraca do UI wyłącznie w symulacji — wtedy SMS
+      // nie wychodzi, więc kod musi być gdzieś widoczny, inaczej nikt nie
+      // dokończy rejestracji. Tryb symulacji włącza administrator (panel → SMS).
+      simulatedMessage: result.simulated ? result.simulatedMessage : undefined,
     })
   } catch (error) {
     console.error("Phone verification send error:", error)
