@@ -43,7 +43,7 @@ export function ContactForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, zrodlo: "KONTAKT" }),
       })
 
       const data = await response.json()

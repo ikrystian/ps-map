@@ -1,6 +1,7 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { BlogUpgradePromo } from "@/components/panel-eksperta/BlogUpgradePromo"
 import { FeatureLockedCard } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
@@ -150,38 +151,9 @@ export default function LawFirmBlogPage() {
     )
   }
 
-  // Jeśli brak dostępu do bloga - pokaż kartę upgrade z ładnym tłem
+  // Jeśli brak dostępu do bloga - pokaż rozbudowaną sekcję korzyści i upgrade
   if (!canAccessBlog) {
-    return (
-      <div className="relative space-y-6 pb-12 min-h-screen">
-        <div className="absolute top-0 left-1/4 w-[300px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="relative z-10">
-          <h1 className="text-2xl font-bold font-playfair text-white">Blog eksperta</h1>
-          <p className="text-zinc-400 text-sm mt-1">
-            Buduj autorytet i przyciągaj klientów dzięki profesjonalnemu blogowi
-          </p>
-        </div>
-
-        <div className="relative z-10">
-          <FeatureLockedCard
-            title="Blog eksperta"
-            description="Prowadź profesjonalny blog prawniczy, dziel się wiedzą i buduj autorytet w swojej dziedzinie."
-            requiredPackage="BIZNES"
-            icon={BookOpen}
-            features={[
-              "Nieograniczona liczba artykułów",
-              "Kategorie i tagi dla lepszej organizacji",
-              "Edytor WYSIWYG z pełnym formatowaniem",
-              "Optymalizacja SEO dla każdego wpisu",
-              "Statystyki wyświetleń i zaangażowania",
-              "Możliwość publikacji i wersji roboczych",
-            ]}
-          />
-        </div>
-      </div>
-    )
+    return <BlogUpgradePromo />
   }
 
   return (

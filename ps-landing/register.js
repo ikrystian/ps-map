@@ -1248,10 +1248,35 @@ function initCustomSelects() {
     });
 }
 
+function initPasswordToggle() {
+    const toggleBtns = document.querySelectorAll(".password-toggle-btn");
+    toggleBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const wrapper = btn.closest(".password-wrapper");
+            const input = wrapper ? wrapper.querySelector("input") : null;
+            if (!input) return;
+
+            const isPassword = input.type === "password";
+            input.type = isPassword ? "text" : "password";
+
+            const openIcon = btn.querySelector(".eye-open");
+            const closedIcon = btn.querySelector(".eye-closed");
+
+            if (openIcon && closedIcon) {
+                openIcon.style.display = isPassword ? "none" : "";
+                closedIcon.style.display = isPassword ? "" : "none";
+            }
+
+            btn.setAttribute("aria-label", isPassword ? "Ukryj hasło" : "Pokaż hasło");
+        });
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initCustomSelects();
     loadReferenceData();
     initCityAutocomplete();
+    initPasswordToggle();
 
     const allInputs = document.querySelectorAll(".form-step input, .form-step select");
     allInputs.forEach((input) => {

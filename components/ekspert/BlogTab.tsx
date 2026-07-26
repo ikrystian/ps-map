@@ -2,16 +2,19 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Eye, ArrowRight, BookOpen } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Calendar, Eye, ArrowRight, BookOpen, Lock, Sparkles, Zap, Plus, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { useSession } from "next-auth/react"
 import type { LawFirm } from "@/types"
-import { BlogPost } from '@/types/blog'
 import { MagicCard } from "@/components/magic-card"
 import { cn } from "@/lib/utils"
 
 interface BlogTabProps {
   lawFirm: LawFirm
   formatDate: (dateString: string) => string
+  isOwnProfile?: boolean
 }
 
 const formatViews = (views: number): string => {
@@ -24,16 +27,29 @@ const formatViews = (views: number): string => {
   return `${views} wyświetleń`;
 };
 
-export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
+export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }: BlogTabProps) {
+  const { data: session } = useSession()
+  
+  const isOwnProfile =
+    propIsOwnProfile ??
+    !!(
+      session?.user?.lawFirm?.id &&
+      lawFirm?.id &&
+      session.user.lawFirm.id === lawFirm.id
+    )
+
   // Helper function to strip HTML tags for blog excerpt
   const stripHtmlTags = (html: string) => {
     return html.replace(/<[^>]*>/g, "")
   }
 
   const pkg = lawFirm.pakietSubskrypcji;
-  const isBusiness = pkg === "BIZNES";
+  const isBusiness = pkg === "BIZNES" || (lawFirm as any).mozliwoscBloga === true;
   const isPremium = pkg === "PREMIUM";
   const isStandard = pkg === "STANDARD";
+
+  // Blog jest dostępny gdy plan to BIZNES lub flaga mozliwoscBloga jest true
+  const hasBlogAccess = isBusiness;
 
   const hoverColor = isBusiness
     ? "group-hover:text-amber-400"
@@ -60,6 +76,64 @@ export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
     : isStandard
     ? "rgba(59, 130, 246, 0.06)"
     : "rgba(13, 161, 146, 0.06)";
+
+  // Jeśli brak dostępu do modułu bloga w pakiecie eksperta:
+  if (!hasBlogAccess) {
+    return (
+      <Card className="border border-white/10 bg-[#1d1d1b]/50 backdrop-blur-md rounded-2xl overflow-hidden relative shadow-lg">
+        {/* Glow ambient background */}
+        <div className="absolute top-0 right-1/4 w-72 h-72 bg-amber-500/5 blur-3xl rounded-full pointer-events-none" />
+
+        <CardContent className="py-14 px-6 text-center max-w-xl mx-auto space-y-6 relative z-10">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
+            <Lock className="h-8 w-8" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
+              <Sparkles className="h-3.5 w-3.5" />
+              Funkcja Dostępna w Pakiecie BIZNES
+            </div>
+            <h3 className="text-xl font-bold font-playfair text-foreground tracking-tight">
+              Moduł Bloga Niedostępny w Aktualnym Pakiecie
+            </h3>
+            <p className="text-muted-foreground text-sm leading-relaxed font-light">
+              Ten ekspert korzysta z planu subskrypcyjnego ({pkg ?? "Podstawowy"}), który nie obejmuje publikacji autorskich artykułów na profilu.
+            </p>
+          </div>
+
+          {isOwnProfile ? (
+            <div className="pt-2 p-5 rounded-xl bg-card/60 border border-amber-500/20 space-y-3 text-left">
+              <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
+                <Zap className="h-4 w-4 fill-amber-300" />
+                <span>Twój profil nie posiada jeszcze aktywnego bloga</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Przejdź na pakiet BIZNES, aby publikować porady prawne, zdobywać bezpłatny ruch z wyszukiwarki Google i wyróżnić swoją kancelarię na tle konkurencji.
+              </p>
+              <Button
+                asChild
+                className="w-full h-10 mt-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium rounded-xl text-xs gap-2 shadow-md"
+              >
+                <Link href="/panel-eksperta/pakiet">
+                  Aktywuj moduł bloga w pakiecie BIZNES
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="pt-2">
+              <Button variant="outline" asChild className="rounded-xl text-xs border-white/10">
+                <Link href={`/kancelaria/${lawFirm.slug}`}>
+                  Zobacz pozostałe informacje o ekspercie
+                </Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -153,8 +227,26 @@ export function BlogTab({ lawFirm, formatDate }: BlogTabProps) {
         </div>
       ) : (
         <Card className="border border-white/5 bg-[#1d1d1b]/40 backdrop-blur-md rounded-2xl">
-          <CardContent className="py-12 text-center text-muted-foreground">
-            Ten ekspert nie opublikował jeszcze żadnych artykułów
+          <CardContent className="py-14 text-center space-y-4 text-muted-foreground">
+            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-muted-foreground">
+              <BookOpen className="h-6 w-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-semibold text-foreground">Brak artykułów na blogu</h4>
+              <p className="text-xs text-muted-foreground font-light mt-1">
+                Ten ekspert posiada aktywny moduł bloga, ale nie opublikował jeszcze pierwszych artykułów.
+              </p>
+            </div>
+            {isOwnProfile && (
+              <div className="pt-2">
+                <Button asChild className="h-10 px-5 rounded-xl bg-primary text-white text-xs gap-2">
+                  <Link href="/panel-eksperta/blog/nowy">
+                    <Plus className="h-4 w-4" />
+                    Napisz pierwszy artykuł
+                  </Link>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

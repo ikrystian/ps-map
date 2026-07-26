@@ -223,7 +223,8 @@ ${formData.tresc}`
           telefon: formData.telefon,
           temat: "WSPOLPRACA",
           tresc: detailedMessage,
-          politykaPrivacy: formData.politykaPrivacy
+          politykaPrivacy: formData.politykaPrivacy,
+          zrodlo: "REKLAMA"
         }),
       })
 

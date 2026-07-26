@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       tresc,
       politykaPrivacy,
       temat, // opcjonalny temat z formularza (enum ContactSubject)
+      zrodlo: zrodloBody,
     } = body
 
     // Walidacja wymaganych pól (lawFirmId jest teraz opcjonalny)
@@ -50,6 +51,9 @@ export async function POST(request: NextRequest) {
       subjectEnum = temat as ContactSubject
     }
 
+    // Ustal źródło wiadomości (np. KONTAKT, REKLAMA)
+    const zrodlo = zrodloBody || (tresc.includes("[Zapytanie z Landing Page Reklama]") ? "REKLAMA" : "KONTAKT")
+
     // Zapisz wiadomość w bazie danych
     const message = await prisma.contactForm.create({
       data: {
@@ -58,6 +62,7 @@ export async function POST(request: NextRequest) {
         telefon: telefon || null,
         temat: subjectEnum,
         wiadomosc: tresc,
+        zrodlo,
       },
     })
 

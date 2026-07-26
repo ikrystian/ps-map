@@ -172,10 +172,10 @@ export default function BlogPostPage() {
   ));
 
   return (
-    <div className="min-h-screen bg-background-sec text-neutral-100 selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
       {/* Reading progress bar */}
       <motion.div
-        className="fixed top-[65px] left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-teal-400 to-primary origin-left z-50 shadow-[0_0_8px_rgba(13,161,146,0.3)]"
+        className="fixed top-[65px] left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-secondary to-primary origin-left z-50 shadow-xs"
         style={{ scaleX }}
       />
 
@@ -379,19 +379,19 @@ export default function BlogPostPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Article Content */}
           <div className="lg:col-span-2 space-y-8">
-            <article className="bg-[#151513]/40 border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm" id="post-content">
+            <article className="bg-card border border-border/70 rounded-3xl p-6 md:p-10 shadow-md backdrop-blur-sm" id="post-content">
               <div
-                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-neutral-300 dark:prose-p:text-neutral-350 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-neutral-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-neutral-300"
+                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: post.tresc || "" }}
               />
 
-              <Separator className="my-10 bg-neutral-800/60" />
+              <Separator className="my-10 bg-border/60" />
 
               {/* Tagi (słowa kluczowe SEO) — klik przenosi do listy wpisów z danym tagiem */}
               {postTags.length > 0 && (
                 <div className="mb-10">
-                  <div className="flex items-center gap-2 mb-4 text-xs font-semibold uppercase tracking-wider text-neutral-400">
-                    <Tag className="w-3.5 h-3.5 text-primary/80" />
+                  <div className="flex items-center gap-2 mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Tag className="w-3.5 h-3.5 text-primary" />
                     Tagi
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -399,7 +399,7 @@ export default function BlogPostPage() {
                       <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
                         <Badge
                           variant="secondary"
-                          className="bg-neutral-900/60 text-neutral-300 border border-neutral-800/80 hover:bg-primary/10 hover:text-primary hover:border-primary/30 text-sm font-medium px-3 py-1 rounded-full cursor-pointer transition-colors"
+                          className="bg-muted text-foreground border border-border/70 hover:bg-primary/10 hover:text-primary hover:border-primary/30 text-sm font-medium px-3 py-1 rounded-full cursor-pointer transition-colors"
                         >
                           #{tag}
                         </Badge>
@@ -410,7 +410,7 @@ export default function BlogPostPage() {
               )}
 
               {/* Article footer metadata info */}
-              <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-neutral-450 bg-neutral-900/20 p-5 rounded-2xl border border-neutral-800/30">
+              <div className="flex items-center justify-between flex-wrap gap-4 text-sm text-muted-foreground bg-muted/40 p-5 rounded-2xl border border-border/50">
                 <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-primary" />
                   <span>
@@ -418,12 +418,12 @@ export default function BlogPostPage() {
                     {post.lawFirm ? (
                       <Link
                         href={`/ekspert/${post.lawFirm.slug}`}
-                        className="font-semibold text-white hover:text-primary hover:underline transition-colors"
+                        className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
                       >
                         {post.lawFirm.nazwa}
                       </Link>
                     ) : (
-                      <span className="font-semibold text-white">zespół redakcyjny</span>
+                      <span className="font-semibold text-foreground">zespół redakcyjny</span>
                     )}
                   </span>
                 </div>

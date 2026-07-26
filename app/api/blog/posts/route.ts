@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search")
     const sponsored = searchParams.get("sponsored")
     const tag = searchParams.get("tag")
+    const sort = searchParams.get("sort") // "popular" | domyślnie najnowsze
     const skip = (page - 1) * limit
 
     // Buduj warunki filtrowania (ukryj wpisy zaplanowane na przyszłość)
@@ -79,9 +80,10 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: {
-          dataPublikacji: "desc",
-        },
+        orderBy:
+          sort === "popular"
+            ? [{ wyswietlenia: "desc" }, { dataPublikacji: "desc" }]
+            : { dataPublikacji: "desc" },
         skip,
         take: limit,
       }),

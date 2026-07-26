@@ -126,6 +126,7 @@ const navigation: { title: string; items: NavItem[] }[] = [
   {
     title: "Komunikacja",
     items: [
+      { name: "Wiadomości kontaktowe", href: "/admin/kontakt", icon: MessageSquare },
       { name: "Newsletter", href: "/admin/newsletter", icon: Mail },
       { name: "Zarządzanie emailami", href: "/admin/emails", icon: Mail },
       { name: "Powiadomienia", href: "/admin/notifications", icon: Bell },

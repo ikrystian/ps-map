@@ -1730,12 +1730,14 @@ model ContactForm {
   wiadomosc     String
   zalacznik     String?  // URL do załącznika
 
+  zrodlo        String?  @default("KONTAKT")
   odpowiedziano Boolean  @default(false)
 
   createdAt     DateTime @default(now())
 
   @@index([odpowiedziano])
   @@index([createdAt])
+  @@index([zrodlo])
 }
 
 enum ContactSubject {
