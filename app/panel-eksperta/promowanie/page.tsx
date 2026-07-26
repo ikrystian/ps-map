@@ -413,8 +413,8 @@ export default function LawFirmPromotionPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold font-playfair tracking-tight">Promowanie profilu</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl font-medium font-playfair tracking-tight">Promowanie profilu</h1>
+          <p className="text-muted-foreground">
             Zwiększ widoczność swojego profilu i przyciągnij więcej klientów
           </p>
         </div>

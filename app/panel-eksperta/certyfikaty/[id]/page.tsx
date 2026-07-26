@@ -237,7 +237,7 @@ export default function LawFirmEditCertificatePage() {
                 <div className="space-y-4">
                   {/* Nazwa */}
                   <div>
-                    <Label htmlFor="nazwaCertyfikatu" className="text-xs font-semibold text-zinc-300">
+                    <Label htmlFor="nazwaCertyfikatu" className="text-xs font-semibold text-zinc-300 mb-1.5">
                       Nazwa certyfikatu / Licencji *
                     </Label>
                     <Input
@@ -246,13 +246,13 @@ export default function LawFirmEditCertificatePage() {
                       value={formData.nazwaCertyfikatu}
                       onChange={(e) => handleInputChange("nazwaCertyfikatu", e.target.value)}
                       required
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm "
                     />
                   </div>
 
                   {/* Wydawca */}
                   <div>
-                    <Label htmlFor="wydawca" className="text-xs font-semibold text-zinc-300">
+                    <Label htmlFor="wydawca" className="text-xs font-semibold text-zinc-300 mb-1.5">
                       Organ wydający / Instytucja *
                     </Label>
                     <Input
@@ -261,14 +261,14 @@ export default function LawFirmEditCertificatePage() {
                       value={formData.wydawca}
                       onChange={(e) => handleInputChange("wydawca", e.target.value)}
                       required
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                     />
                   </div>
 
                   {/* Daty */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="dataUzyskania" className="text-xs font-semibold text-zinc-300">
+                      <Label htmlFor="dataUzyskania" className="text-xs font-semibold text-zinc-300 mb-1.5">
                         Data uzyskania *
                       </Label>
                       <Input
@@ -277,12 +277,12 @@ export default function LawFirmEditCertificatePage() {
                         value={formData.dataUzyskania}
                         onChange={(e) => handleInputChange("dataUzyskania", e.target.value)}
                         required
-                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
+                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm text-zinc-300"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="dataWaznosci" className="text-xs font-semibold text-zinc-300">
+                      <Label htmlFor="dataWaznosci" className="text-xs font-semibold text-zinc-300 mb-1.5">
                         Data ważności (opcjonalnie)
                       </Label>
                       <Input
@@ -290,7 +290,7 @@ export default function LawFirmEditCertificatePage() {
                         type="date"
                         value={formData.dataWaznosci}
                         onChange={(e) => handleInputChange("dataWaznosci", e.target.value)}
-                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5 text-zinc-300"
+                        className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm  text-zinc-300"
                       />
                       <p className="text-sm text-zinc-500 mt-1.5 leading-relaxed">
                         Pozostaw to pole puste, jeśli certyfikat jest wydany bezterminowo.
@@ -300,7 +300,7 @@ export default function LawFirmEditCertificatePage() {
 
                   {/* Numer */}
                   <div>
-                    <Label htmlFor="numerCertyfikatu" className="text-xs font-semibold text-zinc-300">
+                    <Label htmlFor="numerCertyfikatu" className="text-xs font-semibold text-zinc-300 mb-1.5">
                       Numer certyfikatu / Licencji (opcjonalnie)
                     </Label>
                     <Input
@@ -308,13 +308,13 @@ export default function LawFirmEditCertificatePage() {
                       placeholder="np. CERT/2024/12345"
                       value={formData.numerCertyfikatu}
                       onChange={(e) => handleInputChange("numerCertyfikatu", e.target.value)}
-                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm mt-1.5"
+                      className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
                     />
                   </div>
 
                   {/* Skan (Plik) */}
                   <div>
-                    <Label className="text-xs font-semibold text-zinc-300">Skan certyfikatu (Dokument) *</Label>
+                    <Label className="text-xs font-semibold text-zinc-300 mb-1.5">Skan certyfikatu (Dokument) *</Label>
                     <div className="mt-2 space-y-2">
                       {uploadedFileUrl && (
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border border-border/30 bg-zinc-900/40 p-3 shadow-inner gap-2">

@@ -276,7 +276,7 @@ export default function LawFirmStatsPage() {
           <PageHeader
             title="Statystyki i analizy"
             subtitle="Zaawansowane statystyki i analityka wydajności dla Twojego profilu."
-            titleClassName="text-white text-3xl sm:text-4xl"
+            titleClassName="text-white"
           />
 
         </motion.div>
