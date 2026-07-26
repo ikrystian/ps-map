@@ -102,7 +102,9 @@
       "WebSearch",
       "WebFetch(domain:www.smsapi.pl)",
       "WebFetch(domain:www.smsapi.com)",
-      "Bash(bun /tmp/claude-1000/-home-krystian-Projects-ps-map/8ade1869-ae30-4b6d-a734-8be5c8ff9e95/scratchpad/set-sms-mode.ts simulation)"
+      "Bash(bun /tmp/claude-1000/-home-krystian-Projects-ps-map/8ade1869-ae30-4b6d-a734-8be5c8ff9e95/scratchpad/set-sms-mode.ts simulation)",
+      "WebFetch(domain:animate-ui.com)",
+      "Bash(grep -vE '/\\(icon|animate-ui-icon\\)\\\\.tsx$')"
     ]
   }
 }

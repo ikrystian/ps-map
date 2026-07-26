@@ -1,10 +1,11 @@
 "use client";
 
+import { CategoryIcon } from "@/components/category-icon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types/categories";
 import { motion } from "framer-motion";
-import { ArrowRight, icons } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { memo, useState } from "react";
 
@@ -72,19 +73,15 @@ const CategoryCard = memo(
           )}
         />
         <div className="relative h-full flex flex-col items-center justify-end md:justify-center p-3 md:p-6 gap-3">
-          {category.ikonaUrl ? (
-            <img
-              src={category.ikonaUrl}
-              alt=""
-              className="h-10 w-10 object-contain brightness-0 invert hidden md:block"
-            />
-          ) : category.ikona ? (
-            (() => {
-              const Icon = icons[category.ikona as keyof typeof icons];
-              return Icon ? <Icon className="h-10 w-10 text-white hidden md:block" /> : null;
-            })()
-          ) : null}
-          <h3 className="text-white text-base md:text-xl font-bold text-center">{category.nazwa}</h3>
+          {/* Ikony Animate UI odtwarzają animację, gdy kafelek jest pod kursorem. */}
+          <CategoryIcon
+            ikona={category.ikona}
+            ikonaUrl={category.ikonaUrl}
+            animate={hovered === index}
+            className="h-12 w-12 text-white hidden md:block"
+            imageClassName="brightness-0 invert"
+          />
+          <h3 className="text-white font-playfair md:text-xl font-light text-center">{category.nazwa}</h3>
         </div>
       </MotionLink>
     );

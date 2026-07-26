@@ -1,5 +1,6 @@
 "use client"
 
+import { CategoryIcon } from "@/components/category-icon"
 import { MagicCard } from "@/components/magic-card"
 import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
@@ -9,23 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Briefcase,
   Building2,
-  ChevronRight,
-  CircleDollarSign,
-  Gavel,
-  Globe,
-  Hammer,
-  HeartPulse,
-  Home,
   LayoutGrid,
   Loader2,
-  Lock,
-  MessageSquare,
   Scale,
   Search,
-  ShieldCheck,
   User,
-  Users,
-  Zap
+  Users
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
@@ -35,35 +25,6 @@ import { Category } from "@/types/categories"
 
 const DEFAULT_BUSINESS_IMAGE = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
 const DEFAULT_PRIVATE_IMAGE = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
-
-const ICON_MAP: Record<string, any> = {
-  Scale,
-  Briefcase,
-  Gavel,
-  ShieldCheck,
-  HeartPulse,
-  Home,
-  User,
-  Zap,
-  Hammer,
-  CircleDollarSign,
-  Globe,
-  Lock,
-  MessageSquare
-}
-
-const IconRenderer = ({ iconName, iconUrl, fallback: Fallback, className = "h-8 w-8" }: { iconName?: string | null, iconUrl?: string | null, fallback: any, className?: string }) => {
-  if (iconUrl) {
-    return <img src={iconUrl} alt="" className={`${className} object-contain`} />
-  }
-
-  if (iconName && ICON_MAP[iconName]) {
-    const Icon = ICON_MAP[iconName]
-    return <Icon className={className} />
-  }
-
-  return <Fallback className={className} />
-}
 
 export default function CategoriesPage() {
   const router = useRouter()
@@ -392,9 +353,9 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
                   : "text-[#d7b56d] border-[#d7b56d]/20 group-hover:bg-[#d7b56d] group-hover:text-white group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(215,181,109,0.3)]"
                   }`}
               >
-                <IconRenderer
-                  iconName={category.ikona}
-                  iconUrl={category.ikonaUrl}
+                <CategoryIcon
+                  ikona={category.ikona}
+                  ikonaUrl={category.ikonaUrl}
                   fallback={isBusiness ? Briefcase : Scale}
                   className="h-6 w-6"
                 />

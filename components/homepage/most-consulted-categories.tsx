@@ -19,7 +19,7 @@ import {
   Phone,
   Star,
 } from "lucide-react";
-import * as LucideIcons from "lucide-react";
+import { CategoryIcon } from "@/components/category-icon";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useMemo, useRef } from "react";
@@ -30,22 +30,6 @@ interface MostConsultedCategoriesProps {
   lawFirms: LawFirm[];
   consultedCategoryIds?: string[];
 }
-
-const CategoryIcon = ({
-  iconName,
-  className,
-}: {
-  iconName?: string | null;
-  className: string;
-}) => {
-  if (iconName && LucideIcons[iconName as keyof typeof LucideIcons]) {
-    const Icon = LucideIcons[
-      iconName as keyof typeof LucideIcons
-    ] as React.ElementType;
-    return <Icon className={className} />;
-  }
-  return <Star className={className} />;
-};
 
 export function MostConsultedCategories({
   consultedData,
@@ -215,7 +199,8 @@ export function MostConsultedCategories({
               >
                 <div className="mb-1 md:mb-4">
                   <CategoryIcon
-                    iconName={tab.ikona}
+                    ikona={tab.ikona}
+                    fallback={Star}
                     className={`w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"}`}
                   />
                 </div>

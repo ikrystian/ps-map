@@ -1,6 +1,7 @@
 "use client"
 
 import { AdBanner } from "@/components/ad-banner"
+import { CategoryIcon } from "@/components/category-icon"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { PackageBadge } from "@/components/permissions"
@@ -419,7 +420,7 @@ export default function SearchLawyerPage() {
                           {categories.map((category) => (
                             <SelectItem key={category.id} value={category.slug}>
                               <div className="flex items-center gap-2">
-                                {category.ikona && <span>{category.ikona}</span>}
+                                <CategoryIcon ikona={category.ikona} className="h-4 w-4 shrink-0" />
                                 <span>{category.nazwa}</span>
                               </div>
                             </SelectItem>

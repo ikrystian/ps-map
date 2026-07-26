@@ -430,7 +430,7 @@ export function CategoryForm({
                     name="ikona"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ikona (Lucide)</FormLabel>
+                        <FormLabel>Ikona</FormLabel>
                         <FormControl>
                           <IconPicker
                             value={field.value || ""}
@@ -438,7 +438,8 @@ export function CategoryForm({
                           />
                         </FormControl>
                         <FormDescription>
-                          Wybierz ikonę z biblioteki Lucide React
+                          Wybierz ikonę z biblioteki Lucide lub Animate UI. Ikony Animate UI
+                          animują się po najechaniu na kafelek kategorii na stronie głównej.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
