@@ -38,6 +38,7 @@
     "@editorjs/table": "^2.4.5",
     "@editorjs/underline": "^1.2.1",
     "@editorjs/warning": "^1.4.1",
+    "@floating-ui/react": "^0.27.20",
     "@hookform/resolvers": "^5.4.0",
     "@hotjar/browser": "^1.0.9",
     "@libsql/client": "^0.17.4",

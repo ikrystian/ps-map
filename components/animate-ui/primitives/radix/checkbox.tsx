@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 import { motion, SVGMotionProps, type HTMLMotionProps } from 'motion/react';
 
 import { getStrictContext } from '@/lib/get-strict-context';
@@ -18,53 +18,44 @@ const [CheckboxProvider, useCheckbox] =
 type CheckboxProps = HTMLMotionProps<'button'> &
   Omit<React.ComponentProps<typeof CheckboxPrimitive.Root>, 'asChild'>;
 
-const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
-  function Checkbox(
-    {
-      defaultChecked,
-      checked,
-      onCheckedChange,
-      disabled,
-      required,
-      name,
-      value,
-      id,
-      ...props
-    },
-    ref
-  ) {
-    const [isChecked, setIsChecked] = useControlledState({
-      value: checked,
-      defaultValue: defaultChecked,
-      onChange: onCheckedChange,
-    });
+function Checkbox({
+  defaultChecked,
+  checked,
+  onCheckedChange,
+  disabled,
+  required,
+  name,
+  value,
+  ...props
+}: CheckboxProps) {
+  const [isChecked, setIsChecked] = useControlledState({
+    value: checked,
+    defaultValue: defaultChecked,
+    onChange: onCheckedChange,
+  });
 
-    return (
-      <CheckboxProvider value={{ isChecked, setIsChecked }}>
-        <CheckboxPrimitive.Root
-          id={id}
-          defaultChecked={defaultChecked}
-          checked={checked}
-          onCheckedChange={setIsChecked}
-          disabled={disabled}
-          required={required}
-          name={name}
-          value={value}
-          asChild
-        >
-          <motion.button
-            ref={ref}
-            data-slot="checkbox"
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.05 }}
-            {...props}
-          />
-        </CheckboxPrimitive.Root>
-      </CheckboxProvider>
-    );
-  }
-);
-Checkbox.displayName = 'CheckboxPrimitive';
+  return (
+    <CheckboxProvider value={{ isChecked, setIsChecked }}>
+      <CheckboxPrimitive.Root
+        defaultChecked={defaultChecked}
+        checked={checked}
+        onCheckedChange={setIsChecked}
+        disabled={disabled}
+        required={required}
+        name={name}
+        value={value}
+        asChild
+      >
+        <motion.button
+          data-slot="checkbox"
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.05 }}
+          {...props}
+        />
+      </CheckboxPrimitive.Root>
+    </CheckboxProvider>
+  );
+}
 
 type CheckboxIndicatorProps = SVGMotionProps<SVGSVGElement>;
 
@@ -109,7 +100,7 @@ function CheckboxIndicator(props: CheckboxIndicatorProps) {
                 opacity: 1,
                 transition: {
                   duration: 0.2,
-                  delay: 0.1,
+                  delay: 0.2,
                 },
               },
               unchecked: {
@@ -135,4 +126,3 @@ export {
   type CheckboxIndicatorProps,
   type CheckboxContextType,
 };
-
