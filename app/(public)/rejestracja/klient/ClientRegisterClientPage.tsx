@@ -445,7 +445,7 @@ export default function ClientRegistrationPage() {
     >
       <Card className="border-none shadow-none bg-transparent">
         <CardHeader className="space-y-1 px-0">
-          <CardTitle className="text-2xl font-bold">Rejestracja klienta</CardTitle>
+          <CardTitle className="text-2xl font-playfair">Rejestracja klienta</CardTitle>
           <CardDescription>
             Już masz konto?{" "}
             <Link href="/logowanie" className="text-primary hover:underline">
