@@ -137,9 +137,8 @@ export default function LawFirmRegistrationPage() {
   const [selectedCatId, setSelectedCatId] = useState("")
   const [selectedSubcatId, setSelectedSubcatId] = useState("")
   const [formData, setFormData] = useState({
-    // Krok 1: Typ działalności
-    typ: "INNY",
-    typInny: "",
+    // Krok 1: Specjalizacja (forma prawna nie jest zbierana w rejestracji —
+    // `LawFirm.typ` zostaje puste i uzupełnia je admin)
     expertiseCategoryId: "",
 
     nazwa: "",
@@ -567,8 +566,6 @@ export default function LawFirmRegistrationPage() {
           recaptchaToken,
           phoneVerificationToken,
           telemetry: getBrowserTelemetry(),
-          typ: formData.typ,
-          typInny: formData.typInny || null,
           expertiseCategoryId: formData.expertiseCategoryId || null,
           nazwa: formData.nazwa,
           nip: formData.nip,
@@ -633,7 +630,7 @@ export default function LawFirmRegistrationPage() {
         }
 
         const clearSelection = () => {
-          setFormData(prev => ({ ...prev, expertiseCategoryId: "", typInny: "" }))
+          setFormData(prev => ({ ...prev, expertiseCategoryId: "" }))
           if (fieldErrors.expertiseCategoryId) {
             const newErrors = { ...fieldErrors }
             delete newErrors.expertiseCategoryId
@@ -721,17 +718,13 @@ export default function LawFirmRegistrationPage() {
                               fieldErrors.expertiseCategoryId && !isSelected && "border-destructive/30"
                             )}
                             onClick={() => {
-                              const buildPath = () => {
-                                const parts = [selectedCat.nazwa]
-                                if (selectedSubcat) parts.push(selectedSubcat.nazwa)
-                                parts.push(spec.nazwa)
-                                return parts.join(" > ")
-                              }
+                              // Wybór specjalizacji zapisuje wyłącznie jej ID —
+                              // ścieżkę („Kategoria > Specjalizacja”) wylicza się
+                              // z drzewa ExpertiseCategory. Pole `typ` to forma
+                              // prawna i nie ma z tym wyborem nic wspólnego.
                               setFormData(prev => ({
                                 ...prev,
                                 expertiseCategoryId: spec.id,
-                                typInny: buildPath(),
-                                typ: "INNY",
                               }))
                               if (fieldErrors.expertiseCategoryId) {
                                 const newErrors = { ...fieldErrors }

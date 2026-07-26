@@ -28,6 +28,7 @@ import { Building2, CheckCircle, Edit, RefreshCw, Search, Trash2, XCircle } from
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { LAW_FIRM_TYPE_OPTIONS, formatExpertisePath, formatLawFirmType } from "@/lib/expertise-category"
 import type { LawFirm } from "@/types"
 import { PaginatedResponse } from '@/types/pagination';
 
@@ -119,20 +120,6 @@ export default function AdminLawFirmsPage() {
     setIsDeleteDialogOpen(true)
   }
 
-  // Format type display
-  const formatType = (type: LawFirmType, typeOther?: string | null) => {
-    const typeMap: { [key: string]: string } = {
-      OSOBA_FIZYCZNA: "Osoba fizyczna",
-      SPOLKA_CYWILNA: "Spółka cywilna",
-      SPOLKA_PARTNERSKA: "Spółka partnerska",
-      SPOLKA_KOMANDYTOWA: "Spółka komandytowa",
-      SPOLKA_JAWNA: "Spółka jawna",
-      SPOLKA_ZOO: "Spółka z o.o.",
-      INNY: typeOther || "Inny",
-    }
-    return typeMap[type] || type
-  }
-
   // Format subscription display
   const formatSubscription = (subscription: SubscriptionPackage) => {
     const subscriptionMap: { [key: string]: string } = {
@@ -219,15 +206,16 @@ export default function AdminLawFirmsPage() {
                 setCurrentPage(1)
               }}>
                 <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Typ działalności" />
+                  <SelectValue placeholder="Forma prawna" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Wszystkie typy</SelectItem>
-                  <SelectItem value="OSOBA_FIZYCZNA">Osoba fizyczna</SelectItem>
-                  <SelectItem value="SPOLKA_CYWILNA">Spółka cywilna</SelectItem>
-                  <SelectItem value="SPOLKA_PARTNERSKA">Spółka partnerska</SelectItem>
-                  <SelectItem value="SPOLKA_ZOO">Spółka z o.o.</SelectItem>
-                  <SelectItem value="INNY">Inny</SelectItem>
+                  <SelectItem value="all">Wszystkie formy prawne</SelectItem>
+                  <SelectItem value="NIEOKRESLONA">Nieokreślona</SelectItem>
+                  {LAW_FIRM_TYPE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={subscriptionFilter} onValueChange={(value) => {
@@ -287,7 +275,8 @@ export default function AdminLawFirmsPage() {
               <TableRow>
                 <TableHead>Nazwa</TableHead>
                 <TableHead>NIP</TableHead>
-                <TableHead>Typ</TableHead>
+                <TableHead>Specjalizacja</TableHead>
+                <TableHead>Forma prawna</TableHead>
                 <TableHead>Kontakt</TableHead>
                 <TableHead>Lokalizacja</TableHead>
                 <TableHead>Pakiet</TableHead>
@@ -298,7 +287,7 @@ export default function AdminLawFirmsPage() {
             <TableBody>
               {lawFirms.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground">
                     Nie znaleziono ekspertów
                   </TableCell>
                 </TableRow>
@@ -326,7 +315,16 @@ export default function AdminLawFirmsPage() {
                     </TableCell>
                     <TableCell className="font-mono text-sm">{lawFirm.nip}</TableCell>
                     <TableCell>
-                      <span className="text-sm">{formatType((lawFirm.typ ?? "INNY") as LawFirmType, lawFirm.typInny)}</span>
+                      <span className="text-sm">
+                        {formatExpertisePath(lawFirm.expertiseCategory) || (
+                          <span className="text-muted-foreground">Nie wybrano</span>
+                        )}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`text-sm ${lawFirm.typ ? "" : "text-muted-foreground"}`}>
+                        {formatLawFirmType(lawFirm.typ, lawFirm.typInny)}
+                      </span>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">

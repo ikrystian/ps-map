@@ -289,9 +289,11 @@ model LawFirm {
   userId                String   @unique
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Typ działalności
-  typ                   LawFirmType
-  typInny               String?  // Jeśli typ = INNY
+  // Forma prawna działalności. Nullable, bo rejestracja jej nie zbiera —
+  // null oznacza „nieokreślona”, a nie „inna”. Specjalizacja eksperta to
+  // osobna rzecz: trzyma ją `expertiseCategoryId` (ścieżkę wyliczamy z drzewa).
+  typ                   LawFirmType?
+  typInny               String?  // Doprecyzowanie formy prawnej, gdy typ = INNY
 
   // Dane firmy
   nazwa                 String

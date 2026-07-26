@@ -306,8 +306,9 @@ export async function POST(request: NextRequest) {
       await prisma.lawFirm.create({
         data: {
           userId: user.id,
-          typ: userData.lawFirm.typ,
-          typInny: userData.lawFirm.typInny || null,
+          // Forma prawna (`typ`) nie jest zbierana przy rejestracji — uzupełnia
+          // ją admin. Specjalizację niesie `expertiseCategoryId`.
+          expertiseCategoryId: userData.lawFirm.expertiseCategoryId || null,
           nazwa: userData.lawFirm.nazwa || userData.lawFirm.nazwa,
           slug,
           nip, // Tymczasowy NIP dla MVP

@@ -33,8 +33,8 @@ const createLawFirmSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
 
-  // Basic info
-  typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
+  // Forma prawna. Pusty string = nieokreślona.
+  typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]).or(z.literal("")),
   typInny: z.string().optional(),
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
@@ -138,7 +138,7 @@ export default function NewLawFirmPage() {
       email: "",
       password: "",
       userStatus: "ACTIVE",
-      typ: "INNY",
+      typ: "",
       typInny: "",
       expertiseCategoryId: "",
       nazwa: "",
@@ -344,7 +344,6 @@ export default function NewLawFirmPage() {
                         setSelectedCatId(val)
                         setSelectedSubcatId("")
                         form.setValue("expertiseCategoryId", "")
-                        form.setValue("typ", "INNY")
                       }}
                     >
                       <SelectTrigger>
@@ -397,12 +396,7 @@ export default function NewLawFirmPage() {
                                     key={spec.id}
                                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${isSelected ? "bg-primary/5 border-primary" : "border-transparent bg-muted/30 hover:border-primary/30 hover:bg-muted/50"}`}
                                     onClick={() => {
-                                      const parts = [selectedCat.nazwa]
-                                      if (selectedSubcat) parts.push(selectedSubcat.nazwa)
-                                      parts.push(spec.nazwa)
                                       form.setValue("expertiseCategoryId", spec.id)
-                                      form.setValue("typ", "INNY")
-                                      form.setValue("typInny", parts.join(" > "))
                                     }}
                                   >
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"}`}>

@@ -55,6 +55,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { LAW_FIRM_TYPE_OPTIONS } from "@/lib/expertise-category"
 import { motion } from "framer-motion"
 
 import {
@@ -144,7 +145,7 @@ export default function EditLawFirmPage() {
       password: "",
       userStatus: "ACTIVE",
       emailVerified: false,
-      typ: "OSOBA_FIZYCZNA",
+      typ: "",
       typInny: "",
       nazwa: "",
       slug: "",
@@ -453,7 +454,7 @@ export default function EditLawFirmPage() {
             password: "",
             userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED",
             emailVerified: Boolean(lawFirm.user.emailVerified),
-            typ: lawFirm.typ,
+            typ: lawFirm.typ || "",
             typInny: lawFirm.typInny || "",
             nazwa: lawFirm.nazwa,
             slug: lawFirm.slug || "",
@@ -575,6 +576,23 @@ export default function EditLawFirmPage() {
       fetchLawFirm()
     }
   }, [params.id, router])
+
+  // Ścieżkę specjalizacji wyliczamy z drzewa kategorii — nie jest już nigdzie
+  // przechowywana (wcześniej duplikowało ją pole `typInny`).
+  const currentExpertisePath = (() => {
+    const currentId = form.watch("expertiseCategoryId")
+    if (!currentId) return null
+
+    for (const cat of expertiseCategories) {
+      for (const child of cat.children || []) {
+        if (child.id === currentId) return `${cat.nazwa} > ${child.nazwa}`
+        for (const leaf of child.children || []) {
+          if (leaf.id === currentId) return `${cat.nazwa} > ${child.nazwa} > ${leaf.nazwa}`
+        }
+      }
+    }
+    return null
+  })()
 
   const getTabErrors = (tabId: string) => {
     const errors = form.formState.errors
@@ -828,12 +846,7 @@ export default function EditLawFirmPage() {
                                   onValueChange={(val) => {
                                     setSelectedCatId(val)
                                     setSelectedSubcatId("")
-                                    // `typInny` to czytelna ścieżka tej samej specjalizacji —
-                                    // musi zniknąć razem z ID, inaczej w profilu zostaje
-                                    // ścieżka z poprzedniej kategorii.
                                     form.setValue("expertiseCategoryId", "")
-                                    form.setValue("typInny", "")
-                                    form.setValue("typ", "INNY")
                                   }}
                                 >
                                   <SelectTrigger>
@@ -864,7 +877,6 @@ export default function EditLawFirmPage() {
                                           onValueChange={(val) => {
                                             setSelectedSubcatId(val)
                                             form.setValue("expertiseCategoryId", "")
-                                            form.setValue("typInny", "")
                                           }}
                                         >
                                           <SelectTrigger>
@@ -887,12 +899,9 @@ export default function EditLawFirmPage() {
                                                 key={spec.id}
                                                 className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${isSelected ? "bg-primary/5 border-primary" : "border-transparent bg-muted/30 hover:border-primary/30 hover:bg-muted/50"}`}
                                                 onClick={() => {
-                                                  const parts = [selectedCat.nazwa]
-                                                  if (selectedSubcat) parts.push(selectedSubcat.nazwa)
-                                                  parts.push(spec.nazwa)
-                                                  form.setValue("expertiseCategoryId", spec.id)
-                                                  form.setValue("typ", "INNY")
-                                                  form.setValue("typInny", parts.join(" > "))
+                                                  form.setValue("expertiseCategoryId", spec.id, {
+                                                    shouldDirty: true,
+                                                  })
                                                 }}
                                               >
                                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"}`}>
@@ -917,9 +926,9 @@ export default function EditLawFirmPage() {
                                   </div>
                                 )}
 
-                                {form.watch("typInny") && (
+                                {currentExpertisePath && (
                                   <p className="text-xs text-muted-foreground">
-                                    Aktualna ścieżka specjalizacji: <span className="font-medium">{form.watch("typInny")}</span>
+                                    Aktualna ścieżka specjalizacji: <span className="font-medium">{currentExpertisePath}</span>
                                   </p>
                                 )}
                               </div>
@@ -941,6 +950,56 @@ export default function EditLawFirmPage() {
                                 </FormItem>
                               )}
                             />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="typ"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Forma prawna</FormLabel>
+                                  <Select
+                                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
+                                    value={field.value || "none"}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Wybierz formę prawną" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="none">Nieokreślona</SelectItem>
+                                      {LAW_FIRM_TYPE_OPTIONS.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <FormDescription className="text-xs">
+                                    Rejestracja nie zbiera formy prawnej — profile z rejestracji mają ją nieokreśloną.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            {form.watch("typ") === "INNY" && (
+                              <FormField
+                                control={form.control}
+                                name="typInny"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Jaka forma prawna?</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="np. Fundacja" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
                           </div>
 
                           <FormField

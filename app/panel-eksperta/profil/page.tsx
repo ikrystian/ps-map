@@ -147,8 +147,6 @@ function LawFirmProfilePageContent() {
     // Typ oferty
     typOferty: "WSZYSTKIE",
     expertiseCategoryId: "",
-    // Ścieżka specjalizacji wybrana przy rejestracji (np. "Prawnicy > Adwokat")
-    typInny: "",
 
     // Dane firmy do faktury (COMPANY_*) — null gdy rejestracja jako osoba prywatna
     companyData: null as null | {

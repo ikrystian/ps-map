@@ -51,6 +51,7 @@ import {
   Search,
   Upload,
   X,
+  Plus,
   Sparkles,
   Loader2,
   User,
@@ -486,7 +487,7 @@ export default function ClientAddCasePage() {
     );
   };
 
-  // Pobierz dane użytkownika i uzupełnij dane kontaktowe
+  // Pobierz dane użytkownika i uzupełnij dane kontaktowe oraz domyślne miasto
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -501,6 +502,40 @@ export default function ClientAddCasePage() {
               `${userData.imie || ""} ${userData.nazwisko || ""}`.trim(),
             telefonKontakt: userData.telefon || "",
           }));
+
+          // Domyślnie ustaw miasto podane przez użytkownika podczas rejestracji
+          const userCity = userData.miasto?.trim();
+          if (userCity) {
+            try {
+              const citiesRes = await fetch(
+                `/api/cities?search=${encodeURIComponent(userCity)}`
+              );
+              if (citiesRes.ok) {
+                const citiesData = await citiesRes.json();
+                if (Array.isArray(citiesData) && citiesData.length > 0) {
+                  const matchedCity =
+                    citiesData.find(
+                      (c: any) =>
+                        c.nazwa.toLowerCase() === userCity.toLowerCase()
+                    ) || citiesData[0];
+
+                  if (matchedCity) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      cityId: matchedCity.id,
+                      voivodeshipId:
+                        matchedCity.voivodeship?.slug ||
+                        matchedCity.voivodeshipId ||
+                        prev.voivodeshipId,
+                    }));
+                    setSelectedCityName(matchedCity.nazwa);
+                  }
+                }
+              }
+            } catch (cityError) {
+              console.error("Error fetching default city for client:", cityError);
+            }
+          }
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -541,9 +576,8 @@ export default function ClientAddCasePage() {
         if (!formData.opisSprawy.trim()) {
           stepErrors.opisSprawy = "Opisz swoją sprawę (minimum 50 znaków)";
         } else if (formData.opisSprawy.length < 50) {
-          stepErrors.opisSprawy = `Opis musi mieć co najmniej 50 znaków - brakuje jeszcze ${
-            50 - formData.opisSprawy.length
-          }`;
+          stepErrors.opisSprawy = `Opis musi mieć co najmniej 50 znaków - brakuje jeszcze ${50 - formData.opisSprawy.length
+            }`;
         }
         break;
       case 3:
@@ -896,13 +930,13 @@ export default function ClientAddCasePage() {
             }}
           >
             {selectedCategories.length > 0 ? (
-              <Card className="border border-primary/30 bg-primary/5 rounded-lg shadow-md overflow-hidden relative">
-                <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+              <Card className="border border-primary/40 bg-primary/10 rounded-xl shadow-md overflow-hidden relative">
+                <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0 border-b border-primary/20">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                    <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary border border-primary/30 shadow-xs">
                       <FolderOpen className="h-5 w-5" />
                     </div>
-                    <p className="text-sm text-muted-foreground/70 uppercase tracking-wider font-semibold">
+                    <p className="text-xs text-white uppercase tracking-wider font-bold">
                       Wybrane kategorie ({selectedCategories.length})
                     </p>
                   </div>
@@ -910,23 +944,23 @@ export default function ClientAddCasePage() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-9 rounded-md border-border/50 text-muted-foreground hover:text-white hover:bg-white/5 text-xs font-semibold shrink-0"
+                      className="h-9 px-3.5 rounded-lg border-primary/40 bg-primary/15 text-primary hover:bg-primary hover:text-primary-foreground text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       Zmień kategorie
                     </Button>
                   </DialogTrigger>
                 </CardHeader>
-                <CardContent className="px-4 pb-4 pt-0 flex flex-wrap gap-2">
+                <CardContent className="p-4 flex flex-wrap gap-2">
                   {selectedCategories.map((cat) => (
                     <span
                       key={cat.id}
-                      className="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-xs font-semibold text-white"
+                      className="inline-flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-primary/20 border border-primary/40 text-xs font-semibold text-white shadow-xs hover:bg-primary/30 transition-colors"
                     >
                       {cat.path}
                       <button
                         type="button"
                         onClick={() => toggleCategory(cat.id)}
-                        className="h-5 w-5 rounded-full flex items-center justify-center text-muted-foreground hover:text-white hover:bg-white/10 transition-colors"
+                        className="h-5 w-5 rounded-full flex items-center justify-center text-zinc-300 hover:text-white hover:bg-destructive/80 transition-colors cursor-pointer"
                         aria-label={`Usuń kategorię ${cat.path}`}
                       >
                         <X className="h-3 w-3" />
@@ -940,34 +974,38 @@ export default function ClientAddCasePage() {
                 <button
                   type="button"
                   className={cn(
-                    "w-full flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed rounded-lg hover:bg-background-sec/20 transition-all text-center group",
+                    "w-full flex flex-col items-center justify-center py-7 px-5 border-2 border-dashed rounded-xl transition-all duration-200 text-center group cursor-pointer shadow-sm relative overflow-hidden",
                     errors.categoryIds
-                      ? "border-destructive/60 hover:border-destructive"
-                      : "border-border/20 hover:border-primary/40",
+                      ? "border-destructive/80 bg-destructive/5 hover:border-destructive"
+                      : "border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.09] hover:border-primary hover:shadow-md hover:shadow-primary/5",
                   )}
                 >
-                  <div className="h-11 w-11 rounded-md bg-background-sec border border-border/10 group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20 flex items-center justify-center text-muted-foreground transition-all mb-3">
+                  <div className="h-12 w-12 rounded-xl bg-primary/15 border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex items-center justify-center transition-all mb-3 shadow-xs">
                     <Search className="h-5 w-5" />
                   </div>
-                  <span className="font-semibold text-sm text-white group-hover:text-primary transition-colors">
+                  <span className="font-bold text-base text-white group-hover:text-primary transition-colors flex items-center gap-2">
                     Wybierz kategorie sprawy
+                    <ChevronRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
                   </span>
-                  <span className="text-xs text-muted-foreground mt-1 font-light">
-                    Kliknij, aby otworzyć wyszukiwarkę i spis dziedzin prawa
+                  <span className="text-xs text-muted-foreground mt-1 font-normal group-hover:text-zinc-300">
+                    Kliknij, aby otworzyć wyszukiwarkę i pełny spis dziedzin prawa
+                  </span>
+                  <span className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/30 text-xs font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    Otwórz listę kategorii <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
                   </span>
                 </button>
               </DialogTrigger>
             )}
 
-            <DialogContent className="sm:max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col p-5 sm:p-6 overflow-hidden">
-              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[70px] rounded-full pointer-events-none" />
+            <DialogContent className="sm:max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col p-5 sm:p-6 overflow-hidden border-border/40">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/10 blur-[70px] rounded-full pointer-events-none" />
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold font-playfair text-white">
+                <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+                  <FolderOpen className="h-5 w-5 text-primary" />
                   Wybierz kategorie sprawy
                 </DialogTitle>
                 <DialogDescription className="text-zinc-400 text-xs">
-                  Wyszukaj odpowiednie kategorie prawne lub wybierz je ręcznie z
-                  podziału tematycznego. Możesz zaznaczyć więcej niż jedną.
+                  Wyszukaj odpowiednie kategorie prawne lub wybierz je z podziału tematycznego. Możesz zaznaczyć więcej niż jedną.
                 </DialogDescription>
               </DialogHeader>
 
@@ -978,13 +1016,13 @@ export default function ClientAddCasePage() {
                   placeholder="Wpisz np. rozwód, praca, spółka..."
                   value={categorySearchQuery}
                   onChange={(e) => setCategorySearchQuery(e.target.value)}
-                  className="pl-9 pr-8 h-11 text-sm"
+                  className="pl-9 pr-8 h-11 text-sm bg-background-sec/40 border-border/40 focus:border-primary rounded-xl"
                 />
                 {categorySearchQuery && (
                   <button
                     type="button"
                     onClick={() => setCategorySearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -1000,33 +1038,42 @@ export default function ClientAddCasePage() {
                       {categorySearchQuery}&quot;
                     </div>
                   ) : (
-                    getSearchResults().map((cat: any) => (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        onClick={() => toggleCategory(cat.id)}
-                        className={cn(
-                          "w-full flex items-center justify-between p-3.5 rounded-lg border text-left transition-all",
-                          formData.categoryIds.includes(cat.id)
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border/10 hover:border-primary/50 hover:bg-primary/10 hover:text-white",
-                        )}
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-sm text-zinc-200">
-                            {cat.nazwa}
-                          </span>
-                          {cat.parentName && (
-                            <span className="text-sm text-muted-foreground font-light mt-0.5">
-                              Dziedzina nadrzędna: {cat.parentName}
-                            </span>
+                    getSearchResults().map((cat: any) => {
+                      const isSelected = formData.categoryIds.includes(cat.id);
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => toggleCategory(cat.id)}
+                          className={cn(
+                            "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer group my-1",
+                            isSelected
+                              ? "border-primary bg-primary/15 text-white shadow-sm ring-1 ring-primary/30"
+                              : "border-border/30 bg-background-sec/30 text-zinc-200 hover:border-primary/60 hover:bg-primary/10 hover:text-white shadow-xs",
                           )}
-                        </div>
-                        {formData.categoryIds.includes(cat.id) && (
-                          <Check className="h-4 w-4 text-primary shrink-0" />
-                        )}
-                      </button>
-                    ))
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-sm text-white">
+                              {cat.nazwa}
+                            </span>
+                            {cat.parentName && (
+                              <span className="text-xs text-muted-foreground font-normal mt-0.5">
+                                Dziedzina nadrzędna: {cat.parentName}
+                              </span>
+                            )}
+                          </div>
+                          {isSelected ? (
+                            <div className="h-6 w-6 rounded-md bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs">
+                              <Check className="h-4 w-4 stroke-[3]" />
+                            </div>
+                          ) : (
+                            <div className="h-6 w-6 rounded-md border border-border/50 group-hover:border-primary group-hover:bg-primary/20 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary transition-colors">
+                              <Plus className="h-3.5 w-3.5" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })
                   )}
                 </div>
               ) : (
@@ -1035,16 +1082,16 @@ export default function ClientAddCasePage() {
                   {/* Lewa kolumna: Kategorie główne (2/5) */}
                   <div
                     className={cn(
-                      "md:col-span-2 border border-border/10 rounded-lg p-2 overflow-y-auto bg-background-sec/10 space-y-1 h-full",
+                      "md:col-span-2 border border-border/20 rounded-xl p-2 overflow-y-auto bg-background-sec/20 space-y-1 h-full",
                       selectedParentIdForModal !== null ? "hidden md:block" : "block"
                     )}
                   >
-                    <div className="text-sm font-semibold text-muted-foreground px-2.5 py-1 uppercase tracking-wider mb-1">
+                    <div className="text-xs font-bold text-muted-foreground/80 px-2.5 py-1.5 uppercase tracking-wider mb-1">
                       Działy prawa
                     </div>
                     {isLoadingCategories ? (
                       <div className="text-xs text-muted-foreground px-2 py-2 flex items-center gap-1.5">
-                        <Loader2 className="h-3 w-3 animate-spin text-primary" />{" "}
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />{" "}
                         Ładowanie...
                       </div>
                     ) : filteredCats.length === 0 ? (
@@ -1052,7 +1099,7 @@ export default function ClientAddCasePage() {
                         Brak dostępnych kategorii
                       </div>
                     ) : (
-                      // Grupowanie: kategorie prawne vs usługi ekspertów (flaga `ekspercka`)
+                      // Grupowanie: kategorie prawne vs usługi ekspertów
                       [
                         {
                           label: "Sprawy prawne",
@@ -1067,33 +1114,55 @@ export default function ClientAddCasePage() {
                         .map((group, _, groups) => (
                           <div key={group.label} className="space-y-1">
                             {groups.length > 1 && (
-                              <div className="text-[10px] font-semibold text-muted-foreground/70 px-2.5 pt-2 uppercase tracking-wider">
+                              <div className="text-[10px] font-bold text-muted-foreground/70 px-2.5 pt-2 uppercase tracking-wider">
                                 {group.label}
                               </div>
                             )}
-                            {group.items.map((parent: any) => (
-                              <button
-                                key={parent.id}
-                                type="button"
-                                onClick={() => setSelectedParentIdForModal(parent.id)}
-                                className={cn(
-                                  "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all",
-                                  activeParentId === parent.id
-                                    ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                                    : "text-muted-foreground hover:text-white hover:bg-primary/15",
-                                )}
-                              >
-                                <span className="truncate">{parent.nazwa}</span>
-                                <ChevronRight
+                            {group.items.map((parent: any) => {
+                              const isActive = activeParentId === parent.id;
+                              const selectedCountInParent = [
+                                parent.id,
+                                ...(parent.children?.map((c: any) => c.id) || []),
+                              ].filter((id) => formData.categoryIds.includes(id)).length;
+
+                              return (
+                                <button
+                                  key={parent.id}
+                                  type="button"
+                                  onClick={() => setSelectedParentIdForModal(parent.id)}
                                   className={cn(
-                                    "h-3.5 w-3.5 shrink-0 opacity-70",
-                                    activeParentId === parent.id
-                                      ? "text-white"
-                                      : "text-muted-foreground",
+                                    "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left text-xs transition-all cursor-pointer group my-0.5 border",
+                                    isActive
+                                      ? "bg-primary text-primary-foreground font-bold border-primary shadow-md"
+                                      : "bg-background-sec/30 text-zinc-300 border-border/20 hover:border-primary/40 hover:bg-primary/15 hover:text-white",
                                   )}
-                                />
-                              </button>
-                            ))}
+                                >
+                                  <span className="truncate flex items-center gap-1.5">
+                                    {parent.nazwa}
+                                    {selectedCountInParent > 0 && (
+                                      <span
+                                        className={cn(
+                                          "h-4 min-w-[16px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0",
+                                          isActive
+                                            ? "bg-white text-primary"
+                                            : "bg-primary text-primary-foreground",
+                                        )}
+                                      >
+                                        {selectedCountInParent}
+                                      </span>
+                                    )}
+                                  </span>
+                                  <ChevronRight
+                                    className={cn(
+                                      "h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5",
+                                      isActive
+                                        ? "text-primary-foreground opacity-100"
+                                        : "text-muted-foreground group-hover:text-primary opacity-70",
+                                    )}
+                                  />
+                                </button>
+                              );
+                            })}
                           </div>
                         ))
                     )}
@@ -1102,7 +1171,7 @@ export default function ClientAddCasePage() {
                   {/* Prawa kolumna: Podkategorie (3/5) */}
                   <div
                     className={cn(
-                      "md:col-span-3 border border-border/10 rounded-lg p-2 overflow-y-auto space-y-2 h-full",
+                      "md:col-span-3 border border-border/20 rounded-xl p-2.5 overflow-y-auto space-y-2 h-full bg-background-sec/10",
                       selectedParentIdForModal === null ? "hidden md:block" : "block"
                     )}
                   >
@@ -1112,64 +1181,84 @@ export default function ClientAddCasePage() {
                           type="button"
                           variant="ghost"
                           onClick={() => setSelectedParentIdForModal(null)}
-                          className="md:hidden mb-2.5 w-full flex items-center justify-start gap-2 h-9 text-xs text-primary font-semibold hover:bg-primary/10 border border-primary/20"
+                          className="md:hidden mb-2.5 w-full flex items-center justify-start gap-2 h-9 text-xs text-primary font-semibold hover:bg-primary/10 border border-primary/20 rounded-lg cursor-pointer"
                         >
                           <ChevronLeft className="h-4 w-4" />
                           Wróć do kategorii
                         </Button>
-                        <div className="text-sm font-semibold text-muted-foreground px-2.5 py-1 uppercase tracking-wider">
-                          Specjalizacje: {activeParent.nazwa}
+                        <div className="text-xs font-bold text-white px-2.5 py-1 uppercase tracking-wider flex items-center justify-between">
+                          <span>Specjalizacje: {activeParent.nazwa}</span>
                         </div>
 
                         <div className="space-y-1.5 pt-1">
                           {/* Opcja wyboru samej kategorii głównej */}
-                          <button
-                            type="button"
-                            onClick={() => toggleCategory(activeParent.id)}
-                            className={cn(
-                              "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all",
-                              formData.categoryIds.includes(activeParent.id)
-                                ? "border-primary bg-primary/5 text-primary"
-                                : "border-dashed border-border/20 hover:border-primary hover:bg-primary/10",
-                            )}
-                          >
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-xs text-white">
-                                Ogólny zakres: {activeParent.nazwa}
-                              </span>
-                              <span className="text-sm text-muted-foreground font-light mt-0.5 leading-normal">
-                                Wybierz, jeśli sprawa dotyczy całego zakresu tej
-                                dziedziny
-                              </span>
-                            </div>
-                            {formData.categoryIds.includes(activeParent.id) && (
-                              <Check className="h-4 w-4 text-primary shrink-0" />
-                            )}
-                          </button>
+                          {(() => {
+                            const isParentSelected = formData.categoryIds.includes(activeParent.id);
+                            return (
+                              <button
+                                type="button"
+                                onClick={() => toggleCategory(activeParent.id)}
+                                className={cn(
+                                  "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer group my-1",
+                                  isParentSelected
+                                    ? "border-primary bg-primary/15 text-white ring-1 ring-primary/30 shadow-xs"
+                                    : "border-dashed border-border/40 bg-background-sec/30 text-zinc-200 hover:border-primary/60 hover:bg-primary/15 hover:text-white shadow-xs",
+                                )}
+                              >
+                                <div className="flex flex-col pr-2">
+                                  <span className="font-bold text-xs text-white group-hover:text-primary transition-colors">
+                                    Ogólny zakres: {activeParent.nazwa}
+                                  </span>
+                                  <span className="text-[11px] text-muted-foreground font-normal mt-0.5 leading-snug">
+                                    Wybierz, jeśli sprawa dotyczy całego zakresu tej dziedziny
+                                  </span>
+                                </div>
+                                {isParentSelected ? (
+                                  <div className="h-6 w-6 rounded-md bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs">
+                                    <Check className="h-4 w-4 stroke-[3]" />
+                                  </div>
+                                ) : (
+                                  <div className="h-6 w-6 rounded-md border border-border/80 group-hover:border-primary group-hover:bg-primary/20 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary transition-colors">
+                                    <Plus className="h-3.5 w-3.5" />
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })()}
 
                           {/* Separator */}
                           {activeChildren.length > 0 && (
-                            <div className="h-px bg-zinc-800/60 my-2" />
+                            <div className="h-px bg-border/30 my-2" />
                           )}
 
                           {/* Lista podkategorii */}
-                          {activeChildren.map((child: any) => (
-                            <button
-                              key={child.id}
-                              type="button"
-                              onClick={() => toggleCategory(child.id)}
-                              className={cn(
-                                "w-full flex items-center justify-between p-3 rounded-lg border border-border/10 text-left transition-all text-xs font-medium text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-white",
-                                formData.categoryIds.includes(child.id) &&
-                                  "border-primary bg-primary/5 text-primary hover:border-primary",
-                              )}
-                            >
-                              <span>{child.nazwa}</span>
-                              {formData.categoryIds.includes(child.id) && (
-                                <Check className="h-3.5 w-3.5 text-primary shrink-0" />
-                              )}
-                            </button>
-                          ))}
+                          {activeChildren.map((child: any) => {
+                            const isChildSelected = formData.categoryIds.includes(child.id);
+                            return (
+                              <button
+                                key={child.id}
+                                type="button"
+                                onClick={() => toggleCategory(child.id)}
+                                className={cn(
+                                  "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all text-xs font-medium cursor-pointer group my-0.5",
+                                  isChildSelected
+                                    ? "border-primary bg-primary/15 text-white font-semibold shadow-xs ring-1 ring-primary/20"
+                                    : "border-border/30 bg-background-sec/25 text-zinc-200 hover:border-primary/50 hover:bg-primary/15 hover:text-white shadow-xs",
+                                )}
+                              >
+                                <span className="pr-2">{child.nazwa}</span>
+                                {isChildSelected ? (
+                                  <div className="h-5 w-5 rounded-md bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs">
+                                    <Check className="h-3.5 w-3.5 stroke-[3]" />
+                                  </div>
+                                ) : (
+                                  <div className="h-5 w-5 rounded-md border border-border/40 group-hover:border-primary/60 group-hover:bg-primary/20 flex items-center justify-center shrink-0 text-muted-foreground/60 group-hover:text-primary transition-colors">
+                                    <Plus className="h-3 w-3" />
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })}
                         </div>
                       </>
                     ) : (
@@ -1183,7 +1272,10 @@ export default function ClientAddCasePage() {
 
               <DialogFooter className="pt-3 border-t border-border/20">
                 <div className="flex items-center justify-between w-full gap-3">
-                  <span className="text-xs text-muted-foreground font-light">
+                  <span className={cn(
+                    "text-xs transition-colors",
+                    formData.categoryIds.length > 0 ? "text-primary font-bold" : "text-muted-foreground font-normal"
+                  )}>
                     Wybrane kategorie: {formData.categoryIds.length}
                   </span>
                   <Button
@@ -1191,7 +1283,7 @@ export default function ClientAddCasePage() {
                     variant="primary"
                     onClick={() => setIsCategoryModalOpen(false)}
                     disabled={formData.categoryIds.length === 0}
-                    className="h-10 px-5"
+                    className="h-10 px-6 font-bold shadow-md cursor-pointer disabled:cursor-not-allowed"
                   >
                     Zatwierdź wybór
                   </Button>
@@ -1201,7 +1293,7 @@ export default function ClientAddCasePage() {
           </Dialog>
 
           {errors.categoryIds && (
-            <p className="text-xs text-destructive mt-2">
+            <p className="text-xs text-destructive mt-2 font-medium">
               {errors.categoryIds}
             </p>
           )}
@@ -1211,28 +1303,28 @@ export default function ClientAddCasePage() {
             type="button"
             onClick={handleSuggestCategories}
             disabled={isSuggestingCategories}
-            className="mt-3 w-full flex items-center justify-center gap-2.5 py-3.5 px-4 border border-dashed border-primary/30 hover:border-primary/60 rounded-lg hover:bg-primary/5 transition-all text-center disabled:opacity-60 disabled:cursor-not-allowed"
+            className="mt-3.5 w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl border border-dashed border-primary/40 bg-primary/[0.05] hover:bg-primary/[0.12] hover:border-primary transition-all text-center cursor-pointer group shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isSuggestingCategories ? (
-              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+              <Loader2 className="h-4.5 w-4.5 animate-spin text-primary shrink-0" />
             ) : (
-              <Sparkles className="h-4 w-4 text-primary shrink-0" />
+              <Sparkles className="h-4.5 w-4.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
             )}
-            <span className="text-xs font-semibold text-primary">
+            <span className="text-xs font-bold text-primary group-hover:text-primary-foreground group-hover:underline transition-colors">
               {isSuggestingCategories
                 ? "Analizujemy opis sprawy i dobieramy kategorie..."
-                : "Nie wiem, do jakiej kategorii przyporządkować sprawę — dobierz za mnie"}
+                : "Nie wiem, do jakiej kategorii przyporządkować sprawę — dobierz za mnie (AI)"}
             </span>
           </button>
 
           {aiSuggestion && (
-            <div className="mt-3 rounded-lg border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+            <div className="mt-3 rounded-xl border border-primary/30 bg-primary/10 p-4 flex items-start gap-3 shadow-xs">
               <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <h5 className="text-xs font-semibold text-primary uppercase tracking-wider">
+                <h5 className="text-xs font-bold text-primary uppercase tracking-wider">
                   Kategorie dobrane automatycznie
                 </h5>
-                <p className="text-xs text-muted-foreground leading-relaxed font-light">
+                <p className="text-xs text-zinc-300 leading-relaxed font-normal">
                   Na podstawie opisu Twojej sprawy dobraliśmy kategorie
                   automatycznie.
                   {aiSuggestion.uzasadnienie &&
@@ -1261,19 +1353,19 @@ export default function ClientAddCasePage() {
                 variant="outline"
                 role="combobox"
                 className={cn(
-                  "h-11 w-full bg-background-sec/20 rounded-lg text-muted-foreground text-sm font-normal text-left justify-between mt-1.5",
+                  "h-11 w-full bg-background-sec/40 border-border/40 hover:border-primary/60 hover:bg-background-sec/60 focus:border-primary rounded-xl text-sm font-normal text-left justify-between mt-1.5 transition-all cursor-pointer shadow-xs",
                   errors.cityId
                     ? "border-destructive focus-visible:ring-destructive"
-                    : "border-border/30",
+                    : "border-border/40",
                 )}
               >
-                <span className="truncate">
+                <span className={cn("truncate", selectedCityName ? "text-white font-medium" : "text-muted-foreground")}>
                   {selectedCityName || "Wybierz miasto..."}
                 </span>
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-primary opacity-80" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-2rem)] p-0" align="start">
+            <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-2rem)] p-0 border-border/40" align="start">
               <Command shouldFilter={false}>
                 <CommandInput
                   placeholder="Wyszukaj miasto..."
@@ -1323,12 +1415,12 @@ export default function ClientAddCasePage() {
                             setSelectedCityName(city.nazwa);
                             setLocationOpen(false);
                           }}
-                          className="cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-lg data-[selected=true]:bg-background-sec text-white"
+                          className="cursor-pointer flex items-center justify-between gap-2 py-2.5 px-3 text-sm rounded-lg hover:bg-primary/15 hover:text-white data-[selected=true]:bg-primary/20 text-zinc-200 my-0.5 border border-transparent hover:border-primary/30 transition-all"
                         >
                           <div className="flex items-center gap-2">
                             <Check
                               className={cn(
-                                "h-4 w-4 text-primary",
+                                "h-4 w-4 text-primary font-bold",
                                 formData.cityId === city.id
                                   ? "opacity-100"
                                   : "opacity-0",
@@ -1348,7 +1440,7 @@ export default function ClientAddCasePage() {
             </PopoverContent>
           </Popover>
           {errors.cityId && (
-            <p className="text-xs text-destructive mt-1">{errors.cityId}</p>
+            <p className="text-xs text-destructive mt-1 font-medium">{errors.cityId}</p>
           )}
         </div>
       </div>
@@ -1373,9 +1465,9 @@ export default function ClientAddCasePage() {
           onChange={(e) => updateFormData("nazwaSprawy", e.target.value)}
           placeholder="np. Sporządzenie umowy najmu lokalu komercyjnego"
           className={cn(
-            "h-11 mt-1.5",
+            "",
             errors.nazwaSprawy &&
-              "border-destructive focus-visible:ring-destructive",
+            "border-destructive focus-visible:ring-destructive",
           )}
         />
         {errors.nazwaSprawy && (
@@ -1402,7 +1494,7 @@ export default function ClientAddCasePage() {
           className={cn(
             "mt-1.5 resize-none",
             errors.opisSprawy &&
-              "border-destructive focus-visible:ring-destructive",
+            "border-destructive focus-visible:ring-destructive",
           )}
         />
         {errors.opisSprawy && (
@@ -1458,7 +1550,7 @@ export default function ClientAddCasePage() {
                   className={cn(
                     "mx-auto h-9 w-9 rounded-lg bg-background-sec border border-border/10 flex items-center justify-center text-muted-foreground transition-all mb-2.5",
                     !isUploading &&
-                      "group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20",
+                    "group-hover:bg-primary/10 group-hover:text-primary group-hover:border-primary/20",
                   )}
                 >
                   {isUploading ? (
@@ -1655,7 +1747,6 @@ export default function ClientAddCasePage() {
           value={formData.imieNazwisko}
           onChange={(e) => updateFormData("imieNazwisko", e.target.value)}
           placeholder="Jan Kowalski"
-          className="h-11 mt-1.5"
         />
       </div>
 
@@ -1673,7 +1764,6 @@ export default function ClientAddCasePage() {
             value={formData.telefonKontakt}
             onChange={(e) => updateFormData("telefonKontakt", e.target.value)}
             placeholder="+48 123 456 789"
-            className="h-11 mt-1.5"
           />
         </div>
       </div>
@@ -1689,7 +1779,7 @@ export default function ClientAddCasePage() {
           value={formData.preferowanyKontakt}
           onValueChange={(value) => updateFormData("preferowanyKontakt", value)}
         >
-          <SelectTrigger id="preferowanyKontakt" className="h-11 mt-1.5">
+          <SelectTrigger id="preferowanyKontakt">
             <SelectValue placeholder="Wybierz sposób kontaktu" />
           </SelectTrigger>
           <SelectContent>

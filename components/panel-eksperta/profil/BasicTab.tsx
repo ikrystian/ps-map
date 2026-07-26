@@ -41,7 +41,6 @@ interface BasicTabProps {
     oraMiasto: string
     oraWpis: string
     expertiseCategoryId: string
-    typInny: string
   }
   handleInputChange: (field: string, value: any) => void
   isUploading: boolean
@@ -107,39 +106,11 @@ export function BasicTab({
         setSelectedCatId(foundCatId)
         setSelectedSubcatId(foundSubcatId)
       }
-      return
     }
-
-    // 2) Fallback: brak expertiseCategoryId, ale jest ścieżka rejestracyjna w typInny
-    //    (np. "Prawnicy > Adwokat" albo "Eksperci > Finanse > Doradca finansowy").
-    //    Odtwórz wybór po nazwach i uzupełnij expertiseCategoryId (samonaprawa danych).
-    if (formData.typInny) {
-      const segments = formData.typInny.split(">").map((s) => s.trim()).filter(Boolean)
-      if (segments.length >= 2) {
-        const cat = expertiseCategories.find((c) => c.nazwa === segments[0])
-        if (cat) {
-          let subId = ""
-          let leafId = ""
-          if (segments.length === 2) {
-            const leaf = (cat.children || []).find((ch: any) => ch.nazwa === segments[1])
-            if (leaf) leafId = leaf.id
-          } else {
-            const sub = (cat.children || []).find((s: any) => s.nazwa === segments[1])
-            if (sub) {
-              subId = sub.id
-              const leaf = (sub.children || []).find((l: any) => l.nazwa === segments[2])
-              if (leaf) leafId = leaf.id
-            }
-          }
-          if (leafId) {
-            setSelectedCatId(cat.id)
-            if (subId) setSelectedSubcatId(subId)
-            handleInputChange("expertiseCategoryId", leafId)
-          }
-        }
-      }
-    }
-  }, [formData.expertiseCategoryId, formData.typInny, expertiseCategories])
+    // Fallback odtwarzający wybór ze ścieżki w `typInny` był potrzebny, dopóki
+    // ścieżka dublowała `expertiseCategoryId`. Po rozdzieleniu obu znaczeń
+    // (`typ`/`typInny` = forma prawna) jedynym źródłem jest już samo ID.
+  }, [formData.expertiseCategoryId, expertiseCategories])
 
   const selectedCat = expertiseCategories?.find((c) => c.id === selectedCatId)
   const hasSubcategories = !!(

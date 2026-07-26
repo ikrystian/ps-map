@@ -4,6 +4,7 @@ import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/li
 import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
+import { EXPERTISE_CATEGORY_PATH_SELECT, formatExpertisePath } from "@/lib/expertise-category"
 import { verifyRecaptchaToken } from "@/lib/recaptcha"
 import { recordRegistrationAudit } from "@/lib/rodo-audit"
 import { EmailType, UserRole } from "@prisma/client"
@@ -686,8 +687,8 @@ export async function POST(request: NextRequest) {
         data: {
           userId: user.id,
           slug: generateSlug(body.nazwa, body.nip),
-          typ: body.typ,
-          typInny: body.typInny || null,
+          // Forma prawna (`typ`) nie jest zbierana w rejestracji — zostaje pusta
+          // do uzupełnienia przez admina. Specjalizację niesie expertiseCategoryId.
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
           nip: body.nip || null,
@@ -818,10 +819,11 @@ export async function POST(request: NextRequest) {
         if (body.expertiseCategoryId) {
           const expCat = await prisma.expertiseCategory.findUnique({
             where: { id: body.expertiseCategoryId },
-            select: { nazwa: true },
+            ...EXPERTISE_CATEGORY_PATH_SELECT,
           })
           if (expCat) {
-            expertiseCategoryName = expCat.nazwa
+            // Pełna ścieżka („Prawnicy > Adwokat”) zamiast samego liścia
+            expertiseCategoryName = formatExpertisePath(expCat) || expCat.nazwa
           }
         }
 
@@ -873,10 +875,6 @@ export async function POST(request: NextRequest) {
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${voivodeship?.nazwa || 'Nie wybrano'}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Typ działalności:</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${body.typ || ''}${body.typInny ? ` (${body.typInny})` : ''}</td>
-                </tr>
-                <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #8a8f92; font-size: 14px; font-weight: 500;">Główna specjalizacja:</td>
                   <td style="padding: 10px 0; border-bottom: 1px solid #2a2e30; color: #e8e4dc; font-size: 14px;">${expertiseCategoryName || 'Nie wybrano'}</td>
                 </tr>
@@ -912,7 +910,6 @@ Telefon kontaktowy: ${body.numerTelefonu || ''}
 Drugi telefon: ${body.numerTelefonu2 || 'Brak'}
 Adres: ${body.adres || ''}, ${body.kodPocztowy || ''} ${body.miasto || ''}
 Województwo główne: ${voivodeship?.nazwa || 'Nie wybrano'}
-Typ działalności: ${body.typ || ''}${body.typInny ? ` (${body.typInny})` : ''}
 Główna specjalizacja: ${expertiseCategoryName || 'Nie wybrano'}
 Wszystkie specjalizacje: ${categoryNames || 'Brak'}
 Akceptacja regulaminu: ${body.zgodaRegulamin ? 'Tak' : 'Nie'}

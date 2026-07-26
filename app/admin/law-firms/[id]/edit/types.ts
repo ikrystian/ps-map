@@ -7,8 +7,8 @@ export const lawFirmSchema = z.object({
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   emailVerified: z.boolean(),
 
-  // Basic info
-  typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]),
+  // Forma prawna. Pusty string = nieokreślona (rejestracja jej nie zbiera).
+  typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]).or(z.literal("")),
   typInny: z.string().optional(),
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
@@ -110,6 +110,15 @@ export const lawFirmSchema = z.object({
       code: z.ZodIssueCode.custom,
       path: ["mainCategoryId"],
       message: "Specjalizacja wiodąca musi być na liście wybranych specjalizacji",
+    })
+  }
+
+  // Doprecyzowanie formy prawnej ma sens tylko przy „Inna”
+  if (data.typ === "INNY" && !data.typInny?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["typInny"],
+      message: "Podaj formę prawną — wybrano „Inna”",
     })
   }
 

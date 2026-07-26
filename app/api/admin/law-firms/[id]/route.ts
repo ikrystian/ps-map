@@ -325,18 +325,10 @@ export async function PUT(
       }
     }
 
-    // Specjalizacja z drzewa kategorii eksperckich: `typInny` przechowuje
-    // czytelną ścieżkę (np. „Prawnicy > Adwokat”) i musi być spójna z ID.
-    // Odrzucamy tylko *nową* niespójność — profile sprzed wprowadzenia
-    // `expertiseCategoryId` mają samą ścieżkę i muszą dać się zapisywać.
-    if (
-      body.expertiseCategoryId !== undefined &&
-      !body.expertiseCategoryId &&
-      body.typInny &&
-      body.typInny !== existingLawFirm.typInny
-    ) {
+    // `typInny` doprecyzowuje formę prawną i ma sens wyłącznie przy typ = INNY
+    if (body.typ !== undefined && body.typ && body.typ !== "INNY" && body.typInny) {
       return NextResponse.json(
-        { error: "Nie wybrano specjalizacji — dokończ wybór kategorii" },
+        { error: "Pole „inna forma prawna” można wypełnić tylko przy formie „Inna”" },
         { status: 400 }
       )
     }
@@ -362,8 +354,12 @@ export async function PUT(
     if (normalizedSlug) lawFirmUpdateData.slug = normalizedSlug
 
     // Type and basic info
-    if (body.typ !== undefined) lawFirmUpdateData.typ = body.typ
-    if (body.typInny !== undefined) lawFirmUpdateData.typInny = body.typInny
+    // Pusty `typ` = forma prawna nieokreślona (a nie „Inna”)
+    if (body.typ !== undefined) lawFirmUpdateData.typ = body.typ || null
+    if (body.typInny !== undefined) {
+      lawFirmUpdateData.typInny =
+        (body.typ ?? existingLawFirm.typ) === "INNY" ? body.typInny || null : null
+    }
     if (body.expertiseCategoryId !== undefined) {
       lawFirmUpdateData.expertiseCategoryId = body.expertiseCategoryId || null
     }

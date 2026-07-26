@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { EXPERTISE_CATEGORY_PATH_SELECT } from "@/lib/expertise-category"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
@@ -54,8 +55,11 @@ export async function GET(request: NextRequest) {
       where.pakietSubskrypcji = subscription
     }
 
-    // Filter by law firm type
-    if (lawFirmType) {
+    // Filter by legal form. Profile z rejestracji nie mają jej ustawionej,
+    // więc „NIEOKRESLONA” to osobna, sensowna opcja filtra.
+    if (lawFirmType === "NIEOKRESLONA") {
+      where.typ = null
+    } else if (lawFirmType) {
       where.typ = lawFirmType
     }
 
@@ -75,6 +79,9 @@ export async function GET(request: NextRequest) {
               ...USER_CONTACT_SELECT,
             },
           },
+          // Ścieżkę specjalizacji („Kategoria > Specjalizacja”) budujemy z drzewa,
+          // zamiast czytać ją ze zdenormalizowanego `typInny`.
+          expertiseCategory: EXPERTISE_CATEGORY_PATH_SELECT,
           _count: {
             select: {
               offers: true,
@@ -261,8 +268,9 @@ export async function POST(request: NextRequest) {
       const lawFirm = await tx.lawFirm.create({
         data: {
           userId: user.id,
-          typ,
-          typInny: typ === "INNY" ? typInny : null,
+          // Pusta forma prawna = nieokreślona
+          typ: typ || null,
+          typInny: typ === "INNY" ? typInny || null : null,
           expertiseCategoryId: expertiseCategoryId || null,
           nazwa,
           slug,
