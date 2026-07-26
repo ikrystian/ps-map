@@ -885,26 +885,22 @@ export default function PublicHeader({
 
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-                    {/* Search inside Mobile Menu */}
-                    <form onSubmit={(e) => {
-                      e.preventDefault()
-                      handleSearchSubmit(e)
-                      setMobileMenuOpen(false)
-                    }} className="space-y-3">
-                      <div className="flex items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-11 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
-                        <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
-                        <input
-                          type="text"
-                          placeholder="Szukaj..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
+                    {/* Action Buttons (Dodaj sprawę & Zaloguj się) */}
+                    {!isAuthenticated && (
+                      <div className="flex flex-col gap-3">
+                        <AddCaseButton
+                          href="/panel-klienta/sprawy/dodaj"
+                          className="w-full"
+                          innerClassName="w-full h-11 justify-center text-base"
+                          onClick={() => setMobileMenuOpen(false)}
                         />
+                        <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                          <Button className="w-full cursor-pointer bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 border-0" size="lg">
+                            Zaloguj się
+                          </Button>
+                        </Link>
                       </div>
-                      <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 rounded-lg transition-colors cursor-pointer text-sm border-0">
-                        Wyszukaj
-                      </Button>
-                    </form>
+                    )}
 
                     {/* Links & Accordions */}
                     <div className="space-y-4">
@@ -1080,22 +1076,28 @@ export default function PublicHeader({
                     </div>
                   </div>
 
-                  {/* Mobile Actions Footer */}
-                  {!isAuthenticated && (
-                    <div className="p-6 border-t border-neutral-800 bg-[#101010] flex flex-col gap-3">
-                      <AddCaseButton
-                        href="/panel-klienta/sprawy/dodaj"
-                        className="w-full"
-                        innerClassName="w-full h-11 justify-center text-base"
-                        onClick={() => setMobileMenuOpen(false)}
-                      />
-                      <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                        <Button className="w-full cursor-pointer bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 border-0" size="lg">
-                          Zaloguj się
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
+                  {/* Search inside Mobile Menu Footer */}
+                  <div className="p-6 border-t border-neutral-800 bg-[#101010]">
+                    <form onSubmit={(e) => {
+                      e.preventDefault()
+                      handleSearchSubmit(e)
+                      setMobileMenuOpen(false)
+                    }} className="space-y-3">
+                      <div className="flex items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-11 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
+                        <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                        <input
+                          type="text"
+                          placeholder="Szukaj..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
+                        />
+                      </div>
+                      <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 rounded-lg transition-colors cursor-pointer text-sm border-0">
+                        Wyszukaj
+                      </Button>
+                    </form>
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>

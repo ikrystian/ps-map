@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -216,9 +216,17 @@ function CollapsibleNavGroup({
   setImpersonateOpen: (open: boolean) => void
 }) {
   const isGroupActive = group.items.some((item) => isNavItemActive(item.href))
-  const [isOpen, setIsOpen] = useState(() => {
-    return getStoredNavGroupState(group.title, true)
-  })
+  const [isOpen, setIsOpen] = useState(true)
+
+  useEffect(() => {
+    const storedState = getStoredNavGroupState(group.title, true)
+    if (storedState !== true) {
+      const timer = setTimeout(() => {
+        setIsOpen(storedState)
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [group.title])
 
   const handleOpenChange = (newOpen: boolean) => {
     setIsOpen(newOpen)

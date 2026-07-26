@@ -109,7 +109,7 @@ export default function LogoutSuccessPage() {
 
           {/* Text Headers */}
           <motion.div variants={childVariants} className="space-y-3">
-            <h1 className="text-3xl md:text-4xl font-extrabold font-playfair tracking-tight text-foreground bg-gradient-to-b from-foreground to-foreground/80 bg-clip-text">
+            <h1 className="text-3xl md:text-4xl font-playfair tracking-tight text-foreground bg-gradient-to-b from-foreground to-foreground/80 bg-clip-text">
               Pomyślnie wylogowano
             </h1>
             <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-md mx-auto">

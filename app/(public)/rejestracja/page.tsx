@@ -23,7 +23,7 @@ export default function RegistrationPage() {
     >
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
+          <h2 className="text-3xl font-playfair font-bold tracking-tight">
             Wybierz typ konta
           </h2>
           <p className="text-muted-foreground text-base">

@@ -57,7 +57,7 @@ export function HowItWorksSection() {
                         className="space-y-8"
                     >
                         <div>
-                            <h3 className="text-2xl md:text-4xl font-bold mb-6 leading-tight">
+                            <h3 className="text-2xl md:text-4xl font-playfair mb-6 leading-tight">
                                 {activeTab === "user"
                                     ? "Szybka i wygodna pomoc prawna, finansowa i księgowa w jednym miejscu!"
                                     : "Rozwijaj swój biznes i zdobywaj nowych klientów!"}

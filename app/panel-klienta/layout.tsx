@@ -13,19 +13,22 @@ import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
+import { AnimatedNavIcon } from "@/components/AnimatedNavIcon"
 import {
-  Briefcase,
-  CalendarCheck,
+  ArrowRightStartOnRectangleIcon,
+  BriefcaseIcon,
+  CalendarDaysIcon,
+  ChatBubbleLeftRightIcon,
+  HeartIcon,
+  NewspaperIcon,
+  QuestionMarkCircleIcon,
+  Squares2X2Icon,
+  UserCircleIcon,
+} from "@heroicons-animated/react"
+import {
   ChevronLeft,
   ChevronRight,
-  Heart,
-  HelpCircle,
-  LayoutDashboard,
-  LogOut,
   Menu,
-  MessageSquare,
-  Newspaper,
-  UserCircle,
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
@@ -33,15 +36,14 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
 const navigation = [
-  { name: "Panel użytkownika", href: "/panel-klienta", icon: LayoutDashboard },
-  { name: "Sprawy", href: "/panel-klienta/sprawy", icon: Briefcase },
-  { name: "Konsultacje", href: "/panel-klienta/konsultacje", icon: CalendarCheck },
-  { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: MessageSquare },
-  { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: Heart },
-  { name: "Centrum pomocy", href: "/panel-klienta/pomoc", icon: HelpCircle },
-  { name: "Centrum newsów", href: "/panel-klienta/newsy", icon: Newspaper },
-  { name: "Ustawienia profilu", href: "/panel-klienta/profil", icon: UserCircle },
-
+  { name: "Panel użytkownika", href: "/panel-klienta", icon: Squares2X2Icon },
+  { name: "Sprawy", href: "/panel-klienta/sprawy", icon: BriefcaseIcon },
+  { name: "Konsultacje", href: "/panel-klienta/konsultacje", icon: CalendarDaysIcon },
+  { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: ChatBubbleLeftRightIcon },
+  { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: HeartIcon },
+  { name: "Centrum pomocy", href: "/panel-klienta/pomoc", icon: QuestionMarkCircleIcon },
+  { name: "Centrum newsów", href: "/panel-klienta/newsy", icon: NewspaperIcon },
+  { name: "Ustawienia profilu", href: "/panel-klienta/profil", icon: UserCircleIcon },
 ]
 
 export default function ClientPanelLayout({
@@ -171,7 +173,12 @@ export default function ClientPanelLayout({
             </AnimatePresence>
 
             <div className="flex items-center justify-center flex-shrink-0">
-              <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
+              <AnimatedNavIcon
+                icon={item.icon}
+                isHovered={hoveredIndex === index}
+                size={20}
+                className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")}
+              />
             </div>
 
             {/* Text label with elegant fade-slide */}
@@ -222,6 +229,7 @@ export default function ClientPanelLayout({
       <Button
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length)}
+        onMouseLeave={() => setHoveredIndex(null)}
         className={cn(
           "group w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
@@ -246,21 +254,14 @@ export default function ClientPanelLayout({
           )}
         </AnimatePresence>
 
-        <motion.div
-          animate={{
-            scale: hoveredIndex === navigation.length ? 1.1 : 1,
-            x: hoveredIndex === navigation.length && (!inSheet && !isCollapsed) ? 2 : 0,
-            rotate: hoveredIndex === navigation.length ? [0, -5, 5, 0] : 0,
-          }}
-          transition={{
-            scale: { type: "spring", stiffness: 400, damping: 20 },
-            x: { type: "spring", stiffness: 400, damping: 20 },
-            rotate: { duration: 0.4, ease: "easeInOut" }
-          }}
-          className="flex items-center justify-center flex-shrink-0"
-        >
-          <LogOut className="h-5 w-5" />
-        </motion.div>
+        <div className="flex items-center justify-center flex-shrink-0">
+          <AnimatedNavIcon
+            icon={ArrowRightStartOnRectangleIcon}
+            isHovered={hoveredIndex === navigation.length}
+            size={24}
+            className="h-6 w-6 transition-colors duration-200 text-muted-foreground group-hover:text-white"
+          />
+        </div>
 
         {(inSheet || !isCollapsed) && (
           <motion.span

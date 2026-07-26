@@ -253,7 +253,7 @@ export function SearchHelpSection() {
 
               {/* Title */}
               <motion.h3
-                className="text-white text-[22px] font-semibold tracking-wide leading-tight mb-4 max-w-[280px]"
+                className="text-white text-[22px] font-playfair tracking-wide leading-tight mb-4 max-w-[280px]"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
