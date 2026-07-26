@@ -6,6 +6,12 @@ import {
   FaInstagram as Instagram,
   FaLinkedin as Linkedin,
 } from "react-icons/fa"
+import {
+  PreviewLinkCard,
+  PreviewLinkCardTrigger,
+  PreviewLinkCardContent,
+  PreviewLinkCardImage,
+} from "@/components/animate-ui/components/radix/preview-link-card"
 
 interface PanelFooterProps {
   className?: string
@@ -44,7 +50,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
     <div className={className} id={id}>
       {/* Partners banner */}
       {logos.length > 0 && (
-        <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card border border-zinc-800/30 bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
+        <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
           <span className="hidden sm:block text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
 
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
@@ -63,14 +69,21 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
                 <Fragment key={logo.id}>
                   {idx > 0 && <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />}
                   {logo.linkUrl ? (
-                    <a
-                      href={logo.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center transition-opacity hover:opacity-80"
-                    >
-                      {image}
-                    </a>
+                    <PreviewLinkCard href={logo.linkUrl}>
+                      <PreviewLinkCardTrigger
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center transition-opacity hover:opacity-80"
+                      >
+                        {image}
+                      </PreviewLinkCardTrigger>
+                      <PreviewLinkCardContent className="p-1 bg-zinc-900/90 border-zinc-800 backdrop-blur-md rounded-lg shadow-xl">
+                        <PreviewLinkCardImage
+                          alt={logo.name}
+                          className="w-[240px] h-[135px] object-cover rounded"
+                        />
+                      </PreviewLinkCardContent>
+                    </PreviewLinkCard>
                   ) : (
                     <div className="flex items-center">{image}</div>
                   )}
@@ -117,3 +130,4 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
     </div>
   )
 }
+

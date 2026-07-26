@@ -1453,7 +1453,7 @@ export default function ClientAddCasePage() {
         <Label
           htmlFor="nazwaSprawy"
           className={cn(
-            "text-muted-foreground text-xs font-semibold",
+            "text-muted-foreground text-xs font-semibold mb-1.5",
             errors.nazwaSprawy && "text-destructive",
           )}
         >
@@ -1479,7 +1479,7 @@ export default function ClientAddCasePage() {
         <Label
           htmlFor="opisSprawy"
           className={cn(
-            "text-muted-foreground text-xs font-semibold",
+            "text-muted-foreground text-xs font-semibold mb-1.5",
             errors.opisSprawy && "text-destructive",
           )}
         >
@@ -1492,7 +1492,7 @@ export default function ClientAddCasePage() {
           placeholder="Opisz szczegółowo stan faktyczny, kluczowe okoliczności, cele oraz pytania prawne, na które szukasz odpowiedzi..."
           rows={8}
           className={cn(
-            "mt-1.5 resize-none",
+            "resize-none",
             errors.opisSprawy &&
             "border-destructive focus-visible:ring-destructive",
           )}
