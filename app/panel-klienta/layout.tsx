@@ -89,7 +89,7 @@ export default function ClientPanelLayout({
 
   const handleLogout = async () => {
     await clearAppCacheAndStorage()
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/wylogowano" });
   };
 
   // Get user initials for avatar fallback

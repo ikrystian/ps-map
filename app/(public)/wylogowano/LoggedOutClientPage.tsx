@@ -21,7 +21,6 @@ export default function LogoutSuccessPage() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval)
-          router.push("/")
           return 0
         }
         return prev - 1
@@ -31,7 +30,13 @@ export default function LogoutSuccessPage() {
     return () => {
       clearInterval(interval)
     }
-  }, [router, autoRedirect])
+  }, [autoRedirect])
+
+  useEffect(() => {
+    if (autoRedirect && timeLeft === 0) {
+      router.push("/")
+    }
+  }, [timeLeft, autoRedirect, router])
 
   // Framer Motion Animation Variants
   const containerVariants = {

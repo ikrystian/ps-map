@@ -225,7 +225,7 @@ export default function LawFirmSettingsPage() {
 
   const handleLogout = async () => {
     await clearAppCacheAndStorage()
-    await signOut({ callbackUrl: "/" })
+    await signOut({ callbackUrl: "/wylogowano" })
   }
 
   if (isLoading) {

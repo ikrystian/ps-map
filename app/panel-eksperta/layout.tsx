@@ -216,7 +216,7 @@ export default function LawFirmPanelLayout({
 
   const handleLogout = async () => {
     await clearAppCacheAndStorage()
-    await signOut({ callbackUrl: "/" })
+    await signOut({ callbackUrl: "/wylogowano" })
   }
 
   // Get border color class based on subscription type
