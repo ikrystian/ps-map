@@ -28,13 +28,11 @@ import { Building2, CheckCircle, Edit, RefreshCw, Search, Trash2, XCircle } from
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import { LAW_FIRM_TYPE_OPTIONS, formatExpertisePath, formatLawFirmType } from "@/lib/expertise-category"
+import { formatExpertisePath } from "@/lib/expertise-category"
 import type { LawFirm } from "@/types"
 import { PaginatedResponse } from '@/types/pagination';
 
 // Enums from Prisma
-type LawFirmType = "OSOBA_FIZYCZNA" | "SPOLKA_CYWILNA" | "SPOLKA_PARTNERSKA" | "SPOLKA_KOMANDYTOWA" | "SPOLKA_JAWNA" | "SPOLKA_ZOO" | "INNY"
-type OfferType = "STALA_WSPOLPRACA" | "JEDNORAZOWA_USLUGA" | "KONSULTACJA" | "WSZYSTKIE"
 type SubscriptionPackage = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES"
 
 
@@ -48,7 +46,6 @@ export default function AdminLawFirmsPage() {
   const [verifiedFilter, setVerifiedFilter] = useState("")
   const [activeFilter, setActiveFilter] = useState("")
   const [subscriptionFilter, setSubscriptionFilter] = useState("")
-  const [typeFilter, setTypeFilter] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({
     total: 0,
@@ -70,7 +67,6 @@ export default function AdminLawFirmsPage() {
       if (verifiedFilter) params.append("verified", verifiedFilter)
       if (activeFilter) params.append("active", activeFilter)
       if (subscriptionFilter) params.append("subscription", subscriptionFilter)
-      if (typeFilter) params.append("lawFirmType", typeFilter)
 
       const response = await fetch(`/api/admin/law-firms?${params.toString()}`)
       if (response.ok) {
@@ -89,7 +85,7 @@ export default function AdminLawFirmsPage() {
 
   useEffect(() => {
     fetchLawFirms()
-  }, [currentPage, searchQuery, verifiedFilter, activeFilter, subscriptionFilter, typeFilter])
+  }, [currentPage, searchQuery, verifiedFilter, activeFilter, subscriptionFilter])
 
   // Delete law firm
   const handleDeleteLawFirm = async () => {
@@ -201,23 +197,6 @@ export default function AdminLawFirmsPage() {
               </Button>
             </div>
             <div className="flex gap-4">
-              <Select value={typeFilter} onValueChange={(value) => {
-                setTypeFilter(value === "all" ? "" : value)
-                setCurrentPage(1)
-              }}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Forma prawna" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Wszystkie formy prawne</SelectItem>
-                  <SelectItem value="NIEOKRESLONA">Nieokreślona</SelectItem>
-                  {LAW_FIRM_TYPE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
               <Select value={subscriptionFilter} onValueChange={(value) => {
                 setSubscriptionFilter(value === "all" ? "" : value)
                 setCurrentPage(1)
@@ -276,7 +255,6 @@ export default function AdminLawFirmsPage() {
                 <TableHead>Nazwa</TableHead>
                 <TableHead>NIP</TableHead>
                 <TableHead>Specjalizacja</TableHead>
-                <TableHead>Forma prawna</TableHead>
                 <TableHead>Kontakt</TableHead>
                 <TableHead>Lokalizacja</TableHead>
                 <TableHead>Pakiet</TableHead>
@@ -319,11 +297,6 @@ export default function AdminLawFirmsPage() {
                         {formatExpertisePath(lawFirm.expertiseCategory) || (
                           <span className="text-muted-foreground">Nie wybrano</span>
                         )}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`text-sm ${lawFirm.typ ? "" : "text-muted-foreground"}`}>
-                        {formatLawFirmType(lawFirm.typ, lawFirm.typInny)}
                       </span>
                     </TableCell>
                     <TableCell>

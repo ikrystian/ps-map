@@ -89,7 +89,6 @@ async function main() {
       adres: "ul. Ekspercka 2",
       lawFirm: {
         create: {
-          typ: "OSOBA_FIZYCZNA",
           nazwa: "Kancelaria Nowak",
           slug: `kancelaria-nowak-${suffix}`,
           nip: `99${suffix}`.slice(0, 10),
@@ -97,7 +96,6 @@ async function main() {
           opis: "Opis kancelarii",
           logo: "/api/files/logo-test.png",
           linkLinkedIn: "https://linkedin.com/in/anna-nowak",
-          typOferty: "WSZYSTKIE",
           punktySaldo: 120,
           zweryfikowana: true,
           aktywna: true,

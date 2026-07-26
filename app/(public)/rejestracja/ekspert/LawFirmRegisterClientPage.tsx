@@ -137,8 +137,7 @@ export default function LawFirmRegistrationPage() {
   const [selectedCatId, setSelectedCatId] = useState("")
   const [selectedSubcatId, setSelectedSubcatId] = useState("")
   const [formData, setFormData] = useState({
-    // Krok 1: Specjalizacja (forma prawna nie jest zbierana w rejestracji —
-    // `LawFirm.typ` zostaje puste i uzupełnia je admin)
+    // Krok 1: Specjalizacja
     expertiseCategoryId: "",
 
     nazwa: "",
@@ -169,10 +168,7 @@ export default function LawFirmRegistrationPage() {
     // Krok 6: Kategorie
     categoriesIds: [] as string[],
 
-    // Krok 7: Typ oferty (domyślny)
-    typOferty: "WSZYSTKIE",
-
-    // Krok 8: Dane logowania
+    // Krok 7: Dane logowania
     email: "",
     password: "",
     confirmPassword: "",
@@ -579,7 +575,6 @@ export default function LawFirmRegistrationPage() {
           kodPocztowy: formData.kodPocztowy,
           miasto: formData.miasto,
           voivodeshipId: formData.voivodeshipId,
-          typOferty: formData.typOferty,
           zgodaRegulamin: formData.zgodaRegulamin,
           zgodaPrzetwarzanie: formData.zgodaPrzetwarzanie,
           calaPolska: formData.calaPolska,
@@ -720,8 +715,7 @@ export default function LawFirmRegistrationPage() {
                             onClick={() => {
                               // Wybór specjalizacji zapisuje wyłącznie jej ID —
                               // ścieżkę („Kategoria > Specjalizacja”) wylicza się
-                              // z drzewa ExpertiseCategory. Pole `typ` to forma
-                              // prawna i nie ma z tym wyborem nic wspólnego.
+                              // z drzewa ExpertiseCategory.
                               setFormData(prev => ({
                                 ...prev,
                                 expertiseCategoryId: spec.id,

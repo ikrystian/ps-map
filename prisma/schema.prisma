@@ -289,11 +289,8 @@ model LawFirm {
   userId                String   @unique
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Forma prawna działalności. Nullable, bo rejestracja jej nie zbiera —
-  // null oznacza „nieokreślona”, a nie „inna”. Specjalizacja eksperta to
-  // osobna rzecz: trzyma ją `expertiseCategoryId` (ścieżkę wyliczamy z drzewa).
-  typ                   LawFirmType?
-  typInny               String?  // Doprecyzowanie formy prawnej, gdy typ = INNY
+  // Specjalizację eksperta trzyma `expertiseCategoryId` (ścieżkę wyliczamy
+  // z drzewa ExpertiseCategory).
 
   // Dane firmy
   nazwa                 String
@@ -355,9 +352,6 @@ model LawFirm {
   // Obszar działania
   calaPolska            Boolean  @default(false)
   onlineOnly            Boolean  @default(false)
-
-  // Typ oferty
-  typOferty             OfferType
 
   // System punktowy i subskrypcja
   punktySaldo           Int      @default(0)
@@ -424,23 +418,6 @@ model LawFirm {
   @@index([accountManagerId])
   @@index([mainCategoryId])
   @@index([expertiseCategoryId])
-}
-
-enum LawFirmType {
-  OSOBA_FIZYCZNA
-  SPOLKA_CYWILNA
-  SPOLKA_PARTNERSKA
-  SPOLKA_KOMANDYTOWA
-  SPOLKA_JAWNA
-  SPOLKA_ZOO
-  INNY
-}
-
-enum OfferType {
-  STALA_WSPOLPRACA
-  JEDNORAZOWA_USLUGA
-  KONSULTACJA
-  WSZYSTKIE
 }
 
 enum SubscriptionPackage {

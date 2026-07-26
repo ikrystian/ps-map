@@ -33,9 +33,6 @@ const createLawFirmSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
 
-  // Forma prawna. Pusty string = nieokreślona.
-  typ: z.enum(["OSOBA_FIZYCZNA", "SPOLKA_CYWILNA", "SPOLKA_PARTNERSKA", "SPOLKA_KOMANDYTOWA", "SPOLKA_JAWNA", "SPOLKA_ZOO", "INNY"]).or(z.literal("")),
-  typInny: z.string().optional(),
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
   slug: z.string().optional(),
@@ -97,8 +94,7 @@ const createLawFirmSchema = z.object({
   calaPolska: z.boolean(),
   onlineOnly: z.boolean(),
 
-  // Type and subscription
-  typOferty: z.enum(["STALA_WSPOLPRACA", "JEDNORAZOWA_USLUGA", "KONSULTACJA", "WSZYSTKIE"]),
+  // Subscription
   pakietSubskrypcji: z.enum(["PODSTAWOWY", "STANDARD", "PREMIUM", "BIZNES"]).nullable().optional().or(z.literal("")),
   punktySaldo: z.number(),
   dataPakietuOd: z.string().optional(),
@@ -138,8 +134,6 @@ export default function NewLawFirmPage() {
       email: "",
       password: "",
       userStatus: "ACTIVE",
-      typ: "",
-      typInny: "",
       expertiseCategoryId: "",
       nazwa: "",
       slug: "",
@@ -180,7 +174,6 @@ export default function NewLawFirmPage() {
       slowaKluczowe: "",
       calaPolska: false,
       onlineOnly: false,
-      typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "",
       punktySaldo: 0,
       dataPakietuOd: "",
@@ -675,33 +668,9 @@ export default function NewLawFirmPage() {
           <Card>
             <CardHeader>
               <CardTitle>Ustawienia</CardTitle>
-              <CardDescription>Typ oferty, pakiet i status</CardDescription>
+              <CardDescription>Pakiet i status</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="typOferty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Typ oferty</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Wybierz typ oferty" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="STALA_WSPOLPRACA">Stała współpraca</SelectItem>
-                        <SelectItem value="JEDNORAZOWA_USLUGA">Jednorazowa usługa</SelectItem>
-                        <SelectItem value="KONSULTACJA">Konsultacja</SelectItem>
-                        <SelectItem value="WSZYSTKIE">Wszystkie</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

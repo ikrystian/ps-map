@@ -152,8 +152,6 @@ export default function ImportEkspertow() {
       },
       "lawFirm": {
         // --- Dane podstawowe ---
-        "typ": "SPOLKA_PARTNERSKA",                   // patrz "Dozwolone wartości"
-        "typInny": null,                              // tylko gdy typ = "INNY"
         "nazwa": "Kancelaria Kowalski",               // WYMAGANE
         "nazwa": "Kowalski i Wspólnicy Sp. P.",
         "nip": "1234567890",                          // unikalny (zalecane)
@@ -218,10 +216,9 @@ export default function ImportEkspertow() {
         "unikatowyOpisUslugi": "Kompleksowa obsługa prawna firm.",
         "slowaKluczowe": ["prawo gospodarcze", "spółki", "kontrakty"],
 
-        // --- Obszar i typ działania ---
+        // --- Obszar działania ---
         "calaPolska": false,                         // obsługa całej Polski
         "onlineOnly": false,                          // tylko zdalnie
-        "typOferty": "WSZYSTKIE",                     // patrz "Dozwolone wartości"
 
         // --- Subskrypcja i status konta ---
         "pakietSubskrypcji": "PREMIUM",               // patrz "Dozwolone wartości"
@@ -294,7 +291,6 @@ export default function ImportEkspertow() {
           <div>
             <h3 className="font-semibold mb-2">Dane firmy i rejestry:</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>lawFirm.typ, lawFirm.typInny - forma działalności</li>
               <li>lawFirm.nazwa, lawFirm.nip, lawFirm.regon, lawFirm.krs</li>
               <li>lawFirm.oirpMiasto, lawFirm.oirpWpis, lawFirm.oirpStatus - wpis OIRP</li>
               <li>lawFirm.oraMiasto, lawFirm.oraWpis, lawFirm.oraStatus - wpis ORA</li>
@@ -317,7 +313,7 @@ export default function ImportEkspertow() {
               <li>lawFirm.linkLinkedIn, linkFacebook, linkInstagram, linkTwitter, linkTikTok, stronaWww</li>
               <li>lawFirm.edukacja - tablica wpisów (uczelnia, wydzial, rokOd, rokDo)</li>
               <li>lawFirm.slowaKluczowe - tablica tagów do wyszukiwania</li>
-              <li>lawFirm.calaPolska, lawFirm.onlineOnly, lawFirm.typOferty - obszar i typ działania</li>
+              <li>lawFirm.calaPolska, lawFirm.onlineOnly - obszar działania</li>
             </ul>
           </div>
 
@@ -338,8 +334,6 @@ export default function ImportEkspertow() {
           <div>
             <h3 className="font-semibold mb-2">Dozwolone wartości (enumy):</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>lawFirm.typ: OSOBA_FIZYCZNA, SPOLKA_CYWILNA, SPOLKA_PARTNERSKA, SPOLKA_KOMANDYTOWA, SPOLKA_JAWNA, SPOLKA_ZOO, INNY</li>
-              <li>lawFirm.typOferty: STALA_WSPOLPRACA, JEDNORAZOWA_USLUGA, KONSULTACJA, WSZYSTKIE</li>
               <li>lawFirm.pakietSubskrypcji: PODSTAWOWY, STANDARD, PREMIUM, BIZNES</li>
               <li>service.jednostka: ZA_USLUGE, ZA_GODZINE, RYCZALT, DO_UZGODNIENIA</li>
             </ul>

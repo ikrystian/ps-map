@@ -191,7 +191,6 @@ const podkategoriaSelect = document.getElementById("podkategoriaEkspert");
 const specjalizacjaGroup = document.getElementById("specjalizacjaGroup");
 const specjalizacjaSelect = document.getElementById("specjalizacjaEkspert");
 const expertiseCategoryIdInput = document.getElementById("expertiseCategoryId");
-const typInnyInput = document.getElementById("typInny");
 const glownaSpecjalizacjaSelect = document.getElementById("glownaSpecjalizacja");
 const wojewodztwoSelect = document.getElementById("wojewodztwoSelect");
 const passwordInput = document.getElementById("password");
@@ -202,7 +201,6 @@ let expertiseTree = [];
 
 function clearExpertiseLeaf() {
     expertiseCategoryIdInput.value = "";
-    typInnyInput.value = "";
 }
 
 function fillSelect(select, items, placeholder) {
@@ -221,25 +219,8 @@ function hasSubcategories(cat) {
         cat.children.some((ch) => Array.isArray(ch.children) && ch.children.length > 0);
 }
 
-function selectedLeafPath() {
-    const cat = expertiseTree.find((c) => c.id === kategoriaSelect.value);
-    if (!cat) return "";
-    const parts = [cat.nazwa];
-    if (hasSubcategories(cat)) {
-        const sub = (cat.children || []).find((s) => s.id === podkategoriaSelect.value);
-        if (sub) parts.push(sub.nazwa);
-        const leaf = (sub?.children || []).find((l) => l.id === specjalizacjaSelect.value);
-        if (leaf) parts.push(leaf.nazwa);
-    } else {
-        const leaf = (cat.children || []).find((l) => l.id === specjalizacjaSelect.value);
-        if (leaf) parts.push(leaf.nazwa);
-    }
-    return parts.join(" > ");
-}
-
 function rebuildExpertiseLeaf() {
     expertiseCategoryIdInput.value = specjalizacjaSelect.value || "";
-    typInnyInput.value = specjalizacjaSelect.value ? selectedLeafPath() : "";
 }
 
 function onKategoriaChange() {
@@ -912,8 +893,6 @@ async function submitForm(e) {
         password: passwordInput.value,
         recaptchaToken,
         phoneVerificationToken,
-        typ: "INNY",
-        typInny: typInnyInput.value || null,
         expertiseCategoryId: expertiseCategoryIdInput.value || null,
         nazwa: document.getElementById("nazwa").value.trim(),
         // NIP pochodzi wyłącznie z lookupu Białej listy (rejestracja "jako firma");
@@ -929,7 +908,6 @@ async function submitForm(e) {
         kodPocztowy: document.getElementById("kodPocztowy").value.trim(),
         miasto: document.getElementById("miasto").value.trim(),
         voivodeshipId,
-        typOferty: "WSZYSTKIE",
         zgodaRegulamin: document.getElementById("zgodaRegulamin").checked,
         zgodaPrzetwarzanie: document.getElementById("zgodaPrzetwarzanie").checked,
         calaPolska: false,

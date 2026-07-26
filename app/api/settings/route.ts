@@ -71,6 +71,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.comingSoonMode) {
       settingsObject.comingSoonMode = "false"
     }
+    if (!settingsObject.pointsToPlnRatio) {
+      settingsObject.pointsToPlnRatio = "1"
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -86,6 +89,7 @@ export async function GET(request: NextRequest) {
         deleteReviewCostRating1: "500",
         deleteReviewCostRating2: "300",
         deleteReviewCostRating3: "100",
+        pointsToPlnRatio: "1",
         enablePaymentTest: "true",
         enablePaymentPrzelewy24: "true",
         enablePaymentPayU: "true",

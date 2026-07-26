@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
     const verified = searchParams.get("verified") || ""
     const active = searchParams.get("active") || ""
     const subscription = searchParams.get("subscription") || ""
-    const lawFirmType = searchParams.get("lawFirmType") || ""
 
     // Build where clause for filters
     const where: any = {}
@@ -55,14 +54,6 @@ export async function GET(request: NextRequest) {
       where.pakietSubskrypcji = subscription
     }
 
-    // Filter by legal form. Profile z rejestracji nie mają jej ustawionej,
-    // więc „NIEOKRESLONA” to osobna, sensowna opcja filtra.
-    if (lawFirmType === "NIEOKRESLONA") {
-      where.typ = null
-    } else if (lawFirmType) {
-      where.typ = lawFirmType
-    }
-
     // Fetch law firms with related data
     const [lawFirms, total] = await Promise.all([
       prisma.lawFirm.findMany({
@@ -79,8 +70,7 @@ export async function GET(request: NextRequest) {
               ...USER_CONTACT_SELECT,
             },
           },
-          // Ścieżkę specjalizacji („Kategoria > Specjalizacja”) budujemy z drzewa,
-          // zamiast czytać ją ze zdenormalizowanego `typInny`.
+          // Ścieżkę specjalizacji („Kategoria > Specjalizacja”) budujemy z drzewa.
           expertiseCategory: EXPERTISE_CATEGORY_PATH_SELECT,
           _count: {
             select: {
@@ -132,8 +122,6 @@ export async function POST(request: NextRequest) {
       email,
       password,
       // Basic info
-      typ,
-      typInny,
       expertiseCategoryId,
       nazwa,
       nip,
@@ -151,8 +139,7 @@ export async function POST(request: NextRequest) {
       voivodeshipId,
       // Profile
       opis,
-      // Type and subscription
-      typOferty,
+      // Subscription
       pakietSubskrypcji,
       // Status
       zweryfikowana,
@@ -167,7 +154,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!typ || !nazwa || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId || !typOferty) {
+    if (!nazwa || !imieKontakt || !nazwiskoKontakt || !numerTelefonu || !adres || !kodPocztowy || !miasto || !voivodeshipId) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
         { status: 400 }
@@ -268,9 +255,6 @@ export async function POST(request: NextRequest) {
       const lawFirm = await tx.lawFirm.create({
         data: {
           userId: user.id,
-          // Pusta forma prawna = nieokreślona
-          typ: typ || null,
-          typInny: typ === "INNY" ? typInny || null : null,
           expertiseCategoryId: expertiseCategoryId || null,
           nazwa,
           slug,
@@ -278,7 +262,6 @@ export async function POST(request: NextRequest) {
           regon: regon || null,
           krs: krs || null,
           opis: opis || "",
-          typOferty,
           pakietSubskrypcji: (pakietSubskrypcji === "" || pakietSubskrypcji === "none" || pakietSubskrypcji === null) ? null : (pakietSubskrypcji || "PODSTAWOWY"),
           zweryfikowana: zweryfikowana || false,
           aktywna: aktywna !== undefined ? aktywna : true,

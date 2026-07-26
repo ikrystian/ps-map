@@ -694,7 +694,6 @@ export async function anonymizeUserAccount(
           data: {
             nazwa: ANONYMIZED_COMPANY_NAME,
             slug: `usuniete-konto-${lawFirmId}`,
-            typInny: null,
             nip: null,
             regon: null,
             krs: null,

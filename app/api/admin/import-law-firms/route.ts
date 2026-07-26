@@ -199,8 +199,6 @@ export async function POST(request: NextRequest) {
           const lawFirm = await tx.lawFirm.create({
             data: {
               userId: user.id,
-              typ: lawFirmData.typ || "OSOBA_FIZYCZNA",
-              typInny: lawFirmData.typInny,
               nazwa: lawFirmData.nazwa,
               slug,
               nip: lawFirmData.nip || null,
@@ -232,7 +230,6 @@ export async function POST(request: NextRequest) {
               slowaKluczowe: lawFirmData.slowaKluczowe ? JSON.stringify(lawFirmData.slowaKluczowe) : null,
               calaPolska: lawFirmData.calaPolska || false,
               onlineOnly: lawFirmData.onlineOnly || false,
-              typOferty: lawFirmData.typOferty || "WSZYSTKIE",
               pakietSubskrypcji: lawFirmData.pakietSubskrypcji || "PODSTAWOWY",
               zweryfikowana: lawFirmData.zweryfikowana || false,
               aktywna: lawFirmData.aktywna !== false,

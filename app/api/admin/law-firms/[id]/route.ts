@@ -325,14 +325,6 @@ export async function PUT(
       }
     }
 
-    // `typInny` doprecyzowuje formę prawną i ma sens wyłącznie przy typ = INNY
-    if (body.typ !== undefined && body.typ && body.typ !== "INNY" && body.typInny) {
-      return NextResponse.json(
-        { error: "Pole „inna forma prawna” można wypełnić tylko przy formie „Inna”" },
-        { status: 400 }
-      )
-    }
-
     // Główna kategoria musi należeć do listy specjalizacji eksperta
     if (body.categoryIds !== undefined && Array.isArray(body.categoryIds)) {
       const mainId =
@@ -353,13 +345,7 @@ export async function PUT(
 
     if (normalizedSlug) lawFirmUpdateData.slug = normalizedSlug
 
-    // Type and basic info
-    // Pusty `typ` = forma prawna nieokreślona (a nie „Inna”)
-    if (body.typ !== undefined) lawFirmUpdateData.typ = body.typ || null
-    if (body.typInny !== undefined) {
-      lawFirmUpdateData.typInny =
-        (body.typ ?? existingLawFirm.typ) === "INNY" ? body.typInny || null : null
-    }
+    // Basic info
     if (body.expertiseCategoryId !== undefined) {
       lawFirmUpdateData.expertiseCategoryId = body.expertiseCategoryId || null
     }
@@ -459,9 +445,6 @@ export async function PUT(
     if (body.mainCategoryId !== undefined) {
       lawFirmUpdateData.mainCategoryId = body.mainCategoryId || null
     }
-
-    // Offer type
-    if (body.typOferty !== undefined) lawFirmUpdateData.typOferty = body.typOferty
 
     // Points and subscription
     if (body.punktySaldo !== undefined) lawFirmUpdateData.punktySaldo = body.punktySaldo

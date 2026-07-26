@@ -346,7 +346,7 @@ Miejscowość, Data: `
                   <ul className="space-y-2.5 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
                     <li><strong className="text-white">Płatny profil</strong> – korzystanie z serwisu wymaga uiszczenia Abonamentu.</li>
                     <li><strong className="text-white">Pakiet Testowy</strong> – po rejestracji otrzymujesz 30 dni za darmo (do 3 razy max).</li>
-                    <li><strong className="text-white">System Punktowy</strong> – możesz kupować punkty do pozycjonowania (1 pkt = 5 PLN).</li>
+                    <li><strong className="text-white">System Punktowy</strong> – możesz kupować punkty do pozycjonowania (1 pkt = 1 PLN).</li>
                     <li><strong className="text-white">Weryfikacja</strong> – musisz posiadać uprawnienia zawodowe (adwokat, radca itp.).</li>
                   </ul>
                 </div>

@@ -346,9 +346,6 @@ export async function PUT(
     // Subscription plan (can be updated by admin or when buying a package)
     if (body.pakietSubskrypcji !== undefined) updateData.pakietSubskrypcji = body.pakietSubskrypcji
 
-    // Typ oferty
-    if (body.typOferty) updateData.typOferty = body.typOferty
-
     // Specjalizacja / Branża rejestracyjna
     if (body.expertiseCategoryId !== undefined) {
       updateData.expertiseCategoryId = body.expertiseCategoryId || null

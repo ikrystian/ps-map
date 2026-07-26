@@ -97,6 +97,12 @@ export async function GET(request: NextRequest) {
         description: "Koszt usunięcia opinii z oceną 3★ w punktach",
       }
     }
+    if (!settingsObject.pointsToPlnRatio) {
+      settingsObject.pointsToPlnRatio = {
+        value: "1",
+        description: "Przelicznik punktów na złotówki w systemie (1 punkt = X PLN). Domyślnie 1:1.",
+      }
+    }
     if (!settingsObject.autoApproveTestPayment) {
       settingsObject.autoApproveTestPayment = {
         value: "true",

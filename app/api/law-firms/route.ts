@@ -460,7 +460,6 @@ export async function POST(request: NextRequest) {
     const requiredFields = [
       'email',
       'password',
-      'typ',
       'nazwa',
       'imieKontakt',
       'nazwiskoKontakt',
@@ -469,7 +468,6 @@ export async function POST(request: NextRequest) {
       'kodPocztowy',
       'miasto',
       'voivodeshipId',
-      'typOferty',
       'zgodaRegulamin',
       'zgodaPrzetwarzanie',
     ]
@@ -687,8 +685,7 @@ export async function POST(request: NextRequest) {
         data: {
           userId: user.id,
           slug: generateSlug(body.nazwa, body.nip),
-          // Forma prawna (`typ`) nie jest zbierana w rejestracji — zostaje pusta
-          // do uzupełnienia przez admina. Specjalizację niesie expertiseCategoryId.
+          // Specjalizację niesie expertiseCategoryId.
           expertiseCategoryId: body.expertiseCategoryId || null,
           nazwa: body.nazwa,
           nip: body.nip || null,
@@ -696,7 +693,6 @@ export async function POST(request: NextRequest) {
           krs: body.krs || null,
           opis: body.opis || "",
           stronaWww: body.stronaWww || null,
-          typOferty: body.typOferty,
           pakietSubskrypcji: subPackage as any,
           dataPakietuOd: pkgStart,
           dataPakietuDo: pkgEnd,

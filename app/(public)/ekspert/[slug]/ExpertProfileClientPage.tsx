@@ -74,16 +74,6 @@ import type { BlogPost } from "@/types/blog"
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
-const lawFirmTypeLabels: Record<string, string> = {
-  OSOBA_FIZYCZNA: "Osoba fizyczna",
-  SPOLKA_CYWILNA: "Spółka cywilna",
-  SPOLKA_PARTNERSKA: "Spółka partnerska",
-  SPOLKA_KOMANDYTOWA: "Spółka komandytowa",
-  SPOLKA_JAWNA: "Spółka jawna",
-  SPOLKA_ZOO: "Spółka z o.o.",
-  INNY: "Inny",
-}
-
 const serviceUnitLabels: Record<string, string> = {
   ZA_USLUGE: "za usługę",
   ZA_GODZINE: "za godzinę",

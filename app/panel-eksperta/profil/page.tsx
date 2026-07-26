@@ -144,8 +144,6 @@ function LawFirmProfilePageContent() {
     okladkaFilmu: "",
     kolejnoscMultimedia: "zdjecia",
 
-    // Typ oferty
-    typOferty: "WSZYSTKIE",
     expertiseCategoryId: "",
 
     // Dane firmy do faktury (COMPANY_*) — null gdy rejestracja jako osoba prywatna

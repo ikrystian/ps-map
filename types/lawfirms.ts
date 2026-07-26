@@ -38,8 +38,6 @@ export interface LawFirmWithLocation extends LawFirmBase {
  * Law firm for public listing/search and general usage
  */
 export interface LawFirm extends LawFirmWithLocation {
-  typ?: string | null
-  typInny?: string | null
   nip?: string | null
   regon?: string | null
   krs?: string | null
@@ -69,7 +67,6 @@ export interface LawFirm extends LawFirmWithLocation {
   onlineOnly?: boolean
   bieglySadowy?: boolean
   bieglySadowyNazwaSadu?: string | null
-  typOferty?: string | null
   punktySaldo?: number
   pakietSubskrypcji?: string | null
   pakietObrazek?: string | null

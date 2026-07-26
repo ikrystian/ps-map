@@ -107,9 +107,7 @@ export function BasicTab({
         setSelectedSubcatId(foundSubcatId)
       }
     }
-    // Fallback odtwarzający wybór ze ścieżki w `typInny` był potrzebny, dopóki
-    // ścieżka dublowała `expertiseCategoryId`. Po rozdzieleniu obu znaczeń
-    // (`typ`/`typInny` = forma prawna) jedynym źródłem jest już samo ID.
+    // Jedynym źródłem wyboru specjalizacji jest `expertiseCategoryId`.
   }, [formData.expertiseCategoryId, expertiseCategories])
 
   const selectedCat = expertiseCategories?.find((c) => c.id === selectedCatId)

@@ -108,16 +108,16 @@ interface LawFirm {
   nazwa: string
 }
 
-// Pakiety punktów
-const POINT_PACKAGES = [
+// Funkcja generująca pakiety punktów na podstawie przelicznika PLN/pkt
+const getPointPackages = (ratio: number) => [
   {
     id: "100_pkt",
     points: 100,
-    price: 49,
+    price: Math.round(100 * ratio),
     label: "Starter",
     sublabel: "100 punktów",
     discount: null,
-    pricePerPoint: 0.49,
+    pricePerPoint: ratio,
     highlight: false,
     icon: Zap,
     color: "from-slate-500/20 to-slate-600/10",
@@ -127,11 +127,11 @@ const POINT_PACKAGES = [
   {
     id: "250_pkt",
     points: 250,
-    price: 99,
+    price: Math.round(250 * ratio * 0.9),
     label: "Standard",
     sublabel: "250 punktów",
-    discount: "Oszczędzasz 24 zł",
-    pricePerPoint: 0.396,
+    discount: ratio > 0 ? `Oszczędzasz ${Math.round(250 * ratio * 0.1)} zł` : null,
+    pricePerPoint: ratio * 0.9,
     highlight: false,
     icon: Sparkles,
     color: "from-blue-500/20 to-blue-600/10",
@@ -141,11 +141,11 @@ const POINT_PACKAGES = [
   {
     id: "500_pkt",
     points: 500,
-    price: 179,
+    price: Math.round(500 * ratio * 0.8),
     label: "Pro",
     sublabel: "500 punktów",
-    discount: "Oszczędzasz 66 zł",
-    pricePerPoint: 0.358,
+    discount: ratio > 0 ? `Oszczędzasz ${Math.round(500 * ratio * 0.2)} zł` : null,
+    pricePerPoint: ratio * 0.8,
     highlight: true,
     icon: Star,
     color: "from-primary/25 to-primary/10",
@@ -155,11 +155,11 @@ const POINT_PACKAGES = [
   {
     id: "1000_pkt",
     points: 1000,
-    price: 299,
+    price: Math.round(1000 * ratio * 0.7),
     label: "Business",
     sublabel: "1000 punktów",
-    discount: "Oszczędzasz 191 zł",
-    pricePerPoint: 0.299,
+    discount: ratio > 0 ? `Oszczędzasz ${Math.round(1000 * ratio * 0.3)} zł` : null,
+    pricePerPoint: ratio * 0.7,
     highlight: false,
     icon: TrendingDown,
     color: "from-purple-500/20 to-purple-600/10",
@@ -179,6 +179,9 @@ export default function LawFirmPointsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(1)
+
+  const pointPackages = getPointPackages(pointsToPlnRatio)
 
   const handleCopy = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -190,7 +193,7 @@ export default function LawFirmPointsPage() {
 
   // Dialog zakupu
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
-  const [selectedPackage, setSelectedPackage] = useState<typeof POINT_PACKAGES[0] | null>(null)
+  const [selectedPackage, setSelectedPackage] = useState<ReturnType<typeof getPointPackages>[0] | null>(null)
   const [customPoints, setCustomPoints] = useState("")
 
   useEffect(() => {
@@ -204,6 +207,18 @@ export default function LawFirmPointsPage() {
     setError(null)
 
     try {
+      // Pobierz ustawienia systemu dla przelicznika punktów
+      const settingsResponse = await fetch("/api/settings")
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json()
+        if (settingsData.pointsToPlnRatio) {
+          const ratio = parseFloat(settingsData.pointsToPlnRatio)
+          if (!isNaN(ratio) && ratio > 0) {
+            setPointsToPlnRatio(ratio)
+          }
+        }
+      }
+
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
       if (!lawFirmResponse.ok) throw new Error("Nie udało się pobrać danych eksperta")
       const lawFirmData = await lawFirmResponse.json()
@@ -225,7 +240,7 @@ export default function LawFirmPointsPage() {
     }
   }
 
-  const handleOpenPurchaseDialog = (pkg?: typeof POINT_PACKAGES[0]) => {
+  const handleOpenPurchaseDialog = (pkg?: ReturnType<typeof getPointPackages>[0]) => {
     setSelectedPackage(pkg || null)
     setCustomPoints("")
     setPurchaseDialogOpen(true)
@@ -238,7 +253,7 @@ export default function LawFirmPointsPage() {
     }
 
     const points = selectedPackage ? selectedPackage.points : parseInt(customPoints)
-    const price = selectedPackage ? selectedPackage.price : Math.round(points * 0.49)
+    const price = selectedPackage ? selectedPackage.price : Math.round(points * pointsToPlnRatio)
 
     const orderData = {
       pakietPunktow: selectedPackage ? selectedPackage.id : `custom_${points}_pkt`,
@@ -393,7 +408,7 @@ export default function LawFirmPointsPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {POINT_PACKAGES.map((pkg, index) => {
+          {pointPackages.map((pkg, index) => {
             const Icon = pkg.icon
             return (
               <motion.div
@@ -668,7 +683,7 @@ export default function LawFirmPointsPage() {
                     {formatCurrency(
                       selectedPackage
                         ? selectedPackage.price
-                        : Math.round(parseInt(customPoints || "0") * 0.49)
+                        : Math.round(parseInt(customPoints || "0") * pointsToPlnRatio)
                     )}
                   </span>
                 </div>
@@ -689,7 +704,7 @@ export default function LawFirmPointsPage() {
                   className="mt-1.5"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Cena: <span className="font-medium">{customPoints ? (parseInt(customPoints) * 0.49).toFixed(2) : "0,00"} zł</span> (0,49 zł / pkt)
+                  Cena: <span className="font-medium">{customPoints ? (parseInt(customPoints) * pointsToPlnRatio).toFixed(2) : "0,00"} zł</span> ({pointsToPlnRatio.toFixed(2).replace(".", ",")} zł / pkt)
                 </p>
               </div>
             )}

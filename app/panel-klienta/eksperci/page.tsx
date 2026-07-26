@@ -42,7 +42,6 @@ interface FavoriteLawFirm {
     slug: string
     nazwa: string
     nazwa: string
-    typ: string
     opis?: string
     logo?: string
     miasto: string
@@ -61,16 +60,6 @@ interface FavoriteLawFirm {
       }
     }>
   }
-}
-
-const lawFirmTypeLabels: Record<string, string> = {
-  OSOBA_FIZYCZNA: "Osoba fizyczna",
-  SPOLKA_CYWILNA: "Spółka cywilna",
-  SPOLKA_PARTNERSKA: "Spółka partnerska",
-  SPOLKA_KOMANDYTOWA: "Spółka komandytowa",
-  SPOLKA_JAWNA: "Spółka jawna",
-  SPOLKA_ZOO: "Spółka z o.o.",
-  INNY: "Inny",
 }
 
 export default function ClientFavoritesPage() {
@@ -302,10 +291,6 @@ export default function ClientFavoritesPage() {
                               <span>
                                 {lawFirm.miasto}, {lawFirm.voivodeship.nazwa}
                               </span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <Briefcase className="h-3.5 w-3.5 text-secondary" />
-                              <span>{lawFirmTypeLabels[lawFirm.typ] || lawFirm.typ}</span>
                             </div>
                           </div>
                         </div>

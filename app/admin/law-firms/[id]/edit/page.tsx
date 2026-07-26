@@ -55,7 +55,6 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
-import { LAW_FIRM_TYPE_OPTIONS } from "@/lib/expertise-category"
 import { motion } from "framer-motion"
 
 import {
@@ -145,8 +144,6 @@ export default function EditLawFirmPage() {
       password: "",
       userStatus: "ACTIVE",
       emailVerified: false,
-      typ: "",
-      typInny: "",
       nazwa: "",
       slug: "",
       nip: "",
@@ -194,7 +191,6 @@ export default function EditLawFirmPage() {
       onlineOnly: false,
       voivodeshipsIds: [],
       citiesIds: [],
-      typOferty: "WSZYSTKIE",
       pakietSubskrypcji: "",
       punktySaldo: 0,
       dataPakietuOd: "",
@@ -454,8 +450,6 @@ export default function EditLawFirmPage() {
             password: "",
             userStatus: lawFirm.user.status as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED",
             emailVerified: Boolean(lawFirm.user.emailVerified),
-            typ: lawFirm.typ || "",
-            typInny: lawFirm.typInny || "",
             nazwa: lawFirm.nazwa,
             slug: lawFirm.slug || "",
             // Pola nullable muszą trafić do formularza jako "" — inaczej Zod
@@ -505,7 +499,6 @@ export default function EditLawFirmPage() {
             onlineOnly: lawFirm.onlineOnly || false,
             voivodeshipsIds: (lawFirm.voivodeships || []).map((v: any) => v.voivodeshipId ?? v.voivodeship?.id),
             citiesIds: (lawFirm.cities || []).map((c: any) => c.cityId ?? c.city?.id),
-            typOferty: lawFirm.typOferty,
             pakietSubskrypcji: lawFirm.pakietSubskrypcji || "",
             punktySaldo: lawFirm.punktySaldo,
             dataPakietuOd: lawFirm.dataPakietuOd ? new Date(lawFirm.dataPakietuOd).toISOString().split("T")[0] : "",
@@ -578,7 +571,7 @@ export default function EditLawFirmPage() {
   }, [params.id, router])
 
   // Ścieżkę specjalizacji wyliczamy z drzewa kategorii — nie jest już nigdzie
-  // przechowywana (wcześniej duplikowało ją pole `typInny`).
+  // przechowywana.
   const currentExpertisePath = (() => {
     const currentId = form.watch("expertiseCategoryId")
     if (!currentId) return null
@@ -598,8 +591,6 @@ export default function EditLawFirmPage() {
     const errors = form.formState.errors
     const tabFields: Record<string, (keyof LawFirmFormValues)[]> = {
       general: [
-        "typ",
-        "typInny",
         "expertiseCategoryId",
         "nazwa",
         "slug",
@@ -637,7 +628,6 @@ export default function EditLawFirmPage() {
         "password",
         "userStatus",
         "emailVerified",
-        "typOferty",
         "pakietSubskrypcji",
         "punktySaldo",
         "zweryfikowana",
@@ -950,56 +940,6 @@ export default function EditLawFirmPage() {
                                 </FormItem>
                               )}
                             />
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="typ"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Forma prawna</FormLabel>
-                                  <Select
-                                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
-                                    value={field.value || "none"}
-                                  >
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Wybierz formę prawną" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="none">Nieokreślona</SelectItem>
-                                      {LAW_FIRM_TYPE_OPTIONS.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                          {option.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormDescription className="text-xs">
-                                    Rejestracja nie zbiera formy prawnej — profile z rejestracji mają ją nieokreśloną.
-                                  </FormDescription>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            {form.watch("typ") === "INNY" && (
-                              <FormField
-                                control={form.control}
-                                name="typInny"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Jaka forma prawna?</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="np. Fundacja" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            )}
                           </div>
 
                           <FormField
@@ -1656,35 +1596,11 @@ export default function EditLawFirmPage() {
                           <Settings2 className="h-5 w-5 text-primary" />
                           <div>
                             <CardTitle className="text-lg">Konfiguracja i subskrypcja</CardTitle>
-                            <CardDescription>Opcje oferty, pakiet subskrypcyjny i saldo</CardDescription>
+                            <CardDescription>Pakiet subskrypcyjny i saldo</CardDescription>
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-6 pt-6">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <FormField
-                              control={form.control}
-                              name="typOferty"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Obsługiwany typ oferty</FormLabel>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Wybierz typ oferty" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="STALA_WSPOLPRACA">Stała współpraca</SelectItem>
-                                      <SelectItem value="JEDNORAZOWA_USLUGA">Jednorazowa usługa</SelectItem>
-                                      <SelectItem value="KONSULTACJA">Konsultacja</SelectItem>
-                                      <SelectItem value="WSZYSTKIE">Wszystkie typy</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
                             <FormField
                               control={form.control}
                               name="pakietSubskrypcji"

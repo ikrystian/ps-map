@@ -1,8 +1,6 @@
 /**
  * Ścieżka specjalizacji eksperta (np. „Prawnicy > Adwokat”) wynika z drzewa
- * ExpertiseCategory i `LawFirm.expertiseCategoryId`. Wcześniej była duplikowana
- * w `LawFirm.typInny`, przez co rozjeżdżała się z ID i blokowała pole `typ`
- * (forma prawna) na wartości INNY. Tu jest jedno źródło prawdy.
+ * ExpertiseCategory i `LawFirm.expertiseCategoryId` — jedynego źródła prawdy.
  *
  * Drzewo ma maksymalnie trzy poziomy (kategoria > podkategoria > specjalizacja),
  * więc ścieżkę składamy z relacji dociągniętej jednym zapytaniem — bez
@@ -62,30 +60,3 @@ export function expertisePathSegments(
   const path = formatExpertisePath(category);
   return path ? path.split(" > ") : [];
 }
-
-const LAW_FIRM_TYPE_LABELS: Record<string, string> = {
-  OSOBA_FIZYCZNA: "Osoba fizyczna",
-  SPOLKA_CYWILNA: "Spółka cywilna",
-  SPOLKA_PARTNERSKA: "Spółka partnerska",
-  SPOLKA_KOMANDYTOWA: "Spółka komandytowa",
-  SPOLKA_JAWNA: "Spółka jawna",
-  SPOLKA_ZOO: "Spółka z o.o.",
-  INNY: "Inna",
-};
-
-/**
- * Etykieta formy prawnej. `null` = nieokreślona (rejestracja jej nie zbiera),
- * co jest czymś innym niż świadomie wybrane „Inna”.
- */
-export function formatLawFirmType(
-  typ?: string | null,
-  typInny?: string | null
-): string {
-  if (!typ) return "Nieokreślona";
-  if (typ === "INNY") return typInny?.trim() || "Inna";
-  return LAW_FIRM_TYPE_LABELS[typ] || typ;
-}
-
-export const LAW_FIRM_TYPE_OPTIONS = Object.entries(LAW_FIRM_TYPE_LABELS).map(
-  ([value, label]) => ({ value, label })
-);

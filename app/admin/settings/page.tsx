@@ -233,6 +233,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  pointsToPlnRatio?: {
+    value: string
+    description: string | null
+  }
 }
 
 /** Stan konfiguracji SMS wyliczony przez serwer (klucz `smsapiStatus`). */
@@ -252,6 +256,7 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [maxCategories, setMaxCategories] = useState("10")
+  const [pointsToPlnRatio, setPointsToPlnRatio] = useState("1")
   const [siteName, setSiteName] = useState("Prosta Sprawa")
   const [contactEmail, setContactEmail] = useState("kontakt@prostasprawa.pl")
   const [supportEmail, setSupportEmail] = useState("pomoc@prostasprawa.pl")
@@ -398,6 +403,7 @@ export default function AdminSettingsPage() {
 
         // Weryfikacja OTP przy dodawaniu sprawy
         setCaseCreationOtpEnabled(data.caseCreationOtpEnabled?.value || "false")
+        setPointsToPlnRatio(data.pointsToPlnRatio?.value || "1")
 
         // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
         setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
@@ -477,6 +483,12 @@ export default function AdminSettingsPage() {
     const deleteCost3Num = parseInt(deleteCost3)
     if (isNaN(deleteCost1Num) || deleteCost1Num < 0 || isNaN(deleteCost2Num) || deleteCost2Num < 0 || isNaN(deleteCost3Num) || deleteCost3Num < 0) {
       toast.error("Koszty usunięcia opinii muszą być liczbami większymi lub równymi 0")
+      return
+    }
+
+    const pointsToPlnRatioNum = parseFloat(pointsToPlnRatio)
+    if (isNaN(pointsToPlnRatioNum) || pointsToPlnRatioNum <= 0) {
+      toast.error("Przelicznik punktów na PLN musi być liczbą większą od 0")
       return
     }
 
@@ -596,6 +608,10 @@ export default function AdminSettingsPage() {
             deleteReviewCostRating3: {
               value: deleteCost3,
               description: "Koszt usunięcia opinii z oceną 3★ w punktach",
+            },
+            pointsToPlnRatio: {
+              value: pointsToPlnRatio,
+              description: "Przelicznik punktów na złotówki w systemie (1 punkt = X PLN)",
             },
             enableUserSelectionOnLogin: {
               value: enableUserSelectionOnLogin,
@@ -1537,6 +1553,24 @@ export default function AdminSettingsPage() {
                   />
                   <p className="text-sm text-muted-foreground">
                     Ile maks. tagów może dodać ekspert bez aktywnego pakietu
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pointsToPlnRatio">
+                    Przelicznik punktów na PLN (1 pkt = X zł)
+                  </Label>
+                  <Input
+                    id="pointsToPlnRatio"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    value={pointsToPlnRatio}
+                    onChange={(e) => setPointsToPlnRatio(e.target.value)}
+                    placeholder="1.0"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Wartość 1 punktu w PLN (domyślnie 1:1, czyli 1 pkt = 1 PLN)
                   </p>
                 </div>
               </div>
