@@ -2,6 +2,7 @@
 
 import type { LawFirm } from "@/types/lawfirms"
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useRef } from "react"
 
@@ -96,7 +97,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                     {/* Expert Portrait */}
                     <img
-                      src={getFirmImage(firm as LawFirm, index) || "/backgrounds/4.png"}
+                      src={getFirmImage(firm as LawFirm, index) || EXPERT_AVATAR_FALLBACK}
                       alt={firm.nazwa}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

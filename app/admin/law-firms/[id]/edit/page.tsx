@@ -84,6 +84,10 @@ import {
   type RelatedData,
 } from "./components/AdminReadOnlyCards"
 import {
+  RegistrationAuditCard,
+  type RegistrationAudit,
+} from "@/components/admin/RegistrationAuditCard"
+import {
   TagsEditor,
   GalleryEditor,
   BusinessHoursEditor,
@@ -107,6 +111,7 @@ export default function EditLawFirmPage() {
   const [userId, setUserId] = useState<string>("")
   const [companyData, setCompanyData] = useState<CompanyData | null>(null)
   const [accountMeta, setAccountMeta] = useState<AccountMeta>({})
+  const [registrationAudit, setRegistrationAudit] = useState<RegistrationAudit | null>(null)
   const [relatedData, setRelatedData] = useState<RelatedData>({
     services: [],
     certificates: [],
@@ -135,6 +140,7 @@ export default function EditLawFirmPage() {
     { id: "professional", label: "Profesjonalne", desc: "Uprawnienia, opis i edukacja", icon: Briefcase },
     { id: "multimedia", label: "Multimedia", desc: "Logo, banner, wideo i galeria", icon: ImageIcon },
     { id: "stats", label: "Statystyki & Powiadomienia", desc: "Dzienniki i logi", icon: TrendingUp },
+    { id: "registration-audit", label: "Audyt rejestracji", desc: "Zgody i metadane z rejestracji", icon: ShieldCheck },
   ]
 
   const form = useForm<LawFirmFormValues>({
@@ -523,6 +529,7 @@ export default function EditLawFirmPage() {
 
           setUserId(lawFirm.user.id)
           setCompanyData(lawFirm.user.companyData ?? null)
+          setRegistrationAudit(lawFirm.user.registrationAudit ?? null)
           setAccountMeta({
             userCreatedAt: lawFirm.user.createdAt ?? null,
             lawFirmCreatedAt: lawFirm.createdAt ?? null,
@@ -2422,6 +2429,11 @@ export default function EditLawFirmPage() {
                       <RelatedDataCard data={relatedData} />
                       <AdminNotificationSettingsCard notificationSettings={notificationSettings} />
                     </>
+                  )}
+
+                  {/* --- TAB 7: AUDYT REJESTRACJI (tylko podgląd) --- */}
+                  {activeTab === "registration-audit" && (
+                    <RegistrationAuditCard audit={registrationAudit} />
                   )}
                 </motion.div>
             </div>

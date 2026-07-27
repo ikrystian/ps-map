@@ -18,6 +18,7 @@ import { motion } from "framer-motion"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { BlogCategory } from "@/types"
+import { clientAvatar } from "@/lib/client-avatar"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -285,7 +286,7 @@ export default function ConsultationsPage() {
               <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Avatar className="h-32 w-32 sm:h-32 sm:w-32 rounded-xl flex-shrink-0 border border-border/40">
                   {booking.client?.user?.image && (
-                    <AvatarImage src={booking.client.user.image} alt={booking.client.user.name} />
+                    <AvatarImage src={clientAvatar(booking.client.user.image)} alt={booking.client.user.name} />
                   )}
                   <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
                     {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}

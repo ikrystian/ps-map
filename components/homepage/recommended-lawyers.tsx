@@ -19,6 +19,7 @@ import {
   Star
 } from "lucide-react"
 import { useSession } from "next-auth/react"
+import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useRef, useState } from "react"
 
@@ -126,7 +127,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
     if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
       return firm.zdjecieGlowne
     }
-    return `/backgrounds/4.png`
+    return EXPERT_AVATAR_FALLBACK
   }
 
   return (

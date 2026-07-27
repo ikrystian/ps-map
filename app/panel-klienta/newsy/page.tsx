@@ -27,6 +27,7 @@ import type { BlogCategory } from "@/types"
 import { PaginationData } from "@/types/pagination"
 import { buildCategoryTree, pruneEmptyCategoryTree, type BlogCategoryNode } from "@/lib/blog-category-tree"
 import { cn } from "@/lib/utils"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 export default function ClientNewsCenterPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -435,9 +436,9 @@ export default function ClientNewsCenterPage() {
                     {/* Author & Footer info */}
                     <div className="pt-4 border-t border-border/20 flex items-center justify-between text-xs text-zinc-400">
                       <div className="flex items-center gap-2 truncate pr-2">
-                        {post.lawFirm?.logo ? (
+                        {post.lawFirm ? (
                           <img
-                            src={post.lawFirm.logo}
+                            src={expertAvatar(post.lawFirm.logo)}
                             alt={post.lawFirm.nazwa}
                             className="w-6 h-6 rounded-full object-cover border border-border/50 bg-neutral-900 flex-shrink-0"
                           />
@@ -634,9 +635,9 @@ export default function ClientNewsCenterPage() {
                   {/* Author Detail Row */}
                   <div className="flex items-center justify-between flex-wrap gap-4 pt-4 border-t border-border/20">
                     <div className="flex items-center gap-3">
-                      {selectedPost.lawFirm?.logo ? (
+                      {selectedPost.lawFirm ? (
                         <img
-                          src={selectedPost.lawFirm.logo}
+                          src={expertAvatar(selectedPost.lawFirm.logo)}
                           alt={selectedPost.lawFirm.nazwa}
                           className="w-10 h-10 rounded-full object-cover border border-border/50 bg-neutral-900"
                         />

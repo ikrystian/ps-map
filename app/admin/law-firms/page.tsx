@@ -31,6 +31,7 @@ import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { formatExpertisePath } from "@/lib/expertise-category"
 import type { LawFirm } from "@/types"
 import { PaginatedResponse } from '@/types/pagination';
+import { expertAvatar } from "@/lib/expert-avatar"
 
 // Enums from Prisma
 type SubscriptionPackage = "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES"
@@ -275,15 +276,11 @@ export default function AdminLawFirmsPage() {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-muted border flex items-center justify-center flex-shrink-0">
-                          {lawFirm.logo ? (
-                            <img
-                              src={lawFirm.logo}
-                              alt={lawFirm.nazwa}
-                              className="object-contain h-full w-full p-0.5"
-                            />
-                          ) : (
-                            <Building2 className="h-5 w-5 text-muted-foreground" />
-                          )}
+                          <img
+                            src={expertAvatar(lawFirm.logo)}
+                            alt={lawFirm.nazwa}
+                            className="object-contain h-full w-full p-0.5"
+                          />
                         </div>
                         <div>
                           <div>{lawFirm.nazwa}</div>

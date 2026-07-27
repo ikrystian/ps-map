@@ -35,6 +35,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 type Offer = OfferWithCase
 
@@ -273,16 +274,14 @@ export default function ClientOffersPage() {
                 {/* Informacje o ekspercie */}
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    {offer.lawFirm.logo && (
-                      <div className="relative h-6 w-6 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
-                        <Image
-                          src={offer.lawFirm.logo}
-                          alt={offer.lawFirm.nazwa}
-                          fill
-                          className="object-contain p-0.5"
-                        />
-                      </div>
-                    )}
+                    <div className="relative h-6 w-6 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
+                      <Image
+                        src={expertAvatar(offer.lawFirm.logo)}
+                        alt={offer.lawFirm.nazwa}
+                        fill
+                        className="object-contain p-0.5"
+                      />
+                    </div>
                     <p className="font-semibold flex items-center gap-2 text-white">
                       {offer.lawFirm.nazwa}
                     </p>
@@ -451,16 +450,14 @@ export default function ClientOffersPage() {
                 <h3 className="font-semibold mb-2 text-zinc-300 text-sm">Ekspert</h3>
                 <div className="p-4 border border-border/30 bg-zinc-950/20 backdrop-blur-md rounded-lg">
                   <div className="flex items-center gap-2 mb-1">
-                    {selectedOffer.lawFirm.logo && (
-                      <div className="relative h-8 w-8 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
-                        <Image
-                          src={selectedOffer.lawFirm.logo}
-                          alt={selectedOffer.lawFirm.nazwa}
-                          fill
-                          className="object-contain p-0.5"
-                        />
-                      </div>
-                    )}
+                    <div className="relative h-8 w-8 rounded overflow-hidden border border-border/20 flex-shrink-0 bg-white/5">
+                      <Image
+                        src={expertAvatar(selectedOffer.lawFirm.logo)}
+                        alt={selectedOffer.lawFirm.nazwa}
+                        fill
+                        className="object-contain p-0.5"
+                      />
+                    </div>
                     <p className="font-semibold text-lg text-white">{selectedOffer.lawFirm.nazwa}</p>
                   </div>
                   <p className="text-sm text-zinc-400 ml-10">

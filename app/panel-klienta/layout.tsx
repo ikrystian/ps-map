@@ -34,6 +34,7 @@ import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
+import { clientAvatar } from "@/lib/client-avatar"
 
 const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: Squares2X2Icon },
@@ -118,7 +119,7 @@ export default function ClientPanelLayout({
       {(inSheet || !isCollapsed) && session?.user && (
         <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
+            <AvatarImage src={clientAvatar(session.user.image)} alt={session.user.name || "User"} />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg">
               {getUserInitials(session.user.name)}
             </AvatarFallback>

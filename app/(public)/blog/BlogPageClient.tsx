@@ -31,6 +31,7 @@ import {
   CheckCircle2,
   SlidersHorizontal,
 } from "lucide-react";
+import { expertAvatar } from "@/lib/expert-avatar";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -197,10 +198,11 @@ function AuthorAvatar({
   const dimensions = size === "md" ? "h-10 w-10" : "h-7 w-7";
   const iconSize = size === "md" ? "h-5 w-5" : "h-3.5 w-3.5";
 
-  if (post.lawFirm?.logo) {
+  // Ekspert bez wgranego logo dostaje domyślny avatar zamiast ikony sylwetki
+  if (post.lawFirm) {
     return (
       <img
-        src={post.lawFirm.logo}
+        src={expertAvatar(post.lawFirm.logo)}
         alt={post.lawFirm.nazwa ?? "Autor"}
         className={`${dimensions} shrink-0 rounded-full border border-border/60 bg-card object-cover shadow-sm`}
       />

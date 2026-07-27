@@ -46,6 +46,8 @@ export async function GET(
                 COMPANY_workingAddress: true,
               },
             },
+            // Audyt rejestracji i zgód RODO — podgląd w panelu admina
+            registrationAudit: true,
           },
         },
         expertiseCategory: true,

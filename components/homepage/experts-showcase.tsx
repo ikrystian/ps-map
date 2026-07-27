@@ -3,6 +3,7 @@
 import type { LawFirm } from "@/types/lawfirms"
 import { cn } from "@/lib/utils"
 import { ArrowUpRight } from "lucide-react"
+import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
@@ -143,7 +144,7 @@ export function ExpertsShowcase() {
               >
                 <div className="relative w-full aspect-[4/5] overflow-hidden bg-zinc-950">
                   <img
-                    src={getFirmImage(firm) || "/backgrounds/4.png"}
+                    src={getFirmImage(firm) || EXPERT_AVATAR_FALLBACK}
                     alt={firm.nazwa}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

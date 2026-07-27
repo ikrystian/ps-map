@@ -4,7 +4,6 @@ import { AdBanner } from "@/components/ad-banner"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { PackageBadge } from "@/components/permissions"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { cn, stripHtmlTags } from "@/lib/utils"
 import {
   Briefcase,
@@ -816,17 +816,9 @@ export default function CategoryClientPage() {
                             (firm.pakietSubskrypcji && firm.pakietSubskrypcji !== "PODSTAWOWY") ? "border-0" : ""
                           )}>
                             <CardHeader>
-                              {firm.logo ? (
-                                <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
-                                  <Image src={firm.logo} alt={firm.nazwa} fill className="object-cover" />
-                                </div>
-                              ) : (
-                                <Avatar className="mx-auto w-20 h-20 mb-3">
-                                  <AvatarFallback className="text-xl">
-                                    {firm.nazwa.substring(0, 2).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                              )}
+                              <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
+                                <Image src={expertAvatar(firm.logo)} alt={firm.nazwa} fill className="object-cover" />
+                              </div>
                               <div className="flex items-center justify-center gap-2">
                                 <CardTitle className="text-lg text-center">{firm.nazwa}</CardTitle>
                                 {firm.zweryfikowana && (

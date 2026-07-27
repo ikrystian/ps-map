@@ -24,6 +24,7 @@ import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import Image from "next/image"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 const badgeSchema = z.object({
     name: z.string().min(1, "Nazwa jest wymagana"),
@@ -416,20 +417,14 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
                             {searchResults.map((firm) => (
                                 <div key={firm.id} className="flex items-center justify-between p-3 hover:bg-accent transition-colors">
                                     <div className="flex items-center gap-3">
-                                        {firm.logo ? (
-                                            <div className="relative h-8 w-8 rounded-md overflow-hidden border">
-                                                <Image
-                                                    src={firm.logo}
-                                                    alt={firm.nazwa}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center border font-semibold text-xs">
-                                                {firm.nazwa.substring(0, 2).toUpperCase()}
-                                            </div>
-                                        )}
+                                        <div className="relative h-8 w-8 rounded-md overflow-hidden border">
+                                            <Image
+                                                src={expertAvatar(firm.logo)}
+                                                alt={firm.nazwa}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
                                         <div className="text-left">
                                             <div className="text-sm font-medium line-clamp-1">{firm.nazwa}</div>
                                             <div className="text-xs text-muted-foreground">{firm.user?.email || firm.nip}</div>
@@ -483,20 +478,14 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
                             {assignments.map((assignment) => (
                                 <div key={assignment.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                                     <div className="flex items-center gap-3">
-                                        {assignment.lawFirm.logo ? (
-                                            <div className="relative h-8 w-8 rounded-md overflow-hidden border">
-                                                <Image
-                                                    src={assignment.lawFirm.logo}
-                                                    alt={assignment.lawFirm.nazwa}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center border font-semibold text-xs">
-                                                {assignment.lawFirm.nazwa.substring(0, 2).toUpperCase()}
-                                            </div>
-                                        )}
+                                        <div className="relative h-8 w-8 rounded-md overflow-hidden border">
+                                            <Image
+                                                src={expertAvatar(assignment.lawFirm.logo)}
+                                                alt={assignment.lawFirm.nazwa}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
                                         <div className="text-left">
                                             <div className="text-sm font-medium line-clamp-1">{assignment.lawFirm.nazwa}</div>
                                             <div className="text-xs text-muted-foreground">

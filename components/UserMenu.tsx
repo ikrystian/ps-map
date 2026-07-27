@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
+import { userAvatar } from "@/lib/client-avatar"
 
 interface UserMenuProps {
   userRole: "CLIENT" | "LAW_FIRM" | "ADMIN"
@@ -79,7 +80,7 @@ export default function UserMenu({
       id="user-menu-button"
     >
       <Avatar className={cn("h-9 w-9 cursor-pointer border-2", borderColor)}>
-        <AvatarImage src={image || undefined} alt={alt} />
+        <AvatarImage src={userAvatar(image, userRole)} alt={alt} />
         <AvatarFallback>{getInitials()}</AvatarFallback>
       </Avatar>
       <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
@@ -90,7 +91,7 @@ export default function UserMenu({
   const ProfileHeader = ({ image, alt }: { image?: string | null; alt: string }) => (
     <div className="px-4 py-3 flex items-center gap-3 border-b border-border/60 mb-1">
       <Avatar className={cn("h-10 w-10 border-2 flex-shrink-0", borderColor)}>
-        <AvatarImage src={image || undefined} alt={alt} />
+        <AvatarImage src={userAvatar(image, userRole)} alt={alt} />
         <AvatarFallback>{getInitials()}</AvatarFallback>
       </Avatar>
       <div className="flex flex-col min-w-0">

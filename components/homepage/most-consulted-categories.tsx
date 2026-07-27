@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { CategoryIcon } from "@/components/category-icon";
 import { useSession } from "next-auth/react";
+import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar";
 import Link from "next/link";
 import { useState, useMemo, useRef } from "react";
 
@@ -155,7 +156,7 @@ export function MostConsultedCategories({
     ) {
       return firm.zdjecieGlowne;
     }
-    return "/backgrounds/4.png";
+    return EXPERT_AVATAR_FALLBACK;
   };
 
   // Zmienione zgodnie z instrukcją - pobieramy expertiseCategory zamiast getProfessionTitle

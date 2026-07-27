@@ -2,6 +2,8 @@ import { auth } from "@/auth"
 import { decryptMessage } from "@/lib/encryption"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar } from "@/lib/client-avatar"
 
 // GET /api/conversations - Pobierz wszystkie konwersacje użytkownika
 export async function GET(request: NextRequest) {
@@ -106,8 +108,8 @@ export async function GET(request: NextRequest) {
         ? conv.lawFirmUser.lawFirm?.nazwa
         : `${conv.clientUser.client?.imie} ${conv.clientUser.client?.nazwisko}`
       const otherUserImage = isClient
-        ? conv.lawFirmUser.lawFirm?.logo
-        : conv.clientUser.image
+        ? expertAvatar(conv.lawFirmUser.lawFirm?.logo)
+        : clientAvatar(conv.clientUser.image)
 
       const lastMessage = conv.messages[0]
       const unreadCount = conv.messages.filter(

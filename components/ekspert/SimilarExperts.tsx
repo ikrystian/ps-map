@@ -3,6 +3,7 @@
 import type { LawFirm } from "@/types/lawfirms"
 import { ArrowUpRight, MapPin, Star } from "lucide-react"
 import Image from "next/image"
+import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { PackageBadge } from "@/components/permissions"
 
@@ -63,20 +64,12 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
               >
                 {/* Avatar */}
                 <div className="relative flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden bg-zinc-900 border border-zinc-700/50">
-                  {hasImage ? (
-                    <Image
-                      src={expert.logo!}
-                      alt={expert.nazwa || expert.nazwa}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-500">
-                      <span className="text-xl font-bold text-zinc-600">
-                        {(expert.nazwa || expert.nazwa || "E")[0]?.toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+                  <Image
+                    src={hasImage ? expert.logo! : EXPERT_AVATAR_FALLBACK}
+                    alt={expert.nazwa || expert.nazwa}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 {/* Info */}

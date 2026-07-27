@@ -19,6 +19,10 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  RegistrationAuditCard,
+  type RegistrationAudit,
+} from "@/components/admin/RegistrationAuditCard"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, Image as ImageIcon, Info, Loader2, Upload, X, AlertCircle, CheckCircle2 } from "lucide-react"
@@ -118,6 +122,7 @@ interface UserData {
     zgodaNewsletter: boolean
     zgodaMarketing: boolean
   } | null
+  registrationAudit?: RegistrationAudit | null
 }
 
 export default function EditUserPage() {
@@ -459,6 +464,7 @@ export default function EditUserPage() {
               >
                 Ustawienia powiadomień
               </TabsTrigger>
+              <TabsTrigger value="registration-audit">Audyt rejestracji</TabsTrigger>
             </TabsList>
 
             <TabsContent value="account" className="space-y-6">
@@ -1346,6 +1352,11 @@ export default function EditUserPage() {
                   </div>
                 </div>
               )}
+            </TabsContent>
+
+            {/* Audyt rejestracji — wyłącznie podgląd, bez pól formularza */}
+            <TabsContent value="registration-audit" className="space-y-6">
+              <RegistrationAuditCard audit={userData?.registrationAudit ?? null} />
             </TabsContent>
           </Tabs>
 

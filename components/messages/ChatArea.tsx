@@ -9,6 +9,8 @@ import type { ChatMessage, ConversationDetails } from "@/types/conversations"
 import { ArrowLeft, Send } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useRef, useState } from "react"
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar, userAvatar } from "@/lib/client-avatar"
 
 interface ChatAreaProps {
   conversationId: string
@@ -192,8 +194,8 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
     ? (conversation.lawFirmUser.lawFirm.nazwa || conversation.lawFirmUser.lawFirm.nazwa)
     : `${conversation.clientUser.client.imie} ${conversation.clientUser.client.nazwisko}`
   const otherUserImage = isClient
-    ? conversation.lawFirmUser.lawFirm.logo
-    : conversation.clientUser.image
+    ? expertAvatar(conversation.lawFirmUser.lawFirm.logo)
+    : clientAvatar(conversation.clientUser.image)
 
   const messageGroups = groupMessagesByDate()
 
@@ -256,12 +258,10 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
                     >
                       {!isMyMessage && (
                         <Avatar className="h-8 w-8 flex-shrink-0">
-                          {message.sender?.image && (
-                            <AvatarImage
-                              src={message.sender?.image}
-                              alt={message.sender?.name || ""}
-                            />
-                          )}
+                          <AvatarImage
+                            src={message.sender?.image || otherUserImage}
+                            alt={message.sender?.name || ""}
+                          />
                           <AvatarFallback className="bg-muted text-xs">
                             {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                           </AvatarFallback>
@@ -293,12 +293,10 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
 
                       {isMyMessage && (
                         <Avatar className="h-8 w-8 flex-shrink-0">
-                          {session?.user?.image && (
-                            <AvatarImage
-                              src={session?.user?.image}
-                              alt={session?.user?.name || ""}
-                            />
-                          )}
+                          <AvatarImage
+                            src={userAvatar(session?.user?.image, session?.user?.role)}
+                            alt={session?.user?.name || ""}
+                          />
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {session?.user?.name?.substring(0, 2).toUpperCase() || "TY"}
                           </AvatarFallback>

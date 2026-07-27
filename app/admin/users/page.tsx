@@ -31,6 +31,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { PaginatedResponse } from '@/types/pagination';
+import { userAvatar } from "@/lib/client-avatar"
 
 interface User {
   id: string
@@ -392,9 +393,7 @@ export default function AdminUsersPage() {
                   <TableRow key={user.id}>
                     <TableCell>
                       <Avatar className="h-10 w-10">
-                        {user.image && (
-                          <AvatarImage src={user.image} alt={user.name || user.email} />
-                        )}
+                        <AvatarImage src={userAvatar(user.image, user.role)} alt={user.name || user.email} />
                         <AvatarFallback>
                           {getUserInitials(user)}
                         </AvatarFallback>

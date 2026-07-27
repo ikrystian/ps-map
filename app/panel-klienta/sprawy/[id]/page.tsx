@@ -35,6 +35,7 @@ import {
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 interface Case {
   id: string
@@ -481,7 +482,7 @@ export default function ClientCaseDetailsPage() {
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex items-start gap-3 min-w-0 flex-1">
                               <Avatar className="h-12 w-12 border border-border/40 shrink-0">
-                                <AvatarImage src={offer.lawFirm.logo || undefined} />
+                                <AvatarImage src={expertAvatar(offer.lawFirm.logo)} />
                                 <AvatarFallback className="bg-secondary/10 text-secondary font-semibold">
                                   {offer.lawFirm.nazwa.substring(0, 2).toUpperCase()}
                                 </AvatarFallback>

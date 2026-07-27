@@ -15,6 +15,7 @@ import { toast } from "@/components/ui/sonner"
 import { Loader2, LogIn, Search } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { useEffect, useState } from "react"
+import { userAvatar } from "@/lib/client-avatar"
 
 interface ImpersonateUser {
   id: string
@@ -171,7 +172,7 @@ function ImpersonateSearchPanel() {
                     className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.image || undefined} alt="" />
+                      <AvatarImage src={userAvatar(user.image, user.role)} alt="" />
                       <AvatarFallback>{initials(user)}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">

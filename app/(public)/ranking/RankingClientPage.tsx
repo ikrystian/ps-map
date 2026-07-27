@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
 import { CheckCircle2, Coins, MapPin, Medal, Sparkles, Star, TrendingUp, Trophy, RefreshCw } from "lucide-react"
 import Link from "next/link"
@@ -192,24 +193,13 @@ export default function RankingClientPage() {
 
                             {/* Logo */}
                             <div className="flex-shrink-0">
-                              {firm.logo ? (
-                                <div className={cn("rounded-2xl overflow-hidden border border-border/20 bg-zinc-950/40 h-16 w-16 relative flex items-center justify-center p-1", borderColor)}>
-                                  <img
-                                    src={firm.logo}
-                                    alt={firm.nazwa}
-                                    className="w-full h-full object-contain"
-                                  />
-                                </div>
-                              ) : (
-                                <div className={cn(
-                                  "w-16 h-16 rounded-2xl bg-zinc-950/40 flex items-center justify-center border border-border/20 text-zinc-400 text-xl font-bold",
-                                  borderColor
-                                )}>
-                                  <span>
-                                    {firm.nazwa.charAt(0)}
-                                  </span>
-                                </div>
-                              )}
+                              <div className={cn("rounded-2xl overflow-hidden border border-border/20 bg-zinc-950/40 h-16 w-16 relative flex items-center justify-center p-1", borderColor)}>
+                                <img
+                                  src={expertAvatar(firm.logo)}
+                                  alt={firm.nazwa}
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
                             </div>
 
                             {/* Info */}

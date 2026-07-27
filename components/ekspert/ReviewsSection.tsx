@@ -41,9 +41,11 @@ import {
   ThumbsUp,
   UserCheck
 } from "lucide-react"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { Review } from "@/types"
+import { clientAvatar } from "@/lib/client-avatar"
 
 interface ReviewsSectionProps {
   reviews: Review[]
@@ -707,7 +709,7 @@ export function ReviewsSection({
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12 border-2 border-border shadow-sm flex-shrink-0">
                         {!review.anonimowa && review.client.user?.image ? (
-                          <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
+                          <AvatarImage src={clientAvatar(review.client.user.image)} alt={`${review.client.imie} ${review.client.nazwisko}`} />
                         ) : null}
                         <AvatarFallback className="bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm">
                           {review.anonimowa
@@ -805,9 +807,7 @@ export function ReviewsSection({
                     <div className="bg-secondary/40 border-l-4 border-primary/40 rounded-r-xl p-4 mt-4 shadow-inner relative group/reply">
                       <div className="flex items-start gap-3">
                         <Avatar className="h-10 w-10 flex-shrink-0 border shadow-sm">
-                          {lawFirmLogo ? (
-                            <AvatarImage src={lawFirmLogo} alt={lawFirmName} />
-                          ) : null}
+                          <AvatarImage src={expertAvatar(lawFirmLogo)} alt={lawFirmName} />
                           <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                             {lawFirmName.substring(0, 2).toUpperCase()}
                           </AvatarFallback>

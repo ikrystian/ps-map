@@ -86,12 +86,10 @@ export function ConversationList({
               >
                 {/* Avatar */}
                 <Avatar className="h-12 w-12 flex-shrink-0">
-                  {conversation.otherUser.image && (
-                    <AvatarImage
-                      src={conversation.otherUser.image}
-                      alt={conversation.otherUser.name}
-                    />
-                  )}
+                  <AvatarImage
+                    src={conversation.otherUser.image}
+                    alt={conversation.otherUser.name}
+                  />
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {conversation.otherUser.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>

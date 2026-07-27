@@ -38,6 +38,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 interface ActivePromotion {
   id: string
@@ -515,11 +516,7 @@ export default function AdminPozycjonowaniePage() {
                         <td className="px-6 py-4 font-medium text-foreground">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center flex-shrink-0">
-                              {ov.lawFirm.logo ? (
-                                <img src={ov.lawFirm.logo} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
-                              ) : (
-                                <Award className="h-4 w-4 text-zinc-500" />
-                              )}
+                              <img src={expertAvatar(ov.lawFirm.logo)} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
                             </div>
                             <div>
                               <div className="font-bold text-sm leading-snug">{ov.lawFirm.nazwa}</div>
@@ -744,11 +741,7 @@ export default function AdminPozycjonowaniePage() {
 
                             {/* Logo avatar */}
                             <div className="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center relative flex-shrink-0">
-                              {firm.logo ? (
-                                <img src={firm.logo} alt={firm.nazwa} className="w-full h-full object-cover" />
-                              ) : (
-                                <Award className="h-6 w-6 text-zinc-500" />
-                              )}
+                              <img src={expertAvatar(firm.logo)} alt={firm.nazwa} className="w-full h-full object-cover" />
                             </div>
 
                             {/* Name & Basic Info */}

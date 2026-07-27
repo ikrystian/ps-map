@@ -31,6 +31,7 @@ import {
 import { toast } from "@/components/ui/sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { cn } from "@/lib/utils"
 import {
   FaFacebook as Facebook,
@@ -556,8 +557,7 @@ export default function LawFirmProfilePage() {
             {/* Logo and Metadata */}
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start flex-1 w-full text-center md:text-left">
               {/* Logo */}
-              {lawFirm.logo && (
-                <div className="relative group flex-shrink-0 self-center md:self-start">
+              <div className="relative group flex-shrink-0 self-center md:self-start">
                   <div className={cn(
                     "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-[#20201d]/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
                     lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 shadow-amber-500/20",
@@ -573,7 +573,7 @@ export default function LawFirmProfilePage() {
                     )}
                     <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
                       <Image
-                        src={lawFirm.logo}
+                        src={expertAvatar(lawFirm.logo)}
                         alt={lawFirm.nazwa}
                         id="logo-photo"
                         fill
@@ -585,8 +585,7 @@ export default function LawFirmProfilePage() {
                   {(lawFirm.pakietSubskrypcji === "BIZNES" || lawFirm.pakietSubskrypcji === "PREMIUM") && (
                     <span className="absolute -inset-1.5 rounded-3xl bg-primary/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
                   )}
-                </div>
-              )}
+              </div>
 
               {/* Text Info */}
               <div className="space-y-4 flex-1 w-full">

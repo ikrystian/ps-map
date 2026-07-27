@@ -17,6 +17,7 @@ import { motion } from "framer-motion"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -209,9 +210,7 @@ export default function ClientConsultationsPage() {
               <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Link href={`/ekspert/${booking.lawFirm.slug}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
                   <Avatar className="h-16 w-16 sm:h-32 sm:w-32 rounded-md border border-border/40">
-                    {booking.lawFirm?.logo && (
-                      <AvatarImage src={booking.lawFirm.logo} alt={booking.lawFirm.nazwa} />
-                    )}
+                    <AvatarImage src={expertAvatar(booking.lawFirm?.logo)} alt={booking.lawFirm.nazwa} />
                     <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
                       {booking.lawFirm?.nazwa ? booking.lawFirm.nazwa.substring(0, 2).toUpperCase() : "KA"}
                     </AvatarFallback>

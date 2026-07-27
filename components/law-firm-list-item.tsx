@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import { PackageBadge, PackageType } from "@/components/permissions";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -11,6 +10,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { expertAvatar } from "@/lib/expert-avatar";
 import { cn, stripHtmlTags } from "@/lib/utils";
 import {
   Globe,
@@ -319,17 +319,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
           <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
 
-              {lawFirm.logo && (
-                <div className="absolute inset-0 z-10">
-                  <Image
-                    src={lawFirm.logo}
-                    alt="Logo"
-                    width={512}
-                    height={512}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <div className="absolute inset-0 z-10">
+                <Image
+                  src={expertAvatar(lawFirm.logo)}
+                  alt="Logo"
+                  width={512}
+                  height={512}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
               {/* Subtle dark vignette overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />

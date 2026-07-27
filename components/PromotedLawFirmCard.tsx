@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { cn, getSubscriptionBorderColor, stripHtmlTags } from "@/lib/utils"
 import { CheckCircle2, MapPin, Star } from "lucide-react"
 import Link from "next/link"
@@ -61,19 +62,11 @@ export function PromotedLawFirmCard({ lawFirm, className = "" }: PromotedLawFirm
       <CardHeader className="pb-3">
         <div className="flex items-start gap-4">
           {/* Logo */}
-          {lawFirm.logo ? (
-            <img
-              src={lawFirm.logo}
-              alt={lawFirm.nazwa}
-              className={cn("w-16 h-16 rounded-lg object-cover border-2", logoBorderColor)}
-            />
-          ) : (
-            <div className={cn("w-16 h-16 rounded-lg bg-secondary flex items-center justify-center border-2", logoBorderColor)}>
-              <span className="text-2xl font-bold text-muted-foreground">
-                {lawFirm.nazwa.charAt(0)}
-              </span>
-            </div>
-          )}
+          <img
+            src={expertAvatar(lawFirm.logo)}
+            alt={lawFirm.nazwa}
+            className={cn("w-16 h-16 rounded-lg object-cover border-2", logoBorderColor)}
+          />
 
           {/* Info */}
           <div className="flex-1 min-w-0">

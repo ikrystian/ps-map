@@ -14,6 +14,8 @@ import { toast } from "@/components/ui/sonner"
 import { formatLastSeen } from "@/lib/time-utils"
 import { Ban, Calendar, CheckCircle2, Mail, UserCircle } from "lucide-react"
 import { useState } from "react"
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar } from "@/lib/client-avatar"
 
 interface UserInfo {
   id: string
@@ -134,7 +136,7 @@ export function UserInfoDialog({
   }
 
   const displayName = userInfo?.lawFirm?.nazwa || userInfo?.name || "Użytkownik"
-  const displayImage = userInfo?.lawFirm?.logo || userInfo?.image
+  const displayImage = userInfo?.lawFirm ? expertAvatar(userInfo.lawFirm.logo) : clientAvatar(userInfo?.image)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

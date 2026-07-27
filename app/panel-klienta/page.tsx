@@ -31,6 +31,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { BlogPost } from '@/types/blog';
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar } from "@/lib/client-avatar"
 
 interface ClientData {
   id: string
@@ -396,7 +398,7 @@ export default function ClientDashboardPage() {
                                     className="flex items-center gap-2.5 p-2.5 rounded-md bg-background/40 border border-border/20"
                                   >
                                     <Avatar className="h-9 w-9 border border-border/40 shrink-0">
-                                      <AvatarImage src={offer.lawFirm.logo || undefined} />
+                                      <AvatarImage src={expertAvatar(offer.lawFirm.logo)} />
                                       <AvatarFallback className="text-xs bg-secondary/10 text-secondary font-semibold">
                                         {offer.lawFirm.nazwa[0]?.toUpperCase()}
                                       </AvatarFallback>
@@ -513,7 +515,7 @@ export default function ClientDashboardPage() {
             <CardContent className="space-y-5">
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 border border-border/50 ring-2 ring-primary/20">
-                  <AvatarImage src={clientData?.user.image || undefined} />
+                  <AvatarImage src={clientAvatar(clientData?.user.image)} />
                   <AvatarFallback className="bg-gradient-to-br from-primary to-primary-dark text-white text-lg font-bold">
                     {initials}
                   </AvatarFallback>

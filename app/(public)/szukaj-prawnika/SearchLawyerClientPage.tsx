@@ -5,7 +5,6 @@ import { CategoryIcon } from "@/components/category-icon"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { PackageBadge } from "@/components/permissions"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { cn, stripHtmlTags } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { Check, CheckCircle2, ChevronDown, ChevronUp, Clock, Filter, Grid3x3, List, MapPin, Search, Star, X } from "lucide-react"
@@ -746,22 +746,14 @@ export default function SearchLawyerPage() {
                     const cardContent = (
                       <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${hasPromoPackage ? "border-0" : ""}`}>
                         <CardHeader>
-                          {firm.logo ? (
-                            <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
-                              <Image
-                                src={firm.logo}
-                                alt={firm.nazwa}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <Avatar className="mx-auto w-20 h-20 mb-3">
-                              <AvatarFallback className="text-xl">
-                                {firm.nazwa.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
+                          <div className="relative mx-auto w-20 h-20 mb-3 rounded-full overflow-hidden border-2">
+                            <Image
+                              src={expertAvatar(firm.logo)}
+                              alt={firm.nazwa}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
                           <div className="flex items-center justify-center gap-2">
                             <CardTitle className="text-lg text-center">
                               {firm.nazwa}

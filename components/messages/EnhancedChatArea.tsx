@@ -60,6 +60,8 @@ import type {
 } from "@/types/conversations"
 import { formatDistanceToNow } from "date-fns"
 import { pl } from "date-fns/locale"
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar } from "@/lib/client-avatar"
 
 interface ChatAreaProps {
   conversationId: string
@@ -624,8 +626,8 @@ export function EnhancedChatArea({
     ? conversation.lawFirmUser?.lawFirm?.nazwa
     : `${conversation.clientUser?.client?.imie || ""} ${conversation.clientUser?.client?.nazwisko || ""}`.trim()) || "Użytkownik"
   const otherUserImage = isClient
-    ? conversation.lawFirmUser?.lawFirm?.logo
-    : conversation.clientUser?.image
+    ? expertAvatar(conversation.lawFirmUser?.lawFirm?.logo)
+    : clientAvatar(conversation.clientUser?.image)
 
   const messageGroups = groupMessagesByDate()
 
@@ -755,12 +757,10 @@ export function EnhancedChatArea({
                       >
                         {!isMyMessage && (
                           <Avatar className="h-7 w-7 border border-border/40 shrink-0 mb-1">
-                            {message.sender?.image && (
-                              <AvatarImage
-                                src={message.sender?.image}
-                                alt={message.sender?.name || ""}
-                              />
-                            )}
+                            <AvatarImage
+                              src={message.sender?.image || otherUserImage}
+                              alt={message.sender?.name || ""}
+                            />
                             <AvatarFallback className="bg-zinc-800 text-sm text-zinc-300">
                               {message.sender?.name ? message.sender.name.substring(0, 2).toUpperCase() : "??"}
                             </AvatarFallback>

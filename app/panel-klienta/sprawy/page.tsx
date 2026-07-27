@@ -79,6 +79,7 @@ interface Case {
   }>
 }
 import { Category } from "@/types/categories"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -550,7 +551,7 @@ export default function ClientCasesPage() {
                             {caseItem.offers.map((offer) => (
                               <Avatar key={offer.id} className="h-5 w-5 border border-secondary/40 bg-zinc-800">
                                 <AvatarImage
-                                  src={offer.lawFirm?.logo || offer.lawFirm?.zdjecieGlowne || undefined}
+                                  src={expertAvatar(offer.lawFirm?.logo || offer.lawFirm?.zdjecieGlowne)}
                                   alt={offer.lawFirm?.nazwa || "Ekspert"}
                                 />
                                 <AvatarFallback className="text-[8px] font-bold text-secondary bg-secondary/10">

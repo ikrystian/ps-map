@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { expertAvatar } from "@/lib/expert-avatar";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -212,7 +213,7 @@ export default function TeamExpertsSection() {
                 expert.categories?.[0]?.category?.nazwa ||
                 "Specjalista Prawny";
               const location = expert.user?.miasto || "Polska";
-              const avatarSrc = expert.logo || expert.user?.image;
+              const avatarSrc = expertAvatar(expert.logo || expert.user?.image);
               const initials = getInitials(imie, nazwisko, displayName);
               const skills =
                 expert.categories?.map((c) => c.category.nazwa) || [];
@@ -233,7 +234,7 @@ export default function TeamExpertsSection() {
                     {/* Header */}
                     <div className="flex items-center gap-4">
                       <Avatar className="h-14 w-14 border border-zinc-800/60 transition-transform duration-500 group-hover:scale-105">
-                        <AvatarImage src={avatarSrc || undefined} alt={displayName} />
+                        <AvatarImage src={avatarSrc} alt={displayName} />
                         <AvatarFallback className="bg-gradient-to-br from-zinc-800 to-zinc-900 text-primary font-medium text-lg uppercase">
                           {initials}
                         </AvatarFallback>

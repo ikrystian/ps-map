@@ -17,7 +17,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
 import {
-  Briefcase,
   CheckCircle2,
   Globe,
   Heart,
@@ -33,6 +32,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { expertAvatar } from "@/lib/expert-avatar"
 
 interface FavoriteLawFirm {
   id: string
@@ -235,16 +235,12 @@ export default function ClientFavoritesPage() {
                       <div className="flex flex-col sm:flex-row items-start gap-4 flex-1">
                         {/* Logo */}
                         <div className="relative h-32 w-32 rounded-lg overflow-hidden border border-border/30 bg-zinc-950/60 flex-shrink-0 flex items-center justify-center p-2">
-                          {lawFirm.logo ? (
-                            <Image
-                              src={lawFirm.logo}
-                              alt={lawFirm.nazwa}
-                              fill
-                              className="object-contain p-2"
-                            />
-                          ) : (
-                            <Briefcase className="h-8 w-8 text-zinc-600" />
-                          )}
+                          <Image
+                            src={expertAvatar(lawFirm.logo)}
+                            alt={lawFirm.nazwa}
+                            fill
+                            className="object-contain p-2"
+                          />
                         </div>
 
                         {/* Info */}

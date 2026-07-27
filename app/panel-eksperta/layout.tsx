@@ -25,6 +25,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
+import { expertAvatar } from "@/lib/expert-avatar"
 import {
   Award,
   BarChart3,
@@ -258,7 +259,7 @@ export default function LawFirmPanelLayout({
       {(inSheet || !isCollapsed) && session?.user && (
         <div className="mb-4 flex flex-col items-center gap-2 pb-4 border-b border-border expert-avatar-area">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={expertLogo || session.user.image || undefined} alt={session.user.name || "User"} />
+            <AvatarImage src={expertAvatar(expertLogo || session.user.image)} alt={session.user.name || "User"} />
             <AvatarFallback className="bg-primary text-primary-foreground text-lg">
               {getUserInitials(session.user.name)}
             </AvatarFallback>
@@ -501,7 +502,7 @@ export default function LawFirmPanelLayout({
               userRole="LAW_FIRM"
               userName={session?.user?.name}
               userEmail={session?.user?.email}
-              userImage={expertLogo || session?.user?.image}
+              userImage={expertAvatar(expertLogo || session?.user?.image)}
               punktySaldo={punktySaldo}
               userId={session?.user?.id}
               subscriptionType={subscriptionType}

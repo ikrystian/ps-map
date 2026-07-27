@@ -51,6 +51,8 @@ import {
 import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
 import type { LawFirm, Review } from "@/types"
+import { expertAvatar } from "@/lib/expert-avatar"
+import { clientAvatar } from "@/lib/client-avatar"
 
 
 // Format date helper
@@ -712,7 +714,7 @@ export default function LawFirmReviewsPage() {
                             <div className="relative">
                               <Avatar className="h-12 w-12 border-2 border-zinc-950 flex-shrink-0 shadow-md ring-2 ring-primary/20">
                                 {!review.anonimowa && review.client.user?.image ? (
-                                  <AvatarImage src={review.client.user.image} alt={`${review.client.imie} ${review.client.nazwisko}`} />
+                                  <AvatarImage src={clientAvatar(review.client.user.image)} alt={`${review.client.imie} ${review.client.nazwisko}`} />
                                 ) : null}
                                 <AvatarFallback className="bg-gradient-to-br from-zinc-800 to-zinc-900 text-zinc-300 font-semibold text-sm">
                                   {review.anonimowa
@@ -867,9 +869,7 @@ export default function LawFirmReviewsPage() {
                               <div className="flex items-start gap-3">
                                 {/* Logo ekspercie */}
                                 <Avatar className="h-9 w-9 border border-primary/20 shadow-sm flex-shrink-0 ring-1 ring-primary/10">
-                                  {lawFirm.logo ? (
-                                    <AvatarImage src={lawFirm.logo} alt={lawFirm.nazwa} />
-                                  ) : null}
+                                  <AvatarImage src={expertAvatar(lawFirm.logo)} alt={lawFirm.nazwa} />
                                   <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-xs">
                                     {(lawFirm.nazwa ?? lawFirm.nazwa ?? "?").substring(0, 2).toUpperCase()}
                                   </AvatarFallback>

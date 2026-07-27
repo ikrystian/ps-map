@@ -153,12 +153,10 @@ export function EnhancedConversationList({
         {/* Avatar */}
         <div className="relative shrink-0">
           <Avatar className="h-11 w-11 border border-border/40 group-hover/item:scale-105 transition-transform duration-300">
-            {conversation.otherUser.image && (
-              <AvatarImage
-                src={conversation.otherUser.image}
-                alt={conversation.otherUser.name}
-              />
-            )}
+            <AvatarImage
+              src={conversation.otherUser.image}
+              alt={conversation.otherUser.name}
+            />
             <AvatarFallback className="bg-zinc-800 text-white text-xs font-semibold">
               {conversation.otherUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
