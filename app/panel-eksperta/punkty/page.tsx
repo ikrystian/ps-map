@@ -399,7 +399,7 @@ export default function LawFirmPointsPage() {
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-xl font-semibold">Pakiety punktów</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Wybierz pakiet — im większy, tym niższa cena za punkt</p>
+            <p className="text-sm text-muted-foreground mt-0.5">Wybierz pakiet pakiet bądź </p>
           </div>
           <Badge variant="outline" className="gap-1 border-primary/30 text-primary text-xs">
             <Info className="h-3 w-3" />

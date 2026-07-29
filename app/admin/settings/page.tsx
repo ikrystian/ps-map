@@ -1416,9 +1416,10 @@ export default function AdminSettingsPage() {
                 </>
               )}
               <p className="text-xs text-muted-foreground">
-                Te same podkategorie są dostępne dla ekspertów przy zakupie promocji „Polecani prawnicy
-                i adwokaci" w panelu eksperta. Zmiana kategorii nie usuwa już wykupionych promocji — te
-                z podkategorii spoza nowego wyboru przestaną być widoczne na stronie głównej.
+                Format promowania „Polecani prawnicy i adwokaci" widzą i mogą kupić wyłącznie eksperci
+                przypisani do tej kategorii lub do dowolnej pozycji w jej poddrzewie — wybierają wtedy
+                jedną z powyższych podkategorii. Zmiana kategorii nie usuwa już wykupionych promocji —
+                te z podkategorii spoza nowego wyboru przestaną być widoczne na stronie głównej.
               </p>
             </CardContent>
           </Card>

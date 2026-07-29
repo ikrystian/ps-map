@@ -3,6 +3,8 @@ export interface LawFirm {
   nazwa: string
   punktySaldo: number
   mainCategoryId?: string | null
+  /** Specjalizacja z drzewa ExpertiseCategory — decyduje m.in. o dostępie do POLECANI_PRAWNICY */
+  expertiseCategoryId?: string | null
 }
 
 export interface Promotion {

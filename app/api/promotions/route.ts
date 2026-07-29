@@ -3,6 +3,10 @@ import { serverCache } from "@/lib/cache"
 import { generatePromotionActivatedEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
+import {
+  getRecommendedCategoryScope,
+  isEligibleForRecommendedPromotion,
+} from "@/lib/recommended-promotion"
 import { PromotionType } from "@prisma/client"
 import { NextRequest } from "next/server"
 
@@ -228,9 +232,34 @@ export async function POST(request: NextRequest) {
 
       // Sprawdź limit miejsc dla wybranej kategorii
       if (typPromocji === "POLECANI_PRAWNICY") {
+        // Format dostępny tylko dla ekspertów z poddrzewa kategorii wskazanej
+        // przez administratora (Ustawienia → homepageRecommendedCategory)
+        const scope = await getRecommendedCategoryScope()
+
+        if (!scope.parentId) {
+          return Response.json(
+            { error: "Format promowania jest niedostępny — administrator nie skonfigurował kategorii" },
+            { status: 400 }
+          )
+        }
+
+        if (!isEligibleForRecommendedPromotion(scope, lawFirm.expertiseCategoryId)) {
+          return Response.json(
+            { error: "Ten format promowania jest dostępny tylko dla ekspertów z wybranych kategorii" },
+            { status: 403 }
+          )
+        }
+
         if (!kategoriaPromocji) {
           return Response.json(
             { error: "Kategoria jest wymagana dla tej promocji" },
+            { status: 400 }
+          )
+        }
+
+        if (!scope.categories.some((c) => c.nazwa === kategoriaPromocji)) {
+          return Response.json(
+            { error: "Nieprawidłowa kategoria dla tego formatu promowania" },
             { status: 400 }
           )
         }

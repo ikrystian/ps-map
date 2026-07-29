@@ -1,6 +1,7 @@
 import { getOrSetCached } from "@/lib/cache"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
+import { getRecommendedCategoryScope } from "@/lib/recommended-promotion"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -96,17 +97,7 @@ export async function GET(request: NextRequest) {
 
         // 5. Zakładki sekcji "Polecani prawnicy" — podkategorie kategorii wybranej
         //    przez administratora w drzewie ExpertiseCategory (/admin/expertise-categories)
-        const recommendedCategorySetting = await prisma.settings.findUnique({
-          where: { key: "homepageRecommendedCategory" },
-        })
-        const recommendedParentId = recommendedCategorySetting?.value?.trim() || ""
-        const recommendedCategories = recommendedParentId
-          ? await prisma.expertiseCategory.findMany({
-              where: { parentId: recommendedParentId, aktywna: true },
-              select: { id: true, nazwa: true },
-              orderBy: [{ kolejnosc: "asc" }, { nazwa: "asc" }],
-            })
-          : []
+        const { categories: recommendedCategories } = await getRecommendedCategoryScope()
 
         const recommendedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_RECOMMENDED")
         const consultedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_CONSULTED")

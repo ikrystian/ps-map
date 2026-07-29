@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 import { LawFirm, Promotion, Category, Voivodeship } from "./types"
-import { findExpertiseChildren } from "./utils"
+import { getRecommendedScopeFromTree } from "./utils"
 
 
 
@@ -44,6 +44,8 @@ export default function LawFirmPromotionPage() {
   const [consultedCategoryIds, setConsultedCategoryIds] = useState<string[]>([])
   // Podkategorie kategorii wskazanej przez administratora dla sekcji "Polecani prawnicy"
   const [recommendedCategories, setRecommendedCategories] = useState<string[]>([])
+  // Kategoria wskazana przez administratora wraz z poddrzewem — decyduje o dostępie do formatu
+  const [recommendedEligibleIds, setRecommendedEligibleIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -180,7 +182,9 @@ export default function LawFirmPromotionPage() {
             const expertiseResponse = await fetch("/api/expertise-categories")
             if (expertiseResponse.ok) {
               const tree = await expertiseResponse.json()
-              setRecommendedCategories(findExpertiseChildren(tree, recommendedParentId))
+              const scope = getRecommendedScopeFromTree(tree, recommendedParentId)
+              setRecommendedCategories(scope.categories)
+              setRecommendedEligibleIds(scope.eligibleIds)
             }
           }
         }
@@ -306,6 +310,16 @@ export default function LawFirmPromotionPage() {
 
   // Kategorie "Najczęściej konsultowane" wybrane przez administratora w ustawieniach
   const consultedCategories = categories.filter((c) => consultedCategoryIds.includes(c.id))
+
+  // Format "Polecani prawnicy i adwokaci" widzą tylko eksperci przypisani do kategorii
+  // wskazanej przez administratora (lub czegokolwiek w jej poddrzewie)
+  const canBuyRecommendedPromotion =
+    !!lawFirm?.expertiseCategoryId &&
+    recommendedEligibleIds.includes(lawFirm.expertiseCategoryId)
+
+  const availablePromotionTypes = promotionTypes.filter(
+    (promo) => promo.type !== "POLECANI_PRAWNICY" || canBuyRecommendedPromotion
+  )
 
   const handleOpenDialog = (type: string) => {
     resetForm()
@@ -558,7 +572,7 @@ export default function LawFirmPromotionPage() {
 
       {/* Available Promotions Grid */}
       <PromotionFormats
-        promotionTypes={promotionTypes}
+        promotionTypes={availablePromotionTypes}
         handleOpenDialog={handleOpenDialog}
       />
 

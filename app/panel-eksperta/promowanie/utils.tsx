@@ -30,24 +30,39 @@ type ExpertiseCategoryNode = {
   children?: ExpertiseCategoryNode[]
 }
 
+const findExpertiseNode = (
+  nodes: ExpertiseCategoryNode[],
+  id: string
+): ExpertiseCategoryNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node
+    const found = node.children?.length ? findExpertiseNode(node.children, id) : null
+    if (found) return found
+  }
+  return null
+}
+
+const collectIds = (nodes: ExpertiseCategoryNode[]): string[] =>
+  nodes.flatMap((node) => [node.id, ...collectIds(node.children || [])])
+
 /**
- * Nazwy podkategorii wskazanej kategorii — kategorie promocji „Polecani prawnicy
- * i adwokaci" ustala administrator w ustawieniach (klucz homepageRecommendedCategory).
+ * Zakres promocji „Polecani prawnicy i adwokaci" wyznaczony przez kategorię
+ * wskazaną przez administratora (ustawienie homepageRecommendedCategory):
+ *  - `categories` — nazwy podkategorii, czyli kategorie do wyboru przy zakupie,
+ *  - `eligibleIds` — kategoria wraz z poddrzewem; ekspert spoza tego zbioru
+ *    nie ma dostępu do tego formatu promowania.
  */
-export const findExpertiseChildren = (
+export const getRecommendedScopeFromTree = (
   nodes: ExpertiseCategoryNode[],
   parentId: string
-): string[] => {
-  for (const node of nodes) {
-    if (node.id === parentId) {
-      return (node.children || []).map((child) => child.nazwa)
-    }
-    if (node.children?.length) {
-      const found = findExpertiseChildren(node.children, parentId)
-      if (found.length > 0) return found
-    }
+): { categories: string[]; eligibleIds: string[] } => {
+  const parent = findExpertiseNode(nodes, parentId)
+  if (!parent) return { categories: [], eligibleIds: [] }
+
+  return {
+    categories: (parent.children || []).map((child) => child.nazwa),
+    eligibleIds: [parent.id, ...collectIds(parent.children || [])],
   }
-  return []
 }
 
 export const getFutureMonths = (includeCurrentMonth = false) => {
