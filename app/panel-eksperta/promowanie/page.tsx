@@ -550,18 +550,6 @@ export default function LawFirmPromotionPage() {
               <Clock className="h-4 w-4 text-muted-foreground" />
               Historia zakupów
             </Button>
-            <Button
-              id="tour-promo-new"
-              onClick={() => {
-                const element = document.getElementById("tour-promo-types")
-                element?.scrollIntoView({ behavior: "smooth" })
-              }}
-              variant="primary"
-              className="font-medium px-6 h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200 gap-2 text-sm border-t border-white/10"
-            >
-              <Plus className="h-4 w-4" />
-              Nowa promocja
-            </Button>
           </div>
         </PageHeader>
 

@@ -7,7 +7,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
     {
       typ: SubscriptionPackage.PODSTAWOWY,
       nazwa: 'Podstawowy',
-      cena1Miesiac: 40,
+      cena1Miesiac: 39,
       cena6Miesiecy: 199,
       cena12Miesiecy: 440,
       dostepDoSpraw: 10,
@@ -26,7 +26,7 @@ export async function seedPackages(prismaClient: PrismaClient) {
       powiadomieniaSprawy: 3,
       liczbaTakow: 3,
       zalaczniki: false,
-      coverBaner: true,
+      coverBaner: false,
       wyswietlanieReklam: false,
       punktyGratis: 20,
       skillLawFocus: false,

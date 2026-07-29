@@ -86,7 +86,7 @@ export function CategoryPromotedExpertsSlider({
 
           <div
             ref={sliderRef}
-            className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-proximity touch-pan-x"
+            className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-proximity touch-pan-y touch-pan-x"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",

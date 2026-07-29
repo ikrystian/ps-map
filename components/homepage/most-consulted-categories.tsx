@@ -219,7 +219,7 @@ export function MostConsultedCategories({
       <div className="relative min-h-[460px]">
         <div
           ref={sliderRef}
-          className="flex gap-6 overflow-x-auto pb-4 snap-x snap-proximity touch-pan-x"
+          className="flex gap-6 overflow-x-auto pb-4 snap-x snap-proximity touch-pan-y touch-pan-x"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
