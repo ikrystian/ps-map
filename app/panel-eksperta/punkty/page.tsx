@@ -30,6 +30,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  buildCustomPointsOrderId,
+  buildPointsPricingConfig,
+  calculateCustomPointsPrice,
+  DEFAULT_MIN_CUSTOM_POINTS,
+  DEFAULT_POINT_PACKAGES,
+  DEFAULT_POINT_PRICE_TIERS,
+  DEFAULT_POINTS_TO_PLN_RATIO,
+  getPackagePricePerPoint,
+  getPackageSavings,
+  getPackageTotalPoints,
+  getPricePerPoint,
+  type PointPackage,
+  type PointPriceTier,
+} from "@/lib/points-pricing"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import {
@@ -108,74 +123,33 @@ interface LawFirm {
   nazwa: string
 }
 
-// Zakup własnej liczby punktów — minimum oraz próg rabatu ilościowego
-const MIN_CUSTOM_POINTS = 1000
-const BULK_POINTS_THRESHOLD = 999
-const BULK_RATIO_MULTIPLIER = 0.7
-
-// Cena za punkt przy zakupie własnej liczby punktów (powyżej 999 pkt — 70% stawki bazowej)
-const getCustomPointRate = (points: number, ratio: number) =>
-  points > BULK_POINTS_THRESHOLD ? ratio * BULK_RATIO_MULTIPLIER : ratio
-
-// Funkcja generująca pakiety punktów na podstawie przelicznika PLN/pkt
-const getPointPackages = (ratio: number) => [
-  {
-    id: "100_pkt",
-    points: 100,
-    price: Math.round(100 * ratio),
-    label: "Starter",
-    sublabel: "100 punktów",
-    discount: null,
-    pricePerPoint: ratio,
-    highlight: false,
-    icon: Zap,
-    color: "from-slate-500/20 to-slate-600/10",
-    iconColor: "text-slate-400",
-    borderColor: "border-border",
-  },
-  {
-    id: "250_pkt",
-    points: 250,
-    price: Math.round(250 * ratio * 0.9),
-    label: "Standard",
-    sublabel: "250 punktów",
-    discount: ratio > 0 ? `Oszczędzasz ${Math.round(250 * ratio * 0.1)} zł` : null,
-    pricePerPoint: ratio * 0.9,
-    highlight: false,
-    icon: Sparkles,
-    color: "from-blue-500/20 to-blue-600/10",
-    iconColor: "text-blue-400",
-    borderColor: "border-blue-500/30",
-  },
-  {
-    id: "500_pkt",
-    points: 500,
-    price: Math.round(500 * ratio * 0.8),
-    label: "Pro",
-    sublabel: "500 punktów",
-    discount: ratio > 0 ? `Oszczędzasz ${Math.round(500 * ratio * 0.2)} zł` : null,
-    pricePerPoint: ratio * 0.8,
-    highlight: true,
-    icon: Star,
-    color: "from-primary/25 to-primary/10",
-    iconColor: "text-primary",
-    borderColor: "border-primary/50",
-  },
-  {
-    id: "1000_pkt",
-    points: 1000,
-    price: Math.round(1000 * ratio * 0.7),
-    label: "Business",
-    sublabel: "1000 punktów",
-    discount: ratio > 0 ? `Oszczędzasz ${Math.round(1000 * ratio * 0.3)} zł` : null,
-    pricePerPoint: ratio * 0.7,
-    highlight: false,
-    icon: TrendingDown,
-    color: "from-purple-500/20 to-purple-600/10",
-    iconColor: "text-purple-400",
-    borderColor: "border-purple-500/30",
-  },
+// Style kart pakietów — przypisywane cyklicznie wg kolejności z ustawień admina
+const PACKAGE_STYLES = [
+  { icon: Zap, color: "from-slate-500/20 to-slate-600/10", iconColor: "text-slate-400" },
+  { icon: Sparkles, color: "from-blue-500/20 to-blue-600/10", iconColor: "text-blue-400" },
+  { icon: Star, color: "from-primary/25 to-primary/10", iconColor: "text-primary" },
+  { icon: TrendingDown, color: "from-purple-500/20 to-purple-600/10", iconColor: "text-purple-400" },
 ]
+
+/** Uzupełnia pakiet z ustawień o dane prezentacyjne (ikona, gradient, opis, rabat). */
+const decoratePackage = (pkg: PointPackage, index: number, ratio: number) => {
+  const style = PACKAGE_STYLES[index % PACKAGE_STYLES.length]
+  const totalPoints = getPackageTotalPoints(pkg)
+  const savings = getPackageSavings(pkg, ratio)
+
+  return {
+    ...pkg,
+    totalPoints,
+    sublabel: pkg.bonusPoints > 0
+      ? `${pkg.points} pkt + ${pkg.bonusPoints} gratis`
+      : `${pkg.points} punktów`,
+    discount: savings > 0 ? `Oszczędzasz ${savings.toFixed(2).replace(".", ",")} zł` : null,
+    pricePerPoint: getPackagePricePerPoint(pkg),
+    ...style,
+  }
+}
+
+type DecoratedPackage = ReturnType<typeof decoratePackage>
 
 export default function LawFirmPointsPage() {
   const { data: session } = useSession()
@@ -188,9 +162,14 @@ export default function LawFirmPointsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [copiedId, setCopiedId] = useState<string | null>(null)
-  const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(1)
+  const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(DEFAULT_POINTS_TO_PLN_RATIO)
+  const [priceTiers, setPriceTiers] = useState<PointPriceTier[]>(DEFAULT_POINT_PRICE_TIERS)
+  const [minCustomPoints, setMinCustomPoints] = useState<number>(DEFAULT_MIN_CUSTOM_POINTS)
+  const [availablePackages, setAvailablePackages] = useState<PointPackage[]>(DEFAULT_POINT_PACKAGES)
 
-  const pointPackages = getPointPackages(pointsToPlnRatio)
+  const pointPackages = availablePackages
+    .filter((pkg) => pkg.active)
+    .map((pkg, index) => decoratePackage(pkg, index, pointsToPlnRatio))
 
   const handleCopy = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -202,13 +181,18 @@ export default function LawFirmPointsPage() {
 
   // Dialog zakupu
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
-  const [selectedPackage, setSelectedPackage] = useState<ReturnType<typeof getPointPackages>[0] | null>(null)
-  const [customPoints, setCustomPoints] = useState(String(MIN_CUSTOM_POINTS))
+  const [selectedPackage, setSelectedPackage] = useState<DecoratedPackage | null>(null)
+  const [customPoints, setCustomPoints] = useState(String(DEFAULT_MIN_CUSTOM_POINTS))
 
   const customPointsValue = parseInt(customPoints) || 0
-  const customPointRate = getCustomPointRate(customPointsValue, pointsToPlnRatio)
-  const customPointsPrice = Math.round(customPointsValue * customPointRate)
-  const customPointsTooLow = !selectedPackage && customPointsValue < MIN_CUSTOM_POINTS
+  const customPointRate = getPricePerPoint(customPointsValue, priceTiers, pointsToPlnRatio)
+  const customPointsPrice = calculateCustomPointsPrice(customPointsValue, priceTiers, pointsToPlnRatio)
+  const customPointsTooLow = !selectedPackage && customPointsValue < minCustomPoints
+
+  // Przedziały poniżej minimum zakupu są nieosiągalne — nie pokazujemy ich w cenniku
+  const visiblePriceTiers = priceTiers.filter(
+    (tier) => tier.maxPoints === null || tier.maxPoints >= minCustomPoints
+  )
 
   useEffect(() => {
     fetchData()
@@ -221,16 +205,15 @@ export default function LawFirmPointsPage() {
     setError(null)
 
     try {
-      // Pobierz ustawienia systemu dla przelicznika punktów
+      // Pobierz cennik punktów z ustawień (stawka bazowa, przedziały, pakiety)
       const settingsResponse = await fetch("/api/settings")
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json()
-        if (settingsData.pointsToPlnRatio) {
-          const ratio = parseFloat(settingsData.pointsToPlnRatio)
-          if (!isNaN(ratio) && ratio > 0) {
-            setPointsToPlnRatio(ratio)
-          }
-        }
+        const config = buildPointsPricingConfig(settingsData)
+        setPointsToPlnRatio(config.ratio)
+        setPriceTiers(config.tiers)
+        setAvailablePackages(config.packages)
+        setMinCustomPoints(config.minCustomPoints)
       }
 
       const lawFirmResponse = await fetch(`/api/law-firms/me`)
@@ -254,9 +237,9 @@ export default function LawFirmPointsPage() {
     }
   }
 
-  const handleOpenPurchaseDialog = (pkg?: ReturnType<typeof getPointPackages>[0]) => {
+  const handleOpenPurchaseDialog = (pkg?: DecoratedPackage) => {
     setSelectedPackage(pkg || null)
-    setCustomPoints(String(MIN_CUSTOM_POINTS))
+    setCustomPoints(String(minCustomPoints))
     setPurchaseDialogOpen(true)
   }
 
@@ -267,17 +250,20 @@ export default function LawFirmPointsPage() {
     }
 
     if (customPointsTooLow) {
-      setError(`Minimalna liczba punktów do zakupu to ${MIN_CUSTOM_POINTS} pkt`)
+      setError(`Minimalna liczba punktów do zakupu to ${minCustomPoints} pkt`)
       return
     }
 
-    const points = selectedPackage ? selectedPackage.points : customPointsValue
+    // Punkty gratis wliczają się do salda, więc trafiają do liczbaPunktow;
+    // ostateczna kwota i tak jest przeliczana po stronie serwera przy tworzeniu zamówienia.
+    const points = selectedPackage ? selectedPackage.totalPoints : customPointsValue
     const price = selectedPackage ? selectedPackage.price : customPointsPrice
 
     const orderData = {
-      pakietPunktow: selectedPackage ? selectedPackage.id : `custom_${points}_pkt`,
-      pakietLabel: selectedPackage ? selectedPackage.sublabel : `${points} punktów`,
+      pakietPunktow: selectedPackage ? selectedPackage.id : buildCustomPointsOrderId(customPointsValue),
+      pakietLabel: selectedPackage ? selectedPackage.sublabel : `${customPointsValue} punktów`,
       liczbaPunktow: points,
+      punktyGratis: selectedPackage ? selectedPackage.bonusPoints : 0,
       kwota: price,
     }
 
@@ -472,7 +458,14 @@ export default function LawFirmPointsPage() {
 
                     {/* Name */}
                     <p className="font-semibold text-base mb-0.5">{pkg.label}</p>
-                    <p className="text-sm text-muted-foreground mb-4">{pkg.sublabel}</p>
+                    <p className={cn("text-sm text-muted-foreground", pkg.bonusPoints > 0 ? "mb-1" : "mb-4")}>
+                      {pkg.sublabel}
+                    </p>
+                    {pkg.bonusPoints > 0 && (
+                      <p className="text-xs font-medium text-emerald-400 mb-4">
+                        + {pkg.bonusPoints} pkt gratis — łącznie {pkg.totalPoints} pkt
+                      </p>
+                    )}
 
                     {/* Price */}
                     <div className="mb-1">
@@ -695,6 +688,20 @@ export default function LawFirmPointsPage() {
                     {selectedPackage ? selectedPackage.points : (customPoints || "—")} pkt
                   </span>
                 </div>
+                {selectedPackage && selectedPackage.bonusPoints > 0 && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Punkty gratis:</span>
+                      <span className="font-medium text-sm text-emerald-400">
+                        + {selectedPackage.bonusPoints} pkt
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Razem do salda:</span>
+                      <span className="font-semibold text-sm">{selectedPackage.totalPoints} pkt</span>
+                    </div>
+                  </>
+                )}
                 <Separator className="my-1" />
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-sm">Do zapłaty:</span>
@@ -712,10 +719,10 @@ export default function LawFirmPointsPage() {
                 <Input
                   id="custom-points"
                   type="number"
-                  min={MIN_CUSTOM_POINTS}
+                  min={minCustomPoints}
                   value={customPoints}
                   onChange={(e) => setCustomPoints(e.target.value)}
-                  placeholder={`np. ${MIN_CUSTOM_POINTS}`}
+                  placeholder={`np. ${minCustomPoints}`}
                   className="mt-1.5"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
@@ -723,12 +730,19 @@ export default function LawFirmPointsPage() {
                 </p>
                 {customPointsTooLow ? (
                   <p className="text-xs text-destructive mt-1">
-                    Minimalna liczba punktów do zakupu to {MIN_CUSTOM_POINTS} pkt
+                    Minimalna liczba punktów do zakupu to {minCustomPoints} pkt
                   </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Od {BULK_POINTS_THRESHOLD + 1Pakie} pkt obowiązuje stawka {(pointsToPlnRatio * BULK_RATIO_MULTIPLIER).toFixed(2).replace(".", ",")} zł / pkt
-                  </p>
+                  <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
+                    {visiblePriceTiers.map((tier) => (
+                      <p key={tier.id}>
+                        {tier.maxPoints === null
+                          ? `Od ${tier.minPoints} pkt`
+                          : `${tier.minPoints}–${tier.maxPoints} pkt`}
+                        : {tier.pricePerPoint.toFixed(2).replace(".", ",")} zł / pkt
+                      </p>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
