@@ -193,7 +193,7 @@ function LawFirmProfilePageContent() {
             setCategories(mappedCategories)
           }
 
-          setLimitSlowKluczowych(lawFirmData.limitSlowKluczowych || 5)
+          setLimitSlowKluczowych(typeof lawFirmData.limitSlowKluczowych === "number" ? lawFirmData.limitSlowKluczowych : 5)
           const normalizedData = {
             ...lawFirmData,
             // Email konta użytkownika (tylko do wyświetlenia)

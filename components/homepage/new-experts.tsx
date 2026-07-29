@@ -74,7 +74,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
           {/* Slider content area */}
           <div
             ref={sliderRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-4 snap-x snap-proximity touch-pan-x"
+            className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-4 snap-x snap-proximity touch-pan-y touch-pan-x"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
           >
             {experts.map((firm, index) => {

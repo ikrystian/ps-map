@@ -149,24 +149,35 @@ export async function GET(
       ? lawFirm.reviews.reduce((sum: number, review: any) => sum + review.ocenaOgolna, 0) / lawFirm.reviews.length
       : 0
 
-    // Oblicz limit słów kluczowych (tagów)
+    // Oblicz limit słów kluczowych (tagów) z pakietu subskrypcji przypisanego do użytkownika (liczbaTakow)
     let maxKeywords = 5
-    const tagSetting = await prisma.settings.findUnique({
-      where: { key: "maxLawFirmTags" }
-    })
-    if (tagSetting) {
-      maxKeywords = parseInt(tagSetting.value) || 5
+    let assignedPlan = null
+    if (lawFirm.pakietSubskrypcji) {
+      assignedPlan = await prisma.subscriptionPlan.findUnique({
+        where: { typ: lawFirm.pakietSubskrypcji }
+      })
+    } else {
+      assignedPlan = await prisma.subscriptionPlan.findFirst({
+        where: { isPrimary: true }
+      }) || await prisma.subscriptionPlan.findUnique({
+        where: { typ: "PODSTAWOWY" }
+      })
+    }
+
+    if (assignedPlan && typeof assignedPlan.liczbaTakow === "number") {
+      maxKeywords = assignedPlan.liczbaTakow
+    } else {
+      const tagSetting = await prisma.settings.findUnique({
+        where: { key: "maxLawFirmTags" }
+      })
+      if (tagSetting) {
+        maxKeywords = parseInt(tagSetting.value) || 5
+      }
     }
 
     let skillLawFocusActive = false
-    if (lawFirm.pakietSubskrypcji && hasActivePackage(lawFirm as any)) {
-      const plan = await prisma.subscriptionPlan.findUnique({
-        where: { typ: lawFirm.pakietSubskrypcji }
-      })
-      if (plan) {
-        maxKeywords = plan.liczbaTakow
-        skillLawFocusActive = plan.skillLawFocus
-      }
+    if (assignedPlan && hasActivePackage(lawFirm as any)) {
+      skillLawFocusActive = assignedPlan.skillLawFocus
     }
 
     // Parse JSON fields
@@ -309,19 +320,27 @@ export async function PUT(
     if (body.slowaKluczowe !== undefined) {
       if (Array.isArray(body.slowaKluczowe)) {
         let maxKeywords = 5
-        const tagSetting = await prisma.settings.findUnique({
-          where: { key: "maxLawFirmTags" }
-        })
-        if (tagSetting) {
-          maxKeywords = parseInt(tagSetting.value) || 5
-        }
-
-        if (existingLawFirm.pakietSubskrypcji && hasActivePackage(existingLawFirm as any)) {
-          const plan = await prisma.subscriptionPlan.findUnique({
+        let assignedPlan = null
+        if (existingLawFirm.pakietSubskrypcji) {
+          assignedPlan = await prisma.subscriptionPlan.findUnique({
             where: { typ: existingLawFirm.pakietSubskrypcji }
           })
-          if (plan) {
-            maxKeywords = plan.liczbaTakow
+        } else {
+          assignedPlan = await prisma.subscriptionPlan.findFirst({
+            where: { isPrimary: true }
+          }) || await prisma.subscriptionPlan.findUnique({
+            where: { typ: "PODSTAWOWY" }
+          })
+        }
+
+        if (assignedPlan && typeof assignedPlan.liczbaTakow === "number") {
+          maxKeywords = assignedPlan.liczbaTakow
+        } else {
+          const tagSetting = await prisma.settings.findUnique({
+            where: { key: "maxLawFirmTags" }
+          })
+          if (tagSetting) {
+            maxKeywords = parseInt(tagSetting.value) || 5
           }
         }
 
