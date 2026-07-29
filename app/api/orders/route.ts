@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { buildPointsPricingConfig, resolvePointsOrder } from "@/lib/points-pricing"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -137,25 +138,48 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const {
-      pakietPunktow,
-      liczbaPunktow,
-      kwota,
+      pakietPunktow: requestedPakiet,
+      liczbaPunktow: requestedPunkty,
       metodaPlatnosci,
       daneFaktury,
     } = body
 
     // Walidacja wymaganych pól
-    if (!pakietPunktow || !liczbaPunktow || !kwota || !metodaPlatnosci) {
+    if (!requestedPakiet || !metodaPlatnosci) {
       return Response.json(
         { error: "Brak wymaganych pól" },
         { status: 400 }
       )
     }
 
-    // Walidacja wartości
-    if (liczbaPunktow <= 0 || kwota <= 0) {
+    // Cena i liczba punktów liczone po stronie serwera z cennika w ustawieniach —
+    // dane z klienta służą wyłącznie do wskazania pakietu / własnej liczby punktów.
+    const pricingSettings = await prisma.settings.findMany({
+      where: {
+        key: { in: ["pointsPriceTiers", "pointsPackages", "minCustomPoints", "pointsToPlnRatio"] },
+      },
+    })
+    const pricingConfig = buildPointsPricingConfig(
+      pricingSettings.reduce((acc: Record<string, string>, setting) => {
+        acc[setting.key] = setting.value
+        return acc
+      }, {})
+    )
+
+    const resolved = resolvePointsOrder(
+      { pakietPunktow: requestedPakiet, liczbaPunktow: requestedPunkty },
+      pricingConfig
+    )
+
+    if ("error" in resolved) {
+      return Response.json({ error: resolved.error }, { status: 400 })
+    }
+
+    const { pakietPunktow, liczbaPunktow, kwota } = resolved.order
+
+    if (kwota <= 0) {
       return Response.json(
-        { error: "Liczba punktów i kwota muszą być większe od 0" },
+        { error: "Kwota zamówienia musi być większa od 0" },
         { status: 400 }
       )
     }
