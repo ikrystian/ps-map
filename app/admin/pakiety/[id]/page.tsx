@@ -494,7 +494,7 @@ export default function EditSubscriptionPlanPage() {
                     checked={formData.zalaczniki}
                     onCheckedChange={(checked) => handleChange("zalaczniki", checked)}
                   />
-                  <Label htmlFor="zalaczniki">Załączniki</Label>
+                  <Label htmlFor="zalaczniki">Załączniki w wiadomościach</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Checkbox

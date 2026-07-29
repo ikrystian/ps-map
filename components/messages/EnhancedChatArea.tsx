@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 
+import { usePermissions } from "@/hooks/usePermissions"
 import { getSocket } from "@/lib/socket-client"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -76,6 +77,9 @@ export function EnhancedChatArea({
 }: ChatAreaProps) {
   const { data: session } = useSession()
   const isClient = session?.user?.role === "CLIENT"
+  const { permissions: lawFirmPermissions, loading: permissionsLoading } = usePermissions()
+  // Załączniki w wiadomościach dla eksperta zależą od pakietu subskrypcji — klienci nie są ograniczani.
+  const canUseAttachments = isClient || permissionsLoading || (lawFirmPermissions?.extras.allowAttachments ?? false)
   const [conversation, setConversation] = useState<ConversationDetails | null>(null)
   const [messages, setMessages] = useState<EnhancedChatMessage[]>([])
   const [messageText, setMessageText] = useState("")
@@ -388,6 +392,12 @@ export function EnhancedChatArea({
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    if (!canUseAttachments) {
+      toast.error("Załączniki w wiadomościach są dostępne w wyższym pakiecie")
+      e.target.value = ""
+      return
+    }
 
     // Validate PDF
     if (file.type !== "application/pdf") {
@@ -914,10 +924,19 @@ export function EnhancedChatArea({
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (!canUseAttachments) {
+                toast.error("Załączniki w wiadomościach są dostępne w wyższym pakiecie")
+                return
+              }
+              fileInputRef.current?.click()
+            }}
             disabled={isUploading}
-            className="flex-shrink-0 h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850"
-            title="Dodaj plik PDF"
+            className={cn(
+              "flex-shrink-0 h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850",
+              !canUseAttachments && "opacity-50"
+            )}
+            title={canUseAttachments ? "Dodaj plik PDF" : "Załączniki dostępne w wyższym pakiecie"}
           >
             {isUploading ? (
               <Loader2 className={cn("h-4 w-4 animate-spin", isClient ? "text-secondary" : "text-primary")} />

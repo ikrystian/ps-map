@@ -319,14 +319,14 @@ export default function SubscriptionsAndPaymentsPage() {
         <motion.div variants={itemVariants}>
           <Card variant="glass" className="hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-full">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xs font-semibold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
+              <CardTitle className="text-xs font-light font-fpla tracking-wider text-zinc-400 uppercase flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary" /> Twój pakiet
               </CardTitle>
               <div className="mt-3 flex items-center gap-2.5">
                 <div className={cn("h-8 w-8 rounded-lg border flex items-center justify-center shrink-0 shadow-inner", planDetails.color)}>
                   <PlanIcon className="h-4.5 w-4.5" />
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-white">{planDetails.name}</span>
+                <span className="text-2xl font-light font-playfair tracking-tight text-white">{planDetails.name}</span>
               </div>
               <CardDescription className="text-xs mt-1">
                 {subscriptionActive ? (
@@ -363,7 +363,7 @@ export default function SubscriptionsAndPaymentsPage() {
                 <Coins className="h-4 w-4 text-secondary" /> Saldo punktów
               </CardTitle>
               <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-3xl font-black tracking-tight text-secondary font-mono">
+                <span className="text-3xl font-light font-playfair tracking-tight text-secondary font-mono">
                   {lawFirm?.punktySaldo || 0}
                 </span>
                 <span className="text-xs font-semibold text-zinc-400 uppercase">pkt</span>
@@ -393,7 +393,7 @@ export default function SubscriptionsAndPaymentsPage() {
                 <FileText className="h-4 w-4 text-primary" /> Faktury i rozliczenia
               </CardTitle>
               <div className="mt-3 flex items-center">
-                <span className="text-2xl font-bold tracking-tight text-white">Faktury VAT</span>
+                <span className="text-2xl font-light font-playfair tracking-tight text-white">Faktury VAT</span>
               </div>
               <CardDescription className="text-xs mt-1.5 text-zinc-500 font-light leading-relaxed">
                 Pobieraj faktury za zakupione subskrypcje oraz pakiety punktów do celów księgowych.
