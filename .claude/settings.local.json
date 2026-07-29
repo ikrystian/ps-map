@@ -111,7 +111,20 @@
       "Bash(echo \"---exit:$?\")",
       "Read(//home/krystian/.cache/**)",
       "Bash(npm init *)",
-      "Bash(npm i *)"
+      "Bash(npm i *)",
+      "Bash(iconv -f UTF-16 -t UTF-8 \"prosta sprawa_color_svg.svg\")",
+      "Bash(mkdir -p /tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad)",
+      "Bash(iconv -f UTF-16 -t UTF-8 \"public/prosta sprawa_color_svg.svg\")",
+      "Bash(iconv -f UTF-16 -t UTF-8 \"public/logo.svg\")",
+      "Bash(rsvg-convert -w 900 \"/tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-color.svg\" -o \"/tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-color.png\")",
+      "Bash(rsvg-convert -w 900 \"/tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-white.svg\" -o \"/tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-white.png\")",
+      "Bash(rsvg-convert -w 900 __TRACKED_VAR__/logo-color.svg -o __TRACKED_VAR__/logo-color.png)",
+      "Bash(rsvg-convert -w 900 __TRACKED_VAR__/logo-white.svg -o __TRACKED_VAR__/logo-white.png)",
+      "Bash(identify __TRACKED_VAR__/logo-color.png __TRACKED_VAR__/logo-white.png)",
+      "Bash(rsvg-convert -w 900 -b none /tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-white.svg -o /tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-white.png)",
+      "Bash(identify /tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-white.png)",
+      "Bash(rsvg-convert -w 1800 -b none /tmp/claude-1000/-home-krystian-Projects-ps-map/4aa6fbaa-a4b4-4771-ac7d-cf6877136df5/scratchpad/logo-color.svg -o /home/krystian/Projects/ps-map/assets/invoice/logo-color.png)",
+      "Bash(identify \"/home/krystian/Projects/ps-map/assets/invoice/logo-color.png\")"
     ]
   }
 }

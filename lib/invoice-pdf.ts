@@ -18,6 +18,15 @@ const INVOICES_DIR = join(process.cwd(), ".invoices")
 
 const FONT_REGULAR_PATH = join(process.cwd(), "assets", "fonts", "DejaVuSans.ttf")
 const FONT_BOLD_PATH = join(process.cwd(), "assets", "fonts", "DejaVuSans-Bold.ttf")
+const LOGO_PATH = join(process.cwd(), "assets", "invoice", "logo-color.png")
+
+/** Kolory marki Prosta Sprawa (spójne z --primary/--secondary w app/globals.css). */
+const BRAND = {
+  dark: rgb(0x14 / 255, 0x14 / 255, 0x14 / 255),
+  teal: rgb(0x0d / 255, 0xa1 / 255, 0x92 / 255),
+  gold: rgb(0xd7 / 255, 0xb5 / 255, 0x6d / 255),
+  greenDark: rgb(0x0c / 255, 0x45 / 255, 0x39 / 255),
+}
 
 /** Dane sprzedawcy prezentowane na fakturze (zgodne z XML FA(3) w lib/ksef.ts). */
 const SELLER = {
@@ -139,9 +148,10 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     scale: 6,
   })
 
-  const [fontRegularBytes, fontBoldBytes] = await Promise.all([
+  const [fontRegularBytes, fontBoldBytes, logoBytes] = await Promise.all([
     readFile(FONT_REGULAR_PATH),
     readFile(FONT_BOLD_PATH),
+    readFile(LOGO_PATH),
   ])
 
   const pdfDoc = await PDFDocument.create()
@@ -149,6 +159,7 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
   const font = await pdfDoc.embedFont(fontRegularBytes, { subset: true })
   const fontBold = await pdfDoc.embedFont(fontBoldBytes, { subset: true })
   const qrImage = await pdfDoc.embedPng(qrPng)
+  const logoImage = await pdfDoc.embedPng(logoBytes)
 
   pdfDoc.setTitle(`Faktura ${invoice.invoiceNumber}`)
   pdfDoc.setAuthor(SELLER.name)
@@ -162,7 +173,6 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
 
   const black = rgb(0, 0, 0)
   const gray = rgb(0.4, 0.4, 0.4)
-  const lightGray = rgb(0.94, 0.94, 0.94)
 
   let y = 841.89 - margin
 
@@ -189,43 +199,68 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     drawText(text, rightEdge - textWidth, yPos, size, usedFont, color)
   }
 
-  // === Nagłówek ===
-  drawText("FAKTURA VAT", margin, y - 18, 20, fontBold)
-  drawText(invoice.invoiceNumber, margin, y - 36, 13, font, gray)
+  // === Nagłówek: ciemny pas z logo, zgodny z brandem Prosta Sprawa ===
+  const heroHeight = 132
+  const bandTop = 841.89
+  const bandBottom = bandTop - heroHeight
 
-  drawRightText(SELLER.name, width - margin, y - 12, 11, fontBold)
-  drawRightText(SELLER.address, width - margin, y - 26, 9)
-  drawRightText(SELLER.postalCity, width - margin, y - 38, 9)
-  drawRightText(`NIP: ${config.nip}`, width - margin, y - 50, 9)
+  page.drawRectangle({
+    x: 0,
+    y: bandBottom,
+    width,
+    height: heroHeight,
+    color: BRAND.dark,
+  })
+  // Złota linia oddzielająca nagłówek od treści (akcent marki)
+  page.drawRectangle({
+    x: 0,
+    y: bandBottom - 3,
+    width,
+    height: 3,
+    color: BRAND.gold,
+  })
 
-  y -= 62
+  const logoDims = logoImage.scale(118 / logoImage.width)
+  page.drawImage(logoImage, {
+    x: margin,
+    y: bandTop - 22 - logoDims.height,
+    width: logoDims.width,
+    height: logoDims.height,
+  })
 
-  // Wyróżniony blok KSeF — numer nadany przez Ministerstwo Finansów
+  const white = rgb(1, 1, 1)
+  const lightSlate = rgb(0.85, 0.84, 0.8)
+  drawText("Faktura VAT", margin, bandTop - 60, 18, fontBold, white)
+  drawText(invoice.invoiceNumber, margin, bandTop - 78, 11, font, BRAND.gold)
+
+  // Odznaka KSeF — numer nadany przez Ministerstwo Finansów
+  const badgeY = bandTop - 116
+  const badgeText = `Numer KSeF: ${invoice.ksefNumber}`
+  const badgeTextWidth = fontBold.widthOfTextAtSize(badgeText, 8)
+  const badgeWidth = Math.min(badgeTextWidth + 16, contentWidth)
   page.drawRectangle({
     x: margin,
-    y: y - 30,
-    width: contentWidth,
-    height: 28,
-    color: lightGray,
+    y: badgeY,
+    width: badgeWidth,
+    height: 20,
+    color: BRAND.gold,
   })
-  drawText("Faktura ustrukturyzowana (KSeF)", margin + 8, y - 13, 8, fontBold)
-  drawText(`Numer KSeF: ${invoice.ksefNumber}`, margin + 8, y - 25, 9)
+  drawText("Faktura ustrukturyzowana (KSeF)", margin, badgeY + 24, 7, fontBold, BRAND.gold)
+  drawText(badgeText, margin + 8, badgeY + 7, 8, fontBold, BRAND.dark)
 
-  y -= 46
+  drawRightText(SELLER.name, width - margin, bandTop - 34, 11, fontBold, white)
+  drawRightText(SELLER.address, width - margin, bandTop - 48, 9, font, lightSlate)
+  drawRightText(SELLER.postalCity, width - margin, bandTop - 60, 9, font, lightSlate)
+  drawRightText(`NIP: ${config.nip}`, width - margin, bandTop - 72, 9, font, lightSlate)
 
-  page.drawLine({
-    start: { x: margin, y },
-    end: { x: width - margin, y },
-    thickness: 1.5,
-    color: black,
-  })
-
-  y -= 22
+  y = bandBottom - 26
 
   // === Strony ===
   const colBuyerX = margin + contentWidth / 2
-  drawText("SPRZEDAWCA", margin, y, 9, fontBold)
-  drawText("NABYWCA", colBuyerX, y, 9, fontBold)
+  page.drawCircle({ x: margin + 2, y: y + 3, size: 2, color: BRAND.gold })
+  page.drawCircle({ x: colBuyerX + 2, y: y + 3, size: 2, color: BRAND.gold })
+  drawText("SPRZEDAWCA", margin + 10, y, 9, fontBold, BRAND.teal)
+  drawText("NABYWCA", colBuyerX + 10, y, 9, fontBold, BRAND.teal)
   y -= 15
 
   const sellerLines = [
@@ -302,30 +337,29 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     y: y - headerHeight,
     width: contentWidth,
     height: headerHeight,
-    color: lightGray,
-    borderColor: black,
-    borderWidth: 0.7,
+    color: BRAND.dark,
   })
   let cellX = margin
   for (const col of columns) {
     const colWidth = col.width * contentWidth
     const textY = y - headerHeight + 7
     if (col.align === "right") {
-      drawRightText(col.header, cellX + colWidth - cellPadding, textY, 7.5, fontBold)
+      drawRightText(col.header, cellX + colWidth - cellPadding, textY, 7.5, fontBold, rgb(1, 1, 1))
     } else {
-      drawText(col.header, cellX + cellPadding, textY, 7.5, fontBold)
+      drawText(col.header, cellX + cellPadding, textY, 7.5, fontBold, rgb(1, 1, 1))
     }
     cellX += colWidth
   }
 
   // Wiersz pozycji
+  const softBorder = rgb(0.914, 0.902, 0.863)
   const rowTop = y - headerHeight
   page.drawRectangle({
     x: margin,
     y: rowTop - rowHeight,
     width: contentWidth,
     height: rowHeight,
-    borderColor: black,
+    borderColor: softBorder,
     borderWidth: 0.7,
   })
   cellX = margin
@@ -346,7 +380,7 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
         start: { x: cellX, y: y },
         end: { x: cellX, y: rowTop - rowHeight },
         thickness: 0.7,
-        color: black,
+        color: softBorder,
       })
     }
     cellX += colWidth
@@ -366,12 +400,12 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
   page.drawLine({
     start: { x: summaryLabelX, y },
     end: { x: summaryRight, y },
-    thickness: 1,
-    color: black,
+    thickness: 1.5,
+    color: BRAND.gold,
   })
   y -= 14
-  drawText("RAZEM BRUTTO:", summaryLabelX, y, 11, fontBold)
-  drawRightText(formatPln(invoice.grossAmount), summaryRight, y, 11, fontBold)
+  drawText("RAZEM BRUTTO:", summaryLabelX, y, 11, fontBold, BRAND.greenDark)
+  drawRightText(formatPln(invoice.grossAmount), summaryRight, y, 11, fontBold, BRAND.greenDark)
 
   y -= 34
 
@@ -406,12 +440,12 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     y: qrTop - qrSize,
     width: payBoxWidth,
     height: qrSize,
-    color: rgb(0.97, 0.97, 0.97),
-    borderColor: rgb(0.85, 0.85, 0.85),
+    color: rgb(0.94, 0.98, 0.97),
+    borderColor: rgb(0.75, 0.89, 0.87),
     borderWidth: 0.7,
   })
   let payY = qrTop - 16
-  drawText("Informacje o płatności:", margin + 10, payY, 9, fontBold)
+  drawText("Informacje o płatności:", margin + 10, payY, 9, fontBold, BRAND.greenDark)
   payY -= 15
   drawText("Sposób płatności: Przelew bankowy", margin + 10, payY, 8)
   payY -= 12
@@ -428,7 +462,16 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     )
   }
 
-  y = qrTop - qrSize - 30
+  y = qrTop - qrSize - 22
+
+  page.drawLine({
+    start: { x: margin, y },
+    end: { x: width - margin, y },
+    thickness: 0.7,
+    color: BRAND.gold,
+  })
+
+  y -= 16
 
   // === Stopka ===
   drawText(
