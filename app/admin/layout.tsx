@@ -125,7 +125,6 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Klienci", href: "/admin/users", icon: Users },
       { name: "Eksperci", href: "/admin/law-firms", icon: Building2 },
-      { name: "Import ekspertów", href: "/admin/import-ekspertow", icon: Upload, isSubmenu: true },
       { name: "Opiekunowie", href: "/admin/opiekunowie", icon: UserCog },
       { name: "Sprawy", href: "/admin/cases", icon: Briefcase },
     ],
