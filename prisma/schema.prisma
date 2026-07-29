@@ -1323,6 +1323,7 @@ enum PromotionType {
   STRONA_GLOWNA           // 200 pkt/tydzień
   POLECANI_PRAWNICY       // 500 pkt/miesiąc
   NAJCZESCIEJ_KONSULTOWANE // 600 pkt/miesiąc
+  PROMOCJA_KATEGORII      // 70 pkt/tydzień — slider promowanych ekspertów w widoku kategorii
 }
 
 // ============================================================================

@@ -306,6 +306,13 @@ export async function POST(request: NextRequest) {
         }
       }
     } else {
+      if (typPromocji === "PROMOCJA_KATEGORII" && !kategoriaPromocji) {
+        return Response.json(
+          { error: "Kategoria jest wymagana dla tej promocji" },
+          { status: 400 }
+        )
+      }
+
       if (typPromocji === "PODBICIE_OGLOSZENIA") {
         kosztPunktow = (config.pointsPerDay || 20) * czasTrwaniaDni
       } else {
@@ -351,6 +358,9 @@ export async function POST(request: NextRequest) {
 
     // Odśwież cache promocji strony głównej, aby nowa promocja była od razu widoczna
     serverCache.delete("homepage:promotions")
+    if (typPromocji === "PROMOCJA_KATEGORII" && kategoriaPromocji) {
+      serverCache.delete(`category:${kategoriaPromocji}:promoted-experts`)
+    }
 
     // Get promotion label for notification
     const promotionLabels = {
@@ -360,6 +370,7 @@ export async function POST(request: NextRequest) {
       STRONA_GLOWNA: 'Strona Główna Premium',
       POLECANI_PRAWNICY: 'Polecani prawnicy i adwokaci',
       NAJCZESCIEJ_KONSULTOWANE: 'Najczęściej konsultowane kategorie',
+      PROMOCJA_KATEGORII: 'Promocja w kategorii',
     }
 
     const promotionLabel = promotionLabels[typPromocji as keyof typeof promotionLabels]

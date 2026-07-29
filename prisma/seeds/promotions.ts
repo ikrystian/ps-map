@@ -66,6 +66,21 @@ export async function seedPromotionConfigs(prisma: PrismaClient) {
       color: '#E91E63',
       kolejnosc: 6,
     },
+    {
+      type: PromotionType.PROMOCJA_KATEGORII,
+      label: 'Promocja w kategorii',
+      description: 'Wyróżnij swój profil w slajderze promowanych ekspertów wyświetlanym pod opisem wybranej kategorii.',
+      pointsPerWeek: 70,
+      features: JSON.stringify([
+        'Karta profilu w sliderze pod opisem wybranej kategorii',
+        'Wyższa widoczność wśród klientów przeglądających konkretną kategorię',
+        'Możliwość wyboru dowolnej kategorii z oferty eksperta',
+        'Odznaka "Promowany ekspert" na karcie w slajderze'
+      ]),
+      icon: 'Sparkles',
+      color: '#0da192',
+      kolejnosc: 7,
+    },
   ]
 
   await prisma.$transaction(

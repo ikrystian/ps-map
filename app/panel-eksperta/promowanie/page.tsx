@@ -223,6 +223,9 @@ export default function LawFirmPromotionPage() {
       if (!selectedCategory || selectedCategory === "all") return true
       if (availability && availability.availableSlots === 0) return true
     }
+    if (selectedType === "PROMOCJA_KATEGORII" && (!selectedCategory || selectedCategory === "all")) {
+      return true
+    }
     if (lawFirm && lawFirm.punktySaldo < calculateCost()) return true
     return false
   }
@@ -235,6 +238,11 @@ export default function LawFirmPromotionPage() {
 
     const isMonthly = selectedType === "POLECANI_PRAWNICY" || selectedType === "NAJCZESCIEJ_KONSULTOWANE"
     if (isMonthly && (!selectedCategory || selectedCategory === "all")) {
+      setError("Kategoria jest wymagana dla tego typu promocji")
+      return
+    }
+
+    if (selectedType === "PROMOCJA_KATEGORII" && (!selectedCategory || selectedCategory === "all")) {
       setError("Kategoria jest wymagana dla tego typu promocji")
       return
     }
@@ -330,6 +338,9 @@ export default function LawFirmPromotionPage() {
     } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
       const hasMainInConsulted = consultedCategories.some(c => c.id === lawFirm?.mainCategoryId)
       setSelectedCategory(hasMainInConsulted && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : (consultedCategories[0]?.id || "all"))
+    } else if (type === "PROMOCJA_KATEGORII") {
+      const hasMainInCategories = categories.some(c => c.id === lawFirm?.mainCategoryId)
+      setSelectedCategory(hasMainInCategories && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : (categories[0]?.id || "all"))
     } else {
       const hasMainInCategories = categories.some(c => c.id === lawFirm?.mainCategoryId)
       setSelectedCategory(hasMainInCategories && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : "all")

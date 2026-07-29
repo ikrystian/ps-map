@@ -264,10 +264,46 @@ export function NewPromotionDialog({
             </div>
           )}
 
+          {/* Kategoria dla promocji w widoku kategorii (wymagana) */}
+          {selectedType === "PROMOCJA_KATEGORII" && (
+            <div className="space-y-2">
+              <Label
+                htmlFor="category-listing"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+              >
+                Wybierz kategorię *
+              </Label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger
+                  id="category-listing"
+                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                >
+                  <SelectValue placeholder="Wybierz kategorię z listy" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                  {categories.map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id}
+                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                    >
+                      {category.nazwa}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                <Info className="h-3.5 w-3.5 flex-shrink-0" />
+                Twój profil pojawi się w slajderze promowanych ekspertów pod opisem tej kategorii.
+              </p>
+            </div>
+          )}
+
           {/* Kategoria (opcjonalna dla standardowych promocji) */}
           {selectedType &&
             selectedType !== "POLECANI_PRAWNICY" &&
-            selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+            selectedType !== "NAJCZESCIEJ_KONSULTOWANE" &&
+            selectedType !== "PROMOCJA_KATEGORII" && (
               <div className="space-y-2">
                 <Label
                   htmlFor="category"
@@ -306,7 +342,8 @@ export function NewPromotionDialog({
           {/* Województwo (opcjonalne) */}
           {selectedType &&
             selectedType !== "POLECANI_PRAWNICY" &&
-            selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
+            selectedType !== "NAJCZESCIEJ_KONSULTOWANE" &&
+            selectedType !== "PROMOCJA_KATEGORII" && (
               <div className="space-y-2">
                 <Label
                   htmlFor="voivodeship"

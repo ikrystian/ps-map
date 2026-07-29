@@ -4,6 +4,7 @@
  * Funkcje pomocnicze do zarządzania i sprawdzania aktywnych promocji eksperta
  */
 
+import { serverCache } from "@/lib/cache"
 import {
   generatePromotionRenewalFailedEmail,
   generatePromotionRenewedEmail,
@@ -16,7 +17,7 @@ import { prisma } from "@/lib/prisma"
 // TYPY
 // ============================================================================
 
-export type PromotionTypeUnion = "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | "POLECANI_PRAWNICY" | "NAJCZESCIEJ_KONSULTOWANE"
+export type PromotionTypeUnion = "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | "POLECANI_PRAWNICY" | "NAJCZESCIEJ_KONSULTOWANE" | "PROMOCJA_KATEGORII"
 
 export interface ActivePromotion {
   id: string
@@ -192,6 +193,7 @@ export async function calculatePromotionBoost(
     STRONA_GLOWNA: 5,
     POLECANI_PRAWNICY: 1, // Brak wpływu na pozycjonowanie w standardowej wyszukiwarce
     NAJCZESCIEJ_KONSULTOWANE: 1,
+    PROMOCJA_KATEGORII: 1, // Widoczność zapewnia dedykowany slider na stronie kategorii, nie ranking
   }
 
   // Znajdź najwyższy mnożnik
@@ -289,6 +291,54 @@ export async function getTopLawFirms(limit: number = 10) {
   })
 
   return promotions.map((p: any) => flattenLawFirmUser(p.lawFirm))
+}
+
+/**
+ * Pobiera ekspertów z aktywną promocją PROMOCJA_KATEGORII dla danej kategorii
+ * (do wyświetlenia w slajderze pod opisem kategorii na `/kategorie/[slug]`)
+ */
+export async function getCategoryPromotedLawFirms(categoryId: string, limit: number = 12) {
+  const now = new Date()
+
+  const promotions = await prisma.promotion.findMany({
+    where: {
+      typPromocji: "PROMOCJA_KATEGORII",
+      kategoriaPromocji: categoryId,
+      aktywna: true,
+      startPromocji: {
+        lte: now,
+      },
+      koniecPromocji: {
+        gte: now,
+      },
+    },
+    include: {
+      lawFirm: {
+        include: {
+          user: { select: USER_CONTACT_SELECT },
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      startPromocji: "desc",
+    },
+    take: limit,
+  })
+
+  const seen = new Set<string>()
+  const uniqueFirms: any[] = []
+  for (const p of promotions) {
+    if (seen.has(p.lawFirm.id)) continue
+    seen.add(p.lawFirm.id)
+    uniqueFirms.push(flattenLawFirmUser(p.lawFirm))
+  }
+
+  return uniqueFirms
 }
 
 /**
@@ -498,6 +548,10 @@ export async function renewExpiredPromotions() {
       ])
 
       results.renewed.push(promotion.id)
+
+      if (promotion.typPromocji === "PROMOCJA_KATEGORII" && promotion.kategoriaPromocji) {
+        serverCache.delete(`category:${promotion.kategoriaPromocji}:promoted-experts`)
+      }
 
       // Get promotion label
       const promotionLabels = {

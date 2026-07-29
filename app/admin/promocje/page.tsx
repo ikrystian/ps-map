@@ -57,6 +57,7 @@ const PROMOTION_TYPES = [
   { value: "STRONA_GLOWNA", label: "Strona główna" },
   { value: "POLECANI_PRAWNICY", label: "Polecani prawnicy i adwokaci" },
   { value: "NAJCZESCIEJ_KONSULTOWANE", label: "Najczęściej konsultowane kategorie" },
+  { value: "PROMOCJA_KATEGORII", label: "Promocja w kategorii" },
 ]
 
 export default function AdminPromotionsPage() {
