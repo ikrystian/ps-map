@@ -127,7 +127,9 @@
       "Bash(identify \"/home/krystian/Projects/ps-map/assets/invoice/logo-color.png\")",
       "Bash(bun run *)",
       "Bash(ps -o pid,%cpu,%mem,rss,etime -p 13834)",
-      "Bash(kill 13834)"
+      "Bash(kill 13834)",
+      "Bash(kill 219263)",
+      "Bash(disown)"
     ]
   }
 }

@@ -65,6 +65,8 @@ export default function ClientRegistrationPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showPhoneVerification, setShowPhoneVerification] = useState(false)
+  const [isCheckingPhone, setIsCheckingPhone] = useState(false)
+  const [phoneExists, setPhoneExists] = useState(false)
 
   // Inicjalizacja danych z localStorage
   useEffect(() => {
@@ -249,12 +251,46 @@ export default function ClientRegistrationPage() {
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (error) setError("")
+    if (field === "telefon") setPhoneExists(false)
     if (errors[field]) {
       setErrors(prev => {
         const next = { ...prev }
         delete next[field]
         return next
       })
+    }
+  }
+
+  // Sprawdza, czy podany numer telefonu jest już przypisany do istniejącego
+  // konta — wywoływane po opuszczeniu pola, zanim dojdzie do weryfikacji SMS.
+  const checkPhoneAvailability = async (rawPhone: string) => {
+    if (!rawPhone || rawPhone.trim().length < 9) {
+      setPhoneExists(false)
+      return
+    }
+
+    setIsCheckingPhone(true)
+    try {
+      const response = await fetch("/api/auth/check-phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: rawPhone }),
+      })
+      const data = await response.json()
+
+      if (response.ok && data.exists) {
+        setPhoneExists(true)
+        setErrors(prev => ({
+          ...prev,
+          telefon: "Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.",
+        }))
+      } else {
+        setPhoneExists(false)
+      }
+    } catch (err) {
+      console.error("Error checking phone availability:", err)
+    } finally {
+      setIsCheckingPhone(false)
     }
   }
 
@@ -363,6 +399,11 @@ export default function ClientRegistrationPage() {
     // Walidacja
     if (!validateForm()) {
       setError("Formularz zawiera błędy. Popraw zaznaczone pola.")
+      return
+    }
+
+    if (phoneExists) {
+      setError("Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.")
       return
     }
 
@@ -546,9 +587,13 @@ export default function ClientRegistrationPage() {
                   type="tel"
                   value={formData.telefon}
                   onChange={(e) => handleChange("telefon", e.target.value)}
+                  onBlur={(e) => checkPhoneAvailability(e.target.value)}
                   disabled={isLoading}
                   className={cn("h-11", errors.telefon && "border-destructive focus-visible:ring-destructive")}
                 />
+                {isCheckingPhone && (
+                  <p className="text-xs text-muted-foreground mt-1">Sprawdzanie numeru...</p>
+                )}
                 {errors.telefon && (
                   <p className="text-xs text-destructive mt-1">{errors.telefon}</p>
                 )}
@@ -873,7 +918,7 @@ export default function ClientRegistrationPage() {
               </label>
             </div>
 
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
+            <Button type="submit" className="w-full h-11" disabled={isLoading || isCheckingPhone}>
               {isLoading ? "Rejestrowanie..." : session ? "Dokończ rejestrację" : "Zarejestruj się"}
             </Button>
           </form>
