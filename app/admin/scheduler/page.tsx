@@ -39,9 +39,10 @@ type JobRunStatus = "RUNNING" | "SUCCESS" | "FAILED"
 
 interface BackupInfo {
   name: string
-  location: "local" | "gdrive" | "both"
+  location: "local" | "gcs" | "gdrive" | "both"
   sizeBytes?: number
   createdTime?: string
+  gcsFileName?: string
   driveFileId?: string
 }
 
@@ -149,6 +150,7 @@ export default function AdminSchedulerPage() {
         body: JSON.stringify({
           action: "restore",
           fileName: backup.name,
+          gcsFileName: backup.gcsFileName,
           driveFileId: backup.driveFileId,
         }),
       })
@@ -344,7 +346,7 @@ export default function AdminSchedulerPage() {
           <CardTitle className="flex items-center justify-between text-base">
             <span className="flex items-center gap-2">
               <Database className="h-5 w-5 text-primary" />
-              Kopie zapasowe bazy danych (Google Drive / Lokalne)
+              Kopie zapasowe bazy danych (Google Cloud Storage / Lokalne)
             </span>
             <Button
               variant="outline"
@@ -382,7 +384,8 @@ export default function AdminSchedulerPage() {
                 <TableBody>
                   {backups.map((backup) => {
                     const isLocal = backup.location === "local" || backup.location === "both"
-                    const isGDrive = backup.location === "gdrive" || backup.location === "both"
+                    const isGCS = backup.location === "gcs" || backup.location === "both"
+                    const isGDrive = backup.location === "gdrive"
                     
                     return (
                       <TableRow key={backup.name}>
@@ -395,6 +398,12 @@ export default function AdminSchedulerPage() {
                               <Badge variant="outline" className="flex items-center gap-1">
                                 <HardDrive className="h-3 w-3" />
                                 Lokalnie
+                              </Badge>
+                            )}
+                            {isGCS && (
+                              <Badge variant="secondary" className="flex items-center gap-1 bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20">
+                                <Cloud className="h-3 w-3" />
+                                Google Cloud Storage
                               </Badge>
                             )}
                             {isGDrive && (

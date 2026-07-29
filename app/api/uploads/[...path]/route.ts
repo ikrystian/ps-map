@@ -1,4 +1,6 @@
+import { auth } from "@/lib/auth"
 import { isInlineSafeMime } from "@/lib/file-validation"
+import { prisma } from "@/lib/prisma"
 import { existsSync } from "fs"
 import { readFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
@@ -9,21 +11,21 @@ export async function GET(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const { path } = await params
+    const { path: pathSegments } = await params
 
-    if (!path || path.length === 0) {
+    if (!pathSegments || pathSegments.length === 0) {
       return NextResponse.json({ error: "No file specified" }, { status: 400 })
     }
 
     // Reconstruct the file path
-    const filePath = path.join("/")
+    const filePath = pathSegments.join("/")
 
     // Security: prevent directory traversal
     if (filePath.includes("..") || filePath.startsWith("/")) {
       return NextResponse.json({ error: "Invalid file path" }, { status: 400 })
     }
 
-    // Build the full file path
+    // Build the full file path inside .uploads
     const fullPath = join(process.cwd(), ".uploads", filePath)
 
     // Security: ensure the file is within .uploads directory
@@ -35,6 +37,124 @@ export async function GET(
     // Check if file exists
     if (!existsSync(fullPath)) {
       return NextResponse.json({ error: "File not found" }, { status: 404 })
+    }
+
+    // Weryfikacja uprawnień (Autorotyzacja):
+    // Obrazy publiczne (images, avatars, logos) są dostępne dla każdego.
+    // Pliki prywatne (documents, chat, certificates itp.) wymagają autoryzacji (właściciel lub ADMIN).
+    const category = pathSegments[0]
+    const isPublicCategory = category === "images" || category === "avatars" || category === "logos"
+
+    if (!isPublicCategory) {
+      const session = await auth()
+      if (!session?.user) {
+        return NextResponse.json({ error: "Wymagane zalogowanie" }, { status: 401 })
+      }
+
+      const userId = session.user.id
+      const userRole = session.user.role
+
+      // Administrator posiada pełny dostęp do wszystkich plików
+      if (userRole !== "ADMIN") {
+        let isAuthorized = false
+        const filename = pathSegments[pathSegments.length - 1]
+
+        if (category === "chat") {
+          // Sprawdź czy użytkownik jest nadawcą wiadomości lub uczestnikiem konwersacji
+          const chatMsg = await prisma.chatMessage.findFirst({
+            where: {
+              fileUrl: { contains: filename },
+            },
+            include: {
+              conversation: {
+                include: {
+                  client: true,
+                  lawFirm: {
+                    include: {
+                      users: true,
+                    },
+                  },
+                },
+              },
+            },
+          })
+
+          if (chatMsg) {
+            const isSender = chatMsg.senderId === userId
+            const conv = chatMsg.conversation
+            const isClient = conv?.client?.userId === userId
+            const isLawFirmUser =
+              conv?.lawFirm?.userId === userId ||
+              conv?.lawFirm?.users?.some((u) => u.id === userId)
+
+            if (isSender || isClient || isLawFirmUser) {
+              isAuthorized = true
+            }
+          } else {
+            // Jeśli plik w czacie został przesłany przez zalogowanego użytkownika
+            isAuthorized = true
+          }
+        } else if (category === "documents") {
+          // Sprawdź w modelu Document czy plik należy do użytkownika / jego kancelarii
+          const doc = await prisma.document.findFirst({
+            where: {
+              sciezka: { contains: filename },
+            },
+            include: {
+              lawFirm: {
+                include: {
+                  users: true,
+                },
+              },
+            },
+          })
+
+          if (doc) {
+            const isClientOwner = doc.clientUserId === userId
+            const isLawFirmOwner =
+              doc.lawFirm?.userId === userId ||
+              doc.lawFirm?.users?.some((u) => u.id === userId)
+
+            if (isClientOwner || isLawFirmOwner) {
+              isAuthorized = true
+            }
+          } else {
+            // Domyślnie zezwól dla zalogowanego posiadacza dokumentów
+            isAuthorized = true
+          }
+        } else if (category === "certificates") {
+          const cert = await prisma.certificate.findFirst({
+            where: {
+              skanCertyfikatu: { contains: filename },
+            },
+            include: {
+              lawFirm: {
+                include: {
+                  users: true,
+                },
+              },
+            },
+          })
+
+          if (cert) {
+            const isLawFirmOwner =
+              cert.lawFirm?.userId === userId ||
+              cert.lawFirm?.users?.some((u) => u.id === userId)
+            if (isLawFirmOwner) {
+              isAuthorized = true
+            }
+          } else {
+            isAuthorized = true
+          }
+        } else {
+          // Dostęp zalogowany
+          isAuthorized = true
+        }
+
+        if (!isAuthorized) {
+          return NextResponse.json({ error: "Brak uprawnień do tego pliku" }, { status: 403 })
+        }
+      }
     }
 
     // Read the file
@@ -64,18 +184,17 @@ export async function GET(
 
     // Bezpieczeństwo serwowania: nosniff + inline tylko dla bezpiecznych obrazów,
     // pozostałe typy wymuszają pobranie (ochrona przed stored XSS, np. HTML/SVG).
-    const fileName = path[path.length - 1] || "plik"
+    const fileName = pathSegments[pathSegments.length - 1] || "plik"
     const disposition = isInlineSafeMime(contentType)
       ? "inline"
       : `attachment; filename="${encodeURIComponent(fileName)}"`
 
-    // Return the file with appropriate headers
     return new NextResponse(fileBuffer as any, {
       headers: {
         "Content-Type": contentType,
         "Content-Disposition": disposition,
         "X-Content-Type-Options": "nosniff",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": isPublicCategory ? "public, max-age=31536000, immutable" : "private, no-cache",
       },
     })
   } catch (error) {
