@@ -8,11 +8,10 @@ const execPromise = promisify(exec)
 
 export interface BackupInfo {
   name: string
-  location: "local" | "gcs" | "gdrive" | "both"
+  location: "local" | "gcs" | "both"
   sizeBytes?: number
   createdTime?: string
   gcsFileName?: string
-  driveFileId?: string
 }
 
 /**
@@ -51,7 +50,7 @@ function getBucketName(): string {
 }
 
 /**
- * Creates a local SQLite database backup, an uploads directory archive, and an invoices directory archive,
+ * Creates a local SQLite database backup and an archive of all application files (files, .uploads, .invoices, public/uploads),
  * uploads them to Google Cloud Storage (GCS), and performs retention cleanup both locally and in GCS.
  */
 export async function backupDbToGoogleCloudStorage() {
@@ -106,58 +105,38 @@ export async function backupDbToGoogleCloudStorage() {
   const fileSize = fs.statSync(backupFilePath).size
   const fileSizeMb = (fileSize / (1024 * 1024)).toFixed(2)
 
-  // 5a. Create archive of uploads directory (.uploads and public/uploads if existing)
-  const uploadsArchiveName = `uploads_${timestamp}_gcs.tar.gz`
-  const uploadsArchivePath = path.join(backupDir, uploadsArchiveName)
-  let uploadsArchiveCreated = false
-  let uploadsSizeMb = "0"
+  // 5. Create comprehensive archive of all file directories (files, .uploads, .invoices, public/uploads)
+  const filesArchiveName = `files_${timestamp}_gcs.tar.gz`
+  const filesArchivePath = path.join(backupDir, filesArchiveName)
+  let filesArchiveCreated = false
+  let filesSizeMb = "0"
 
-  const uploadsDir = path.resolve(process.cwd(), ".uploads")
-  const publicUploadsDir = path.resolve(process.cwd(), "public/uploads")
+  const fileDirs = [
+    { name: "files", path: path.resolve(process.cwd(), "files") },
+    { name: ".uploads", path: path.resolve(process.cwd(), ".uploads") },
+    { name: ".invoices", path: path.resolve(process.cwd(), ".invoices") },
+    { name: "public/uploads", path: path.resolve(process.cwd(), "public/uploads") },
+  ]
 
-  if (fs.existsSync(uploadsDir) || fs.existsSync(publicUploadsDir)) {
-    console.log(`[BACKUP] Archiving uploads directory...`)
+  const existingTargets = fileDirs.filter((d) => fs.existsSync(d.path)).map((d) => d.name)
+
+  if (existingTargets.length > 0) {
+    console.log(`[BACKUP] Archiving application file directories (${existingTargets.join(", ")})...`)
     try {
-      const targets: string[] = []
-      if (fs.existsSync(uploadsDir)) targets.push(".uploads")
-      if (fs.existsSync(publicUploadsDir)) targets.push("public/uploads")
-
-      await execPromise(`tar -czf "${uploadsArchivePath}" -C "${process.cwd()}" ${targets.join(" ")}`)
-      if (fs.existsSync(uploadsArchivePath)) {
-        uploadsArchiveCreated = true
-        const size = fs.statSync(uploadsArchivePath).size
-        uploadsSizeMb = (size / (1024 * 1024)).toFixed(2)
-        console.log(`[BACKUP] Uploads archive created: ${uploadsArchiveName} (${uploadsSizeMb} MB)`)
+      await execPromise(`tar -czf "${filesArchivePath}" -C "${process.cwd()}" ${existingTargets.join(" ")}`)
+      if (fs.existsSync(filesArchivePath)) {
+        filesArchiveCreated = true
+        const size = fs.statSync(filesArchivePath).size
+        filesSizeMb = (size / (1024 * 1024)).toFixed(2)
+        console.log(`[BACKUP] Application files archive created: ${filesArchiveName} (${filesSizeMb} MB)`)
       }
     } catch (archError) {
-      console.warn("[BACKUP] Failed to create uploads archive tar.gz:", archError)
+      console.warn("[BACKUP] Failed to create application files archive tar.gz:", archError)
     }
   }
 
-  // 5b. Create archive of invoices directory (.invoices - PDF faktury z danych KSeF)
-  const invoicesArchiveName = `invoices_${timestamp}_gcs.tar.gz`
-  const invoicesArchivePath = path.join(backupDir, invoicesArchiveName)
-  let invoicesArchiveCreated = false
-  let invoicesSizeMb = "0"
-
-  const invoicesDir = path.resolve(process.cwd(), ".invoices")
-  if (fs.existsSync(invoicesDir)) {
-    console.log(`[BACKUP] Archiving KSeF invoices directory (.invoices)...`)
-    try {
-      await execPromise(`tar -czf "${invoicesArchivePath}" -C "${process.cwd()}" .invoices`)
-      if (fs.existsSync(invoicesArchivePath)) {
-        invoicesArchiveCreated = true
-        const size = fs.statSync(invoicesArchivePath).size
-        invoicesSizeMb = (size / (1024 * 1024)).toFixed(2)
-        console.log(`[BACKUP] Invoices archive created: ${invoicesArchiveName} (${invoicesSizeMb} MB)`)
-      }
-    } catch (invArchError) {
-      console.warn("[BACKUP] Failed to create invoices archive tar.gz:", invArchError)
-    }
-  }
-
-  // 6. Upload database backup, uploads archive, and invoices archive to Google Cloud Storage
-  console.log(`[BACKUP] Uploading files to Google Cloud Storage bucket: ${bucketName}...`)
+  // 6. Upload database backup & files archive to Google Cloud Storage
+  console.log(`[BACKUP] Uploading backups to Google Cloud Storage bucket: ${bucketName}...`)
   try {
     const bucket = storage.bucket(bucketName)
 
@@ -170,26 +149,15 @@ export async function backupDbToGoogleCloudStorage() {
     })
     console.log(`[BACKUP] Successfully uploaded DB backup to GCS: ${backupFileName}`)
 
-    // Upload Uploads archive
-    if (uploadsArchiveCreated && fs.existsSync(uploadsArchivePath)) {
-      await bucket.upload(uploadsArchivePath, {
-        destination: uploadsArchiveName,
+    // Upload Files archive
+    if (filesArchiveCreated && fs.existsSync(filesArchivePath)) {
+      await bucket.upload(filesArchivePath, {
+        destination: filesArchiveName,
         metadata: {
           contentType: "application/gzip",
         },
       })
-      console.log(`[BACKUP] Successfully uploaded Uploads archive to GCS: ${uploadsArchiveName}`)
-    }
-
-    // Upload Invoices archive
-    if (invoicesArchiveCreated && fs.existsSync(invoicesArchivePath)) {
-      await bucket.upload(invoicesArchivePath, {
-        destination: invoicesArchiveName,
-        metadata: {
-          contentType: "application/gzip",
-        },
-      })
-      console.log(`[BACKUP] Successfully uploaded KSeF Invoices archive to GCS: ${invoicesArchiveName}`)
+      console.log(`[BACKUP] Successfully uploaded application Files archive to GCS: ${filesArchiveName}`)
     }
   } catch (uploadError: any) {
     console.error("[BACKUP] Google Cloud Storage upload failed:", uploadError)
@@ -208,15 +176,16 @@ export async function backupDbToGoogleCloudStorage() {
 
   console.log(`[BACKUP] Performing retention cleanup (keeping backups from last ${keepDays} days)...`)
 
-  // 7a. Clean up old backups on Google Cloud Storage (db_, uploads_, invoices_)
+  // 7a. Clean up old backups on Google Cloud Storage (db_, files_, uploads_, invoices_)
   let deletedGcsCount = 0
   try {
     const bucket = storage.bucket(bucketName)
-    const [files] = await bucket.getFiles()
+    const [gcsFiles] = await bucket.getFiles()
 
-    for (const file of files) {
+    for (const file of gcsFiles) {
       if (
         file.name.startsWith("db_") ||
+        file.name.startsWith("files_") ||
         file.name.startsWith("uploads_") ||
         file.name.startsWith("invoices_")
       ) {
@@ -242,6 +211,7 @@ export async function backupDbToGoogleCloudStorage() {
     for (const file of localFiles) {
       if (
         (file.startsWith("db_") && file.endsWith(".db")) ||
+        (file.startsWith("files_") && file.endsWith(".tar.gz")) ||
         (file.startsWith("uploads_") && file.endsWith(".tar.gz")) ||
         (file.startsWith("invoices_") && file.endsWith(".tar.gz"))
       ) {
@@ -262,10 +232,9 @@ export async function backupDbToGoogleCloudStorage() {
     success: true,
     fileName: backupFileName,
     fileSizeMb,
-    uploadsArchiveName: uploadsArchiveCreated ? uploadsArchiveName : undefined,
-    uploadsSizeMb: uploadsArchiveCreated ? uploadsSizeMb : undefined,
-    invoicesArchiveName: invoicesArchiveCreated ? invoicesArchiveName : undefined,
-    invoicesSizeMb: invoicesArchiveCreated ? invoicesSizeMb : undefined,
+    filesArchiveName: filesArchiveCreated ? filesArchiveName : undefined,
+    filesSizeMb: filesArchiveCreated ? filesSizeMb : undefined,
+    archivedDirectories: existingTargets,
     bucketName,
     deletedGcsCount,
     deletedLocalCount,
@@ -356,7 +325,7 @@ export async function listBackups(): Promise<BackupInfo[]> {
  * If the file is only on Google Cloud Storage, it downloads it first.
  * Generates a safety pre-restore backup.
  */
-export async function restoreBackup(backupFileName: string, gcsFileName?: string, driveFileId?: string) {
+export async function restoreBackup(backupFileName: string, gcsFileName?: string) {
   let dbUrl = process.env.DATABASE_URL || "file:./prisma/dev.db"
   if (dbUrl.startsWith("file:")) {
     dbUrl = dbUrl.substring(5)

@@ -39,11 +39,10 @@ type JobRunStatus = "RUNNING" | "SUCCESS" | "FAILED"
 
 interface BackupInfo {
   name: string
-  location: "local" | "gcs" | "gdrive" | "both"
+  location: "local" | "gcs" | "both"
   sizeBytes?: number
   createdTime?: string
   gcsFileName?: string
-  driveFileId?: string
 }
 
 interface SchedulerJob {
@@ -385,7 +384,6 @@ export default function AdminSchedulerPage() {
                   {backups.map((backup) => {
                     const isLocal = backup.location === "local" || backup.location === "both"
                     const isGCS = backup.location === "gcs" || backup.location === "both"
-                    const isGDrive = backup.location === "gdrive"
                     
                     return (
                       <TableRow key={backup.name}>
@@ -404,12 +402,6 @@ export default function AdminSchedulerPage() {
                               <Badge variant="secondary" className="flex items-center gap-1 bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20">
                                 <Cloud className="h-3 w-3" />
                                 Google Cloud Storage
-                              </Badge>
-                            )}
-                            {isGDrive && (
-                              <Badge variant="secondary" className="flex items-center gap-1 bg-green-500/10 text-green-700 border-green-500/20">
-                                <Cloud className="h-3 w-3" />
-                                Google Drive
                               </Badge>
                             )}
                           </div>
