@@ -252,6 +252,15 @@ export const getPromotionSuccessDetails = (
         kiedy:
           "Promowanie trwa przez cały wybrany pełny miesiąc kalendarzowy (od pierwszego do ostatniego dnia miesiąca).",
       }
+    case "PROMOCJA_KATEGORII":
+      return {
+        gdzie: `Slajder promowanych ekspertów widoczny bezpośrednio pod opisem kategorii "${
+          category || "wybranej kategorii"
+        }" na stronie /kategorie — dokładnie tam, gdzie klienci szukają specjalisty w tej dziedzinie.`,
+        jak: "Twoja karta pojawi się w poziomym slajderze ze zdjęciem, oceną i odznaką 'Promowany ekspert', widocznym każdemu odwiedzającemu tę konkretną kategorię — niezależnie od zastosowanych przez niego filtrów wyszukiwania.",
+        kiedy:
+          "Promowanie będzie aktywne nieprzerwanie od daty startu przez zdefiniowany okres (w dniach). Po zakończeniu możesz je przedłużyć ręcznie lub włączyć automatyczne odnowienie.",
+      }
     default:
       return {
         gdzie: "W wybranych sekcjach serwisu w zależności od wybranego pakietu.",

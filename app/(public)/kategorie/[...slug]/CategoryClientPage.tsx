@@ -1,6 +1,7 @@
 "use client"
 
 import { AdBanner } from "@/components/ad-banner"
+import { CategoryPromotedExpertsSlider } from "@/components/category/CategoryPromotedExpertsSlider"
 import { LawFirmCardWrapper } from "@/components/law-firm-card-wrapper"
 import { LawFirmListItem } from "@/components/law-firm-list-item"
 import { PackageBadge } from "@/components/permissions"
@@ -142,6 +143,7 @@ export default function CategoryClientPage() {
   const [total, setTotal] = useState(0)
   const [isDescExpanded, setIsDescExpanded] = useState(false)
   const hasLongDescription = ((category?.opis?.length || 0) + (category?.opisDodatkowy?.length || 0)) > 400
+  const [promotedExperts, setPromotedExperts] = useState<LawFirm[]>([])
 
   // Geographic hierarchy
   const [geographicHierarchy, setGeographicHierarchy] = useState<"voivodeships" | "counties" | "cities">("cities")
@@ -175,6 +177,28 @@ export default function CategoryClientPage() {
 
     fetchCategories()
   }, [slug])
+
+  // Fetch promowanych ekspertów (PROMOCJA_KATEGORII) dla slidera pod opisem kategorii
+  useEffect(() => {
+    if (!category?.id) {
+      setPromotedExperts([])
+      return
+    }
+
+    const fetchPromotedExperts = async () => {
+      try {
+        const response = await fetch(`/api/categories/${category.id}/promoted-experts`)
+        if (response.ok) {
+          const data = await response.json()
+          setPromotedExperts(data.experts || [])
+        }
+      } catch (error) {
+        console.error("Error fetching promoted experts:", error)
+      }
+    }
+
+    fetchPromotedExperts()
+  }, [category?.id])
 
   // Fetch voivodeships and geographic hierarchy setting on mount
   useEffect(() => {
@@ -1047,6 +1071,14 @@ export default function CategoryClientPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Slider promowanych ekspertów (promocja PROMOCJA_KATEGORII) — pod opisem kategorii */}
+        {category && promotedExperts.length > 0 && (
+          <CategoryPromotedExpertsSlider
+            experts={promotedExperts}
+            categoryName={category.nazwa}
+          />
         )}
       </div>
 

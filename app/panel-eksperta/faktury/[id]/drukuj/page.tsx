@@ -113,8 +113,8 @@ export default function InvoicePrintPage() {
         }
 
         :global(html), :global(body) {
-          background-color: #f3f4f6 !important;
-          color: #000000 !important;
+          background-color: #f0efe9 !important;
+          color: #1c1c1a !important;
           color-scheme: light !important;
         }
 
@@ -136,145 +136,289 @@ export default function InvoicePrintPage() {
 
         @page {
           size: A4;
-          margin: 1cm;
+          margin: 0;
         }
 
         .invoice-container {
           max-width: 21cm;
           margin: 0 auto;
-          padding: 1cm;
-          background: white;
-          font-family: Arial, sans-serif;
-          color: #000;
+          background: #ffffff;
+          font-family: var(--font-poppins), Arial, sans-serif;
+          color: #1c1c1a;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+          overflow: hidden;
+        }
+
+        @media print {
+          .invoice-container {
+            box-shadow: none;
+          }
+        }
+
+        .invoice-body {
+          padding: 1.4cm 1.3cm 1cm;
         }
 
         .invoice-header {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 2rem;
-          padding-bottom: 1rem;
-          border-bottom: 2px solid #000;
+          align-items: flex-start;
+          padding: 1cm 1.3cm 0.9cm;
+          background: #141414;
+          background-image: linear-gradient(135deg, #141414 0%, #1b2320 100%);
+          border-bottom: 3px solid #d7b56d;
+        }
+
+        .invoice-logo {
+          height: 30px;
+          width: auto;
+          display: block;
+        }
+
+        .invoice-title-block {
+          margin-top: 14px;
         }
 
         .invoice-title {
-          font-size: 24px;
-          font-weight: bold;
-          margin-bottom: 0.5rem;
+          font-family: var(--font-playfair), Georgia, serif;
+          font-size: 26px;
+          font-weight: 700;
+          color: #ffffff;
+          letter-spacing: 0.02em;
         }
 
         .invoice-number {
-          font-size: 18px;
-          color: #333;
+          font-size: 13px;
+          color: #d7b56d;
+          font-weight: 600;
+          margin-top: 2px;
         }
 
         .company-info {
           text-align: right;
+          color: #e5e5e0;
         }
 
         .company-name {
-          font-weight: bold;
-          font-size: 16px;
-          margin-bottom: 0.25rem;
+          font-weight: 700;
+          font-size: 15px;
+          margin-bottom: 0.3rem;
+          color: #ffffff;
+        }
+
+        .company-info div {
+          font-size: 11px;
+          line-height: 1.6;
+          color: #b7b5a9;
+        }
+
+        .ksef-badge {
+          display: inline-flex;
+          flex-direction: column;
+          margin-top: 12px;
+          padding: 6px 10px;
+          background: #d7b56d;
+          border-radius: 8px;
+          color: #141414;
+        }
+
+        .ksef-badge .label {
+          font-size: 9.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .ksef-badge .value {
+          font-size: 10px;
+          font-family: var(--font-geist-mono), monospace;
+          margin-top: 1px;
         }
 
         .parties-section {
           display: flex;
-          justify-content: space-between;
-          margin: 2rem 0;
+          gap: 1.5rem;
+          margin: 1.8rem 0;
         }
 
         .party {
           flex: 1;
+          background: #faf9f5;
+          border: 1px solid #e9e6dc;
+          border-radius: 12px;
+          padding: 1rem 1.1rem;
         }
 
         .party-title {
-          font-weight: bold;
-          font-size: 14px;
-          margin-bottom: 0.5rem;
+          font-weight: 700;
+          font-size: 11px;
+          margin-bottom: 0.6rem;
           text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #0da192;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .party-title::before {
+          content: "";
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #d7b56d;
         }
 
         .party-details {
           font-size: 12px;
-          line-height: 1.6;
+          line-height: 1.7;
+          color: #3d3929;
         }
 
         .dates-section {
           display: flex;
-          gap: 2rem;
-          margin: 2rem 0;
-          font-size: 12px;
+          gap: 0.75rem;
+          margin: 1.6rem 0;
+          font-size: 11.5px;
         }
 
         .date-item {
           display: flex;
-          gap: 0.5rem;
+          flex-direction: column;
+          gap: 2px;
+          background: #f5f4ee;
+          border: 1px solid #ebebe4;
+          border-radius: 10px;
+          padding: 0.5rem 0.9rem;
         }
 
         .date-label {
-          font-weight: bold;
+          font-weight: 700;
+          color: #83827d;
+          font-size: 9.5px;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
         }
 
         .items-table {
           width: 100%;
-          border-collapse: collapse;
-          margin: 2rem 0;
+          border-collapse: separate;
+          border-spacing: 0;
+          margin: 1.6rem 0;
           font-size: 12px;
+          border: 1px solid #e9e6dc;
+          border-radius: 12px;
+          overflow: hidden;
         }
 
         .items-table th,
         .items-table td {
-          border: 1px solid #333;
-          padding: 0.5rem;
+          padding: 0.65rem 0.6rem;
           text-align: left;
         }
 
         .items-table th {
-          background-color: #f0f0f0;
-          font-weight: bold;
+          background-color: #141414;
+          color: #ffffff;
+          font-weight: 600;
+          font-size: 10.5px;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
         }
 
-        .items-table td.right {
+        .items-table tbody td {
+          border-top: 1px solid #ebebe4;
+        }
+
+        .items-table td.right,
+        .items-table th.right {
           text-align: right;
         }
 
         .summary-section {
-          margin-top: 2rem;
+          margin-top: 1.4rem;
           display: flex;
           justify-content: flex-end;
         }
 
         .summary-table {
-          width: 50%;
+          width: 55%;
           font-size: 12px;
+          background: #faf9f5;
+          border: 1px solid #e9e6dc;
+          border-radius: 12px;
+          padding: 0.9rem 1.1rem;
         }
 
-        .summary-table tr {
+        .summary-table .row {
           display: flex;
           justify-content: space-between;
           padding: 0.25rem 0;
+          color: #535146;
         }
 
         .summary-table .total {
-          font-weight: bold;
-          font-size: 14px;
-          border-top: 2px solid #000;
-          padding-top: 0.5rem;
-          margin-top: 0.5rem;
+          display: flex;
+          justify-content: space-between;
+          font-weight: 700;
+          font-size: 15px;
+          border-top: 2px solid #d7b56d;
+          padding-top: 0.6rem;
+          margin-top: 0.4rem;
+          color: #0c4539;
         }
 
         .footer-section {
-          margin-top: 3rem;
-          font-size: 11px;
-          color: #666;
+          margin-top: 2rem;
+          padding: 1cm 1.3cm;
+          background: #141414;
+          background-image: linear-gradient(135deg, #141414 0%, #1b2320 100%);
+          color: #b7b5a9;
+        }
+
+        .footer-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #2a2a26;
+          padding-bottom: 0.8rem;
+          margin-bottom: 0.8rem;
+        }
+
+        .footer-logo {
+          height: 18px;
+          width: auto;
+          opacity: 0.95;
+        }
+
+        .footer-contact {
+          font-size: 10.5px;
+          color: #d7b56d;
+          font-weight: 600;
+          text-align: right;
+          line-height: 1.6;
+        }
+
+        .footer-note {
+          font-size: 10px;
+          color: #83827d;
+          line-height: 1.6;
         }
 
         .payment-info {
-          margin-top: 2rem;
-          padding: 1rem;
-          background-color: #f9f9f9;
-          border: 1px solid #ddd;
-          font-size: 11px;
+          margin-top: 1.6rem;
+          padding: 1rem 1.1rem;
+          background-color: rgba(13, 161, 146, 0.06);
+          border: 1px solid rgba(13, 161, 146, 0.25);
+          border-radius: 12px;
+          font-size: 11.5px;
+        }
+
+        .payment-info .payment-title {
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          color: #0c4539;
         }
       `}</style>
 
@@ -282,14 +426,15 @@ export default function InvoicePrintPage() {
         {/* Header */}
         <div className="invoice-header">
           <div>
-            <div className="invoice-title">FAKTURA VAT</div>
-            <div className="invoice-number">{invoice.invoiceNumber}</div>
+            <img src="/logo-color.svg" alt="Prosta Sprawa" className="invoice-logo" style={{ filter: "brightness(0) invert(1)" }} />
+            <div className="invoice-title-block">
+              <div className="invoice-title">Faktura VAT</div>
+              <div className="invoice-number">{invoice.invoiceNumber}</div>
+            </div>
             {invoice.ksefNumber && (
-              <div style={{ marginTop: "0.5rem", fontSize: "11px", color: "var(--primary)", fontWeight: "bold" }}>
-                Faktura ustrukturyzowana (KSeF)
-                <div style={{ fontSize: "10px", fontFamily: "monospace", color: "#000", marginTop: "2px", fontWeight: "normal" }}>
-                  Numer KSeF: {invoice.ksefNumber}
-                </div>
+              <div className="ksef-badge">
+                <span className="label">Faktura ustrukturyzowana (KSeF)</span>
+                <span className="value">Numer KSeF: {invoice.ksefNumber}</span>
               </div>
             )}
           </div>
@@ -301,126 +446,131 @@ export default function InvoicePrintPage() {
           </div>
         </div>
 
-        {/* Parties */}
-        <div className="parties-section">
-          <div className="party">
-            <div className="party-title">Sprzedawca</div>
-            <div className="party-details">
-              <div className="company-name">Prosta Sprawa</div>
-              <div>ul. Przykładowa 123</div>
-              <div>00-001 Warszawa</div>
-              <div>NIP: 1234567890</div>
-              <div>Email: kontakt@prostasprawa.pl</div>
-              <div>Tel: +48 123 456 789</div>
+        <div className="invoice-body">
+          {/* Parties */}
+          <div className="parties-section">
+            <div className="party">
+              <div className="party-title">Sprzedawca</div>
+              <div className="party-details">
+                <div style={{ fontWeight: 700 }}>Prosta Sprawa</div>
+                <div>ul. Przykładowa 123</div>
+                <div>00-001 Warszawa</div>
+                <div>NIP: 1234567890</div>
+                <div>Email: kontakt@prostasprawa.pl</div>
+                <div>Tel: +48 123 456 789</div>
+              </div>
+            </div>
+            <div className="party">
+              <div className="party-title">Nabywca</div>
+              <div className="party-details">
+                <div style={{ fontWeight: 700 }}>{invoice.buyerName}</div>
+                <div>{invoice.buyerAddress}</div>
+                <div>{invoice.buyerPostalCode} {invoice.buyerCity}</div>
+                {invoice.buyerNIP && <div>NIP: {invoice.buyerNIP}</div>}
+                <div>{invoice.buyerCountry}</div>
+              </div>
             </div>
           </div>
-          <div className="party">
-            <div className="party-title">Nabywca</div>
-            <div className="party-details">
-              <div className="company-name">{invoice.buyerName}</div>
-              <div>{invoice.buyerAddress}</div>
-              <div>{invoice.buyerPostalCode} {invoice.buyerCity}</div>
-              {invoice.buyerNIP && <div>NIP: {invoice.buyerNIP}</div>}
-              <div>{invoice.buyerCountry}</div>
-            </div>
-          </div>
-        </div>
 
-        {/* Dates */}
-        <div className="dates-section">
-          <div className="date-item">
-            <span className="date-label">Data wystawienia:</span>
-            <span>{formatDate(invoice.issueDate)}</span>
+          {/* Dates */}
+          <div className="dates-section">
+            <div className="date-item">
+              <span className="date-label">Data wystawienia</span>
+              <span>{formatDate(invoice.issueDate)}</span>
+            </div>
+            <div className="date-item">
+              <span className="date-label">Data sprzedaży</span>
+              <span>{formatDate(invoice.saleDate)}</span>
+            </div>
+            <div className="date-item">
+              <span className="date-label">Termin płatności</span>
+              <span>{formatDate(invoice.dueDate)}</span>
+            </div>
           </div>
-          <div className="date-item">
-            <span className="date-label">Data sprzedaży:</span>
-            <span>{formatDate(invoice.saleDate)}</span>
-          </div>
-          <div className="date-item">
-            <span className="date-label">Termin płatności:</span>
-            <span>{formatDate(invoice.dueDate)}</span>
-          </div>
-        </div>
 
-        {/* Items Table */}
-        <table className="items-table">
-          <thead>
-            <tr>
-              <th style={{ width: "5%" }}>Lp.</th>
-              <th style={{ width: "40%" }}>Nazwa towaru/usługi</th>
-              <th style={{ width: "10%" }}>Ilość</th>
-              <th style={{ width: "10%" }}>J.m.</th>
-              <th style={{ width: "15%" }}>Cena netto</th>
-              <th style={{ width: "10%" }}>VAT %</th>
-              <th style={{ width: "15%" }}>Wartość brutto</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="right">1</td>
-              <td>
-                {invoice.order.orderType === "SUBSCRIPTION" ? (
-                  <>
-                    Subskrypcja:{" "}
-                    {invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}
-                  </>
-                ) : (
-                  "Pakiet punktów"
-                )}
-                <br />
-                <span style={{ fontSize: "10px", color: "#666" }}>
-                  Zamówienie: {invoice.order.orderNumber}
-                </span>
-              </td>
-              <td className="right">1</td>
-              <td>szt.</td>
-              <td className="right">{formatCurrency(invoice.netAmount)}</td>
-              <td className="right">{invoice.vatRate}%</td>
-              <td className="right">{formatCurrency(invoice.grossAmount)}</td>
-            </tr>
-          </tbody>
-        </table>
+          {/* Items Table */}
+          <table className="items-table">
+            <thead>
+              <tr>
+                <th style={{ width: "5%" }}>Lp.</th>
+                <th style={{ width: "38%" }}>Nazwa towaru/usługi</th>
+                <th className="right" style={{ width: "9%" }}>Ilość</th>
+                <th style={{ width: "9%" }}>J.m.</th>
+                <th className="right" style={{ width: "16%" }}>Cena netto</th>
+                <th className="right" style={{ width: "8%" }}>VAT %</th>
+                <th className="right" style={{ width: "15%" }}>Wartość brutto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="right">1</td>
+                <td>
+                  {invoice.order.orderType === "SUBSCRIPTION" ? (
+                    <>
+                      Subskrypcja:{" "}
+                      {invoice.order.subscriptionPlan?.nazwa || "Pakiet subskrypcji"}
+                    </>
+                  ) : (
+                    "Pakiet punktów"
+                  )}
+                  <br />
+                  <span style={{ fontSize: "10px", color: "#83827d" }}>
+                    Zamówienie: {invoice.order.orderNumber}
+                  </span>
+                </td>
+                <td className="right">1</td>
+                <td>szt.</td>
+                <td className="right">{formatCurrency(invoice.netAmount)}</td>
+                <td className="right">{invoice.vatRate}%</td>
+                <td className="right">{formatCurrency(invoice.grossAmount)}</td>
+              </tr>
+            </tbody>
+          </table>
 
-        {/* Summary */}
-        <div className="summary-section">
-          <div className="summary-table">
-            <div>
-              <span>Razem netto:</span>
-              <span>{formatCurrency(invoice.netAmount)}</span>
-            </div>
-            <div>
-              <span>VAT ({invoice.vatRate}%):</span>
-              <span>{formatCurrency(invoice.vatAmount)}</span>
-            </div>
-            <div className="total">
-              <span>RAZEM BRUTTO:</span>
-              <span>{formatCurrency(invoice.grossAmount)}</span>
+          {/* Summary */}
+          <div className="summary-section">
+            <div className="summary-table">
+              <div className="row">
+                <span>Razem netto:</span>
+                <span>{formatCurrency(invoice.netAmount)}</span>
+              </div>
+              <div className="row">
+                <span>VAT ({invoice.vatRate}%):</span>
+                <span>{formatCurrency(invoice.vatAmount)}</span>
+              </div>
+              <div className="total">
+                <span>Razem brutto:</span>
+                <span>{formatCurrency(invoice.grossAmount)}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Payment Info */}
-        <div className="payment-info">
-          <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-            Informacje o płatności:
+          {/* Payment Info */}
+          <div className="payment-info">
+            <div className="payment-title">Informacje o płatności</div>
+            <div>Sposób płatności: Przelew bankowy</div>
+            <div>Nr konta: 12 3456 7890 1234 5678 9012 3456</div>
+            {invoice.paymentDate && (
+              <div style={{ marginTop: "0.5rem", color: "#10b981", fontWeight: 700 }}>
+                Faktura opłacona dnia: {formatDate(invoice.paymentDate)}
+              </div>
+            )}
           </div>
-          <div>Sposób płatności: Przelew bankowy</div>
-          <div>Nr konta: 12 3456 7890 1234 5678 9012 3456</div>
-          {invoice.paymentDate && (
-            <div style={{ marginTop: "0.5rem", color: "#22c55e", fontWeight: "bold" }}>
-              Faktura opłacona dnia: {formatDate(invoice.paymentDate)}
-            </div>
-          )}
         </div>
 
         {/* Footer */}
         <div className="footer-section">
-          <p>
+          <div className="footer-top">
+            <img src="/logo-color.svg" alt="Prosta Sprawa" className="footer-logo" style={{ filter: "brightness(0) invert(1)" }} />
+            <div className="footer-contact">
+              kontakt@prostasprawa.pl<br />
+              +48 123 456 789
+            </div>
+          </div>
+          <div className="footer-note">
             Faktura wystawiona automatycznie przez system Prosta Sprawa.
-          </p>
-          <p>
             W przypadku pytań prosimy o kontakt: kontakt@prostasprawa.pl
-          </p>
+          </div>
         </div>
       </div>
 
@@ -436,7 +586,7 @@ export default function InvoicePrintPage() {
           onClick={() => window.print()}
           style={{
             padding: "0.75rem 1.5rem",
-            backgroundColor: "var(--primary)",
+            backgroundColor: "#0da192",
             color: "white",
             border: "none",
             borderRadius: "0.5rem",

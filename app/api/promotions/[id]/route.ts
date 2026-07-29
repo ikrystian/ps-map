@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { serverCache } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -243,6 +244,10 @@ export async function DELETE(
         },
       }),
     ])
+
+    if (promotion.typPromocji === "PROMOCJA_KATEGORII" && promotion.kategoriaPromocji) {
+      serverCache.delete(`category:${promotion.kategoriaPromocji}:promoted-experts`)
+    }
 
     return Response.json({
       promotion: deactivatedPromotion,
