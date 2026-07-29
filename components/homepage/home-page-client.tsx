@@ -35,6 +35,7 @@ export default function HomePageClient() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [homepagePromotions, setHomepagePromotions] = useState<{
     recommended: Record<string, LawFirm[]>;
+    recommendedCategories?: { id: string; nazwa: string }[];
     consulted: Record<string, LawFirm[]>;
     consultedCategoryIds?: string[];
   } | null>(null);
@@ -123,6 +124,7 @@ export default function HomePageClient() {
       {/* SECTION 5: Recommended Lawyers */}
       <RecommendedLawyers
         recommendedData={homepagePromotions?.recommended}
+        recommendedCategories={homepagePromotions?.recommendedCategories}
         lawFirms={lawFirms}
       />
 

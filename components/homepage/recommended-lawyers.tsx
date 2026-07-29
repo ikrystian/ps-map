@@ -39,34 +39,36 @@ const getOpinieText = (count: number) => {
 
 interface RecommendedLawyersProps {
   recommendedData?: Record<string, LawFirm[]>
+  /**
+   * Podkategorie kategorii wybranej przez administratora w ustawieniach
+   * (drzewo z /admin/expertise-categories) — źródło zakładek sekcji.
+   */
+  recommendedCategories?: { id: string; nazwa: string }[]
   lawFirms: LawFirm[]
 }
 
-const CATEGORIES = [
-  "Adwokat",
-  "Aplikant",
-  "BHP i PPOŻ",
-  "Doradca finansowy",
-  "Doradca podatkowy"
-]
-
-export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLawyersProps) {
+export function RecommendedLawyers({ recommendedData, recommendedCategories, lawFirms }: RecommendedLawyersProps) {
   const { status } = useSession()
   const isLoggedIn = status === "authenticated"
   const [activeIdx, setActiveIdx] = useState(0)
   const sliderRef = useRef<HTMLDivElement>(null)
 
-  const categoriesList = recommendedData && Object.keys(recommendedData).length > 0
-    ? Object.keys(recommendedData).sort()
-    : CATEGORIES
+  // Zakładki pochodzą z konfiguracji administratora; gdy jej brak — z kategorii
+  // wykupionych promocji, żeby opłacone wyróżnienia nie zniknęły ze strony.
+  const categoriesList = recommendedCategories && recommendedCategories.length > 0
+    ? recommendedCategories.map(c => c.nazwa)
+    : Object.keys(recommendedData || {}).sort()
 
-  // Jeśli nie ma ani danych promocyjnych, ani ogólnych kancelarii, to ukrywamy cały blok
-  if (
-    (!recommendedData || Object.keys(recommendedData).length === 0) &&
-    (!lawFirms || lawFirms.length === 0)
-  ) {
+  // Bez skonfigurowanych kategorii albo bez jakichkolwiek ekspertów nie ma czego pokazać
+  const hasAnyFirms =
+    (lawFirms?.length ?? 0) > 0 ||
+    Object.values(recommendedData || {}).some(list => list.length > 0)
+
+  if (categoriesList.length === 0 || !hasAnyFirms) {
     return null
   }
+
+  const safeActiveIdx = Math.min(activeIdx, categoriesList.length - 1)
 
   const handleCategoryChange = (idx: number) => {
     setActiveIdx(idx)
@@ -77,12 +79,12 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
   // Carousel Prev/Next Handlers that switch active category
   const handlePrev = () => {
-    const nextIdx = (activeIdx - 1 + categoriesList.length) % categoriesList.length
+    const nextIdx = (safeActiveIdx - 1 + categoriesList.length) % categoriesList.length
     handleCategoryChange(nextIdx)
   }
 
   const handleNext = () => {
-    const nextIdx = (activeIdx + 1) % categoriesList.length
+    const nextIdx = (safeActiveIdx + 1) % categoriesList.length
     handleCategoryChange(nextIdx)
   }
 
@@ -93,6 +95,17 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
     if (recommendedData && recommendedData[currentCategory]) {
       list = [...recommendedData[currentCategory]]
+    }
+
+    // Uzupełnij ekspertami z tej samej specjalizacji, zanim sięgniemy po dowolnych
+    if (list.length < 4 && lawFirms && lawFirms.length > 0) {
+      lawFirms
+        .filter(firm => firm.expertiseCategory?.nazwa === currentCategory)
+        .forEach(firm => {
+          if (list.length < 4 && !list.some(f => f.id === firm.id)) {
+            list.push(firm)
+          }
+        })
     }
 
     // Pad with other general lawFirms up to 4 items if we have fewer
@@ -147,20 +160,22 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
 
           {/* Navigation & Selector Container */}
           <div className="flex gap-4 w-full">
-            {/* Category tabs: only show the active category on mobile, all on desktop */}
-
-            {categoriesList.map((cat, i) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(i)}
-                className={`recommended-lawyers-category-button text-center flex-1 justify-center px-5 py-4 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeIdx === i
-                  ? "bg-black text-white shadow-lg flex"
-                  : "bg-[#0da192] hover:bg-[#0b8b7e] text-white hidden md:flex"
-                  }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {/* Category tabs: only show the active category on mobile, all on desktop.
+                Liczba zakładek zależy od konfiguracji admina, więc wiersz się zawija. */}
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 flex-1 min-w-0">
+              {categoriesList.map((cat, i) => (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryChange(i)}
+                  className={`recommended-lawyers-category-button text-center justify-center px-5 py-4 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${safeActiveIdx === i
+                    ? "bg-black text-white shadow-lg flex"
+                    : "bg-[#0da192] hover:bg-[#0b8b7e] text-white hidden md:flex"
+                    }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
 
             {/* Previous / Next Arrow Buttons */}
             <div className="flex items-center gap-2 flex-shrink-0" id="main-arrows">
@@ -196,14 +211,14 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
         >
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeIdx}
+              key={safeActiveIdx}
               initial={{ opacity: 0, x: 25 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -25 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="flex gap-4 w-max md:w-full"
             >
-              {getCategoryFirms(activeIdx).map((firm, index) => {
+              {getCategoryFirms(safeActiveIdx).map((firm, index) => {
                 const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
                   const button = (
                     <a
@@ -289,7 +304,7 @@ export function RecommendedLawyers({ recommendedData, lawFirms }: RecommendedLaw
                       <div>
                         {/* Upper Case Category subtitle */}
                         <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
-                          {categoriesList[activeIdx]}
+                          {categoriesList[safeActiveIdx]}
                         </span>
                         {/* Lawyer / Firm Name */}
                         <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">

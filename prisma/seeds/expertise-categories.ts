@@ -6,12 +6,14 @@ const data = [
     kolejnosc: 0,
     specializations: [
       "Adwokat",
+      "Aplikant",
       "Radca prawny",
       "Doradca podatkowy",
       "Rzecznik patentowy",
       "Doradca restrukturyzacyjny",
       "Mediator",
       "Syndyk",
+      "Komornik"
     ],
   },
   {

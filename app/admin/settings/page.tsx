@@ -13,7 +13,51 @@ import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, 
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Category } from "@/types/categories"
+
+/** Węzeł drzewa z /admin/expertise-categories (API zwraca zagnieżdżone dzieci). */
+type ExpertiseCategoryNode = {
+  id: string
+  nazwa: string
+  children?: ExpertiseCategoryNode[]
+}
+
+/** Kategoria nadrzędna wraz z podkategoriami — kandydat na źródło zakładek. */
+type ExpertiseParentOption = {
+  id: string
+  label: string
+  children: string[]
+}
+
+/**
+ * Spłaszcza drzewo do węzłów posiadających podkategorie — tylko one mogą
+ * wypełnić zakładki sekcji "Polecani prawnicy i adwokaci".
+ */
+const collectExpertiseParents = (
+  nodes: ExpertiseCategoryNode[],
+  prefix = ""
+): ExpertiseParentOption[] => {
+  const result: ExpertiseParentOption[] = []
+  nodes.forEach((node) => {
+    const label = prefix ? `${prefix} > ${node.nazwa}` : node.nazwa
+    if (node.children?.length) {
+      result.push({
+        id: node.id,
+        label,
+        children: node.children.map((c) => c.nazwa),
+      })
+      result.push(...collectExpertiseParents(node.children, label))
+    }
+  })
+  return result
+}
 
 interface Settings {
   favicon?: {
@@ -185,6 +229,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  homepageRecommendedCategory?: {
+    value: string
+    description: string | null
+  }
   promoteConsultedImmediately?: {
     value: string
     description: string | null
@@ -312,6 +360,10 @@ export default function AdminSettingsPage() {
   const [availableCategories, setAvailableCategories] = useState<Category[]>([])
   const [promoteConsultedImmediately, setPromoteConsultedImmediately] = useState("false")
 
+  // Polecani prawnicy — kategoria z drzewa ExpertiseCategory, której podkategorie tworzą zakładki
+  const [homepageRecommendedCategory, setHomepageRecommendedCategory] = useState("")
+  const [expertiseParents, setExpertiseParents] = useState<ExpertiseParentOption[]>([])
+
   // Favicon i Open Graph (SEO)
   const [favicon, setFavicon] = useState("/favicon.png")
   const [ogTitle, setOgTitle] = useState("Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi")
@@ -420,11 +472,20 @@ export default function AdminSettingsPage() {
           setHomepageConsultedCategories([])
         }
 
+        setHomepageRecommendedCategory(data.homepageRecommendedCategory?.value || "")
+
         // Pobierz kategorie
         const catRes = await fetch("/api/categories")
         if (catRes.ok) {
           const cats = await catRes.json()
           setAvailableCategories(cats.filter((c: Category) => c.aktywna && c.typ === "SPRAWY_PRYWATNE"))
+        }
+
+        // Pobierz drzewo typów działalności ekspertów (/admin/expertise-categories)
+        const expertiseRes = await fetch("/api/expertise-categories")
+        if (expertiseRes.ok) {
+          const tree: ExpertiseCategoryNode[] = await expertiseRes.json()
+          setExpertiseParents(collectExpertiseParents(tree))
         }
       }
     } catch (error) {
@@ -705,6 +766,10 @@ export default function AdminSettingsPage() {
             homepageConsultedCategories: {
               value: JSON.stringify(homepageConsultedCategories),
               description: "Lista ID kategorii wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
+            },
+            homepageRecommendedCategory: {
+              value: homepageRecommendedCategory,
+              description: "ID kategorii (ExpertiseCategory), której podkategorie są zakładkami sekcji Polecani prawnicy i adwokaci na stronie głównej",
             },
             promoteConsultedImmediately: {
               value: promoteConsultedImmediately,
@@ -1286,6 +1351,75 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Strona główna - Polecani prawnicy i adwokaci */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Polecani prawnicy i adwokaci</CardTitle>
+              <CardDescription>
+                Wybierz kategorię z drzewa typów działalności (/admin/expertise-categories). Jej podkategorie
+                staną się zakładkami sekcji „Polecani prawnicy i adwokaci" na stronie głównej.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {expertiseParents.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Ładowanie kategorii...</p>
+              ) : (
+                <>
+                  <div className="space-y-2 max-w-xl">
+                    <Label htmlFor="homepageRecommendedCategory">Kategoria nadrzędna</Label>
+                    <Select
+                      value={homepageRecommendedCategory || "none"}
+                      onValueChange={(val) =>
+                        setHomepageRecommendedCategory(val === "none" ? "" : val)
+                      }
+                    >
+                      <SelectTrigger id="homepageRecommendedCategory">
+                        <SelectValue placeholder="Brak (sekcja ukryta)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Brak (sekcja ukryta)</SelectItem>
+                        {expertiseParents.map((parent) => (
+                          <SelectItem key={parent.id} value={parent.id}>
+                            {parent.label} ({parent.children.length})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {(() => {
+                    const selected = expertiseParents.find(
+                      (p) => p.id === homepageRecommendedCategory
+                    )
+                    if (!selected) return null
+                    return (
+                      <div className="space-y-2">
+                        <p className="text-xs text-muted-foreground">
+                          Zakładki na stronie głównej ({selected.children.length}):
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {selected.children.map((nazwa) => (
+                            <span
+                              key={nazwa}
+                              className="text-xs px-2 py-1 rounded-md bg-secondary text-secondary-foreground"
+                            >
+                              {nazwa}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })()}
+                </>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Te same podkategorie są dostępne dla ekspertów przy zakupie promocji „Polecani prawnicy
+                i adwokaci" w panelu eksperta. Zmiana kategorii nie usuwa już wykupionych promocji — te
+                z podkategorii spoza nowego wyboru przestaną być widoczne na stronie głównej.
+              </p>
             </CardContent>
           </Card>
 

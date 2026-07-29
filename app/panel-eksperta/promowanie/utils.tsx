@@ -23,20 +23,32 @@ export const ICON_MAP: Record<string, any> = {
   Crown,
 }
 
-export const RECOMMENDED_LAWYERS_CATEGORIES = [
-  "Adwokat",
-  "Radca prawny",
-  "Rzeczoznawca",
-  "Notariusz",
-  "Doradca podatkowy",
-  "Doradca finansowy",
-  "Mediator",
-  "Komornik",
-  "Rzecznik patentowy",
-  "Aplikant",
-  "BHP i PPOŻ",
-  "Doradca prawny",
-]
+/** Węzeł drzewa z /api/expertise-categories (dzieci zagnieżdżone w odpowiedzi). */
+type ExpertiseCategoryNode = {
+  id: string
+  nazwa: string
+  children?: ExpertiseCategoryNode[]
+}
+
+/**
+ * Nazwy podkategorii wskazanej kategorii — kategorie promocji „Polecani prawnicy
+ * i adwokaci" ustala administrator w ustawieniach (klucz homepageRecommendedCategory).
+ */
+export const findExpertiseChildren = (
+  nodes: ExpertiseCategoryNode[],
+  parentId: string
+): string[] => {
+  for (const node of nodes) {
+    if (node.id === parentId) {
+      return (node.children || []).map((child) => child.nazwa)
+    }
+    if (node.children?.length) {
+      const found = findExpertiseChildren(node.children, parentId)
+      if (found.length > 0) return found
+    }
+  }
+  return []
+}
 
 export const getFutureMonths = (includeCurrentMonth = false) => {
   const months = []

@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.homepageConsultedCategories) {
       settingsObject.homepageConsultedCategories = "[]"
     }
+    if (!settingsObject.homepageRecommendedCategory) {
+      settingsObject.homepageRecommendedCategory = ""
+    }
     if (!settingsObject.comingSoonMode) {
       settingsObject.comingSoonMode = "false"
     }

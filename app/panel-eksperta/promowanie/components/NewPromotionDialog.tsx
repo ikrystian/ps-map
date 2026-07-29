@@ -27,7 +27,6 @@ import {
   getIconComponent,
   getPromotionTypeLabel,
   getFutureMonths,
-  RECOMMENDED_LAWYERS_CATEGORIES,
 } from "../utils"
 
 interface NewPromotionDialogProps {
@@ -41,6 +40,8 @@ interface NewPromotionDialogProps {
   setSelectedCategory: (category: string) => void
   categories: Category[]
   consultedCategories: Category[]
+  /** Nazwy podkategorii wybranych przez administratora dla sekcji "Polecani prawnicy" */
+  recommendedCategories: string[]
   selectedVoivodeship: string
   setSelectedVoivodeship: (voivodeship: string) => void
   voivodeships: Voivodeship[]
@@ -73,6 +74,7 @@ export function NewPromotionDialog({
   setSelectedCategory,
   categories,
   consultedCategories,
+  recommendedCategories,
   selectedVoivodeship,
   setSelectedVoivodeship,
   voivodeships,
@@ -205,7 +207,7 @@ export function NewPromotionDialog({
                   <SelectValue placeholder="Wybierz kategorię zawodową" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
-                  {RECOMMENDED_LAWYERS_CATEGORIES.map((cat) => (
+                  {recommendedCategories.map((cat) => (
                     <SelectItem
                       key={cat}
                       value={cat}
@@ -216,6 +218,11 @@ export function NewPromotionDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {recommendedCategories.length === 0 && (
+                <p className="text-xs text-amber-400/90">
+                  Administrator nie skonfigurował jeszcze kategorii dla tego formatu promowania.
+                </p>
+              )}
             </div>
           )}
 

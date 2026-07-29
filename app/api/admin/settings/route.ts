@@ -61,6 +61,12 @@ export async function GET(request: NextRequest) {
         description: "Lista ID kategorii (Category) wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
       }
     }
+    if (!settingsObject.homepageRecommendedCategory) {
+      settingsObject.homepageRecommendedCategory = {
+        value: "",
+        description: "ID kategorii (ExpertiseCategory), której podkategorie są zakładkami sekcji Polecani prawnicy i adwokaci na stronie głównej",
+      }
+    }
     if (!settingsObject.maxLawFirmCategories) {
       settingsObject.maxLawFirmCategories = {
         value: "10",
