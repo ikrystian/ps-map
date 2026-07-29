@@ -288,7 +288,8 @@ export function MostConsultedCategories({
                 };
 
                 return (
-                  <div
+                  <Link
+                    href={`/ekspert/${firm.slug}?src=home-consulted`}
                     key={`${firm.id}-${index}`}
                     className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
@@ -387,7 +388,7 @@ export function MostConsultedCategories({
                         </Link>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </motion.div>

@@ -82,7 +82,8 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
               const voivodeship = firm.voivodeship?.nazwa;
 
               return (
-                <div
+                <Link
+                  href={`/ekspert/${firm.slug}?src=home-new`}
                   key={firm.id}
                   className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
                 >
@@ -107,13 +108,12 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                   </div>
 
                   {/* Center floating up-right diagonal arrow button */}
-                  <Link
-                    href={`/ekspert/${firm.slug}`}
+                  <span
                     className="absolute top-[118px] md:top-[268px] left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#008073] hover:bg-[#006f63] flex items-center justify-center text-white border-4 border-[#1d1d1f] transition-transform duration-300 hover:scale-110 shadow-lg z-20"
                     title="Zobacz profil"
                   >
                     <ArrowUpRight className="w-5 h-5 text-white" />
-                  </Link>
+                  </span>
 
                   {/* Content Section */}
                   <div className="pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
@@ -134,7 +134,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                       {firm.miasto}, {voivodeship}
                     </p>
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>
