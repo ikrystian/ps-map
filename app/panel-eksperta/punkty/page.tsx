@@ -108,6 +108,15 @@ interface LawFirm {
   nazwa: string
 }
 
+// Zakup własnej liczby punktów — minimum oraz próg rabatu ilościowego
+const MIN_CUSTOM_POINTS = 1000
+const BULK_POINTS_THRESHOLD = 999
+const BULK_RATIO_MULTIPLIER = 0.7
+
+// Cena za punkt przy zakupie własnej liczby punktów (powyżej 999 pkt — 70% stawki bazowej)
+const getCustomPointRate = (points: number, ratio: number) =>
+  points > BULK_POINTS_THRESHOLD ? ratio * BULK_RATIO_MULTIPLIER : ratio
+
 // Funkcja generująca pakiety punktów na podstawie przelicznika PLN/pkt
 const getPointPackages = (ratio: number) => [
   {
@@ -194,7 +203,12 @@ export default function LawFirmPointsPage() {
   // Dialog zakupu
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<ReturnType<typeof getPointPackages>[0] | null>(null)
-  const [customPoints, setCustomPoints] = useState("")
+  const [customPoints, setCustomPoints] = useState(String(MIN_CUSTOM_POINTS))
+
+  const customPointsValue = parseInt(customPoints) || 0
+  const customPointRate = getCustomPointRate(customPointsValue, pointsToPlnRatio)
+  const customPointsPrice = Math.round(customPointsValue * customPointRate)
+  const customPointsTooLow = !selectedPackage && customPointsValue < MIN_CUSTOM_POINTS
 
   useEffect(() => {
     fetchData()
@@ -242,7 +256,7 @@ export default function LawFirmPointsPage() {
 
   const handleOpenPurchaseDialog = (pkg?: ReturnType<typeof getPointPackages>[0]) => {
     setSelectedPackage(pkg || null)
-    setCustomPoints("")
+    setCustomPoints(String(MIN_CUSTOM_POINTS))
     setPurchaseDialogOpen(true)
   }
 
@@ -252,8 +266,13 @@ export default function LawFirmPointsPage() {
       return
     }
 
-    const points = selectedPackage ? selectedPackage.points : parseInt(customPoints)
-    const price = selectedPackage ? selectedPackage.price : Math.round(points * pointsToPlnRatio)
+    if (customPointsTooLow) {
+      setError(`Minimalna liczba punktów do zakupu to ${MIN_CUSTOM_POINTS} pkt`)
+      return
+    }
+
+    const points = selectedPackage ? selectedPackage.points : customPointsValue
+    const price = selectedPackage ? selectedPackage.price : customPointsPrice
 
     const orderData = {
       pakietPunktow: selectedPackage ? selectedPackage.id : `custom_${points}_pkt`,
@@ -680,11 +699,7 @@ export default function LawFirmPointsPage() {
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-sm">Do zapłaty:</span>
                   <span className="text-2xl font-bold text-primary">
-                    {formatCurrency(
-                      selectedPackage
-                        ? selectedPackage.price
-                        : Math.round(parseInt(customPoints || "0") * pointsToPlnRatio)
-                    )}
+                    {formatCurrency(selectedPackage ? selectedPackage.price : customPointsPrice)}
                   </span>
                 </div>
               </CardContent>
@@ -697,15 +712,24 @@ export default function LawFirmPointsPage() {
                 <Input
                   id="custom-points"
                   type="number"
-                  min="1"
+                  min={MIN_CUSTOM_POINTS}
                   value={customPoints}
                   onChange={(e) => setCustomPoints(e.target.value)}
-                  placeholder="np. 150"
+                  placeholder={`np. ${MIN_CUSTOM_POINTS}`}
                   className="mt-1.5"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Cena: <span className="font-medium">{customPoints ? (parseInt(customPoints) * pointsToPlnRatio).toFixed(2) : "0,00"} zł</span> ({pointsToPlnRatio.toFixed(2).replace(".", ",")} zł / pkt)
+                  Cena: <span className="font-medium">{customPointsPrice.toFixed(2).replace(".", ",")} zł</span> ({customPointRate.toFixed(2).replace(".", ",")} zł / pkt)
                 </p>
+                {customPointsTooLow ? (
+                  <p className="text-xs text-destructive mt-1">
+                    Minimalna liczba punktów do zakupu to {MIN_CUSTOM_POINTS} pkt
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Od {BULK_POINTS_THRESHOLD + 1Pakie} pkt obowiązuje stawka {(pointsToPlnRatio * BULK_RATIO_MULTIPLIER).toFixed(2).replace(".", ",")} zł / pkt
+                  </p>
+                )}
               </div>
             )}
 
@@ -717,7 +741,7 @@ export default function LawFirmPointsPage() {
             </Button>
             <Button
               onClick={handleSubmitPurchase}
-              disabled={!selectedPackage && !customPoints}
+              disabled={(!selectedPackage && !customPoints) || customPointsTooLow}
               variant="primary"
               className="gap-2"
             >
