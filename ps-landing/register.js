@@ -679,6 +679,10 @@ function buildPhoneModal() {
             <input class="ps-phone-code" type="text" inputmode="numeric" maxlength="6"
                    autocomplete="one-time-code" placeholder="000000" aria-label="Kod z SMS">
             <p class="ps-phone-error" role="alert"></p>
+            <div class="ps-phone-simulated" style="display:none;">
+                <p class="ps-phone-simulated-label">Tryb symulacji — log serwera</p>
+                <p class="ps-phone-simulated-text"></p>
+            </div>
             <div class="ps-phone-actions">
                 <button type="button" class="ps-phone-cancel">Anuluj</button>
                 <button type="button" class="ps-phone-resend">Wyślij ponownie</button>
@@ -699,6 +703,11 @@ function buildPhoneModal() {
         .ps-phone-code { width: 100%; padding: 12px; font-size: 24px; letter-spacing: 8px;
             text-align: center; border: 1px solid #ccc; border-radius: 8px; }
         .ps-phone-error { color: #d32f2f; font-size: 13px; min-height: 18px; margin: 10px 0 0; }
+        .ps-phone-simulated { text-align: left; background: rgba(245, 158, 11, .1); border: 1px dashed rgba(245, 158, 11, .6);
+            border-radius: 8px; padding: 10px 12px; margin: 10px 0 0; }
+        .ps-phone-simulated-label { margin: 0 0 4px; font-size: 12px; font-weight: 600; color: #92400e; }
+        .ps-phone-simulated-text { margin: 0; font-size: 12px; font-family: monospace; color: #78350f;
+            word-break: break-all; }
         .ps-phone-actions { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
         .ps-phone-actions button { padding: 10px 18px; border-radius: 8px; border: 1px solid #ccc;
             background: #fff; cursor: pointer; font-size: 14px; }
@@ -724,9 +733,13 @@ function verifyPhoneNumber(phone) {
     const cancelBtn = overlay.querySelector(".ps-phone-cancel");
     const resendBtn = overlay.querySelector(".ps-phone-resend");
     const confirmBtn = overlay.querySelector(".ps-phone-confirm");
+    const simulatedBox = overlay.querySelector(".ps-phone-simulated");
+    const simulatedText = overlay.querySelector(".ps-phone-simulated-text");
 
     codeInput.value = "";
     errorEl.textContent = "";
+    simulatedBox.style.display = "none";
+    simulatedText.textContent = "";
     overlay.classList.add("active");
     codeInput.focus();
 
@@ -773,6 +786,8 @@ function verifyPhoneNumber(phone) {
 
                 if (!response.ok) {
                     errorEl.textContent = data.error || "Nie udało się wysłać kodu SMS.";
+                    simulatedBox.style.display = "none";
+                    simulatedText.textContent = "";
                     startCooldown(data.retryAfterSeconds || 45);
                     return;
                 }
@@ -780,6 +795,15 @@ function verifyPhoneNumber(phone) {
                 desc.textContent = data.maskedPhone
                     ? `Kod wysłaliśmy SMS-em na numer ${data.maskedPhone}. Wpisz go poniżej, aby dokończyć rejestrację.`
                     : "Kod został wysłany. Wpisz go poniżej.";
+
+                if (data.simulated && typeof data.simulatedMessage === "string") {
+                    simulatedText.textContent = data.simulatedMessage;
+                    simulatedBox.style.display = "block";
+                } else {
+                    simulatedBox.style.display = "none";
+                    simulatedText.textContent = "";
+                }
+
                 startCooldown(45);
             } catch (err) {
                 errorEl.textContent = "Nie udało się wysłać kodu SMS. Sprawdź połączenie.";
