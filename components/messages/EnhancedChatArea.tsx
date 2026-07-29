@@ -31,6 +31,8 @@ import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import type { Theme as EmojiPickerTheme } from "emoji-picker-react"
+
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
   loading: () => (
@@ -631,6 +633,19 @@ export function EnhancedChatArea({
   }
 
   const themeColor = isClient ? "#d7b56d" : "#0da192"
+  const emojiPickerStyle = {
+    "--epr-dark-bg-color": "#18181b",
+    "--epr-dark-category-label-bg-color": "#18181be6",
+    "--epr-dark-picker-border-color": "#27272a",
+    "--epr-dark-text-color": "#a1a1aa",
+    "--epr-dark-search-input-bg-color": "#09090b",
+    "--epr-dark-search-input-bg-color-active": "#09090b",
+    "--epr-dark-focus-bg-color": "#27272a",
+    "--epr-dark-hover-bg-color": `${themeColor}26`,
+    "--epr-dark-hover-bg-color-reduced-opacity": `${themeColor}14`,
+    "--epr-dark-highlight-color": themeColor,
+    "--epr-dark-category-icon-active-color": themeColor,
+  } as React.CSSProperties
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = (isClient
     ? conversation.lawFirmUser?.lawFirm?.nazwa
@@ -959,7 +974,11 @@ export function EnhancedChatArea({
 
             {showEmojiPicker && (
               <div className="absolute bottom-14 left-0 z-50">
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
+                <EmojiPicker
+                  onEmojiClick={handleEmojiClick}
+                  theme={"dark" as unknown as EmojiPickerTheme}
+                  style={emojiPickerStyle}
+                />
               </div>
             )}
           </div>
