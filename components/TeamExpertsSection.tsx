@@ -156,7 +156,7 @@ export default function TeamExpertsSection() {
             <Users className="mr-2 h-3.5 w-3.5 inline text-primary animate-pulse" />{" "}
             Nasi Eksperci
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tight text-white max-w-3xl font-playfair">
+          <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
             Poznaj naszych Specjalistów
           </h2>
           <p className="max-w-[750px] text-zinc-400 text-sm sm:text-base md:text-lg font-light leading-relaxed">
@@ -207,7 +207,7 @@ export default function TeamExpertsSection() {
               const imieNazwisko =
                 imie && nazwisko ? `${imie} ${nazwisko}` : null;
               const displayName =
-              expert.nazwa;
+                expert.nazwa;
               const roleName =
                 expert.mainCategory?.nazwa ||
                 expert.categories?.[0]?.category?.nazwa ||

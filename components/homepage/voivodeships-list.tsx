@@ -37,7 +37,7 @@ export function VoivodeshipsList() {
     <section className="py-16 bg-card/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl mb-4 font-playfair">
+          <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
             Znajdź eksperta w swoim województwie
           </h2>
           <p className="text-base md:text-lg text-muted-foreground">

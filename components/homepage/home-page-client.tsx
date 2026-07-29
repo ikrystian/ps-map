@@ -25,6 +25,7 @@ import { SearchHelpSection } from "@/components/homepage/search-help-section";
 import { LocalSeoLinks } from "@/components/seo/local-seo-links";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 import { SurveySection } from "@/components/homepage/survey-section";
+import { VideoConsultationSection } from "@/components/homepage/video-consultation-section";
 
 export default function HomePageClient() {
   const { data: session } = useSession();
@@ -142,6 +143,9 @@ export default function HomePageClient() {
       {/* SECTION 8: New Experts */}
       <NewExperts newLawFirms={newLawFirms} />
 
+
+      {/* SECTION 8.5: Video Consultations */}
+      <VideoConsultationSection />
 
       {/* SECTION 9: How It Works */}
       <HowItWorksSection />

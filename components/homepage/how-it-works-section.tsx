@@ -20,7 +20,7 @@ export function HowItWorksSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-3xl md:text-4xl font-bold mb-12 font-playfair">Jak to działa?</h2>
+                    <h2 className="text-3xl md:text-4xl font-playfair font-light mb-12">Jak to działa?</h2>
 
                     {/* Tabs */}
                     <div className="flex justify-center gap-4 md:gap-12 border-b border-gray-800 w-fit mx-auto">

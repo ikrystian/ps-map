@@ -114,7 +114,7 @@ export function ExpertsShowcase() {
       <div className="md:sticky md:top-0 md:h-screen md:overflow-hidden flex flex-col justify-center py-14 md:py-0">
         {/* Nagłówek z paskiem postępu */}
         <div className="container mx-auto px-4 max-w-7xl w-full flex items-end justify-between gap-8 mb-8 md:mb-12">
-          <h2 className="font-playfair text-2xl md:text-3xl lg:text-[34px] font-normal text-white tracking-wide whitespace-nowrap">
+          <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
             Poznaj naszych ekspertów
           </h2>
           <div className="hidden md:block relative flex-grow max-w-[280px] h-px bg-zinc-800 mb-2.5">

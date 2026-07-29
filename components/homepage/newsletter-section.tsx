@@ -87,7 +87,7 @@ export function NewsletterSection() {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-playfair text-white text-3xl md:text-4xl font-normal tracking-wide mb-4">
+            <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
               Zapisz się do newslettera
             </h2>
             <p className="text-xs md:text-sm text-neutral-400 font-light max-w-2xl mx-auto mb-8 leading-relaxed">
