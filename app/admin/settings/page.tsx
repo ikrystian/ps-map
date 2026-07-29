@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Settings as SettingsIcon } from "lucide-react"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +21,18 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Category } from "@/types/categories"
+import {
+  DEFAULT_MIN_CUSTOM_POINTS,
+  getPackagePricePerPoint,
+  getPackageSavings,
+  getPackageTotalPoints,
+  parseMinCustomPoints,
+  parsePointPackages,
+  parsePointPriceTiers,
+  validatePointPriceTiers,
+  type PointPackage,
+  type PointPriceTier,
+} from "@/lib/points-pricing"
 
 /** Węzeł drzewa z /admin/expertise-categories (API zwraca zagnieżdżone dzieci). */
 type ExpertiseCategoryNode = {
@@ -285,7 +297,77 @@ interface Settings {
     value: string
     description: string | null
   }
+  pointsPriceTiers?: {
+    value: string
+    description: string | null
+  }
+  pointsPackages?: {
+    value: string
+    description: string | null
+  }
+  minCustomPoints?: {
+    value: string
+    description: string | null
+  }
 }
+
+/** Wiersz edytora przedziałów cenowych — trzymany jako tekst, żeby pola dały się czyścić. */
+interface PointTierDraft {
+  id: string
+  minPoints: string
+  /** Pusty string = przedział otwarty („i więcej"). */
+  maxPoints: string
+  pricePerPoint: string
+}
+
+/** Wiersz edytora pakietów punktów. */
+interface PointPackageDraft {
+  id: string
+  label: string
+  points: string
+  bonusPoints: string
+  price: string
+  highlight: boolean
+  active: boolean
+}
+
+const toTierDrafts = (tiers: PointPriceTier[]): PointTierDraft[] =>
+  tiers.map((tier) => ({
+    id: tier.id,
+    minPoints: String(tier.minPoints),
+    maxPoints: tier.maxPoints === null ? "" : String(tier.maxPoints),
+    pricePerPoint: String(tier.pricePerPoint),
+  }))
+
+const fromTierDrafts = (drafts: PointTierDraft[]): PointPriceTier[] =>
+  drafts.map((draft) => ({
+    id: draft.id,
+    minPoints: Math.floor(parseFloat(draft.minPoints)),
+    maxPoints: draft.maxPoints.trim() === "" ? null : Math.floor(parseFloat(draft.maxPoints)),
+    pricePerPoint: parseFloat(draft.pricePerPoint),
+  }))
+
+const toPackageDrafts = (packages: PointPackage[]): PointPackageDraft[] =>
+  packages.map((pkg) => ({
+    id: pkg.id,
+    label: pkg.label,
+    points: String(pkg.points),
+    bonusPoints: String(pkg.bonusPoints),
+    price: String(pkg.price),
+    highlight: pkg.highlight,
+    active: pkg.active,
+  }))
+
+const fromPackageDrafts = (drafts: PointPackageDraft[]): PointPackage[] =>
+  drafts.map((draft) => ({
+    id: draft.id,
+    label: draft.label.trim(),
+    points: Math.floor(parseFloat(draft.points)),
+    bonusPoints: draft.bonusPoints.trim() === "" ? 0 : Math.floor(parseFloat(draft.bonusPoints)),
+    price: parseFloat(draft.price),
+    highlight: draft.highlight,
+    active: draft.active,
+  }))
 
 /** Stan konfiguracji SMS wyliczony przez serwer (klucz `smsapiStatus`). */
 interface SmsApiStatus {
@@ -305,6 +387,9 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false)
   const [maxCategories, setMaxCategories] = useState("10")
   const [pointsToPlnRatio, setPointsToPlnRatio] = useState("1")
+  const [minCustomPoints, setMinCustomPoints] = useState(String(DEFAULT_MIN_CUSTOM_POINTS))
+  const [pointTiers, setPointTiers] = useState<PointTierDraft[]>([])
+  const [pointPackages, setPointPackages] = useState<PointPackageDraft[]>([])
   const [siteName, setSiteName] = useState("Prosta Sprawa")
   const [contactEmail, setContactEmail] = useState("kontakt@prostasprawa.pl")
   const [supportEmail, setSupportEmail] = useState("pomoc@prostasprawa.pl")
@@ -457,6 +542,11 @@ export default function AdminSettingsPage() {
         setCaseCreationOtpEnabled(data.caseCreationOtpEnabled?.value || "false")
         setPointsToPlnRatio(data.pointsToPlnRatio?.value || "1")
 
+        // Cennik punktów — przedziały cenowe i pakiety (JSON w Settings)
+        setMinCustomPoints(String(parseMinCustomPoints(data.minCustomPoints?.value)))
+        setPointTiers(toTierDrafts(parsePointPriceTiers(data.pointsPriceTiers?.value)))
+        setPointPackages(toPackageDrafts(parsePointPackages(data.pointsPackages?.value)))
+
         // Stopka — dolny pasek (?? zamiast ||, bo pusty string = celowo ukryta ikona)
         setFooterCopyrightText(data.footerCopyrightText?.value ?? "2026 © ProstaSprawa.pl")
         setFooterSocialFacebook(data.footerSocialFacebook?.value ?? "https://facebook.com")
@@ -550,6 +640,55 @@ export default function AdminSettingsPage() {
     const pointsToPlnRatioNum = parseFloat(pointsToPlnRatio)
     if (isNaN(pointsToPlnRatioNum) || pointsToPlnRatioNum <= 0) {
       toast.error("Przelicznik punktów na PLN musi być liczbą większą od 0")
+      return
+    }
+
+    const minCustomPointsNum = parseInt(minCustomPoints)
+    if (isNaN(minCustomPointsNum) || minCustomPointsNum < 1) {
+      toast.error("Minimalna liczba punktów musi być liczbą większą od 0")
+      return
+    }
+
+    if (pointTiers.length === 0) {
+      toast.error("Dodaj przynajmniej jeden przedział cenowy punktów")
+      return
+    }
+
+    const hasIncompleteTier = pointTiers.some(
+      (tier) =>
+        isNaN(parseFloat(tier.minPoints)) ||
+        isNaN(parseFloat(tier.pricePerPoint)) ||
+        (tier.maxPoints.trim() !== "" && isNaN(parseFloat(tier.maxPoints)))
+    )
+    if (hasIncompleteTier) {
+      toast.error("Uzupełnij poprawnie wszystkie pola przedziałów cenowych")
+      return
+    }
+
+    const tierErrors = validatePointPriceTiers(fromTierDrafts(pointTiers))
+    if (tierErrors.length > 0) {
+      toast.error(tierErrors[0])
+      return
+    }
+
+    const hasIncompletePackage = pointPackages.some(
+      (pkg) =>
+        !pkg.label.trim() ||
+        isNaN(parseFloat(pkg.points)) ||
+        parseFloat(pkg.points) < 1 ||
+        isNaN(parseFloat(pkg.price)) ||
+        parseFloat(pkg.price) < 0 ||
+        (pkg.bonusPoints.trim() !== "" &&
+          (isNaN(parseFloat(pkg.bonusPoints)) || parseFloat(pkg.bonusPoints) < 0))
+    )
+    if (hasIncompletePackage) {
+      toast.error("Uzupełnij poprawnie nazwę, liczbę punktów i cenę każdego pakietu")
+      return
+    }
+
+    const packageIds = pointPackages.map((pkg) => pkg.id)
+    if (new Set(packageIds).size !== packageIds.length) {
+      toast.error("Identyfikatory pakietów punktów muszą być unikalne")
       return
     }
 
@@ -673,6 +812,18 @@ export default function AdminSettingsPage() {
             pointsToPlnRatio: {
               value: pointsToPlnRatio,
               description: "Przelicznik punktów na złotówki w systemie (1 punkt = X PLN)",
+            },
+            minCustomPoints: {
+              value: String(minCustomPointsNum),
+              description: "Minimalna liczba punktów przy zakupie własnej liczby punktów",
+            },
+            pointsPriceTiers: {
+              value: JSON.stringify(fromTierDrafts(pointTiers)),
+              description: "Przedziały cenowe (JSON) dla zakupu własnej liczby punktów",
+            },
+            pointsPackages: {
+              value: JSON.stringify(fromPackageDrafts(pointPackages)),
+              description: "Pakiety punktów (JSON) prezentowane w panelu eksperta, wraz z punktami gratis",
             },
             enableUserSelectionOnLogin: {
               value: enableUserSelectionOnLogin,
@@ -895,6 +1046,103 @@ export default function AdminSettingsPage() {
     }
   }
 
+  // ---- Cennik punktów: przedziały cenowe ----
+  const updatePointTier = (index: number, field: keyof PointTierDraft, value: string) => {
+    setPointTiers((prev) =>
+      prev.map((tier, i) => (i === index ? { ...tier, [field]: value } : tier))
+    )
+  }
+
+  const addPointTier = () => {
+    const last = pointTiers[pointTiers.length - 1]
+    const lastMax = last ? parseFloat(last.maxPoints) : NaN
+    const nextMin = !isNaN(lastMax) ? lastMax + 1 : 1
+    setPointTiers((prev) => [
+      ...prev,
+      {
+        id: `tier_${Date.now()}`,
+        minPoints: String(nextMin),
+        maxPoints: "",
+        pricePerPoint: pointsToPlnRatio || "1",
+      },
+    ])
+  }
+
+  const removePointTier = (index: number) => {
+    setPointTiers((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  // ---- Cennik punktów: pakiety ----
+  const updatePointPackage = (
+    index: number,
+    field: keyof PointPackageDraft,
+    value: string | boolean
+  ) => {
+    setPointPackages((prev) =>
+      prev.map((pkg, i) => {
+        if (i !== index) {
+          // Wyróżniony może być tylko jeden pakiet
+          return field === "highlight" && value === true ? { ...pkg, highlight: false } : pkg
+        }
+        return { ...pkg, [field]: value }
+      })
+    )
+  }
+
+  const addPointPackage = () => {
+    setPointPackages((prev) => [
+      ...prev,
+      {
+        id: `pkg_${Date.now()}`,
+        label: "Nowy pakiet",
+        points: "100",
+        bonusPoints: "0",
+        price: pointsToPlnRatio ? String(Math.round(100 * parseFloat(pointsToPlnRatio))) : "100",
+        highlight: false,
+        active: true,
+      },
+    ])
+  }
+
+  const removePointPackage = (index: number) => {
+    setPointPackages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  /** Podgląd wiersza pakietu — liczony na bieżąco z wpisanych wartości. */
+  const getPackagePreview = (draft: PointPackageDraft) => {
+    const points = parseFloat(draft.points)
+    const bonus = parseFloat(draft.bonusPoints)
+    const price = parseFloat(draft.price)
+    const ratio = parseFloat(pointsToPlnRatio)
+    if (isNaN(points) || isNaN(price)) return null
+
+    const pkg: PointPackage = {
+      id: draft.id,
+      label: draft.label,
+      points: Math.floor(points),
+      bonusPoints: isNaN(bonus) ? 0 : Math.floor(bonus),
+      price,
+      highlight: draft.highlight,
+      active: draft.active,
+    }
+
+    return {
+      totalPoints: getPackageTotalPoints(pkg),
+      pricePerPoint: getPackagePricePerPoint(pkg),
+      savings: isNaN(ratio) ? 0 : getPackageSavings(pkg, ratio),
+    }
+  }
+
+  const pointTierIssues = (() => {
+    const complete = pointTiers.every(
+      (tier) =>
+        !isNaN(parseFloat(tier.minPoints)) &&
+        !isNaN(parseFloat(tier.pricePerPoint)) &&
+        (tier.maxPoints.trim() === "" || !isNaN(parseFloat(tier.maxPoints)))
+    )
+    return complete ? validatePointPriceTiers(fromTierDrafts(pointTiers)) : []
+  })()
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -922,6 +1170,10 @@ export default function AdminSettingsPage() {
             <TabsTrigger value="experts" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
               <Users className="h-4 w-4" />
               <span>Eksperci</span>
+            </TabsTrigger>
+            <TabsTrigger value="points" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <Coins className="h-4 w-4" />
+              <span>Punkty</span>
             </TabsTrigger>
             <TabsTrigger value="reviews" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
               <Star className="h-4 w-4" />
@@ -1691,23 +1943,6 @@ export default function AdminSettingsPage() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="pointsToPlnRatio">
-                    Przelicznik punktów na PLN (1 pkt = X zł)
-                  </Label>
-                  <Input
-                    id="pointsToPlnRatio"
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={pointsToPlnRatio}
-                    onChange={(e) => setPointsToPlnRatio(e.target.value)}
-                    placeholder="1.0"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Wartość 1 punktu w PLN (domyślnie 1:1, czyli 1 pkt = 1 PLN)
-                  </p>
-                </div>
               </div>
 
               <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
@@ -1725,6 +1960,275 @@ export default function AdminSettingsPage() {
                   onCheckedChange={(checked) => setAutoGrantBusinessPackage(checked ? "true" : "false")}
                 />
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB: PUNKTY ============== */}
+        <TabsContent value="points" className="space-y-6 m-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Stawka bazowa punktów</CardTitle>
+              <CardDescription>
+                Punkt odniesienia dla wyliczeń rabatów oraz stawka awaryjna, gdy liczba punktów nie mieści się w żadnym przedziale
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="pointsToPlnRatio">
+                    Przelicznik punktów na PLN (1 pkt = X zł)
+                  </Label>
+                  <Input
+                    id="pointsToPlnRatio"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    value={pointsToPlnRatio}
+                    onChange={(e) => setPointsToPlnRatio(e.target.value)}
+                    placeholder="1.0"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Wartość 1 punktu w PLN (domyślnie 1:1, czyli 1 pkt = 1 PLN)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="minCustomPoints">
+                    Minimalna liczba punktów przy zakupie
+                  </Label>
+                  <Input
+                    id="minCustomPoints"
+                    type="number"
+                    min="1"
+                    value={minCustomPoints}
+                    onChange={(e) => setMinCustomPoints(e.target.value)}
+                    placeholder="1000"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Dotyczy zakupu własnej liczby punktów w panelu eksperta (wartość domyślna w oknie zakupu)
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Przedziały cenowe</CardTitle>
+              <CardDescription>
+                Cena za punkt zależna od zamawianej liczby punktów. Przedziały nie mogą na siebie nachodzić, a przedział bez górnej granicy („i więcej") musi być ostatni.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_auto] gap-3 px-1 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <span>Od (pkt)</span>
+                <span>Do (pkt)</span>
+                <span>Cena za punkt (zł)</span>
+                <span className="w-9" />
+              </div>
+
+              {pointTiers.map((tier, index) => {
+                const points = parseFloat(tier.minPoints)
+                const price = parseFloat(tier.pricePerPoint)
+                return (
+                  <div
+                    key={tier.id}
+                    className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-start rounded-lg border border-border/60 bg-muted/20 p-3 md:border-0 md:bg-transparent md:p-1"
+                  >
+                    <div className="space-y-1">
+                      <Label className="md:hidden text-xs">Od (pkt)</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={tier.minPoints}
+                        onChange={(e) => updatePointTier(index, "minPoints", e.target.value)}
+                        placeholder="1"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="md:hidden text-xs">Do (pkt)</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={tier.maxPoints}
+                        onChange={(e) => updatePointTier(index, "maxPoints", e.target.value)}
+                        placeholder="bez limitu"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Puste = „i więcej"
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="md:hidden text-xs">Cena za punkt (zł)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        value={tier.pricePerPoint}
+                        onChange={(e) => updatePointTier(index, "pricePerPoint", e.target.value)}
+                        placeholder="1.00"
+                      />
+                      {!isNaN(points) && !isNaN(price) && (
+                        <p className="text-xs text-muted-foreground">
+                          {points} pkt = {(points * price).toFixed(2)} zł
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-destructive"
+                      onClick={() => removePointTier(index)}
+                      aria-label="Usuń przedział"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )
+              })}
+
+              {pointTiers.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Brak przedziałów — obowiązuje stawka bazowa dla każdej liczby punktów.
+                </p>
+              )}
+
+              {pointTierIssues.length > 0 && (
+                <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 space-y-1">
+                  {pointTierIssues.map((issue) => (
+                    <p key={issue} className="text-sm text-destructive flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                      {issue}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              <Button type="button" variant="outline" onClick={addPointTier} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Dodaj przedział
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Pakiety punktów</CardTitle>
+              <CardDescription>
+                Pakiety widoczne w panelu eksperta (/panel-eksperta/punkty). Punkty gratis są dopisywane do salda razem z punktami płatnymi.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {pointPackages.map((pkg, index) => {
+                const preview = getPackagePreview(pkg)
+                return (
+                  <div
+                    key={pkg.id}
+                    className="rounded-lg border border-border/60 bg-muted/20 p-4 space-y-3"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-start">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Nazwa pakietu</Label>
+                        <Input
+                          value={pkg.label}
+                          onChange={(e) => updatePointPackage(index, "label", e.target.value)}
+                          placeholder="np. Business"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Punkty</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={pkg.points}
+                          onChange={(e) => updatePointPackage(index, "points", e.target.value)}
+                          placeholder="1000"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Punkty gratis</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={pkg.bonusPoints}
+                          onChange={(e) => updatePointPackage(index, "bonusPoints", e.target.value)}
+                          placeholder="0"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Cena (zł)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={pkg.price}
+                          onChange={(e) => updatePointPackage(index, "price", e.target.value)}
+                          placeholder="700"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-destructive md:mt-6"
+                        onClick={() => removePointPackage(index)}
+                        aria-label="Usuń pakiet"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          id={`pkg-highlight-${pkg.id}`}
+                          checked={pkg.highlight}
+                          onCheckedChange={(checked) => updatePointPackage(index, "highlight", checked)}
+                        />
+                        <Label htmlFor={`pkg-highlight-${pkg.id}`} className="text-sm font-normal">
+                          Wyróżniony („Najlepszy wybór")
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          id={`pkg-active-${pkg.id}`}
+                          checked={pkg.active}
+                          onCheckedChange={(checked) => updatePointPackage(index, "active", checked)}
+                        />
+                        <Label htmlFor={`pkg-active-${pkg.id}`} className="text-sm font-normal">
+                          Widoczny dla ekspertów
+                        </Label>
+                      </div>
+                    </div>
+
+                    {preview && (
+                      <p className="text-xs text-muted-foreground">
+                        Ekspert otrzyma <span className="font-medium text-foreground">{preview.totalPoints} pkt</span>
+                        {" · "}
+                        {preview.pricePerPoint.toFixed(2)} zł / punkt
+                        {preview.savings > 0 && (
+                          <span className="text-emerald-500">
+                            {" · "}oszczędność {preview.savings.toFixed(2)} zł względem stawki bazowej
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+
+              {pointPackages.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Brak pakietów — eksperci zobaczą wyłącznie zakup własnej liczby punktów.
+                </p>
+              )}
+
+              <Button type="button" variant="outline" onClick={addPointPackage} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Dodaj pakiet
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

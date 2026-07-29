@@ -1,3 +1,8 @@
+import {
+  DEFAULT_MIN_CUSTOM_POINTS,
+  DEFAULT_POINT_PACKAGES,
+  DEFAULT_POINT_PRICE_TIERS,
+} from "@/lib/points-pricing"
 import prisma from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -77,6 +82,15 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.pointsToPlnRatio) {
       settingsObject.pointsToPlnRatio = "1"
     }
+    if (!settingsObject.pointsPriceTiers) {
+      settingsObject.pointsPriceTiers = JSON.stringify(DEFAULT_POINT_PRICE_TIERS)
+    }
+    if (!settingsObject.pointsPackages) {
+      settingsObject.pointsPackages = JSON.stringify(DEFAULT_POINT_PACKAGES)
+    }
+    if (!settingsObject.minCustomPoints) {
+      settingsObject.minCustomPoints = String(DEFAULT_MIN_CUSTOM_POINTS)
+    }
 
     return NextResponse.json(settingsObject, { status: 200 })
   } catch (error) {
@@ -93,6 +107,9 @@ export async function GET(request: NextRequest) {
         deleteReviewCostRating2: "300",
         deleteReviewCostRating3: "100",
         pointsToPlnRatio: "1",
+        pointsPriceTiers: JSON.stringify(DEFAULT_POINT_PRICE_TIERS),
+        pointsPackages: JSON.stringify(DEFAULT_POINT_PACKAGES),
+        minCustomPoints: String(DEFAULT_MIN_CUSTOM_POINTS),
         enablePaymentTest: "true",
         enablePaymentPrzelewy24: "true",
         enablePaymentPayU: "true",
