@@ -1,6 +1,7 @@
 import { getOrSetCached } from "@/lib/cache"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
+import { getRecommendedCategoryScope } from "@/lib/recommended-promotion"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -94,13 +95,18 @@ export async function GET(request: NextRequest) {
           // fallback
         }
 
+        // 5. Zakładki sekcji "Polecani prawnicy" — podkategorie kategorii wybranej
+        //    przez administratora w drzewie ExpertiseCategory (/admin/expertise-categories)
+        const { categories: recommendedCategories } = await getRecommendedCategoryScope()
+
         const recommendedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_RECOMMENDED")
         const consultedOverrides = allOverrides.filter(o => o.context === "HOMEPAGE_CONSULTED")
 
         // Mapuj wyniki na ustrukturyzowany format pogrupowany po kategoriach
         const recommendedByCat: Record<string, any[]> = {}
         recommendedPromotions.forEach((p) => {
-          const cat = p.kategoriaPromocji || "Adwokat"
+          const cat = p.kategoriaPromocji
+          if (!cat) return
           if (!recommendedByCat[cat]) {
             recommendedByCat[cat] = []
           }
@@ -194,6 +200,7 @@ export async function GET(request: NextRequest) {
 
         return {
           recommended: recommendedByCat,
+          recommendedCategories,
           consulted: consultedByCat,
           consultedCategoryIds: homepageConsultedCategoryIds,
         }

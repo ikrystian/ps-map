@@ -610,6 +610,12 @@ export default function CheckoutPage() {
                       <span className="text-zinc-400 font-light">Punkty:</span>
                       <span className="font-medium text-white">+{orderData.liczbaPunktow} pkt</span>
                     </div>
+                    {orderData.punktyGratis && orderData.punktyGratis > 0 ? (
+                      <div className="flex items-center justify-between text-sm text-emerald-400 font-medium">
+                        <span>w tym punkty gratis:</span>
+                        <span>+{orderData.punktyGratis} pkt</span>
+                      </div>
+                    ) : null}
                     {lawFirm && orderData.liczbaPunktow && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-zinc-400 font-light">Stan po zakupie:</span>

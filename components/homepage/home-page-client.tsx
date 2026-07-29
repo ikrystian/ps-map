@@ -25,6 +25,7 @@ import { SearchHelpSection } from "@/components/homepage/search-help-section";
 import { LocalSeoLinks } from "@/components/seo/local-seo-links";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 import { SurveySection } from "@/components/homepage/survey-section";
+import { VideoConsultationSection } from "@/components/homepage/video-consultation-section";
 
 export default function HomePageClient() {
   const { data: session } = useSession();
@@ -35,6 +36,7 @@ export default function HomePageClient() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [homepagePromotions, setHomepagePromotions] = useState<{
     recommended: Record<string, LawFirm[]>;
+    recommendedCategories?: { id: string; nazwa: string }[];
     consulted: Record<string, LawFirm[]>;
     consultedCategoryIds?: string[];
   } | null>(null);
@@ -123,6 +125,7 @@ export default function HomePageClient() {
       {/* SECTION 5: Recommended Lawyers */}
       <RecommendedLawyers
         recommendedData={homepagePromotions?.recommended}
+        recommendedCategories={homepagePromotions?.recommendedCategories}
         lawFirms={lawFirms}
       />
 
@@ -140,6 +143,9 @@ export default function HomePageClient() {
       {/* SECTION 8: New Experts */}
       <NewExperts newLawFirms={newLawFirms} />
 
+
+      {/* SECTION 8.5: Video Consultations */}
+      <VideoConsultationSection />
 
       {/* SECTION 9: How It Works */}
       <HowItWorksSection />

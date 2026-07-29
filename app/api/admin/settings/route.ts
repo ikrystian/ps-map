@@ -1,4 +1,9 @@
 import { auth } from "@/lib/auth"
+import {
+  DEFAULT_MIN_CUSTOM_POINTS,
+  DEFAULT_POINT_PACKAGES,
+  DEFAULT_POINT_PRICE_TIERS,
+} from "@/lib/points-pricing"
 import prisma from "@/lib/prisma"
 import { getSmsConfig } from "@/lib/smsapi"
 import { NextRequest, NextResponse } from "next/server"
@@ -61,6 +66,12 @@ export async function GET(request: NextRequest) {
         description: "Lista ID kategorii (Category) wyświetlanych w sekcji Najczęściej Konsultowane na stronie głównej",
       }
     }
+    if (!settingsObject.homepageRecommendedCategory) {
+      settingsObject.homepageRecommendedCategory = {
+        value: "",
+        description: "ID kategorii (ExpertiseCategory), której podkategorie są zakładkami sekcji Polecani prawnicy i adwokaci na stronie głównej",
+      }
+    }
     if (!settingsObject.maxLawFirmCategories) {
       settingsObject.maxLawFirmCategories = {
         value: "10",
@@ -101,6 +112,24 @@ export async function GET(request: NextRequest) {
       settingsObject.pointsToPlnRatio = {
         value: "1",
         description: "Przelicznik punktów na złotówki w systemie (1 punkt = X PLN). Domyślnie 1:1.",
+      }
+    }
+    if (!settingsObject.pointsPriceTiers) {
+      settingsObject.pointsPriceTiers = {
+        value: JSON.stringify(DEFAULT_POINT_PRICE_TIERS),
+        description: "Przedziały cenowe (JSON) dla zakupu własnej liczby punktów",
+      }
+    }
+    if (!settingsObject.pointsPackages) {
+      settingsObject.pointsPackages = {
+        value: JSON.stringify(DEFAULT_POINT_PACKAGES),
+        description: "Pakiety punktów (JSON) prezentowane w panelu eksperta, wraz z punktami gratis",
+      }
+    }
+    if (!settingsObject.minCustomPoints) {
+      settingsObject.minCustomPoints = {
+        value: String(DEFAULT_MIN_CUSTOM_POINTS),
+        description: "Minimalna liczba punktów przy zakupie własnej liczby punktów",
       }
     }
     if (!settingsObject.autoApproveTestPayment) {

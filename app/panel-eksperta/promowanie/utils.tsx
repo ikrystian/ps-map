@@ -23,20 +23,47 @@ export const ICON_MAP: Record<string, any> = {
   Crown,
 }
 
-export const RECOMMENDED_LAWYERS_CATEGORIES = [
-  "Adwokat",
-  "Radca prawny",
-  "Rzeczoznawca",
-  "Notariusz",
-  "Doradca podatkowy",
-  "Doradca finansowy",
-  "Mediator",
-  "Komornik",
-  "Rzecznik patentowy",
-  "Aplikant",
-  "BHP i PPOŻ",
-  "Doradca prawny",
-]
+/** Węzeł drzewa z /api/expertise-categories (dzieci zagnieżdżone w odpowiedzi). */
+type ExpertiseCategoryNode = {
+  id: string
+  nazwa: string
+  children?: ExpertiseCategoryNode[]
+}
+
+const findExpertiseNode = (
+  nodes: ExpertiseCategoryNode[],
+  id: string
+): ExpertiseCategoryNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node
+    const found = node.children?.length ? findExpertiseNode(node.children, id) : null
+    if (found) return found
+  }
+  return null
+}
+
+const collectIds = (nodes: ExpertiseCategoryNode[]): string[] =>
+  nodes.flatMap((node) => [node.id, ...collectIds(node.children || [])])
+
+/**
+ * Zakres promocji „Polecani prawnicy i adwokaci" wyznaczony przez kategorię
+ * wskazaną przez administratora (ustawienie homepageRecommendedCategory):
+ *  - `categories` — nazwy podkategorii, czyli kategorie do wyboru przy zakupie,
+ *  - `eligibleIds` — kategoria wraz z poddrzewem; ekspert spoza tego zbioru
+ *    nie ma dostępu do tego formatu promowania.
+ */
+export const getRecommendedScopeFromTree = (
+  nodes: ExpertiseCategoryNode[],
+  parentId: string
+): { categories: string[]; eligibleIds: string[] } => {
+  const parent = findExpertiseNode(nodes, parentId)
+  if (!parent) return { categories: [], eligibleIds: [] }
+
+  return {
+    categories: (parent.children || []).map((child) => child.nazwa),
+    eligibleIds: [parent.id, ...collectIds(parent.children || [])],
+  }
+}
 
 export const getFutureMonths = (includeCurrentMonth = false) => {
   const months = []

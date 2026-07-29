@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 import { LawFirm, Promotion, Category, Voivodeship } from "./types"
+import { getRecommendedScopeFromTree } from "./utils"
 
 
 
@@ -41,6 +42,10 @@ export default function LawFirmPromotionPage() {
   const [promotionTypes, setPromotionTypes] = useState<any[]>([])
   const [promoteConsultedImmediately, setPromoteConsultedImmediately] = useState(false)
   const [consultedCategoryIds, setConsultedCategoryIds] = useState<string[]>([])
+  // Podkategorie kategorii wskazanej przez administratora dla sekcji "Polecani prawnicy"
+  const [recommendedCategories, setRecommendedCategories] = useState<string[]>([])
+  // Kategoria wskazana przez administratora wraz z poddrzewem — decyduje o dostępie do formatu
+  const [recommendedEligibleIds, setRecommendedEligibleIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -170,6 +175,18 @@ export default function LawFirmPromotionPage() {
           } catch {
             setConsultedCategoryIds([])
           }
+
+          // Kategorie "Polecani prawnicy" = podkategorie kategorii wybranej przez administratora
+          const recommendedParentId: string = settingsData.homepageRecommendedCategory || ""
+          if (recommendedParentId) {
+            const expertiseResponse = await fetch("/api/expertise-categories")
+            if (expertiseResponse.ok) {
+              const tree = await expertiseResponse.json()
+              const scope = getRecommendedScopeFromTree(tree, recommendedParentId)
+              setRecommendedCategories(scope.categories)
+              setRecommendedEligibleIds(scope.eligibleIds)
+            }
+          }
         }
       } catch {
         // Brak ustawień – używamy wartości domyślnych
@@ -294,12 +311,22 @@ export default function LawFirmPromotionPage() {
   // Kategorie "Najczęściej konsultowane" wybrane przez administratora w ustawieniach
   const consultedCategories = categories.filter((c) => consultedCategoryIds.includes(c.id))
 
+  // Format "Polecani prawnicy i adwokaci" widzą tylko eksperci przypisani do kategorii
+  // wskazanej przez administratora (lub czegokolwiek w jej poddrzewie)
+  const canBuyRecommendedPromotion =
+    !!lawFirm?.expertiseCategoryId &&
+    recommendedEligibleIds.includes(lawFirm.expertiseCategoryId)
+
+  const availablePromotionTypes = promotionTypes.filter(
+    (promo) => promo.type !== "POLECANI_PRAWNICY" || canBuyRecommendedPromotion
+  )
+
   const handleOpenDialog = (type: string) => {
     resetForm()
     setSelectedType(type)
 
     if (type === "POLECANI_PRAWNICY") {
-      setSelectedCategory("Adwokat")
+      setSelectedCategory(recommendedCategories[0] || "all")
     } else if (type === "NAJCZESCIEJ_KONSULTOWANE") {
       const hasMainInConsulted = consultedCategories.some(c => c.id === lawFirm?.mainCategoryId)
       setSelectedCategory(hasMainInConsulted && lawFirm?.mainCategoryId ? lawFirm.mainCategoryId : (consultedCategories[0]?.id || "all"))
@@ -545,7 +572,7 @@ export default function LawFirmPromotionPage() {
 
       {/* Available Promotions Grid */}
       <PromotionFormats
-        promotionTypes={promotionTypes}
+        promotionTypes={availablePromotionTypes}
         handleOpenDialog={handleOpenDialog}
       />
 
@@ -573,6 +600,7 @@ export default function LawFirmPromotionPage() {
         setSelectedCategory={setSelectedCategory}
         categories={categories}
         consultedCategories={consultedCategories}
+        recommendedCategories={recommendedCategories}
         selectedVoivodeship={selectedVoivodeship}
         setSelectedVoivodeship={setSelectedVoivodeship}
         voivodeships={voivodeships}

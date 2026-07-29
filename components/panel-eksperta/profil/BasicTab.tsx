@@ -189,6 +189,14 @@ export function BasicTab({
                     Określ swoją główną specjalizację zawodową podaną podczas rejestracji.
                   </p>
                 </div>
+                {/*
+                  Uwaga: te selecty żyją wewnątrz <form> profilu, więc Radix renderuje dla nich
+                  ukryty natywny <select> (tzw. bubble input). Gdy wartość zostanie ustawiona,
+                  zanim doładują się opcje z API, natywny <select> nie znajduje pasującego
+                  <option>, zeruje się i emituje `change` z pustą wartością — co kasowało
+                  wczytaną kategorię i specjalizację po odświeżeniu strony. Realny wybór
+                  użytkownika nigdy nie jest pusty, więc puste (i powtórzone) wartości ignorujemy.
+                */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Kategoria */}
                   <div className="grid gap-2">
@@ -196,6 +204,7 @@ export function BasicTab({
                     <Select
                       value={selectedCatId}
                       onValueChange={(val) => {
+                        if (!val || val === selectedCatId) return
                         setSelectedCatId(val)
                         setSelectedSubcatId("")
                         handleInputChange("expertiseCategoryId", "")
@@ -221,6 +230,7 @@ export function BasicTab({
                       <Select
                         value={selectedSubcatId}
                         onValueChange={(val) => {
+                          if (!val || val === selectedSubcatId) return
                           setSelectedSubcatId(val)
                           handleInputChange("expertiseCategoryId", "")
                         }}
@@ -246,6 +256,7 @@ export function BasicTab({
                       <Select
                         value={formData.expertiseCategoryId || ""}
                         onValueChange={(val) => {
+                          if (!val || val === formData.expertiseCategoryId) return
                           handleInputChange("expertiseCategoryId", val)
                         }}
                       >

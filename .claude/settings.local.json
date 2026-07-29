@@ -108,7 +108,10 @@
       "Bash(/api\" /home/krystian/Projects/ps-map/app/\\\\\\(public\\\\\\)/ekspert/\\\\[slug\\\\]/ExpertProfileClientPage.tsx /home/krystian/Projects/ps-map/components/ekspert/*.tsx | head -30)",
       "Bash(grep -rn \"fetch\\(\\\\\"/api\\\\|fetch\\(`/api\" /home/krystian/Projects/ps-map/app/\\\\\\(public\\\\\\)/ekspert/\\\\[slug\\\\]/ExpertProfileClientPage.tsx /home/krystian/Projects/ps-map/components/ekspert/*.tsx | head -30)",
       "Bash(echo \"exit=$?\")",
-      "Bash(echo \"---exit:$?\")"
+      "Bash(echo \"---exit:$?\")",
+      "Read(//home/krystian/.cache/**)",
+      "Bash(npm init *)",
+      "Bash(npm i *)"
     ]
   }
 }
