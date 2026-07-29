@@ -674,6 +674,13 @@ function buildPhoneModal() {
     overlay.className = "ps-phone-modal-overlay";
     overlay.innerHTML = `
         <div class="ps-phone-modal" role="dialog" aria-modal="true" aria-labelledby="psPhoneTitle">
+            <div class="ps-phone-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0da192" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z" />
+                    <path d="M9 12l2 2 4-4" />
+                </svg>
+            </div>
             <h3 id="psPhoneTitle">Weryfikacja numeru telefonu</h3>
             <p class="ps-phone-desc">Wysyłamy kod SMS na podany numer telefonu…</p>
             <input class="ps-phone-code" type="text" inputmode="numeric" maxlength="6"
@@ -693,26 +700,40 @@ function buildPhoneModal() {
 
     const style = document.createElement("style");
     style.textContent = `
-        .ps-phone-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55);
+        .ps-phone-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7);
             display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px; }
         .ps-phone-modal-overlay.active { display: flex; }
-        .ps-phone-modal { background: #fff; border-radius: 12px; padding: 28px 24px; max-width: 400px;
-            width: 100%; text-align: center; font-family: inherit; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-        .ps-phone-modal h3 { margin: 0 0 8px; font-size: 20px; }
-        .ps-phone-desc { margin: 0 0 18px; color: #555; font-size: 14px; line-height: 1.5; }
-        .ps-phone-code { width: 100%; padding: 12px; font-size: 24px; letter-spacing: 8px;
-            text-align: center; border: 1px solid #ccc; border-radius: 8px; }
-        .ps-phone-error { color: #d32f2f; font-size: 13px; min-height: 18px; margin: 10px 0 0; }
-        .ps-phone-simulated { text-align: left; background: rgba(245, 158, 11, .1); border: 1px dashed rgba(245, 158, 11, .6);
-            border-radius: 8px; padding: 10px 12px; margin: 10px 0 0; }
-        .ps-phone-simulated-label { margin: 0 0 4px; font-size: 12px; font-weight: 600; color: #92400e; }
-        .ps-phone-simulated-text { margin: 0; font-size: 12px; font-family: monospace; color: #78350f;
-            word-break: break-all; }
-        .ps-phone-actions { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
-        .ps-phone-actions button { padding: 10px 18px; border-radius: 8px; border: 1px solid #ccc;
-            background: #fff; cursor: pointer; font-size: 14px; }
+        .ps-phone-modal { background: #1a1a1a; border: 1px solid rgba(200,168,100,.15); border-radius: 20px;
+            padding: 36px 32px; max-width: 400px; width: 100%; text-align: center;
+            font-family: 'Inter', sans-serif; color: #e0ddd5;
+            box-shadow: 0 30px 60px rgba(0,0,0,.6), 0 0 30px rgba(200,168,100,.03); }
+        .ps-phone-icon { width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; background: rgba(13,161,146,.1);
+            border: 1px solid rgba(13,161,146,.25); }
+        .ps-phone-modal h3 { margin: 0 0 8px; font-family: 'Playfair Display', serif; font-weight: 500;
+            font-size: 1.3rem; color: #e0ddd5; }
+        .ps-phone-desc { margin: 0 0 20px; color: #aaa; font-size: 0.9rem; line-height: 1.6; }
+        .ps-phone-code { width: 100%; padding: 16px 20px; font-size: 1.4rem; letter-spacing: 10px;
+            text-align: center; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.08);
+            border-radius: 10px; color: #e0ddd5; font-family: 'Inter', sans-serif; outline: none;
+            transition: border-color .3s, box-shadow .3s; }
+        .ps-phone-code:focus { border-color: rgba(200,168,100,.4); box-shadow: 0 0 0 3px rgba(200,168,100,.08); }
+        .ps-phone-error { color: #e06c6c; font-size: 0.8rem; min-height: 18px; margin: 12px 0 0; }
+        .ps-phone-simulated { text-align: left; background: rgba(0,0,0,.3); border: 1px dashed rgba(200,168,100,.35);
+            border-radius: 12px; padding: 12px 14px; margin: 12px 0 0; }
+        .ps-phone-simulated-label { margin: 0 0 6px; font-size: 0.75rem; font-weight: 600; color: #c8a864;
+            text-transform: uppercase; letter-spacing: .04em; }
+        .ps-phone-simulated-text { margin: 0; font-size: 0.8rem; font-family: monospace; color: #ccc;
+            word-break: break-all; line-height: 1.5; }
+        .ps-phone-actions { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+        .ps-phone-actions button { padding: 12px 20px; border-radius: 50px; border: none;
+            font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer;
+            transition: all .3s; white-space: nowrap; }
         .ps-phone-actions button:disabled { opacity: .5; cursor: not-allowed; }
-        .ps-phone-confirm { background: #1a3d7c; color: #fff; border-color: #1a3d7c; }
+        .ps-phone-cancel, .ps-phone-resend { background: rgba(255,255,255,.06); color: #e0ddd5; }
+        .ps-phone-cancel:hover:not(:disabled), .ps-phone-resend:hover:not(:disabled) { background: rgba(255,255,255,.1); }
+        .ps-phone-confirm { background: linear-gradient(135deg, #0da192, #0b8c7f); color: #fff; }
+        .ps-phone-confirm:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(13,161,146,.35); }
     `;
 
     document.head.appendChild(style);
