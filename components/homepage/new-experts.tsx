@@ -124,9 +124,9 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                     {/* Name */}
                     <h3 className=" font-medium text-[18px] leading-tight text-white mb-2 max-w-[90%] line-clamp-2 min-h-[2.8rem] flex items-center justify-center group-hover:text-[#008073] transition-colors duration-200">
-                      <Link href={`/ekspert/${firm.slug}`}>
+                      <span>
                         {firm.nazwa}
-                      </Link>
+                      </span>
                     </h3>
 
                     {/* Location details */}

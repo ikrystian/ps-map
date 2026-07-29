@@ -161,10 +161,11 @@ export function MostConsultedCategories({
 
   // Zmienione zgodnie z instrukcją - pobieramy expertiseCategory zamiast getProfessionTitle
   const getSubtitle = (firm: LawFirm) => {
+
     if (firm.expertiseCategory?.nazwa) {
-      return firm.expertiseCategory.nazwa.toUpperCase();
+      return firm.expertiseCategory.nazwa;
     }
-    return "EKSPERT";
+    return "";
   };
 
   return (
@@ -241,22 +242,35 @@ export function MostConsultedCategories({
                   icon: Icon,
                   href,
                   title,
+                  onClick,
                 }: {
                   icon: React.ElementType;
-                  href: string;
+                  href?: string;
                   title: string;
+                  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
                 }) => {
+                  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!isLoggedIn) return;
+
+                    if (onClick) {
+                      onClick(e);
+                    } else if (href && href !== "#") {
+                      if (href.startsWith("http://") || href.startsWith("https://")) {
+                        window.open(href, "_blank", "noopener,noreferrer");
+                      } else {
+                        window.location.href = href;
+                      }
+                    }
+                  };
+
                   const button = (
-                    <a
-                      href={isLoggedIn ? href : "#"}
-                      onClick={(e) => {
-                        if (!isLoggedIn) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }
-                      }}
+                    <button
+                      type="button"
+                      onClick={handleClick}
                       className={cn(
-                        "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md",
+                        "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
                         isLoggedIn
                           ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95"
                           : "opacity-70 cursor-help",
@@ -269,7 +283,7 @@ export function MostConsultedCategories({
                           Icon === Phone && "fill-white",
                         )}
                       />
-                    </a>
+                    </button>
                   );
 
                   if (isLoggedIn) return button;
@@ -335,9 +349,9 @@ export function MostConsultedCategories({
                           {getSubtitle(firm)}
                         </span>
                         <h3 className="text-[19px] font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
-                          <Link href={`/ekspert/${firm.slug}`}>
+                          <span>
                             {firm.nazwa}
-                          </Link>
+                          </span>
                         </h3>
                         <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-3">
                           <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
@@ -350,6 +364,8 @@ export function MostConsultedCategories({
 
                       <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80">
                         <div className="flex gap-2">
+
+
                           <ContactButton
                             icon={Phone}
                             href={
@@ -379,13 +395,12 @@ export function MostConsultedCategories({
                           )}
                         </div>
 
-                        <Link
-                          href={`/ekspert/${firm.slug}`}
+                        <span
                           className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] absolute right-0 bottom-0 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                           title="Zobacz pełny profil"
                         >
                           <ArrowUpRight className="w-5 h-5 text-white" />
-                        </Link>
+                        </span>
                       </div>
                     </div>
                   </Link>

@@ -285,27 +285,48 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
         >
           <div className="flex gap-4 w-max md:w-full">
             {getCategoryFirms(safeActiveIdx).map((firm, index) => {
-              const ContactButton = ({ icon: Icon, href, title }: { icon: any, href: string, title: string }) => {
+              const ContactButton = ({
+                icon: Icon,
+                href,
+                title,
+                onClick,
+              }: {
+                icon: any;
+                href?: string;
+                title: string;
+                onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+              }) => {
+                const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!isLoggedIn) return;
+
+                  if (onClick) {
+                    onClick(e);
+                  } else if (href && href !== "#") {
+                    if (href.startsWith("http://") || href.startsWith("https://")) {
+                      window.open(href, "_blank", "noopener,noreferrer");
+                    } else {
+                      window.location.href = href;
+                    }
+                  }
+                };
+
                 const button = (
-                  <a
-                    href={isLoggedIn ? href : "#"}
-                    onClick={(e) => {
-                      if (!isLoggedIn) {
-                        e.preventDefault()
-                        e.stopPropagation()
-                      }
-                    }}
+                  <button
+                    type="button"
+                    onClick={handleClick}
                     className={cn(
-                      "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md",
+                      "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
                       isLoggedIn ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95" : "opacity-70 cursor-help"
                     )}
                     title={isLoggedIn ? title : undefined}
                   >
                     <Icon className={cn("w-4.5 h-4.5 text-white", Icon === Phone && "fill-white")} />
-                  </a>
-                )
+                  </button>
+                );
 
-                if (isLoggedIn) return button
+                if (isLoggedIn) return button;
 
                 return (
                   <Tooltip>
@@ -316,8 +337,8 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                       Informacja dostępna po zalogowaniu
                     </TooltipContent>
                   </Tooltip>
-                )
-              }
+                );
+              };
 
               return (
                 <Link
@@ -375,9 +396,9 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                       </span>
                       {/* Lawyer / Firm Name */}
                       <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
-                        <Link href={`/ekspert/${firm.slug}`}>
+                        <span>
                           {firm.nazwa}
-                        </Link>
+                        </span>
                       </h3>
                       {/* Location text */}
                       <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-4">
