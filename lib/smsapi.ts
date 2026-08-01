@@ -250,7 +250,12 @@ export async function sendSms(to: string, message: string): Promise<SmsSendResul
     if (!response.ok || !data || data.error) {
       const errorCode = data?.error ?? `http_${response.status}`
       const description = data?.message || data?.developer_description || ""
-      console.error(`[SMSAPI] Wysyłka nieudana (${errorCode}): ${description}`)
+      console.error(
+        `[SMSAPI] Wysyłka nieudana (${errorCode}): ${description}` +
+        ` [host=${config.apiUrl}, token=${describeToken(config)}, from="${config.sender}"]`
+      )
+      const hint = explainSmsApiError(String(errorCode), config)
+      if (hint) console.error(`[SMSAPI] ${hint}`)
       return { success: false, error: `${errorCode}${description ? `: ${description}` : ""}` }
     }
 
@@ -270,6 +275,49 @@ export async function sendSms(to: string, message: string): Promise<SmsSendResul
     const isTimeout = error instanceof Error && error.name === "AbortError"
     console.error("[SMSAPI] Błąd połączenia z bramką:", error)
     return { success: false, error: isTimeout ? "timeout" : "network_error" }
+  }
+}
+
+/**
+ * Opis tokenu do logów — źródło i pierwsze znaki, nigdy cała wartość.
+ * Bez tego nie da się odróżnić "token w panelu jest zły" od "token w ENV jest zły",
+ * a przy dwóch źródłach konfiguracji to najczęstsza przyczyna błędu 101.
+ */
+function describeToken(config: SmsConfig): string {
+  if (!config.token) return "brak"
+  const source = config.tokenSource === "settings" ? "panel administratora" : "ENV"
+  return `${source}, ${config.token.slice(0, 4)}…${config.token.slice(-2)} (${config.token.length} zn.)`
+}
+
+/**
+ * Tłumaczy kody błędów SMSAPI na konkretną instrukcję naprawy.
+ * Nie zwraca nic dla kodów, przy których sam komunikat bramki wystarcza.
+ */
+function explainSmsApiError(code: string, config: SmsConfig): string | null {
+  switch (code) {
+    case "101":
+    case "102":
+      return (
+        `Token odrzucony przez bramkę. Sprawdź kolejno: ` +
+        `1) czy token z panelu administratora (Ustawienia → SMS) nie jest starszy niż ten w SMSAPI — ` +
+        `wartość z bazy ma pierwszeństwo przed SMSAPI_TOKEN z .env; ` +
+        `2) czy token pochodzi z tej samej platformy co host ${config.apiUrl} ` +
+        `(token z panelu smsapi.pl nie działa na api.smsapi.com i odwrotnie); ` +
+        `3) czy token nie został unieważniony lub nie ma zawężonej listy uprawnień/IP.`
+      )
+    case "103":
+      return "Brak punktów na koncie SMSAPI — doładuj konto, inaczej rejestracja nie przejdzie."
+    case "105":
+      return "Adres IP serwera nie jest na liście dozwolonych dla tego tokenu (panel SMSAPI → API)."
+    case "14":
+      return (
+        `Nazwa nadawcy "${config.sender}" nie jest zatwierdzona na koncie. ` +
+        `Ustaw jedną z aktywnych nazw (panel SMSAPI → Nadawcy) w Ustawieniach → SMS.`
+      )
+    case "13":
+      return "Bramka odrzuciła numer odbiorcy jako niepoprawny."
+    default:
+      return null
   }
 }
 
