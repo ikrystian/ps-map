@@ -558,33 +558,33 @@ export default function LawFirmProfilePage() {
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start flex-1 w-full text-center md:text-left">
               {/* Logo */}
               <div className="relative group flex-shrink-0 self-center md:self-start">
-                  <div className={cn(
-                    "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-[#20201d]/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
-                    lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 shadow-amber-500/20",
-                    lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-400 shadow-purple-500/20",
-                    lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-400 shadow-blue-500/20",
-                    (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-white/10"
-                  )}>
-                    {lawFirm.pakietSubskrypcji === "BIZNES" && (
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient opacity-60" />
-                    )}
-                    {lawFirm.pakietSubskrypcji === "PREMIUM" && (
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-[length:200%_100%] animate-gradient opacity-60" />
-                    )}
-                    <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
-                      <Image
-                        src={expertAvatar(lawFirm.logo)}
-                        alt={lawFirm.nazwa}
-                        id="logo-photo"
-                        fill
-                        className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                  </div>
-                  {/* Subtle pulsing background glow on hover for premium profiles */}
-                  {(lawFirm.pakietSubskrypcji === "BIZNES" || lawFirm.pakietSubskrypcji === "PREMIUM") && (
-                    <span className="absolute -inset-1.5 rounded-3xl bg-primary/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                <div className={cn(
+                  "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-[#20201d]/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
+                  lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 shadow-amber-500/20",
+                  lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-400 shadow-purple-500/20",
+                  lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-400 shadow-blue-500/20",
+                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-white/10"
+                )}>
+                  {lawFirm.pakietSubskrypcji === "BIZNES" && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient opacity-60" />
                   )}
+                  {lawFirm.pakietSubskrypcji === "PREMIUM" && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-[length:200%_100%] animate-gradient opacity-60" />
+                  )}
+                  <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
+                    <Image
+                      src={expertAvatar(lawFirm.logo)}
+                      alt={lawFirm.nazwa}
+                      id="logo-photo"
+                      fill
+                      className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                </div>
+                {/* Subtle pulsing background glow on hover for premium profiles */}
+                {(lawFirm.pakietSubskrypcji === "BIZNES" || lawFirm.pakietSubskrypcji === "PREMIUM") && (
+                  <span className="absolute -inset-1.5 rounded-3xl bg-primary/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                )}
               </div>
 
               {/* Text Info */}
@@ -906,7 +906,7 @@ export default function LawFirmProfilePage() {
             {/* Contact Details Card */}
             <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
               <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <CardTitle className="text-xl font-light font-playfair flex items-center gap-2">
                   <Mail className="h-5 w-5 text-primary/80" />
                   Dane kontaktowe
                 </CardTitle>
@@ -1242,7 +1242,7 @@ export default function LawFirmProfilePage() {
             {/* Portal Stats Card */}
             <Card className="border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
               <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <CardTitle className="text-xl font-light font-playfair flex items-center gap-2">
                   <Award className="h-5 w-5 text-primary/80" />
                   Statystyki na portalu
                 </CardTitle>
@@ -1268,7 +1268,7 @@ export default function LawFirmProfilePage() {
             {/* Contact Form Card */}
             <Card id="contact-form" className="scroll-mt-24 border border-border/50 shadow-sm overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300">
               <CardHeader className="bg-muted/10 border-b border-border/30 pb-4">
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <CardTitle className="text-xl font-light font-playfair flex items-center gap-2">
                   <Send className="h-5 w-5 text-primary/80" />
                   Skontaktuj się z ekspertem
                 </CardTitle>

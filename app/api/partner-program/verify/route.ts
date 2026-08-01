@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { checkAndAwardBadges } from "@/lib/badges"
 import { updateBannerVerification, verifyBannerPlacement } from "@/lib/partner-program"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
@@ -72,6 +73,9 @@ export async function POST(request: NextRequest) {
         checkedUrl: verificationResult.checkedUrl
       }
     )
+
+    // Odśwież ordery eksperta (np. odznaka klubu partnerskiego)
+    await checkAndAwardBadges(lawFirm.id)
 
     return Response.json({
       success: verificationResult.success,

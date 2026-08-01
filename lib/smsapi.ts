@@ -1,9 +1,9 @@
 /**
- * Klient SMSAPI (https://www.smsapi.com/docs/).
+ * Klient SMSAPI (https://www.smsapi.pl/docs/).
  *
- * UWAGA — host: konto prostasprawa.pl działa na platformie **smsapi.com**, nie .pl.
- * Token OAuth wystawiony w panelu .com zwraca `authorization_failed` na api.smsapi.pl,
- * dlatego domyślny host to api.smsapi.com (nadpisywalny przez SMSAPI_API_URL).
+ * UWAGA — host: konto prostasprawa.pl działa na platformie **smsapi.pl**, nie .com.
+ * Token OAuth wystawiony w panelu .pl zwraca `authorization_failed` na api.smsapi.com,
+ * dlatego domyślny host to api.smsapi.pl (nadpisywalny przez SMSAPI_API_URL).
  *
  * Nazwa nadawcy (`from`) musi być zweryfikowana w panelu SMSAPI. Konta świeże/trial
  * mają dostępną wyłącznie nazwę "Test" — stąd taki default. Na produkcji ustaw
@@ -13,7 +13,7 @@
  * jako fallback — patrz `getSmsConfig`.
  */
 
-const DEFAULT_API_URL = "https://api.smsapi.com"
+const DEFAULT_API_URL = "https://api.smsapi.pl"
 const DEFAULT_SENDER = "Test"
 
 /** Klucze ustawień w tabeli Settings (panel administratora → zakładka SMS). */

@@ -7,6 +7,7 @@ export async function checkAndAwardBadges(lawFirmId: string) {
             badges: true,
             reviews: true,
             blogPosts: true,
+            partnerProgram: true,
         },
     })
 
@@ -15,8 +16,10 @@ export async function checkAndAwardBadges(lawFirmId: string) {
     const badges = await prisma.badge.findMany()
 
     for (const badge of badges) {
-        // Skip if already awarded
-        if (lawFirm.badges.some((b) => b.badgeId === badge.id)) {
+        const awardedBadge = lawFirm.badges.find((b) => b.badgeId === badge.id)
+
+        // Skip if already awarded, unless the badge type can also be revoked
+        if (awardedBadge && badge.conditionType !== "PARTNER_CLUB_BANNER_VERIFIED") {
             continue
         }
 
@@ -45,15 +48,24 @@ export async function checkAndAwardBadges(lawFirmId: string) {
             case "MANUAL":
                 // Manual badges are only awarded manually by admins
                 break;
+            case "PARTNER_CLUB_BANNER_VERIFIED":
+                if (lawFirm.partnerProgram?.active && lawFirm.partnerProgram?.bannerPlaced) {
+                    conditionMet = true
+                }
+                break
         }
 
-        if (conditionMet) {
+        if (conditionMet && !awardedBadge) {
             await prisma.lawFirmBadge.create({
                 data: {
                     lawFirmId: lawFirm.id,
                     badgeId: badge.id,
                 },
             })
+        } else if (!conditionMet && awardedBadge && badge.conditionType === "PARTNER_CLUB_BANNER_VERIFIED") {
+            // Odznaka klubu partnerskiego jest odbierana, gdy warunek przestaje być spełniony
+            // (np. weryfikacja bannera nie powiodła się lub program został dezaktywowany)
+            await prisma.lawFirmBadge.delete({ where: { id: awardedBadge.id } })
         }
     }
 }

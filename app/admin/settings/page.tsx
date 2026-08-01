@@ -2563,8 +2563,8 @@ export default function AdminSettingsPage() {
                     }
                   />
                   <p className="text-xs text-muted-foreground">
-                    Token z panelu <span className="font-mono">smsapi.com</span> (nie .pl — token z
-                    .pl zwraca <span className="font-mono">authorization_failed</span>). Puste pole =
+                    Token z panelu <span className="font-mono">smsapi.pl</span> (nie .com — token z
+                    .com zwraca <span className="font-mono">authorization_failed</span>). Puste pole =
                     używany jest <span className="font-mono">SMSAPI_TOKEN</span> z ENV.
                   </p>
                 </div>

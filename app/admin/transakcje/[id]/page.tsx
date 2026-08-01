@@ -486,7 +486,7 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
               </div>
 
               <div className="border-t pt-3">
-                <Link href={`/admin/law-firms/${order.lawFirm.id}`} className="w-full">
+                <Link href={`/ekspert/${order.lawFirm.slug}`} className="w-full">
                   <Button variant="outline" size="sm" className="w-full">
                     Pokaż profil eksperta
                   </Button>

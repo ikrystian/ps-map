@@ -21,7 +21,7 @@ export function BadgesSection({ badges }: BadgesSectionProps) {
     return (
         <Card className="mt-6">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="font-playfair font-light 2xl flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
                     Ordery i wyróżnienia
                 </CardTitle>
