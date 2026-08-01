@@ -72,7 +72,7 @@ export default function ComingSoon() {
     })();
 
     // Countdown — Cel: 1 sierpnia 2026, 00:00 (czas lokalny)
-    const target = new Date(2026, 10, 1, 0, 0, 0).getTime();
+    const target = new Date(2026, 7, 1, 0, 0, 0).getTime();
     const cd = document.getElementById("countdown");
     const elDays = cd?.querySelector("[data-days]");
     const elHours = cd?.querySelector("[data-hours]");
