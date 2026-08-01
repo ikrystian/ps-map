@@ -2357,6 +2357,7 @@ enum BadgeConditionType {
   OFFERS_SUBMITTED
   PROFILE_VIEWS
   MANUAL
+  PARTNER_CLUB_BANNER_VERIFIED
 }
 
 // ============================================================================

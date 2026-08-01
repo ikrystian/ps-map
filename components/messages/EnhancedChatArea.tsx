@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 
+import { usePermissions } from "@/hooks/usePermissions"
 import { getSocket } from "@/lib/socket-client"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -29,6 +30,8 @@ import {
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import { useCallback, useEffect, useRef, useState } from "react"
+
+import type { Theme as EmojiPickerTheme } from "emoji-picker-react"
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
@@ -76,6 +79,9 @@ export function EnhancedChatArea({
 }: ChatAreaProps) {
   const { data: session } = useSession()
   const isClient = session?.user?.role === "CLIENT"
+  const { permissions: lawFirmPermissions, loading: permissionsLoading } = usePermissions()
+  // Załączniki w wiadomościach dla eksperta zależą od pakietu subskrypcji — klienci nie są ograniczani.
+  const canUseAttachments = isClient || permissionsLoading || (lawFirmPermissions?.extras.allowAttachments ?? false)
   const [conversation, setConversation] = useState<ConversationDetails | null>(null)
   const [messages, setMessages] = useState<EnhancedChatMessage[]>([])
   const [messageText, setMessageText] = useState("")
@@ -389,6 +395,12 @@ export function EnhancedChatArea({
     const file = e.target.files?.[0]
     if (!file) return
 
+    if (!canUseAttachments) {
+      toast.error("Załączniki w wiadomościach są dostępne w wyższym pakiecie")
+      e.target.value = ""
+      return
+    }
+
     // Validate PDF
     if (file.type !== "application/pdf") {
       toast.error("Dozwolone są tylko pliki PDF")
@@ -621,6 +633,19 @@ export function EnhancedChatArea({
   }
 
   const themeColor = isClient ? "#d7b56d" : "#0da192"
+  const emojiPickerStyle = {
+    "--epr-dark-bg-color": "#18181b",
+    "--epr-dark-category-label-bg-color": "#18181be6",
+    "--epr-dark-picker-border-color": "#27272a",
+    "--epr-dark-text-color": "#a1a1aa",
+    "--epr-dark-search-input-bg-color": "#09090b",
+    "--epr-dark-search-input-bg-color-active": "#09090b",
+    "--epr-dark-focus-bg-color": "#27272a",
+    "--epr-dark-hover-bg-color": `${themeColor}26`,
+    "--epr-dark-hover-bg-color-reduced-opacity": `${themeColor}14`,
+    "--epr-dark-highlight-color": themeColor,
+    "--epr-dark-category-icon-active-color": themeColor,
+  } as React.CSSProperties
   const otherUser = isClient ? conversation.lawFirmUser : conversation.clientUser
   const otherUserName = (isClient
     ? conversation.lawFirmUser?.lawFirm?.nazwa
@@ -914,10 +939,19 @@ export function EnhancedChatArea({
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (!canUseAttachments) {
+                toast.error("Załączniki w wiadomościach są dostępne w wyższym pakiecie")
+                return
+              }
+              fileInputRef.current?.click()
+            }}
             disabled={isUploading}
-            className="flex-shrink-0 h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850"
-            title="Dodaj plik PDF"
+            className={cn(
+              "flex-shrink-0 h-11 w-11 rounded-xl bg-zinc-900 border border-border/40 text-zinc-400 hover:text-white hover:bg-zinc-850",
+              !canUseAttachments && "opacity-50"
+            )}
+            title={canUseAttachments ? "Dodaj plik PDF" : "Załączniki dostępne w wyższym pakiecie"}
           >
             {isUploading ? (
               <Loader2 className={cn("h-4 w-4 animate-spin", isClient ? "text-secondary" : "text-primary")} />
@@ -940,7 +974,11 @@ export function EnhancedChatArea({
 
             {showEmojiPicker && (
               <div className="absolute bottom-14 left-0 z-50">
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
+                <EmojiPicker
+                  onEmojiClick={handleEmojiClick}
+                  theme={"dark" as unknown as EmojiPickerTheme}
+                  style={emojiPickerStyle}
+                />
               </div>
             )}
           </div>

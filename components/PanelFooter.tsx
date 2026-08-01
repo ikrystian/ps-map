@@ -77,7 +77,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
                       >
                         {image}
                       </PreviewLinkCardTrigger>
-                      <PreviewLinkCardContent className="p-1 bg-zinc-900/90 border-zinc-800 backdrop-blur-md rounded-lg shadow-xl">
+                      <PreviewLinkCardContent className="z-50 zp-1 bg-zinc-900/90 border-zinc-800 backdrop-blur-md rounded-lg shadow-xl">
                         <PreviewLinkCardImage
                           alt={logo.name}
                           className="w-[240px] h-[135px] object-cover rounded"

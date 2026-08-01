@@ -161,7 +161,7 @@ export default function RegistrationSuccessPage() {
             <Mail className="w-10 h-10" />
           </motion.div>
 
-          <motion.h2 variants={itemVariants} className="text-3xl font-bold tracking-tight">
+          <motion.h2 variants={itemVariants} className="text-3xl font-light font-playfair tracking-tight">
             Sprawdź skrzynkę pocztową
           </motion.h2>
 
@@ -267,8 +267,8 @@ export default function RegistrationSuccessPage() {
               {isLoading
                 ? "Wysyłanie..."
                 : resendCount > 0
-                ? `Wyślij ponownie (${3 - resendCount})`
-                : "Nie otrzymałem maila"}
+                  ? `Wyślij ponownie (${3 - resendCount})`
+                  : "Nie otrzymałem maila"}
             </Button>
 
             <Button asChild className="flex-1 h-11 text-sm">

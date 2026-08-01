@@ -182,6 +182,8 @@ export default function LawFirmRegistrationPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLookingUpCompany, setIsLookingUpCompany] = useState(false)
   const [companyLookupError, setCompanyLookupError] = useState("")
+  const [isCheckingPhone, setIsCheckingPhone] = useState(false)
+  const [phoneExists, setPhoneExists] = useState(false)
 
   const totalSteps = steps.length
 
@@ -524,6 +526,39 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
+  // Sprawdza, czy podany numer telefonu jest już przypisany do istniejącego
+  // konta — wywoływane po opuszczeniu pola, zanim dojdzie do weryfikacji SMS.
+  const checkPhoneAvailability = async (rawPhone: string) => {
+    if (!rawPhone || rawPhone.trim().length < 9) {
+      setPhoneExists(false)
+      return
+    }
+
+    setIsCheckingPhone(true)
+    try {
+      const response = await fetch("/api/auth/check-phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: rawPhone }),
+      })
+      const data = await response.json()
+
+      if (response.ok && data.exists) {
+        setPhoneExists(true)
+        setFieldErrors(prev => ({
+          ...prev,
+          numerTelefonu: "Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.",
+        }))
+      } else {
+        setPhoneExists(false)
+      }
+    } catch (err) {
+      console.error("Error checking phone availability:", err)
+    } finally {
+      setIsCheckingPhone(false)
+    }
+  }
+
   // Ostatni krok kreatora otwiera modal z kodem SMS. Konto powstaje dopiero
   // po potwierdzeniu numeru (patrz submitRegistration).
   const handleSubmit = (e: React.FormEvent) => {
@@ -536,6 +571,11 @@ export default function LawFirmRegistrationPage() {
     }
 
     if (!validateStep()) {
+      return
+    }
+
+    if (phoneExists) {
+      setError("Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.")
       return
     }
 
@@ -938,14 +978,17 @@ export default function LawFirmRegistrationPage() {
                       value={formData.numerTelefonu}
                       onChange={(e) => {
                         setFormData({ ...formData, numerTelefonu: e.target.value })
+                        setPhoneExists(false)
                         if (fieldErrors.numerTelefonu) {
                           const newErrors = { ...fieldErrors }
                           delete newErrors.numerTelefonu
                           setFieldErrors(newErrors)
                         }
                       }}
+                      onBlur={(e) => checkPhoneAvailability(e.target.value)}
                       className={cn("h-11", fieldErrors.numerTelefonu && "border-destructive")}
                     />
+                    {isCheckingPhone && <p className="text-xs text-muted-foreground">Sprawdzanie numeru...</p>}
                     {fieldErrors.numerTelefonu && <p className="text-xs text-destructive">{fieldErrors.numerTelefonu}</p>}
                   </div>
                   <div className="space-y-2">
@@ -1531,7 +1574,7 @@ export default function LawFirmRegistrationPage() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (currentStep === 4 && isCheckingPhone)}
                 className="flex-1 h-12 rounded-xl text-base font-light shadow-xl shadow-primary/20 group"
               >
                 {currentStep === 4

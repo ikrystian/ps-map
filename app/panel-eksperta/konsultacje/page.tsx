@@ -285,9 +285,7 @@ export default function ConsultationsPage() {
             <div className="flex flex-col gap-5 lg:flex-row lg:justify-between lg:items-center">
               <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Avatar className="h-32 w-32 sm:h-32 sm:w-32 rounded-xl flex-shrink-0 border border-border/40">
-                  {booking.client?.user?.image && (
-                    <AvatarImage src={clientAvatar(booking.client.user.image)} alt={booking.client.user.name} />
-                  )}
+                  <AvatarImage src={clientAvatar(booking.client?.user?.image)} alt={booking.client?.user?.name} />
                   <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
                     {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}
                   </AvatarFallback>

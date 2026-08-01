@@ -85,7 +85,7 @@ export function VoivodeshipPicker({
               "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
               value === "all"
                 ? "bg-neutral-800 text-white"
-                : "text-neutral-300 hover:bg-neutral-800/50 hover:text-white bg-transparent"
+                : "text-neutral-300 hover:bg-primary hover:text-white bg-transparent"
             )}
           >
             <span>Wszystkie</span>

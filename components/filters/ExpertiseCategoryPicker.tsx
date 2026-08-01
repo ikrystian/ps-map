@@ -149,7 +149,7 @@ export function ExpertiseCategoryPicker({
                   const parent = getParentItem()
                   if (parent) handleSelect(parent.id)
                 }}
-                className="w-full text-left px-3 py-2 text-xs rounded-md text-teal-400 hover:bg-neutral-800 transition-colors flex items-center gap-2 cursor-pointer font-semibold border-0 bg-transparent"
+                className="w-full text-left px-3 py-2 text-xs rounded-md text-teal-400 hover:bg-primary transition-colors flex items-center gap-2 cursor-pointer font-semibold border-0 bg-transparent"
               >
                 <Check className="h-3.5 w-3.5" />
                 Wybierz całe &quot;{getParentItem()?.nazwa}&quot;
@@ -173,7 +173,7 @@ export function ExpertiseCategoryPicker({
                     }
                   }}
                   className={cn(
-                    "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0 bg-transparent text-white hover:bg-neutral-800/80",
+                    "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0 bg-transparent text-white hover:bg-primary",
                     isSelected && "bg-neutral-800 text-teal-400 font-semibold"
                   )}
                 >

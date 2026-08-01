@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
 import { seedPackages } from './seed-packages';
+import { seedBadges } from './seeds/badges'
 import { seedBlogCategories } from './seeds/blog-categories'
 import { seedCategories } from './seeds/categories'
 import { seedEmailTemplates } from './seeds/email-templates';
@@ -45,6 +46,7 @@ async function main() {
   await prisma.scheduledJobRun.deleteMany()
   await prisma.scheduledJob.deleteMany()
   await prisma.lawFirmBadge.deleteMany()
+  await prisma.badge.deleteMany()
   await prisma.orderOverride.deleteMany()
   await prisma.lawFirmCategoryStats.deleteMany()
   await prisma.lawFirmStats.deleteMany()
@@ -98,6 +100,7 @@ async function main() {
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)
   await seedHelp(prisma)
+  await seedBadges(prisma)
   // await seedAdvertisements(prisma)
 
   // Promocje homepage wymagają istniejących kancelarii — uruchamiamy PO seederze relacyjnym

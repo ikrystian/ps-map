@@ -1,6 +1,8 @@
 import { auth } from "@/auth"
+import { getAuthenticatedLawFirm } from "@/lib/api-permissions"
 import { decryptMessage } from "@/lib/encryption"
 import { sendSystemNotification } from "@/lib/notifications"
+import { getLawFirmPermissions } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
 import { emitNewMessage } from "@/lib/socket"
 import { NextRequest } from "next/server"
@@ -184,6 +186,21 @@ export async function POST(
         { error: "Wiadomość nie może być pusta" },
         { status: 400 }
       )
+    }
+
+    // Załączniki w wiadomościach dla eksperta zależą od pakietu subskrypcji (pole "zalaczniki").
+    if (attachments && attachments.length > 0 && session.user.role === "LAW_FIRM") {
+      const lawFirm = await getAuthenticatedLawFirm()
+      const allowAttachments = lawFirm
+        ? getLawFirmPermissions(lawFirm).extras.allowAttachments
+        : false
+
+      if (!allowAttachments) {
+        return Response.json(
+          { error: "Załączniki w wiadomościach są dostępne w wyższym pakiecie" },
+          { status: 403 }
+        )
+      }
     }
 
     // Encrypt message content

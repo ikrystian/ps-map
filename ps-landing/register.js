@@ -886,6 +886,47 @@ function verifyPhoneNumber(phone) {
     });
 }
 
+// ===== Sprawdzenie unikalności numeru telefonu =====
+// Po opuszczeniu pola telefonu głównego pytamy API, czy numer jest już
+// przypisany do istniejącego konta — zanim użytkownik dojdzie do weryfikacji SMS.
+let phoneAlreadyExists = false;
+
+async function checkPhoneAvailability(rawPhone) {
+    if (!rawPhone || rawPhone.trim().length < 9) {
+        phoneAlreadyExists = false;
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/auth/check-phone`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone: rawPhone }),
+        });
+        const data = await response.json().catch(() => ({}));
+
+        phoneAlreadyExists = response.ok && !!data.exists;
+        if (phoneAlreadyExists) {
+            const input = document.getElementById("numerTelefonu");
+            if (input) showFieldError(input, "Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.");
+        }
+    } catch (err) {
+        console.error("Błąd sprawdzania numeru telefonu:", err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const numerTelefonuInput = document.getElementById("numerTelefonu");
+    if (numerTelefonuInput) {
+        numerTelefonuInput.addEventListener("blur", () => {
+            void checkPhoneAvailability(numerTelefonuInput.value.trim());
+        });
+        numerTelefonuInput.addEventListener("input", () => {
+            phoneAlreadyExists = false;
+        });
+    }
+});
+
 // ===== Wysyłka =====
 async function submitForm(e) {
     e.preventDefault();
@@ -894,6 +935,11 @@ async function submitForm(e) {
     if (errorEl) errorEl.textContent = "";
 
     if (!validateActiveStep()) return;
+
+    if (phoneAlreadyExists) {
+        if (errorEl) errorEl.textContent = "Konto z tym numerem telefonu już istnieje. Zaloguj się lub podaj inny numer.";
+        return;
+    }
 
     // Numer telefonu potwierdzamy zanim cokolwiek poleci do API — bez tokenu
     // endpoint rejestracji odrzuci żądanie. Robimy to przed reCAPTCHA, żeby jej
