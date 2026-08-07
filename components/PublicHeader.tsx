@@ -830,12 +830,19 @@ export default function PublicHeader({
             {isAuthenticated && userRole ? (
               <div className="flex items-center gap-2 min-[400px]:gap-3">
                 {userRole === "CLIENT" && (
-                  <AddCaseButton
-                    href="/panel-klienta/sprawy/dodaj"
-                    className="flex"
-                    labelClassName="hidden min-[390px]:block"
-                    iconClassName="min-[390px]:hidden"
-                  />
+                  <>
+                    <AddCaseButton
+                      href="/panel-klienta/sprawy/dodaj"
+                      className="flex"
+                      labelClassName="hidden min-[390px]:block"
+                      iconClassName="min-[390px]:hidden"
+                    />
+                    <AddCaseButton
+                      href="/panel-klienta/konsultacje/zapytaj"
+                      label="Konsultacja online"
+                      className="hidden lg:flex"
+                    />
+                  </>
                 )}
                 {(userRole === "CLIENT" || userRole === "LAW_FIRM") && (
                   <>
@@ -854,6 +861,11 @@ export default function PublicHeader({
             ) : (
               <div className="flex items-center gap-4">
                 <AddCaseButton href="/panel-klienta/sprawy/dodaj" className="flex" />
+                <AddCaseButton
+                  href="/panel-klienta/konsultacje/zapytaj"
+                  label="Konsultacja online"
+                  className="hidden lg:flex"
+                />
                 <Link href="/logowanie" className="hidden xl:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
@@ -890,6 +902,14 @@ export default function PublicHeader({
                       <div className="flex flex-col gap-3">
                         <AddCaseButton
                           href="/panel-klienta/sprawy/dodaj"
+                          className="w-full"
+                          innerClassName="w-full h-11 justify-center text-base"
+                          onClick={() => setMobileMenuOpen(false)}
+                        />
+                        <AddCaseButton
+                          href="/panel-klienta/konsultacje/zapytaj"
+                          label="Konsultacja online"
+                          shortLabel="Konsultacja online"
                           className="w-full"
                           innerClassName="w-full h-11 justify-center text-base"
                           onClick={() => setMobileMenuOpen(false)}

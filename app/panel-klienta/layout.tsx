@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserMenu from "@/components/UserMenu"
 import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
-import { cn, clearAppCacheAndStorage } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage, resolveActiveNavHref } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { AnimatedNavIcon } from "@/components/AnimatedNavIcon"
 import {
@@ -40,6 +40,7 @@ const navigation = [
   { name: "Panel użytkownika", href: "/panel-klienta", icon: Squares2X2Icon },
   { name: "Sprawy", href: "/panel-klienta/sprawy", icon: BriefcaseIcon },
   { name: "Konsultacje", href: "/panel-klienta/konsultacje", icon: CalendarDaysIcon },
+  { name: "Zapytania o konsultacje", href: "/panel-klienta/konsultacje/zapytania", icon: ChatBubbleLeftRightIcon },
   { name: "Wiadomości", href: "/panel-klienta/wiadomosci", icon: ChatBubbleLeftRightIcon },
   { name: "Wybrani eksperci", href: "/panel-klienta/eksperci", icon: HeartIcon },
   { name: "Centrum pomocy", href: "/panel-klienta/pomoc", icon: QuestionMarkCircleIcon },
@@ -103,6 +104,13 @@ export default function ClientPanelLayout({
     return name[0].toUpperCase()
   }
 
+  // Podświetlamy tylko najbardziej szczegółową pasującą pozycję menu
+  const activeHref = resolveActiveNavHref(
+    navigation.map((item) => item.href),
+    pathname,
+    "/panel-klienta"
+  )
+
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
@@ -132,8 +140,7 @@ export default function ClientPanelLayout({
         </div>
       )}
       {navigation.map((item, index) => {
-        const isActive = pathname === item.href ||
-          (item.href !== "/panel-klienta" && pathname.startsWith(item.href))
+        const isActive = item.href === activeHref
         const isMessagesItem = item.href === "/panel-klienta/wiadomosci"
         const showBadge = isMessagesItem && unreadCount > 0
 

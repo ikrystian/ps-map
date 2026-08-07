@@ -27,6 +27,7 @@ import {
   MessageSquare,
   Paperclip,
   Phone,
+  Share2,
   Sparkles,
   Star,
   User,
@@ -78,6 +79,17 @@ interface Case {
   }
   city?: {
     nazwa: string
+  } | null
+  /** Obecne tylko dla spraw utworzonych z linku polecającego eksperta */
+  referral?: {
+    id: string
+    createdAt: string
+    lawFirm: {
+      id: string
+      nazwa: string
+      slug: string
+      logo: string | null
+    }
   } | null
   offers: Array<{
     id: string
@@ -335,6 +347,12 @@ export default function ClientCaseDetailsPage() {
             >
               {statusLabels[caseData.status]?.label || caseData.status}
             </span>
+            {caseData.referral && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold tracking-wide">
+                <Share2 className="h-3 w-3" />
+                Z polecenia eksperta
+              </span>
+            )}
             {caseData.trybPilny && (
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-error/10 text-error border border-error/30 text-xs font-bold uppercase tracking-wider animate-pulse">
                 Pilne
@@ -647,6 +665,47 @@ export default function ClientCaseDetailsPage() {
 
         {/* Right column: Details info sidebar */}
         <div className="space-y-6">
+          {/* Sprawa utworzona z linku polecającego eksperta */}
+          {caseData.referral && (
+            <Card variant="glass" className="border-amber-500/30 bg-amber-500/[0.06]">
+              <CardHeader className="border-b border-amber-500/20 py-3.5 px-6">
+                <CardTitle className="text-base font-playfair text-amber-100 flex items-center gap-2">
+                  <Share2 className="h-4 w-4 text-amber-400" />
+                  Sprawa polecona przez
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Link
+                  href={`/ekspert/${caseData.referral.lawFirm.slug}`}
+                  className="flex items-center gap-3 group"
+                >
+                  <Avatar className="h-11 w-11 rounded-lg border border-amber-500/30">
+                    <AvatarImage
+                      src={expertAvatar(caseData.referral.lawFirm.logo)}
+                      alt={caseData.referral.lawFirm.nazwa}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="rounded-lg bg-amber-500/15 text-amber-300">
+                      {caseData.referral.lawFirm.nazwa.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <span className="font-medium text-white block truncate group-hover:text-amber-300 transition-colors">
+                      {caseData.referral.lawFirm.nazwa}
+                    </span>
+                    <span className="text-xs text-amber-200/70 font-light">
+                      Zaproszenie z {formatDate(caseData.referral.createdAt)}
+                    </span>
+                  </div>
+                </Link>
+                <p className="mt-4 text-xs font-light leading-relaxed text-amber-200/80">
+                  Ekspert przygotował zakres tej sprawy. Oferty mogą złożyć również inni eksperci —
+                  wybór należy do Ciebie.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Podsumowanie sprawy */}
           <Card variant="glass">
             <CardHeader className="border-b border-border/20 py-3.5 px-6">

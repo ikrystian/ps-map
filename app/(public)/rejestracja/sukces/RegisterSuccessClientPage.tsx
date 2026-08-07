@@ -14,6 +14,7 @@ export default function RegistrationSuccessPage() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || ""
   const role = searchParams.get("role") || "CLIENT"
+  const referral = searchParams.get("referral")
 
   const [isLoading, setIsLoading] = useState(false)
   const [resendCount, setResendCount] = useState(0)
@@ -205,6 +206,24 @@ export default function RegistrationSuccessPage() {
           </motion.div>
         )}
 
+        {referral && (
+          <motion.div variants={itemVariants}>
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
+              <p className="font-semibold text-amber-100">Twoja sprawa z polecenia czeka</p>
+              <p className="mt-1 text-xs font-light leading-relaxed">
+                Po potwierdzeniu adresu e-mail i zalogowaniu otwórz link z polecenia — dokończysz
+                zgłoszenie z gotowym zakresem i lokalizacją.
+              </p>
+              <Button variant="outline" size="sm" asChild className="mt-3">
+                <Link href={`/polecenie/${referral}`}>
+                  Otwórz link z polecenia
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Action Steps */}
         <motion.div variants={itemVariants} className="space-y-3">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -228,6 +247,16 @@ export default function RegistrationSuccessPage() {
                 title: "Zaloguj się",
                 desc: "Po pomyślnej weryfikacji zostaniesz automatycznie przekierowany do logowania.",
               },
+              // Rejestracja z polecenia eksperta — sprawa czeka pod tym samym linkiem
+              ...(referral
+                ? [
+                    {
+                      step: "4",
+                      title: "Dokończ zgłoszenie sprawy",
+                      desc: "Wróć do linku z polecenia — zakres i lokalizacja będą już uzupełnione.",
+                    },
+                  ]
+                : []),
             ].map((step, idx) => (
               <div
                 key={idx}

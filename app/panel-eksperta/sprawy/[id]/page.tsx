@@ -25,6 +25,7 @@ import {
   Paperclip,
   Phone,
   Send,
+  Share2,
   User,
   ArrowLeft,
   DollarSign,
@@ -66,6 +67,20 @@ interface Case {
   }
   city?: {
     nazwa: string
+  } | null
+  /**
+   * Obecne tylko, gdy to TA kancelaria poleciła sprawę — API zeruje pole
+   * dla polecenia innych ekspertów.
+   */
+  referral?: {
+    id: string
+    createdAt: string
+    lawFirm: {
+      id: string
+      nazwa: string
+      slug: string
+      logo: string | null
+    }
   } | null
   client: {
     imie: string
@@ -315,6 +330,12 @@ export default function LawFirmCaseDetailsPage() {
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-semibold">
               {getCaseStatusLabel(caseData.status)}
             </span>
+            {caseData.referral && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold">
+                <Share2 className="h-3 w-3" />
+                Twoje polecenie
+              </span>
+            )}
             {caseData.trybPilny && (
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/25 text-xs font-bold uppercase tracking-wider animate-pulse">
                 Pilne

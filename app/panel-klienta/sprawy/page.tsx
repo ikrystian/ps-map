@@ -27,6 +27,7 @@ import {
   MessageSquare,
   Plus,
   Search,
+  Share2,
   Sparkles,
   XCircle,
 } from "lucide-react"
@@ -66,6 +67,8 @@ interface Case {
     id: string
     nazwa: string
   } | null
+  /** Obecne tylko dla spraw utworzonych z linku polecającego eksperta */
+  referral?: { lawFirm: { nazwa: string } } | null
   offers: Array<{
     id: string
     status: string
@@ -525,6 +528,14 @@ export default function ClientCasesPage() {
                         <Badge variant="outline" className="inline-flex items-center bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">
                           {caseTypeLabels[caseItem.typSprawy] || caseItem.typSprawy}
                         </Badge>
+
+                        {/* Sprawa z polecenia eksperta */}
+                        {caseItem.referral && (
+                          <Badge variant="outline" className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold">
+                            <Share2 className="h-3 w-3" />
+                            Z polecenia
+                          </Badge>
+                        )}
 
                         {/* Urgent tag */}
                         {caseItem.trybPilny && (

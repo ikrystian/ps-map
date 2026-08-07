@@ -20,7 +20,7 @@ import { getBrowserTelemetry } from "@/lib/rodo-audit"
 import { Check, ChevronDown, Eye, EyeOff } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Voivodeship } from "@/types"
@@ -31,8 +31,16 @@ const clientCitiesCache: Record<string, any[]> = {}
 
 export default function ClientRegistrationPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, status } = useSession()
   const { executeRecaptcha } = useRecaptcha()
+
+  // Rejestracja z linku polecającego eksperta (/polecenie/[token])
+  const referralToken = searchParams.get("referral")
+  const [referralInfo, setReferralInfo] = useState<{
+    ekspert: string
+    email: string
+  } | null>(null)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -237,6 +245,24 @@ export default function ClientRegistrationPage() {
     }
   }
 
+  // Kontekst polecenia — pokazujemy, kto poleca i na jaki adres wysłano link
+  useEffect(() => {
+    if (!referralToken) return
+
+    const fetchReferral = async () => {
+      try {
+        const response = await fetch(`/api/case-referrals/token/${referralToken}`)
+        if (!response.ok) return
+        const data = await response.json()
+        setReferralInfo({ ekspert: data.ekspert?.nazwa || "", email: data.emailMasked || "" })
+      } catch (error) {
+        console.error("Error fetching referral:", error)
+      }
+    }
+
+    fetchReferral()
+  }, [referralToken])
+
   useEffect(() => {
     if (session?.user) {
       setFormData(prev => ({
@@ -431,6 +457,7 @@ export default function ClientRegistrationPage() {
           recaptchaToken,
           phoneVerificationToken,
           role: "CLIENT",
+          referralToken: referralToken || undefined,
           telemetry: getBrowserTelemetry(),
           name: formData.clientType === "BUSINESS" && formData.nazwa.trim()
             ? formData.nazwa.trim()
@@ -467,7 +494,11 @@ export default function ClientRegistrationPage() {
       localStorage.removeItem("client_registration_data")
 
       // Przekieruj na stronę sukcesu rejestracji z e-mailem w parametrze
-      router.push(`/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=CLIENT`)
+      router.push(
+        `/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=CLIENT${
+          referralToken ? `&referral=${referralToken}` : ""
+        }`
+      )
     } catch (error) {
       setError("Wystąpił błąd podczas rejestracji")
       setIsLoading(false)
@@ -496,6 +527,21 @@ export default function ClientRegistrationPage() {
         </CardHeader>
         <CardContent className="px-0">
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {referralToken && (
+              <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">
+                <p className="font-semibold text-amber-100">
+                  Rejestracja z polecenia
+                  {referralInfo?.ekspert ? ` — ${referralInfo.ekspert}` : ""}
+                </p>
+                <p className="mt-1 text-xs font-light leading-relaxed">
+                  Po założeniu konta dokończysz zgłoszenie sprawy z gotowym zakresem.
+                  {referralInfo?.email
+                    ? ` Użyj adresu, na który dostałeś link (${referralInfo.email}).`
+                    : ""}
+                </p>
+              </div>
+            )}
+
             {error && (
               <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
                 {error}

@@ -44,6 +44,14 @@ export async function GET(
         categories: { include: { category: true } },
         voivodeship: true,
         city: true,
+        // Obecne tylko wtedy, gdy sprawa powstała z linku polecającego eksperta
+        referral: {
+          select: {
+            id: true,
+            createdAt: true,
+            lawFirm: { select: { id: true, nazwa: true, slug: true, logo: true } },
+          },
+        },
         client: {
           include: {
             user: {
@@ -113,7 +121,7 @@ export async function GET(
     }
 
     // Dodaj _count dla ofert
-    const caseDataWithCount = {
+    let caseDataWithCount = {
       ...caseData,
       _count: {
         offers: caseData.offers.length,
@@ -158,6 +166,11 @@ export async function GET(
       // - sprawa ma status NOWA lub OFERTY_OTRZYMANE (i nie ma zaakceptowanej oferty od innej eksperta)
       if (!hasOffer && !isAvailable) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+
+      // Nie ujawniamy konkurentowi, który ekspert polecił sprawę — tylko własne polecenie
+      if (caseDataWithCount.referral && caseDataWithCount.referral.lawFirm.id !== lawFirm.id) {
+        caseDataWithCount = { ...caseDataWithCount, referral: null }
       }
     }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { cn, clearAppCacheAndStorage } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage, resolveActiveNavHref } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
@@ -31,6 +31,7 @@ import {
   BarChart3,
   BookOpen,
   Briefcase,
+  CalendarClock,
   ChevronLeft,
   ChevronRight,
   Coins,
@@ -44,6 +45,7 @@ import {
   MessageSquare,
   Package,
   Settings,
+  Share2,
   Star,
   TrendingUp,
   Trophy,
@@ -64,8 +66,10 @@ const navigationGroups = [
     label: "Obsługa spraw",
     items: [
       { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: Briefcase },
+      { name: "Polecenia spraw", href: "/panel-eksperta/polecenia", icon: Share2 },
       { name: "Oferty", href: "/panel-eksperta/oferty", icon: FileText },
       { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpen },
+      { name: "Zapytania o konsultacje", href: "/panel-eksperta/konsultacje/zapytania", icon: CalendarClock },
       { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: MessageSquare },
     ],
   },
@@ -244,6 +248,13 @@ export default function LawFirmPanelLayout({
     return name[0].toUpperCase()
   }
 
+  // Podświetlamy tylko najbardziej szczegółową pasującą pozycję menu
+  const activeHref = resolveActiveNavHref(
+    navigation.map((item) => item.href.replace("[slug]", lawFirmSlug || "")),
+    pathname,
+    "/panel-eksperta"
+  )
+
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
@@ -287,8 +298,7 @@ export default function LawFirmPanelLayout({
           {group.items.map((item) => {
             const index = navigation.indexOf(item)
             const href = item.href.replace("[slug]", lawFirmSlug || "")
-            const isActive = pathname === href ||
-              (href !== "/panel-eksperta" && pathname.startsWith(href))
+            const isActive = href === activeHref
             const isMessagesItem = href === "/panel-eksperta/wiadomosci"
             const showBadge = isMessagesItem && unreadCount > 0
 

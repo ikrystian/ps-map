@@ -1,6 +1,7 @@
 "use client"
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { ConsultationsSubnav } from "@/components/konsultacje/ConsultationsSubnav"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -472,6 +473,8 @@ export default function ConsultationsPage() {
         title="Zarządzanie konsultacjami"
         subtitle="Przeglądaj i zarządzaj prośbami o konsultacje od klientów."
       />
+
+      <ConsultationsSubnav variant="expert" />
 
       {/* Main Container */}
       <motion.div

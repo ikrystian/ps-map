@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { isReferralUsable } from "@/lib/case-referrals"
 import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { generateCaseOtpEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
@@ -56,6 +57,7 @@ export async function GET(request: NextRequest) {
           categories: { include: { category: true } },
           voivodeship: true,
           city: true,
+          referral: { select: { lawFirm: { select: { nazwa: true } } } },
           offers: {
             include: {
               lawFirm: true,
@@ -104,6 +106,7 @@ export async function GET(request: NextRequest) {
           categories: { include: { category: true } },
           voivodeship: true,
           city: { include: { county: true } },
+          referral: { select: { lawFirmId: true } },
           client: {
             select: {
               imie: true,
@@ -152,8 +155,10 @@ export async function GET(request: NextRequest) {
       })
 
       // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
-      const cases = filteredCases.map((caseItem: any) => ({
+      const cases = filteredCases.map(({ referral, ...caseItem }: any) => ({
         ...caseItem,
+        // Nie ujawniamy, KTÓRY ekspert polecił sprawę — tylko czy zrobił to ten zalogowany
+        zTwojegoPolecenia: referral?.lawFirmId === lawFirm.id,
         // Miasto klienta przeniesione do modelu User — spłaszcz dla zgodności
         client: caseItem.client
           ? { ...caseItem.client, miasto: caseItem.client.user?.miasto ?? null }
@@ -288,6 +293,28 @@ export async function POST(request: NextRequest) {
       await prisma.caseOtpVerification.update({ where: { id: otpRecord.id }, data: { consumed: true } })
     }
 
+    // Sprawa może pochodzić z linku polecającego eksperta (/polecenie/[token]).
+    // Niepoprawny token NIE blokuje utworzenia sprawy — sprawa powstaje po prostu bez polecenia.
+    const referralToken = typeof body.referralToken === "string" ? body.referralToken.trim() : ""
+    let referral: { id: string; lawFirmId: string } | null = null
+
+    if (referralToken) {
+      const candidate = await prisma.caseReferral.findUnique({
+        where: { token: referralToken },
+        select: { id: true, lawFirmId: true, email: true, status: true, expiresAt: true, caseId: true },
+      })
+
+      const usability = isReferralUsable(candidate)
+
+      if (!usability.ok) {
+        console.warn(`[REFERRAL] Pominięto token przy tworzeniu sprawy: ${usability.reason}`)
+      } else if (candidate!.email !== session.user.email?.toLowerCase()) {
+        console.warn("[REFERRAL] Token polecenia nie należy do zalogowanego klienta — pomijam")
+      } else {
+        referral = { id: candidate!.id, lawFirmId: candidate!.lawFirmId }
+      }
+    }
+
     // Znajdź kategorie po ID lub po slugu (np. dla dawnych slugów w formularzach)
     const resolvedCategories = []
     for (const requestedId of requestedCategoryIds) {
@@ -400,6 +427,24 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Zamknij lejek polecenia — sprawa jest celem, po który został wysłany link
+    if (referral) {
+      try {
+        await prisma.caseReferral.update({
+          where: { id: referral.id },
+          data: {
+            caseId: newCase.id,
+            clientId: client.id,
+            status: "SPRAWA_UTWORZONA",
+            wykorzystanoAt: new Date(),
+          },
+        })
+      } catch (referralError) {
+        console.error("Failed to link case referral:", referralError)
+        referral = null
+      }
+    }
+
     // Utwórz powiadomienie dla klienta o dodaniu sprawy
     const { notification: clientNotification } = await sendSystemNotification({
       userId: session.user.id,
@@ -450,6 +495,7 @@ export async function POST(request: NextRequest) {
         ],
       },
       select: {
+        id: true,
         userId: true,
         nazwa: true,
         calaPolska: true,
@@ -500,6 +546,9 @@ export async function POST(request: NextRequest) {
       ].filter(Boolean).join(", ")
 
       for (const lf of lawFirms) {
+        // Polecający ekspert dostaje osobne, dokładniejsze powiadomienie – nie dublujemy
+        if (referral && lf.id === referral.lawFirmId) continue
+
         console.log(`[NOTIFY] Sending notification to: ${lf.nazwa} (userId: ${lf.userId})`)
         const { notification: lfNotification, success, emailSent } = await sendSystemNotification({
           userId: lf.userId,
@@ -532,6 +581,39 @@ export async function POST(request: NextRequest) {
             console.error(`Failed to send case email to law firm ${lf.nazwa}:`, emailError)
           }
         }
+      }
+    }
+
+    // Powiadom eksperta, którego polecenie doprowadziło do powstania sprawy
+    if (referral) {
+      try {
+        const referringFirm = await prisma.lawFirm.findUnique({
+          where: { id: referral.lawFirmId },
+          select: { nazwa: true, userId: true, user: { select: { email: true } } },
+        })
+
+        if (referringFirm) {
+          const { notification } = await sendSystemNotification({
+            userId: referringFirm.userId,
+            typ: "POLECENIE_WYKORZYSTANE",
+            tytul: "Klient z Twojego polecenia dodał sprawę",
+            tresc: `🤝 ${newCase.nazwaSprawy} · ${allCategoryNames}. Sprawa jest już w Twoim panelu — możesz złożyć ofertę.`,
+            linkUrl: `/panel-eksperta/sprawy/${newCase.id}`,
+            emailTemplateType: EmailType.POLECENIE_SPRAWA_UTWORZONA,
+            emailVariables: {
+              "{ekspert}": referringFirm.nazwa,
+              "{klient}": `${client.imie} ${client.nazwisko}`,
+              "{email}": session.user.email || "",
+              "{nazwaSprawy}": newCase.nazwaSprawy,
+              "{kategorie}": allCategoryNames,
+              "{linkDoSprawy}": `${baseUrl}/panel-eksperta/sprawy/${newCase.id}`,
+            },
+          })
+
+          await emitNewNotification(referringFirm.userId, notification)
+        }
+      } catch (referralNotifyError) {
+        console.error("Failed to notify referring law firm:", referralNotifyError)
       }
     }
 

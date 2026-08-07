@@ -69,6 +69,10 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
         case "KONSULTACJA_ODRZUCONA":
         case "KONSULTACJA_ZAPLACONA":
         case "KONSULTACJA_ANULOWANA":
+        case "NOWE_ZAPYTANIE_KONSULTACJI":
+        case "NOWE_ZAINTERESOWANIE_KONSULTACJA":
+        case "ZAINTERESOWANIE_ZAAKCEPTOWANE":
+        case "POLECENIE_WYKORZYSTANE":
           // Statusy spraw/konsultacji – obsługa klientów (obowiązkowe)
           shouldSendEmail = settings.kontaktKlienci
           break

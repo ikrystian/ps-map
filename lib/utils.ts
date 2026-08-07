@@ -6,6 +6,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Wybiera pozycję menu, którą należy podświetlić dla bieżącej ścieżki.
+ * Wygrywa najbardziej szczegółowe dopasowanie, dzięki czemu pozycja nadrzędna
+ * (np. /panel-klienta/konsultacje) nie podświetla się razem z podstroną
+ * (/panel-klienta/konsultacje/zapytania).
+ */
+export function resolveActiveNavHref(
+  hrefs: string[],
+  pathname: string,
+  rootHref?: string
+): string | undefined {
+  return hrefs
+    .filter(
+      (href) =>
+        pathname === href || (href !== rootHref && pathname.startsWith(`${href}/`))
+    )
+    .sort((a, b) => b.length - a.length)[0]
+}
+
+/**
  * Generuje slug z podanego tekstu
  * Zamienia polskie znaki na ASCII, usuwa znaki specjalne, zamienia spacje na myślniki
  */

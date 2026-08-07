@@ -32,6 +32,7 @@ import {
   Heart,
   Loader2,
   MapPin,
+  Share2,
   Trash2,
   ArrowRight,
   Sparkles,
@@ -55,6 +56,8 @@ interface Case {
   budzetDo: number | null
   doNegocjacji: boolean
   trybPilny: boolean
+  /** true, gdy sprawa powstała z linku polecającego TEJ kancelarii */
+  zTwojegoPolecenia?: boolean
   status: string
   createdAt: string
   oczekiwanyTerminRealizacji: string | null
@@ -786,6 +789,12 @@ const SprawyPage = () => {
                         <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">
                           {getTypeLabel(sprawa.typSprawy)}
                         </span>
+                        {sprawa.zTwojegoPolecenia && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold">
+                            <Share2 className="h-3 w-3" />
+                            Twoje polecenie
+                          </span>
+                        )}
                         {sprawa.trybPilny && (
                           <span className="inline-flex items-center px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-bold uppercase tracking-wider animate-pulse">
                             Pilne

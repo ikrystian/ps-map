@@ -276,6 +276,8 @@ model Client {
   negotiations    Negotiation[]
   punktySaldo     Int      @default(0)
   consultationBookings ConsultationBooking[]
+  consultationRequests ConsultationRequest[]
+  caseReferrals   CaseReferral[]
 
   @@index([userId])
 }
@@ -406,6 +408,8 @@ model LawFirm {
   pointTransactions     PointTransaction[]    @relation("PointTransactions") // Transakcje punktowe
   consultationAvailabilities ConsultationAvailability[]
   consultationBookings       ConsultationBooking[]
+  consultationInterests      ConsultationInterest[]
+  caseReferrals              CaseReferral[]        // Sprawy polecone klientom przez tego eksperta
   badges                     LawFirmBadge[]
   orderOverrides             OrderOverride[]
   surveyResponses            SurveyResponse[]
@@ -606,6 +610,8 @@ model Category {
   caseLinks   CaseCategory[]
   stats       LawFirmCategoryStats[]
   mainCategoryFor LawFirm[] @relation("MainCategory")
+  consultationRequests ConsultationRequest[]
+  caseReferralLinks CaseReferralCategory[]
 
   @@index([slug])
   @@index([parentId])
@@ -714,6 +720,8 @@ model Case {
   // Relacje
   offers                    Offer[]
   messages                  Message[]
+  // Ustawiane, gdy sprawa powstała z linku polecającego eksperta
+  referral                  CaseReferral?
 
   @@index([clientId])
   @@index([categoryId])
@@ -742,6 +750,77 @@ enum PreferredContact {
   EMAIL
   TELEFON
   OBA
+}
+
+// ============================================================================
+// POLECENIA SPRAW (CASE REFERRALS)
+// ============================================================================
+
+/// Polecenie sprawy: ekspert generuje jednorazowy link i wysyła go mailem osobie,
+/// którą pozyskał poza platformą. Token jest związany z konkretnym adresem e-mail
+/// i wygasa (domyślnie po 14 dniach — patrz `REFERRAL_TTL_DAYS` w `lib/case-referrals.ts`).
+/// Kategorie, lokalizację i typ sprawy wybiera ekspert; resztę pól uzupełnia klient
+/// w zwykłym kreatorze `/panel-klienta/sprawy/dodaj`.
+model CaseReferral {
+  id               String   @id @default(uuid())
+  token            String   @unique
+
+  lawFirmId        String
+  lawFirm          LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  email            String              // Adres, na który poszedł link (zawsze lowercase)
+  typSprawy        CaseType
+  nazwaSprawy      String?             // Propozycja nazwy od eksperta
+  wiadomosc        String?             // Notatka eksperta do klienta (trafia do maila)
+
+  voivodeshipId    String
+  voivodeship      Voivodeship @relation(fields: [voivodeshipId], references: [id])
+  cityId           String
+  city             City        @relation(fields: [cityId], references: [id])
+  categories       CaseReferralCategory[]
+
+  status           CaseReferralStatus @default(WYSLANE)
+  expiresAt        DateTime
+
+  otwarteAt        DateTime?           // Pierwsze wejście w link
+  zarejestrowanoAt DateTime?           // Klient założył konto / powiązał istniejące
+  wykorzystanoAt   DateTime?           // Sprawa utworzona
+
+  clientId         String?
+  client           Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  caseId           String?  @unique
+  case             Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([lawFirmId])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CaseReferralCategory {
+  id         String @id @default(uuid())
+  referralId String
+  referral   CaseReferral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+
+  @@unique([referralId, categoryId])
+  @@index([referralId])
+  @@index([categoryId])
+}
+
+enum CaseReferralStatus {
+  WYSLANE           // Link wygenerowany, mail wysłany
+  OTWARTE           // Klient wszedł w link
+  ZAREJESTROWANO    // Klient założył konto lub powiązał istniejące
+  SPRAWA_UTWORZONA  // Cel osiągnięty
+  WYGASLE           // Minął expiresAt
+  ANULOWANE         // Ekspert cofnął polecenie
 }
 
 // ============================================================================
@@ -1423,6 +1502,10 @@ enum NotificationType {
   KONSULTACJA_ODRZUCONA
   KONSULTACJA_ZAPLACONA
   KONSULTACJA_ANULOWANA
+  NOWE_ZAPYTANIE_KONSULTACJI       // Do eksperta: klient dodał zapytanie o konsultację
+  NOWE_ZAINTERESOWANIE_KONSULTACJA // Do klienta: ekspert zgłosił zainteresowanie
+  ZAINTERESOWANIE_ZAAKCEPTOWANE    // Do eksperta: klient wybrał jego zgłoszenie
+  POLECENIE_WYKORZYSTANE           // Do eksperta: klient z polecenia utworzył sprawę
   SYSTEM
 }
 
@@ -1489,6 +1572,7 @@ model Voivodeship {
   users           User[]
   lawFirmVoivodeships LawFirmVoivodeship[]
   cases           Case[]
+  caseReferrals   CaseReferral[]
 
   @@index([slug])
 }
@@ -1532,6 +1616,7 @@ model City {
   lawFirms        LawFirmCity[]
   cases           Case[]
   postalCodes     PostalCode[]
+  caseReferrals   CaseReferral[]
 
   @@index([voivodeshipId])
   @@index([countyId])
@@ -2219,10 +2304,16 @@ enum EmailType {
   KONSULTACJA_ANULOWANA        // Email o anulowaniu konsultacji
   PRZYPOMNIENIE_KONSULTACJI    // Email z przypomnieniem o nadchodzącej konsultacji
   LINK_KONSULTACJI             // Email z linkiem Google Meet do konsultacji
+  NOWE_ZAPYTANIE_KONSULTACJI       // Email do eksperta o nowym zapytaniu o konsultację
+  NOWE_ZAINTERESOWANIE_KONSULTACJA // Email do klienta o zgłoszeniu zainteresowania eksperta
+  ZAINTERESOWANIE_ZAAKCEPTOWANE    // Email do eksperta o wyborze jego zgłoszenia
+  ZAINTERESOWANIE_ODRZUCONE        // Email do eksperta o odrzuceniu zgłoszenia
   POTWIERDZENIE_EMAIL_SUBDOMENA // Email z linkiem do potwierdzenia adresu email (subdomena)
   REJESTRACJA_SUBDOMENA_KLIENT // Email powitalny dla klienta (subdomena)
   REJESTRACJA_SUBDOMENA_KANCELARIA // Email powitalny dla ekspertów (subdomena)
   NEWSLETTER_POTWIERDZENIE     // Email z linkiem do potwierdzenia zapisu do newslettera
+  POLECENIE_SPRAWY             // Email do klienta z linkiem polecającym od eksperta
+  POLECENIE_SPRAWA_UTWORZONA   // Email do eksperta: klient z polecenia utworzył sprawę
 }
 
 // ============================================================================
@@ -2271,6 +2362,8 @@ model ConsultationBooking {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  consultationRequest ConsultationRequest?
+
   @@index([lawFirmId])
   @@index([clientId])
   @@index([status])
@@ -2283,6 +2376,97 @@ enum ConsultationStatus {
   REJECTED
   COMPLETED
   CANCELLED
+}
+
+/// Zapytanie klienta o konsultację online widoczne dla wszystkich pasujących ekspertów.
+/// Odpowiednik `Case` w marketplace spraw — eksperci odpowiadają `ConsultationInterest`.
+model ConsultationRequest {
+  id                String   @id @default(uuid())
+  clientId          String
+  client            Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  categoryId        String?
+  category          Category? @relation(fields: [categoryId], references: [id])
+
+  temat             String
+  opis              String              // min 100 znaków (walidacja w API)
+  forma             ConsultationForm    @default(DOWOLNA)
+  preferowanyCzas   Int?                // 15 | 30 | 60 minut, null = dowolny
+  preferowanyTermin String?             // opis słowny, np. "w tym tygodniu, popołudniami"
+  terminOd          DateTime?
+  terminDo          DateTime?
+  budzetDo          Float?
+  imieNazwisko      String
+  telefonKontakt    String
+
+  status            ConsultationRequestStatus @default(NOWE)
+  isArchived        Boolean  @default(false)
+
+  // Ustawiane po akceptacji zgłoszenia — spina zapytanie z istniejącym bookingiem
+  bookingId         String?  @unique
+  booking           ConsultationBooking? @relation(fields: [bookingId], references: [id])
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  zamknieto         DateTime?
+
+  interests         ConsultationInterest[]
+
+  @@index([clientId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([isArchived])
+  @@index([createdAt])
+}
+
+/// Zgłoszenie zainteresowania eksperta odbyciem płatnej konsultacji.
+/// Odpowiednik `Offer` — ekspert proponuje termin, czas trwania i cenę.
+model ConsultationInterest {
+  id                 String   @id @default(uuid())
+  requestId          String
+  request            ConsultationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  lawFirmId          String
+  lawFirm            LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+
+  proponowanyTermin  DateTime
+  alternatywnyTermin DateTime?
+  duration           Int                 // 15 | 30 | 60 minut
+  cena               Float               // brutto PLN
+  forma              ConsultationForm
+  wiadomosc          String              // min 100 znaków
+
+  status             ConsultationInterestStatus @default(ZLOZONE)
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  zaakceptowaneData  DateTime?
+  odrzuconeData      DateTime?
+
+  @@unique([requestId, lawFirmId])
+  @@index([requestId])
+  @@index([lawFirmId])
+  @@index([status])
+}
+
+enum ConsultationForm {
+  VIDEO
+  TELEFON
+  DOWOLNA
+}
+
+enum ConsultationRequestStatus {
+  NOWE
+  ZGLOSZENIA_OTRZYMANE
+  UMOWIONA
+  ZAKONCZONA
+  ANULOWANA
+}
+
+enum ConsultationInterestStatus {
+  ZLOZONE
+  ZAAKCEPTOWANE
+  ODRZUCONE
+  WYGASLE
 }
 
 // ============================================================================

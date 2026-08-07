@@ -17,6 +17,7 @@ import { motion } from "framer-motion"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
+import { ConsultationsSubnav } from "@/components/konsultacje/ConsultationsSubnav"
 import { expertAvatar } from "@/lib/expert-avatar"
 
 const containerVariants = {
@@ -349,7 +350,16 @@ export default function ClientConsultationsPage() {
       <PageHeader
         title="Moje Konsultacje"
         subtitle="Przeglądaj status swoich umówionych konsultacji, dołączaj do spotkań wideo oraz zarządzaj rezerwacjami."
-      />
+      >
+        <Button asChild className="gap-2">
+          <Link href="/panel-klienta/konsultacje/zapytaj">
+            <MessageCircle className="h-4 w-4" />
+            Zapytaj o konsultację
+          </Link>
+        </Button>
+      </PageHeader>
+
+      <ConsultationsSubnav variant="client" />
 
 
       {/* Main Container */}
