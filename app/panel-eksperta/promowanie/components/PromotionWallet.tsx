@@ -2,15 +2,24 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Coins, ChevronRight, TrendingUp, Sparkles, MapPin } from "lucide-react"
+import { Coins, ChevronRight, TrendingUp, Sparkles, MapPin, Layers } from "lucide-react"
 import { motion } from "framer-motion"
 import { LawFirm } from "../types"
+import {
+  RANKING_PACKAGE_ORDER,
+  RANKING_PACKAGE_BONUS_PERCENT,
+  getPackageBonusPercent,
+  getPackageMultiplier,
+} from "@/lib/ranking-score"
 
 interface PromotionWalletProps {
   lawFirm: LawFirm | null
 }
 
 export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
+  const packageBonusPercent = getPackageBonusPercent(lawFirm?.pakietSubskrypcji)
+  const packageMultiplier = getPackageMultiplier(lawFirm?.pakietSubskrypcji)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -48,6 +57,36 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
             </div>
             <p className="text-xs text-muted-foreground leading-normal">
               Dostępne środki marketingowe na zakup i przedłużanie formatów promowania.
+            </p>
+          </div>
+
+          {/* Bonus rankingowy z pakietu abonamentowego */}
+          <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-3 space-y-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+                <Layers className="h-3.5 w-3.5" />
+                Bonus pakietu
+              </span>
+              <span className="text-xs font-mono font-bold text-cyan-300">
+                {packageBonusPercent > 0 ? `+${packageBonusPercent}%` : "brak"}
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-normal">
+              {packageBonusPercent > 0 ? (
+                <>
+                  Pakiet <strong className="text-white font-medium">{lawFirm?.pakietSubskrypcji}</strong> podnosi Twój wynik
+                  w wyszukiwarce o <strong className="text-cyan-300 font-medium">{packageBonusPercent}%</strong> — każdy punkt
+                  wydany na promowanie liczy się w rankingu jak{" "}
+                  <strong className="text-cyan-300 font-medium">{packageMultiplier.toFixed(2)} pkt</strong>.
+                </>
+              ) : (
+                <>
+                  Bez aktywnego pakietu nie otrzymujesz procentowego bonusu do wyniku w wyszukiwarce.
+                </>
+              )}
+            </p>
+            <p className="text-[10px] text-muted-foreground/70 leading-normal">
+              {RANKING_PACKAGE_ORDER.map((pkg) => `${pkg} +${RANKING_PACKAGE_BONUS_PERCENT[pkg]}%`).join(" · ")}
             </p>
           </div>
 

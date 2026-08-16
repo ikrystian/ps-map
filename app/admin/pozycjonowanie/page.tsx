@@ -39,6 +39,11 @@ import {
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { expertAvatar } from "@/lib/expert-avatar"
+import {
+  RANKING_PACKAGE_BONUS_PERCENT,
+  RANKING_PACKAGE_ORDER,
+  RANKING_VERIFIED_SCORE,
+} from "@/lib/ranking-score"
 
 interface ActivePromotion {
   id: string
@@ -77,6 +82,10 @@ interface LawFirmRankingData {
   scoreBeforeBoost: number
   boostMultiplier: number
   promoSpentScore: number
+  scoreBeforePackage: number
+  packageBonusPercent: number
+  packageMultiplier: number
+  packageBonusScore: number
   finalScore: number
   avgRating: number
   reviewCount: number
@@ -426,16 +435,17 @@ export default function AdminPozycjonowaniePage() {
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
                     <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-2">
-                      <span className="text-primary font-bold">Score</span> = (
-                      <span className="text-green-400">Weryfikacja [1000 pkt]</span> +
+                      <span className="text-primary font-bold">Score</span> = ((
+                      <span className="text-green-400">Weryfikacja [{RANKING_VERIFIED_SCORE} pkt]</span> +
                       <span className="text-blue-400"> Wyświetlenia * 0.1</span> +
                       <span className="text-amber-400"> Śr. Ocena * 50</span>) *
                       <span className="text-purple-400 font-bold"> Mnożnik Promocji</span> +
-                      <span className="text-rose-400 font-bold"> Wydano na prom.</span>
+                      <span className="text-rose-400 font-bold"> Wydano na prom.</span>) *
+                      <span className="text-cyan-400 font-bold"> Mnożnik Pakietu</span>
                     </div>
                     <p>
                       Składnik <span className="text-rose-400 font-semibold">Wydano na prom.</span> (suma punktów wydanych
-                      na promocje) jest doliczany **poza mnożnikiem** — w stosunku 1:1, bez wzmacniania przez mnożnik promocji.
+                      na promocje) jest doliczany **poza mnożnikiem promocji** — w stosunku 1:1, bez wzmacniania przez mnożnik promocji.
                       Gdzie **Mnożnik Promocji** to najwyższy mnożnik z aktywnych wykupionych promocji:
                     </p>
                     <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">
@@ -443,6 +453,20 @@ export default function AdminPozycjonowaniePage() {
                       <li>Wyróżnienie profilu: <span className="text-primary">2.0x</span></li>
                       <li>Top Lista: <span className="text-primary">3.0x</span></li>
                       <li>Strona Główna Premium: <span className="text-primary">5.0x</span></li>
+                    </ul>
+                    <p className="pt-2">
+                      Na końcu cały wynik jest mnożony przez <span className="text-cyan-400 font-semibold">Mnożnik Pakietu</span> —
+                      im wyższy pakiet abonamentowy eksperta, tym większy **procentowy** dodatek do wszystkich punktów
+                      (dotyczy również punktów wydanych na promocje). Brak aktywnego pakietu = 0% (mnożnik 1.0x):
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">
+                      {RANKING_PACKAGE_ORDER.map((pkg) => (
+                        <li key={pkg}>
+                          {pkg}: <span className="text-cyan-400">
+                            +{RANKING_PACKAGE_BONUS_PERCENT[pkg]}% ({(1 + RANKING_PACKAGE_BONUS_PERCENT[pkg] / 100).toFixed(2)}x)
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 ) : context === "HOMEPAGE_FEATURED" || context === "HOMEPAGE_TOP" ? (
@@ -777,7 +801,7 @@ export default function AdminPozycjonowaniePage() {
                           <div className="flex flex-wrap items-center gap-4 xl:gap-8 flex-1 w-full xl:w-auto xl:justify-center">
                             {/* Score breakdown breakdown grid */}
                             {context === "SEARCH" && (
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1.5 border-r border-border/40 pr-6 w-full sm:w-auto">
+                              <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-6 gap-y-1.5 border-r border-border/40 pr-6 w-full sm:w-auto">
                                 <div className="flex flex-col">
                                   <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Award className="h-3 w-3 text-emerald-500" /> Weryfikacja
@@ -805,6 +829,17 @@ export default function AdminPozycjonowaniePage() {
                                     <Sparkles className="h-3 w-3 text-purple-500" /> Mnożnik
                                   </span>
                                   <span className="text-sm font-mono text-purple-400 font-bold">x{firm.boostMultiplier}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
+                                    <Layers className="h-3 w-3 text-cyan-500" /> Pakiet
+                                  </span>
+                                  <span className="text-sm font-mono text-cyan-400 font-bold">
+                                    x{(firm.packageMultiplier ?? 1).toFixed(2)}{" "}
+                                    <span className="text-sm font-normal text-muted-foreground/60">
+                                      (+{firm.packageBonusPercent ?? 0}%)
+                                    </span>
+                                  </span>
                                 </div>
                               </div>
                             )}

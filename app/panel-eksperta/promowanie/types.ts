@@ -2,6 +2,8 @@ export interface LawFirm {
   id: string
   nazwa: string
   punktySaldo: number
+  /** Pakiet abonamentowy — daje procentowy bonus do wyniku rankingowego */
+  pakietSubskrypcji?: string | null
   mainCategoryId?: string | null
   /** Specjalizacja z drzewa ExpertiseCategory — decyduje m.in. o dostępie do POLECANI_PRAWNICY */
   expertiseCategoryId?: string | null

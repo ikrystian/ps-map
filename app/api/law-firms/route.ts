@@ -309,7 +309,9 @@ export async function GET(request: NextRequest) {
         const highlightType = await getLawFirmHighlightType(firm.id, firmPromotions)
 
         // Calculate ranking score using the shared formula. "Wydano na prom."
-        // (total points spent on promotions) is added 1:1 outside the multiplier.
+        // (total points spent on promotions) is added 1:1 outside the promotion
+        // multiplier, and the subscription package adds a percentage bonus on top
+        // of the whole score.
         const totalSpentPoints = sumPromotionSpentPoints(firm.pointTransactions || [])
         const { finalScore } = computeRankingScore({
           zweryfikowana: firm.zweryfikowana,
@@ -317,6 +319,7 @@ export async function GET(request: NextRequest) {
           avgRating,
           boostMultiplier: boost.boostMultiplier,
           totalSpentPoints,
+          pakietSubskrypcji: firm.pakietSubskrypcji,
         })
 
         // Ustawienie "Wyświetlanie awatara w katalogu" – ukrywa logo eksperta na listingach

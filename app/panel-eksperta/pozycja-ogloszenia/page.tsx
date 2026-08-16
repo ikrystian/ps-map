@@ -19,6 +19,10 @@ import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/components/ui/use-toast"
 import { InfoDialog } from "@/components/ui/info-dialog"
+import {
+  RANKING_PACKAGE_BONUS_PERCENT,
+  RANKING_PACKAGE_ORDER,
+} from "@/lib/ranking-score"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -44,11 +48,20 @@ interface RankingLawFirm {
   punktySaldo: number
   mainCategoryId: string
   mainCategoryName?: string
+  pakietSubskrypcji: string | null
   /** Wynik wg pełnego wzoru punktowego (nie tylko punktów wydanych na promocje). */
   rankingScore: number
   scoreBeforeBoost: number
   boostMultiplier: number
   promoSpentScore: number
+  /** Wynik przed doliczeniem bonusu za pakiet abonamentowy. */
+  scoreBeforePackage: number
+  /** Procentowy bonus pakietu (np. 20 dla PREMIUM). */
+  packageBonusPercent: number
+  /** Mnożnik pakietu (np. 1.2 dla PREMIUM). */
+  packageMultiplier: number
+  /** Ile punktów dołożył pakiet do obecnego wyniku. */
+  packageBonusScore: number
 }
 
 interface Competitor {
@@ -83,6 +96,16 @@ const itemVariants = {
 }
 
 const PRESETS = [50, 100, 500, 1000]
+
+/**
+ * Wynik po przeznaczeniu dodatkowych punktów. Punkty trafiają do składnika
+ * "Wydano na prom." (1:1, poza mnożnikiem promocji), ale cały wynik jest
+ * jeszcze przemnażany przez mnożnik pakietu abonamentowego — dlatego każdy
+ * przeznaczony punkt daje w rankingu `1 × mnożnik pakietu` punktu.
+ */
+function projectedScore(currentScore: number, points: number, packageMultiplier: number) {
+  return Math.round((currentScore + points * (packageMultiplier || 1)) * 10) / 10
+}
 
 function RankingIllustration() {
   return (
@@ -191,9 +214,9 @@ export default function RankingBoostPage() {
     const rank = allFirms.findIndex(f => f.id === lawFirm.id) + 1
     setCurrentRank(rank)
 
-    // Przydzielenie punktów zwiększa składnik "Wydano na prom." 1:1 (poza mnożnikiem),
-    // więc nowy wynik = obecny wynik + przydzielone punkty.
-    const newRankingScore = lawFirm.rankingScore + points
+    // Przydzielenie punktów zwiększa składnik "Wydano na prom." 1:1 (poza mnożnikiem
+    // promocji), a całość jest jeszcze mnożona przez bonus za pakiet abonamentowy.
+    const newRankingScore = projectedScore(lawFirm.rankingScore, points, lawFirm.packageMultiplier)
     const newAllFirms = [...competitors, { id: lawFirm.id, rankingScore: newRankingScore }]
       .sort((a, b) => b.rankingScore - a.rankingScore)
 
@@ -268,6 +291,12 @@ export default function RankingBoostPage() {
   }
 
   const hasPoints = (lawFirm.punktySaldo ?? 0) > 0
+  const packageMultiplier = lawFirm.packageMultiplier || 1
+  const packageBonusPercent = lawFirm.packageBonusPercent ?? 0
+  /** Wynik po uwzględnieniu zaplanowanego boostu (z bonusem pakietu). */
+  const boostedScore = projectedScore(lawFirm.rankingScore, points, packageMultiplier)
+  /** Ile punktów rankingu realnie da przeznaczenie `points` punktów. */
+  const boostValue = Math.round(points * packageMultiplier * 10) / 10
 
   return (
     <div className="relative space-y-8">
@@ -365,7 +394,12 @@ export default function RankingBoostPage() {
                         <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
                           <Rocket className="h-5 w-5 animate-bounce" />
                         </div>
-                        <span className="text-xs font-bold text-primary font-mono">+{points}</span>
+                        <span className="text-xs font-bold text-primary font-mono">+{boostValue.toLocaleString()}</span>
+                        {packageBonusPercent > 0 && (
+                          <span className="text-[10px] text-cyan-400 font-semibold whitespace-nowrap">
+                            {points} pkt +{packageBonusPercent}% (pakiet)
+                          </span>
+                        )}
                         {currentRank - newRank > 0 && (
                           <span className="text-[10px] px-2 py-0.5 rounded bg-success/10 text-success font-bold border border-success/20 whitespace-nowrap">
                             Awans o +{currentRank - newRank}
@@ -404,7 +438,7 @@ export default function RankingBoostPage() {
                     "text-xs mt-2 font-mono transition-colors",
                     points > 0 ? "text-primary font-semibold" : "text-zinc-500"
                   )}>
-                    {(lawFirm.rankingScore + points).toLocaleString()} pkt
+                    {boostedScore.toLocaleString()} pkt
                   </span>
                 </div>
               </div>
@@ -528,7 +562,10 @@ export default function RankingBoostPage() {
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
                         Przeznaczasz <strong className="text-white font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
-                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{(lawFirm.rankingScore + points).toLocaleString()} pkt</strong>. Operacji tej nie można cofnąć.
+                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{boostedScore.toLocaleString()} pkt</strong>
+                        {packageBonusPercent > 0 && (
+                          <> (w tym <strong className="text-cyan-400 font-semibold">+{packageBonusPercent}%</strong> bonusu za pakiet {lawFirm.pakietSubskrypcji})</>
+                        )}. Operacji tej nie można cofnąć.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:gap-0 pt-4 flex flex-col-reverse sm:flex-row">
@@ -568,7 +605,7 @@ export default function RankingBoostPage() {
               <div className="divide-y divide-border/10">
                 {[
                   ...competitors.map(c => ({ id: c.id, nazwa: c.nazwa, rankingScore: c.rankingScore })),
-                  { id: lawFirm.id, nazwa: lawFirm.nazwa, rankingScore: lawFirm.rankingScore + points },
+                  { id: lawFirm.id, nazwa: lawFirm.nazwa, rankingScore: boostedScore },
                 ]
                   .sort((a, b) => b.rankingScore - a.rankingScore)
                   .map((firm, index) => {
@@ -582,7 +619,7 @@ export default function RankingBoostPage() {
                     ]
 
                     const score = firm.rankingScore
-                    const maxScore = Math.max(...competitors.map(c => c.rankingScore), lawFirm.rankingScore + points, 1)
+                    const maxScore = Math.max(...competitors.map(c => c.rankingScore), boostedScore, 1)
                     const percent = Math.max(5, Math.min(100, (score / maxScore) * 100))
 
                     return (
@@ -661,7 +698,29 @@ export default function RankingBoostPage() {
                 <p>Dodane punkty podnoszą pozycję na stałe, chyba że inny ekspert zdobędzie więcej punktów i wyprzedzi Twój wynik.</p>
               </div>
               <div className="space-y-1">
-                <h4 className="font-semibold text-zinc-300">3. Pozyskiwanie punktów</h4>
+                <h4 className="font-semibold text-zinc-300">3. Bonus za pakiet abonamentowy</h4>
+                <p>
+                  Cały Twój wynik rankingowy jest powiększany procentowo w zależności od pakietu:{" "}
+                  {RANKING_PACKAGE_ORDER.map((pkg, i) => (
+                    <span key={pkg}>
+                      {i > 0 && ", "}
+                      <span className={cn("font-medium", pkg === lawFirm.pakietSubskrypcji ? "text-cyan-400" : "text-zinc-300")}>
+                        {pkg} +{RANKING_PACKAGE_BONUS_PERCENT[pkg]}%
+                      </span>
+                    </span>
+                  ))}
+                  .{" "}
+                  {packageBonusPercent > 0 ? (
+                    <>Twój pakiet <strong className="text-white font-medium">{lawFirm.pakietSubskrypcji}</strong> daje{" "}
+                      <strong className="text-cyan-400 font-medium">+{packageBonusPercent}%</strong> do wyniku
+                      (obecnie {lawFirm.packageBonusScore?.toLocaleString() ?? 0} pkt).</>
+                  ) : (
+                    <>Nie masz aktywnego pakietu, więc nie otrzymujesz tego bonusu.</>
+                  )}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-semibold text-zinc-300">4. Pozyskiwanie punktów</h4>
                 <p>Dodatkowe punkty zakupisz w zakładce <a href="/panel-eksperta/punkty" className="text-primary hover:underline font-medium">Punkty</a> lub otrzymasz w pakiecie abonamentowym.</p>
               </div>
             </div>

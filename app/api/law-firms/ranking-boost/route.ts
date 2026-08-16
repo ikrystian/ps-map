@@ -16,6 +16,7 @@ const PROMO_BOOST_MULTIPLIERS: Record<string, number> = {
 type FirmForScore = {
   zweryfikowana: boolean
   wyswietleniaProfilu: number
+  pakietSubskrypcji: string | null
   reviews: { ocenaOgolna: number }[]
   promotions: { typPromocji: string }[]
   pointTransactions: { amount: number }[]
@@ -42,6 +43,7 @@ function scoreFirm(firm: FirmForScore) {
     avgRating,
     boostMultiplier,
     totalSpentPoints,
+    pakietSubskrypcji: firm.pakietSubskrypcji,
   })
 }
 
@@ -54,6 +56,7 @@ export async function GET() {
   try {
     const now = new Date()
     const scoreInclude = {
+      pakietSubskrypcji: true,
       reviews: { select: { ocenaOgolna: true } },
       promotions: {
         where: {
@@ -123,10 +126,15 @@ export async function GET() {
         punktySaldo: lawFirm.punktySaldo,
         mainCategoryId: lawFirm.mainCategoryId,
         mainCategoryName: lawFirm.mainCategory?.nazwa,
+        pakietSubskrypcji: lawFirm.pakietSubskrypcji,
         rankingScore: parseFloat(lawFirmScore.finalScore.toFixed(1)),
         scoreBeforeBoost: parseFloat(lawFirmScore.scoreBeforeBoost.toFixed(1)),
         boostMultiplier: lawFirmScore.boostMultiplier,
         promoSpentScore: parseFloat(lawFirmScore.promoSpentScore.toFixed(1)),
+        scoreBeforePackage: parseFloat(lawFirmScore.scoreBeforePackage.toFixed(1)),
+        packageBonusPercent: lawFirmScore.packageBonusPercent,
+        packageMultiplier: lawFirmScore.packageMultiplier,
+        packageBonusScore: parseFloat(lawFirmScore.packageBonusScore.toFixed(1)),
       },
       competitors: competitorsWithScore,
     })
