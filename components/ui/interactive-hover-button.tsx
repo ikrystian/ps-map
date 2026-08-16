@@ -10,7 +10,9 @@ export function InteractiveHoverButton({
   return (
     <button
       className={cn(
-        "group bg-primary relative w-auto cursor-pointer overflow-hidden rounded-md  p-2 px-6 text-center font-semibold",
+        // Kolor tekstu na stałe pod `bg-primary` — bez tego przycisk dziedziczył
+        // `foreground` z sekcji i w jasnym motywie robił ciemny napis na zieleni.
+        "group bg-primary text-primary-foreground relative w-auto cursor-pointer overflow-hidden rounded-md  p-2 px-6 text-center font-semibold",
         className
       )}
       {...props}

@@ -116,15 +116,22 @@ export default function CategoriesPage() {
 
   return (
     <div
-      className="min-h-screen bg-backgroundbg-bg-background selection:bg-primary/30 relative"
+      id="categories-hero"
+      className="min-h-screen bg-background selection:bg-primary/30 relative"
     >
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32 on-dark" style={{
-        backgroundImage: "linear-gradient(to bottom, rgba(20, 20, 18, 0.85), rgba(20, 20, 18, 0.95)), url('/4085ef6e-74b2-4e6e-aa70-a2135f53b9cb.jpeg')",
+      <section className="relative overflow-hidden py-20 text-foreground lg:py-32" style={{
+        backgroundImage: "url('/4085ef6e-74b2-4e6e-aa70-a2135f53b9cb.jpeg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
       }}>
+        {/* Welon w kolorze tła motywu — zdjęcie zostaje czytelnym tłem, a treść
+            jest ciemna na jasnym i jasna na ciemnym motywie. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-background/90 to-background/97"
+        />
         <ParticlesBackground />
 
         {/* Decorative elements */}
@@ -134,7 +141,7 @@ export default function CategoriesPage() {
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary-foreground text-sm font-medium">
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -174,7 +181,7 @@ export default function CategoriesPage() {
               <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Wszystkich kategorii</p>
             </div>
             <div className="flex flex-col items-center p-4 rounded-2xl bg-foreground/5 backdrop-blur-sm border border-border">
-              <p className="text-3xl md:text-4xl font-bold text-[#d7b56d]">
+              <p className="text-3xl md:text-4xl font-bold text-secondary">
                 <NumberTicker value={stats.private} />
               </p>
               <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Prywatnych</p>

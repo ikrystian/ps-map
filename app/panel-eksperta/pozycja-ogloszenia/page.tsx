@@ -560,18 +560,12 @@ export default function RankingBoostPage() {
                         <ShieldAlert className="h-5 w-5 text-secondary" />
                         Potwierdzenie operacji
                       </AlertDialogTitle>
-<<<<<<< HEAD
                       <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
                         Przeznaczasz <strong className="text-white font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
                         Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{boostedScore.toLocaleString()} pkt</strong>
                         {packageBonusPercent > 0 && (
                           <> (w tym <strong className="text-cyan-400 font-semibold">+{packageBonusPercent}%</strong> bonusu za pakiet {lawFirm.pakietSubskrypcji})</>
                         )}. Operacji tej nie można cofnąć.
-=======
-                      <AlertDialogDescription className="text-muted-foreground text-sm pt-2 leading-relaxed">
-                        Przeznaczasz <strong className="text-foreground font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
-                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{(lawFirm.rankingScore + points).toLocaleString()} pkt</strong>. Operacji tej nie można cofnąć.
->>>>>>> 1b6a6948 (feat: implement site-wide theme support with logo and theme toggle components)
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:gap-0 pt-4 flex flex-col-reverse sm:flex-row">
