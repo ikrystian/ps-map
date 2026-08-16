@@ -110,7 +110,7 @@ const ContactButton = ({
         onClick(e);
       }}
       className={cn(
-        "rounded-full bg-[#058c80] text-white transition-all duration-300 h-11 w-11 shadow-md border-0",
+        "rounded-full bg-primary-dark text-white transition-all duration-300 h-11 w-11 shadow-md border-0",
         isLoggedIn ? "hover:bg-[#04756b]" : "opacity-70 cursor-help",
       )}
     >
@@ -125,7 +125,7 @@ const ContactButton = ({
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent
         side="top"
-        className="bg-[#1a1a1a] border-neutral-800 text-white  text-xs"
+        className="bg-card border-border text-foreground  text-xs"
       >
         Informacja dostępna po zalogowaniu
       </TooltipContent>
@@ -231,7 +231,7 @@ const AwardEmblem = () => (
 
 const OraIcon = () => (
   <svg
-    className="w-4 h-4 text-white"
+    className="w-4 h-4 text-foreground"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -277,12 +277,12 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
   const cardBorderAndGlow =
     pkg === "BIZNES"
-      ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 hover:shadow-[0_0_35px_rgba(245,158,11,0.2)] bg-gradient-to-br from-[#131313] via-[#131313] to-amber-950/15"
+      ? "border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-500/80 hover:shadow-[0_0_35px_rgba(245,158,11,0.2)] bg-gradient-to-br from-background via-background to-amber-950/15"
       : pkg === "PREMIUM"
-        ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 hover:shadow-[0_0_35px_rgba(168,85,247,0.2)] bg-gradient-to-br from-[#131313] via-[#131313] to-purple-950/15"
+        ? "border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.08)] hover:border-purple-500/80 hover:shadow-[0_0_35px_rgba(168,85,247,0.2)] bg-gradient-to-br from-background via-background to-purple-950/15"
         : pkg === "STANDARD"
-          ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.15)] bg-gradient-to-br from-[#131313] via-[#131313] to-blue-950/15"
-          : "border-neutral-800 hover:border-neutral-700 bg-[#131313] hover:shadow-[0_10px_30px_rgba(0,0,0,0.4)]";
+          ? "border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.06)] hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.15)] bg-gradient-to-br from-background via-background to-blue-950/15"
+          : "border-border hover:border-border bg-background hover:shadow-[0_10px_30px_rgba(0,0,0,0.4)]";
 
   const professionalTitle = lawFirm.oraStatus
     ? "Adwokat"
@@ -316,8 +316,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
-          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-[#111111] border-r border-neutral-800">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111] flex items-center justify-center overflow-hidden">
+          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-background border-r border-border">
+            <div className="absolute inset-0 bg-gradient-to-br from-card to-background flex items-center justify-center overflow-hidden">
 
               <div className="absolute inset-0 z-10">
                 <Image
@@ -350,7 +350,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             {/* Rating - Bottom Left */}
             {lawFirm.reviewCount > 0 && (
               <div className="absolute bottom-2 left-2 z-10">
-                <div className="bg-[#058c80] text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
+                <div className="bg-primary-dark text-white px-3 py-2 rounded-lg flex items-center gap-3 shadow-lg border border-teal-500/20">
                   <span className="text-2xl font-bold  tracking-tight leading-none">
                     {lawFirm.avgRating > 0
                       ? lawFirm.avgRating.toFixed(1).replace(".", ",")
@@ -365,12 +365,12 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                             "w-3 h-3 fill-current",
                             i < Math.round(lawFirm.avgRating || 5)
                               ? "text-amber-400"
-                              : "text-neutral-400/30",
+                              : "text-muted-foreground/30",
                           )}
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-neutral-200  leading-none font-light">
+                    <span className="text-sm text-foreground  leading-none font-light">
                       {lawFirm.reviewCount}{" "}
                       {getOpinieText(lawFirm.reviewCount)}
                     </span>
@@ -398,7 +398,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start gap-4 mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl md:text-2xl font-playfair text-white mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
+                  <h3 className="text-xl md:text-2xl font-playfair text-foreground mb-2 flex flex-wrap items-center gap-2 group-hover:text-[#0db19f] group-hover:translate-x-1 transition-all duration-300">
                     <span className="truncate">{lawFirm.nazwa}</span>
                     {lawFirm.pakietSubskrypcji && (
                       <PackageBadge
@@ -409,7 +409,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                   </h3>
                   <div className="flex items-center text-[#0db19f]">
                     <MapPin className="w-4 h-4 mr-1.5 flex-shrink-0" />
-                    <span className="text-sm text-neutral-400 font-light truncate">
+                    <span className="text-sm text-muted-foreground font-light truncate">
                       {lawFirm.adres
                         ? `${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}`
                         : `${lawFirm.miasto}, ${lawFirm.voivodeship?.nazwa}`}
@@ -421,7 +421,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
               {/* Description */}
               <div className="flex-1">
-                <p className="text-neutral-400 text-sm leading-relaxed font-light line-clamp-3">
+                <p className="text-muted-foreground text-sm leading-relaxed font-light line-clamp-3">
                   {stripHtmlTags(lawFirm.opis) || "Brak opisu eksperta."}
                 </p>
               </div>
@@ -437,10 +437,10 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
                 {/* Teal badge (Regional Chamber) */}
                 <div className="flex items-center gap-1.5 md:gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-1.5 pr-2.5 md:pl-2 md:pr-4 py-1 md:py-1.5 rounded-lg text-xs md:text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
-                  <div className="bg-[#058c80] p-1 md:p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
+                  <div className="bg-primary-dark p-1 md:p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
                     <OraIcon />
                   </div>
-                  <span className="text-neutral-200">{chamberText}</span>
+                  <span className="text-foreground">{chamberText}</span>
                 </div>
               </div>
             </div>
@@ -482,14 +482,14 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 />
               </div>
 
-              <div className="expert-item-btn bg-[#058c80] text-white rounded-lg p-2.5 shadow-md transition-all duration-300 group-hover:bg-[#0db19f] group-hover:shadow-[0_0_15px_rgba(13,177,159,0.3)] flex items-center justify-center absolute right-0 bottom-0">
+              <div className="expert-item-btn bg-primary-dark text-white rounded-lg p-2.5 shadow-md transition-all duration-300 group-hover:bg-[#0db19f] group-hover:shadow-[0_0_15px_rgba(13,177,159,0.3)] flex items-center justify-center absolute right-0 bottom-0">
                 <ArrowUpLeftIcon
                   size={36}
                   strokeWidth={2.5}
                   isHovered={isCardHovered}
                   duration={0.5}
                   repeatDelay={0}
-                  className="text-white"
+                  className="text-foreground"
                 />
               </div>
             </div>

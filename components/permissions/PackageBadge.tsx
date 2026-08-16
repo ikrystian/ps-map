@@ -49,7 +49,7 @@ export function PackageBadge({
       <Badge
         variant="outline"
         className={cn(
-          "gap-1 font-semibold border-gray-300 text-gray-500 dark:text-gray-400",
+          "gap-1 font-semibold border-gray-300 text-muted-foreground dark:text-muted-foreground",
           sizes.badge,
           className
         )}
@@ -64,7 +64,7 @@ export function PackageBadge({
       label: "Podstawowy",
       icon: Sparkles,
       variant: "outline" as const,
-      className: "border-neutral-700 bg-neutral-900/60 text-neutral-400",
+      className: "border-border bg-card/60 text-muted-foreground",
     },
     STANDARD: {
       label: "Standard",

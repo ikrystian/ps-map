@@ -146,10 +146,10 @@ export default function AdminDashboardPage() {
       // Payment Statuses
       OCZEKUJE: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
       ZAPLACONE: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-      ANULOWANE: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20',
+      ANULOWANE: 'bg-slate-500/10 text-slate-600 dark:text-muted-foreground border border-slate-500/20',
       ZWROT: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
     }
-    return statusColors[status] || 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+    return statusColors[status] || 'bg-slate-500/10 text-slate-600 dark:text-muted-foreground border border-slate-500/20'
   }
 
   const formatRole = (role: string) => {
@@ -271,7 +271,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{formatCurrency(statistics.totalRevenue)}</div>
-            <p className="text-xs text-slate-500 mt-1 font-medium">
+            <p className="text-xs text-muted-foreground mt-1 font-medium">
               {statistics.totalOrders} zamówień
             </p>
           </CardContent>
@@ -286,7 +286,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold tracking-tight">{statistics.unpaidOrders}</div>
-            <p className="text-xs text-slate-500 mt-1 font-medium">
+            <p className="text-xs text-muted-foreground mt-1 font-medium">
               zamówień do opłacenia
             </p>
           </CardContent>
@@ -355,7 +355,7 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {charts.casesByStatus.length === 0 ? (
-                <div className="text-center py-6 text-slate-500 text-sm">Brak spraw w bazie</div>
+                <div className="text-center py-6 text-muted-foreground text-sm">Brak spraw w bazie</div>
               ) : (
                 charts.casesByStatus.map((item) => {
                   const total = charts.casesByStatus.reduce((sum, i) => sum + i.count, 0)
@@ -363,14 +363,14 @@ export default function AdminDashboardPage() {
                   return (
                     <div key={item.status} className="group/bar">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        <span className="text-sm font-semibold text-slate-700 dark:text-foreground/80">
                           {getStatusName(item.status)}
                         </span>
-                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400 group-hover/bar:text-slate-900 dark:group-hover/bar:text-slate-100 transition-colors">
+                        <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground group-hover/bar:text-slate-900 dark:group-hover/bar:text-foreground transition-colors">
                           {item.count} ({percentage}%)
                         </span>
                       </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-800/80 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200/30 dark:border-slate-700/20">
+                      <div className="w-full bg-slate-100 dark:bg-muted/80 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200/30 dark:border-border/20">
                         <div
                           className={`bg-gradient-to-r ${getStatusGradient(item.status)} h-full rounded-full transition-all duration-500 ease-out`}
                           style={{ width: `${percentage}%` }}
@@ -398,12 +398,12 @@ export default function AdminDashboardPage() {
                 return (
                   <div key={item.month} className="group/bar">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item.month}</span>
+                      <span className="text-sm font-semibold text-slate-700 dark:text-foreground/80">{item.month}</span>
                       <span className="text-sm font-bold text-emerald-600 dark:text-emerald-500 group-hover/bar:scale-105 transition-transform origin-right">
                         {formatCurrency(Number(item.revenue))}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-100 dark:bg-slate-800/80 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200/30 dark:border-slate-700/20">
+                    <div className="w-full bg-slate-100 dark:bg-muted/80 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200/30 dark:border-border/20">
                       <div
                         className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_8px_rgba(20,184,166,0.15)]"
                         style={{ width: `${percentage}%` }}
@@ -431,12 +431,12 @@ export default function AdminDashboardPage() {
               return (
                 <div key={item.date} className="flex-1 flex flex-col justify-end items-center h-full group relative">
                   {/* Floating Tooltip */}
-                  <div className="absolute -top-6 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm sm:text-xs font-bold px-2 py-0.5 rounded shadow-md opacity-0 pointer-events-none transition-all duration-200 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 z-10 whitespace-nowrap">
+                  <div className="absolute -top-6 bg-card dark:bg-slate-100 text-foreground dark:text-slate-900 text-sm sm:text-xs font-bold px-2 py-0.5 rounded shadow-md opacity-0 pointer-events-none transition-all duration-200 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 z-10 whitespace-nowrap">
                     {Number(item.count)} uż.
                   </div>
 
                   {/* Bar container */}
-                  <div className="w-full bg-slate-100 dark:bg-slate-800/40 rounded-t-md relative flex-1 flex flex-col justify-end overflow-hidden border border-slate-200/30 dark:border-slate-700/20 min-h-[4px]">
+                  <div className="w-full bg-slate-100 dark:bg-muted/40 rounded-t-md relative flex-1 flex flex-col justify-end overflow-hidden border border-slate-200/30 dark:border-border/20 min-h-[4px]">
                     <div
                       className="w-full bg-gradient-to-t from-blue-600 via-indigo-500 to-cyan-400 dark:from-blue-500 dark:via-indigo-600 dark:to-cyan-400 rounded-t-sm transition-all duration-700 ease-out group-hover:brightness-110 shadow-md group-hover:shadow-lg shadow-indigo-500/10 group-hover:shadow-indigo-500/20"
                       style={{ height: `${height}%` }}
@@ -444,7 +444,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   {/* Label without year */}
-                  <div className="text-sm sm:text-xs text-slate-500 mt-2 font-medium truncate w-full text-center">
+                  <div className="text-sm sm:text-xs text-muted-foreground mt-2 font-medium truncate w-full text-center">
                     {formatDate(item.date).replace(/ 202\d$/, '')}
                   </div>
                 </div>
@@ -467,14 +467,14 @@ export default function AdminDashboardPage() {
               {recentActivity.users.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-border/50 hover:bg-slate-50/50 dark:hover:bg-muted/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarGradient(user.role)} text-white text-xs font-bold shadow-sm group-hover:scale-105 transition-transform duration-200`}>
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarGradient(user.role)} text-foreground text-xs font-bold shadow-sm group-hover:scale-105 transition-transform duration-200`}>
                       {getUserInitials(user.name, user.email)}
                     </div>
                     <div className="space-y-0.5">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                      <div className="font-semibold text-slate-800 dark:text-foreground leading-tight">
                         {user.name || 'Użytkownik bez nazwy'}
                       </div>
                       <div className="text-xs text-muted-foreground font-light">
@@ -508,14 +508,14 @@ export default function AdminDashboardPage() {
               {recentActivity.cases.map((caseItem) => (
                 <div
                   key={caseItem.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-border/50 hover:bg-slate-50/50 dark:hover:bg-muted/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 group-hover:scale-105 transition-transform duration-200">
                       <Briefcase className="h-4 w-4" />
                     </div>
                     <div className="space-y-0.5">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                      <div className="font-semibold text-slate-800 dark:text-foreground leading-tight">
                         {caseItem.nazwaSprawy}
                       </div>
                       <div className="text-xs text-muted-foreground font-light">
@@ -552,14 +552,14 @@ export default function AdminDashboardPage() {
               {recentActivity.orders.map((order) => (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-border/50 hover:bg-slate-50/50 dark:hover:bg-muted/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
                       <CreditCard className="h-4 w-4" />
                     </div>
                     <div className="space-y-0.5">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                      <div className="font-semibold text-slate-800 dark:text-foreground leading-tight">
                         {order.orderNumber}
                       </div>
                       <div className="text-xs text-muted-foreground font-light">
@@ -568,7 +568,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <div className="font-bold text-slate-800 dark:text-slate-100 text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">
+                    <div className="font-bold text-slate-800 dark:text-foreground text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-500 transition-colors">
                       {formatCurrency(order.kwota)}
                     </div>
                     <div className="flex items-center gap-2">
@@ -597,14 +597,14 @@ export default function AdminDashboardPage() {
               {recentActivity.blogPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl border border-transparent hover:border-slate-200/50 dark:hover:border-border/50 hover:bg-slate-50/50 dark:hover:bg-muted/40 hover:shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center gap-3 max-w-[70%]">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-500 border border-violet-500/20 group-hover:scale-105 transition-transform duration-200">
                       <FileText className="h-4 w-4" />
                     </div>
                     <div className="space-y-0.5 truncate">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200 leading-tight truncate">
+                      <div className="font-semibold text-slate-800 dark:text-foreground leading-tight truncate">
                         {post.tytul}
                       </div>
                       <div className="text-xs text-muted-foreground font-light truncate">
@@ -615,7 +615,7 @@ export default function AdminDashboardPage() {
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <Badge className={`${post.opublikowany
                       ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20'
-                      : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+                      : 'bg-slate-500/10 text-slate-600 dark:text-muted-foreground border border-slate-500/20'
                       } font-semibold text-sm px-2 py-0.5 rounded-full shadow-none`}>
                       {post.opublikowany ? 'Opublikowany' : 'Szkic'}
                     </Badge>

@@ -287,24 +287,24 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
         type: ModuleType.EDITABLE_HTML,
         code: `
 <!-- HERO -->
-<section class="relative bg-[#121212] py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-neutral-900/60">
-  <div class="absolute -top-20 left-1/4 w-[420px] h-[420px] bg-emerald-950/25 rounded-full blur-[130px] pointer-events-none"></div>
-  <div class="absolute -bottom-24 right-1/5 w-[480px] h-[480px] bg-emerald-900/10 rounded-full blur-[150px] pointer-events-none"></div>
+<section class="relative bg-background py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-border">
+  <div class="absolute -top-20 left-1/4 w-[420px] h-[420px] bg-primary/10 rounded-full blur-[130px] pointer-events-none"></div>
+  <div class="absolute -bottom-24 right-1/5 w-[480px] h-[480px] bg-primary/5 rounded-full blur-[150px] pointer-events-none"></div>
   <div class="max-w-4xl mx-auto relative z-10 text-center">
-    <p class="text-[#0da192] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">O nas</p>
-    <h1 class="font-playfair text-4xl sm:text-5xl lg:text-6xl text-white font-light tracking-tight leading-tight mb-6">
+    <p class="text-primary text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-6">O nas</p>
+    <h1 class="font-playfair text-4xl sm:text-5xl lg:text-6xl text-foreground font-light tracking-tight leading-tight mb-6">
       Zbudowaliśmy to, czego <span class="font-bold">sami nie mogliśmy znaleźć</span>
     </h1>
-    <p class="text-neutral-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+    <p class="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
       ProstaSprawa.pl nie powstała z analizy rynku. Powstała z naszych własnych spraw, z którymi nie wiedzieliśmy, co zrobić.
     </p>
   </div>
 </section>
 
 <!-- HISTORIA -->
-<section class="bg-[#181816] py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-900/60">
+<section class="bg-background-sec py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-border">
   <div class="max-w-3xl mx-auto">
-    <div class="space-y-6 text-neutral-400 text-sm sm:text-base leading-relaxed">
+    <div class="space-y-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
       <p>
         Znamy ten moment od środka. Przychodzi pismo z sądu albo umowa napisana tak, że nie wiadomo, co się właściwie podpisuje, i zaczyna się szukanie. Wpisujesz coś w wyszukiwarkę, otwierasz dwadzieścia kart, dzwonisz do kolejnych kancelarii. Jedna nie odbiera, druga nie prowadzi takich spraw, trzecia oddzwoni w przyszłym tygodniu. Mija kilka dni, a Ty jesteś w tym samym punkcie, tylko bardziej zmęczony i o kilka dni bliżej terminu.
       </p>
@@ -313,12 +313,12 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       </p>
     </div>
 
-    <p class="font-playfair text-2xl sm:text-3xl lg:text-4xl text-white font-light text-center my-10 md:my-12">
+    <p class="font-playfair text-2xl sm:text-3xl lg:text-4xl text-foreground font-light text-center my-10 md:my-12">
       Tak powstała <span class="font-bold">ProstaSprawa.pl</span>.
     </p>
 
-    <div class="border-l-2 border-[#0da192] pl-5 sm:pl-6">
-      <p class="text-neutral-300 text-sm sm:text-base leading-relaxed">
+    <div class="border-l-2 border-primary pl-5 sm:pl-6">
+      <p class="text-foreground/80 text-sm sm:text-base leading-relaxed">
         Dziś łączymy klientów z prawnikami i ekspertami z całej Polski. Działamy we wszystkich 16 województwach, obejmujemy 44 kategorie spraw i ponad 100 specjalizacji, prywatnych i firmowych.
       </p>
     </div>
@@ -326,42 +326,42 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- LICZBY -->
-<section class="relative bg-[#121212] py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-neutral-900/60">
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl h-[320px] bg-gradient-to-r from-teal-500/5 to-emerald-500/5 blur-[120px] pointer-events-none"></div>
+<section class="relative bg-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-border">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl h-[320px] bg-gradient-to-r from-primary/5 to-primary/10 blur-[120px] pointer-events-none"></div>
   <div class="max-w-6xl mx-auto relative z-10">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light text-center mb-12">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light text-center mb-12">
       ProstaSprawa.pl <span class="font-bold">w liczbach</span>
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
-        <div class="font-playfair text-4xl text-[#0da192] mb-2">44</div>
-        <p class="text-white text-sm font-semibold mb-1">kategorie spraw</p>
-        <p class="text-neutral-400 text-sm leading-relaxed">22 prywatne i 22 firmowe</p>
+      <div class="bg-card border border-border rounded-xl p-6">
+        <div class="font-playfair text-4xl text-primary mb-2">44</div>
+        <p class="text-foreground text-sm font-semibold mb-1">kategorie spraw</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">22 prywatne i 22 firmowe</p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
-        <div class="font-playfair text-4xl text-[#0da192] mb-2">100+</div>
-        <p class="text-white text-sm font-semibold mb-1">podkategorii</p>
-        <p class="text-neutral-400 text-sm leading-relaxed">od rozwodu i spadku po RODO i spory z pracownikami</p>
+      <div class="bg-card border border-border rounded-xl p-6">
+        <div class="font-playfair text-4xl text-primary mb-2">100+</div>
+        <p class="text-foreground text-sm font-semibold mb-1">podkategorii</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">od rozwodu i spadku po RODO i spory z pracownikami</p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
-        <div class="font-playfair text-4xl text-[#0da192] mb-2">16</div>
-        <p class="text-white text-sm font-semibold mb-1">województw</p>
-        <p class="text-neutral-400 text-sm leading-relaxed">specjaliści z całej Polski</p>
+      <div class="bg-card border border-border rounded-xl p-6">
+        <div class="font-playfair text-4xl text-primary mb-2">16</div>
+        <p class="text-foreground text-sm font-semibold mb-1">województw</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">specjaliści z całej Polski</p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6 sm:col-span-2 lg:col-span-1">
-        <div class="font-playfair text-4xl text-[#d7b56d] mb-2">0 zł</div>
-        <p class="text-white text-sm font-semibold mb-1">prowizji od każdej sprawy</p>
-        <p class="text-neutral-400 text-sm leading-relaxed">dla obu stron</p>
+      <div class="bg-card border border-border rounded-xl p-6 sm:col-span-2 lg:col-span-1">
+        <div class="font-playfair text-4xl text-secondary mb-2">0 zł</div>
+        <p class="text-foreground text-sm font-semibold mb-1">prowizji od każdej sprawy</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">dla obu stron</p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6 sm:col-span-2">
-        <div class="font-playfair text-4xl text-[#d7b56d] mb-2">3 miesiące</div>
-        <p class="text-white text-sm font-semibold mb-1">bezpłatnego testu</p>
-        <p class="text-neutral-400 text-sm leading-relaxed">dla nowego specjalisty</p>
+      <div class="bg-card border border-border rounded-xl p-6 sm:col-span-2">
+        <div class="font-playfair text-4xl text-secondary mb-2">3 miesiące</div>
+        <p class="text-foreground text-sm font-semibold mb-1">bezpłatnego testu</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">dla nowego specjalisty</p>
       </div>
     </div>
   </div>
@@ -377,45 +377,45 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
         type: ModuleType.EDITABLE_HTML,
         code: `
 <!-- ODWRACAMY KOLEJNOŚĆ -->
-<section class="bg-[#181816] py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-900/60">
+<section class="bg-background-sec py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-border">
   <div class="max-w-5xl mx-auto">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light mb-4">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light mb-4">
       Odwracamy <span class="font-bold">kolejność</span>
     </h2>
-    <p class="text-neutral-300 text-base sm:text-lg leading-relaxed mb-10 max-w-3xl">
+    <p class="text-foreground/80 text-base sm:text-lg leading-relaxed mb-10 max-w-3xl">
       U nas to nie klient szuka specjalisty. To specjaliści zgłaszają się do jego sprawy.
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-background border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <span class="font-playfair text-2xl text-[#0da192]">01</span>
-          <span class="h-px flex-1 bg-neutral-800"></span>
+          <span class="font-playfair text-2xl text-primary">01</span>
+          <span class="h-px flex-1 bg-border"></span>
         </div>
-        <h3 class="text-white text-base font-semibold mb-2">Opisujesz sprawę</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <h3 class="text-foreground text-base font-semibold mb-2">Opisujesz sprawę</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Własnymi słowami, bez prawniczego języka. Wybierasz kategorię i lokalizację. Tyle wystarczy, a rejestracja i dodanie sprawy nic nie kosztują.
         </p>
       </div>
 
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-background border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <span class="font-playfair text-2xl text-[#0da192]">02</span>
-          <span class="h-px flex-1 bg-neutral-800"></span>
+          <span class="font-playfair text-2xl text-primary">02</span>
+          <span class="h-px flex-1 bg-border"></span>
         </div>
-        <h3 class="text-white text-base font-semibold mb-2">Zgłaszają się specjaliści</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <h3 class="text-foreground text-base font-semibold mb-2">Zgłaszają się specjaliści</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Twoja sprawa nie wisi publicznie w internecie. Trafia wyłącznie do tych specjalistów, których profil i doświadczenie do niej pasują. Oni odpowiadają konkretną propozycją: co zrobią, w jakim zakresie i za ile.
         </p>
       </div>
 
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-background border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <span class="font-playfair text-2xl text-[#0da192]">03</span>
-          <span class="h-px flex-1 bg-neutral-800"></span>
+          <span class="font-playfair text-2xl text-primary">03</span>
+          <span class="h-px flex-1 bg-border"></span>
         </div>
-        <h3 class="text-white text-base font-semibold mb-2">Porównujesz i wybierasz</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <h3 class="text-foreground text-base font-semibold mb-2">Porównujesz i wybierasz</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Możesz też nie wybrać nikogo, bo dodanie sprawy do niczego nie zobowiązuje.
         </p>
       </div>
@@ -424,16 +424,16 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- BRAK PROWIZJI -->
-<section class="relative bg-[#121212] py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-neutral-900/60">
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[300px] bg-gradient-to-r from-teal-500/5 to-emerald-500/5 blur-[120px] pointer-events-none"></div>
+<section class="relative bg-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-border">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[300px] bg-gradient-to-r from-primary/5 to-primary/10 blur-[120px] pointer-events-none"></div>
   <div class="max-w-3xl mx-auto relative z-10">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light mb-4">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light mb-4">
       Nie bierzemy <span class="font-bold">prowizji od spraw</span>
     </h2>
-    <p class="text-[#d7b56d] text-base sm:text-lg mb-8">
+    <p class="text-secondary text-base sm:text-lg mb-8">
       Ani od klienta, ani od specjalisty. Teraz i w przyszłości.
     </p>
-    <div class="space-y-5 text-neutral-400 text-sm sm:text-base leading-relaxed">
+    <div class="space-y-5 text-muted-foreground text-sm sm:text-base leading-relaxed">
       <p>
         Prowizja podnosi cenę klientowi i zabiera specjaliście część wynagrodzenia za pracę, której nie wykonaliśmy. Dlatego płacisz wyłącznie za realną pomoc i płacisz bezpośrednio wybranemu specjaliście, na warunkach, które ustalicie między sobą. Nie stoimy w środku tej płatności.
       </p>
@@ -445,12 +445,12 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- NIE TYLKO PRAWNICY -->
-<section class="bg-[#181816] py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-900/60">
+<section class="bg-background-sec py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-border">
   <div class="max-w-4xl mx-auto">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light mb-6">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light mb-6">
       To nie są <span class="font-bold">wyłącznie prawnicy</span>
     </h2>
-    <div class="space-y-5 text-neutral-400 text-sm sm:text-base leading-relaxed mb-10">
+    <div class="space-y-5 text-muted-foreground text-sm sm:text-base leading-relaxed mb-10">
       <p>
         Sprawy z życia rzadko mieszczą się w jednej dziedzinie. Rozwód to zwykle także podział majątku i podatek. Zakup mieszkania to umowa, ale i opinia rzeczoznawcy. Spór z wykonawcą kończy się na dokumentacji i kosztorysie.
       </p>
@@ -460,75 +460,75 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
     </div>
 
     <div class="flex flex-wrap gap-2 mb-8">
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Adwokaci</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Radcowie prawni</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Aplikanci</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Doradcy podatkowi</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Doradcy finansowi</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Księgowi</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Rzeczoznawcy</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">Architekci</span>
-      <span class="bg-[#121212] border border-neutral-800 text-neutral-300 text-xs sm:text-sm rounded-full px-4 py-2">BHP i PPOŻ</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Adwokaci</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Radcowie prawni</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Aplikanci</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Doradcy podatkowi</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Doradcy finansowi</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Księgowi</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Rzeczoznawcy</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">Architekci</span>
+      <span class="bg-background border border-border text-foreground/80 text-xs sm:text-sm rounded-full px-4 py-2">BHP i PPOŻ</span>
     </div>
 
-    <p class="font-playfair text-xl sm:text-2xl text-white font-light">
+    <p class="font-playfair text-xl sm:text-2xl text-foreground font-light">
       Jedna sprawa, jedno miejsce, kilka głów, które mogą się nią zająć.
     </p>
   </div>
 </section>
 
 <!-- NA CZYM NAM ZALEŻY -->
-<section class="bg-[#121212] py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-900/60">
+<section class="bg-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-border">
   <div class="max-w-6xl mx-auto">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light text-center mb-12">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light text-center mb-12">
       Na czym nam <span class="font-bold">zależy</span>
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-card border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <svg class="h-6 w-6 text-[#0da192] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <svg class="h-6 w-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
-          <h3 class="text-white text-lg font-semibold">Sprawdzamy, kto tu odpowiada</h3>
+          <h3 class="text-foreground text-lg font-semibold">Sprawdzamy, kto tu odpowiada</h3>
         </div>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Każdy profil weryfikuje administrator platformy, zanim specjalista zacznie odpowiadać na sprawy. Sprawdzamy dokumenty zawodowe i przynależność do samorządu, czyli OIRP albo ORA.
         </p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-card border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <svg class="h-6 w-6 text-[#0da192] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <svg class="h-6 w-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          <h3 class="text-white text-lg font-semibold">Twoje dane zostają Twoje</h3>
+          <h3 class="text-foreground text-lg font-semibold">Twoje dane zostają Twoje</h3>
         </div>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Sprawę widzą tylko dopasowani specjaliści, nigdy cały internet. Opinie na profilach wystawiają wyłącznie klienci, którzy naprawdę współpracowali, i każda przechodzi moderację.
         </p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-card border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <svg class="h-6 w-6 text-[#0da192] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <svg class="h-6 w-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
           </svg>
-          <h3 class="text-white text-lg font-semibold">Wybór zamiast działania w ciemno</h3>
+          <h3 class="text-foreground text-lg font-semibold">Wybór zamiast działania w ciemno</h3>
         </div>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Zanim zdecydujesz, wchodzisz na profil: specjalizacje, doświadczenie, publikacje, certyfikaty, opinie innych klientów. Wybierasz świadomie, a nie na podstawie pierwszego wyniku w wyszukiwarce.
         </p>
       </div>
 
-      <div class="bg-[#181816] border border-neutral-800 rounded-xl p-6">
+      <div class="bg-card border border-border rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
-          <svg class="h-6 w-6 text-[#0da192] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <svg class="h-6 w-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <h3 class="text-white text-lg font-semibold">Konkret zamiast darmowych porad</h3>
+          <h3 class="text-foreground text-lg font-semibold">Konkret zamiast darmowych porad</h3>
         </div>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+        <p class="text-muted-foreground text-sm leading-relaxed">
           To nie jest forum z poradami. Specjalista, który odpowiada na Twoją sprawę, chce się nią zająć i od razu mówi, na jakich warunkach.
         </p>
       </div>
@@ -537,38 +537,38 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- CTA KLIENT -->
-<section class="relative bg-[#181816] py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-neutral-900/60">
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl h-[340px] bg-gradient-to-r from-teal-500/5 to-emerald-500/5 blur-[120px] pointer-events-none"></div>
+<section class="relative bg-background-sec py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-border">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl h-[340px] bg-gradient-to-r from-primary/5 to-primary/10 blur-[120px] pointer-events-none"></div>
   <div class="max-w-5xl mx-auto relative z-10">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light text-center mb-12">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light text-center mb-12">
       Masz sprawę <span class="font-bold">do załatwienia?</span>
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
-        <h3 class="text-white text-base font-semibold mb-2">Dodaj sprawę</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+      <div class="bg-background border border-border rounded-xl p-6">
+        <h3 class="text-foreground text-base font-semibold mb-2">Dodaj sprawę</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Opisz problem, wybierz kategorię i lokalizację. Zajmie Ci to kilka minut i nic nie kosztuje. Możesz podać widełki cenowe i termin, jeśli goni Cię czas.
         </p>
       </div>
 
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
-        <h3 class="text-white text-base font-semibold mb-2">Porównaj oferty</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+      <div class="bg-background border border-border rounded-xl p-6">
+        <h3 class="text-foreground text-base font-semibold mb-2">Porównaj oferty</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Zamiast jednej wyceny dostajesz kilka. Widzisz zakres pomocy, warunki i cenę, a obok pełny profil osoby, która je proponuje.
         </p>
       </div>
 
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
-        <h3 class="text-white text-base font-semibold mb-2">Prowadź sprawę w jednym miejscu</h3>
-        <p class="text-neutral-400 text-sm leading-relaxed">
+      <div class="bg-background border border-border rounded-xl p-6">
+        <h3 class="text-foreground text-base font-semibold mb-2">Prowadź sprawę w jednym miejscu</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">
           Czat z wybranym specjalistą, statusy, dokumenty i cała historia zgłoszeń w Twoim panelu. Bez przekopywania skrzynki mailowej.
         </p>
       </div>
     </div>
 
     <div class="text-center">
-      <a href="/panel-klienta/sprawy/dodaj" class="inline-flex items-center justify-center gap-2 bg-[#0da192] hover:bg-[#0fbaa8] text-white text-sm sm:text-base font-semibold rounded-full px-8 py-3.5 transition-colors">
+      <a href="/panel-klienta/sprawy/dodaj" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-primary-foreground text-sm sm:text-base font-semibold rounded-full px-8 py-3.5 transition-colors">
         Dodaj sprawę
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -579,13 +579,13 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- CTA SPECJALISTA -->
-<section class="bg-[#121212] py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-900/60">
+<section class="bg-background py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-b border-border">
   <div class="max-w-3xl mx-auto">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light mb-6">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light mb-6">
       Jesteś prawnikiem <span class="font-bold">albo ekspertem?</span>
     </h2>
 
-    <div class="space-y-5 text-neutral-400 text-sm sm:text-base leading-relaxed mb-8">
+    <div class="space-y-5 text-muted-foreground text-sm sm:text-base leading-relaxed mb-8">
       <p>
         Zamiast szukać klientów, wybierasz sprawy. Trafiają do Ciebie zapytania dopasowane do specjalizacji, a Ty decydujesz, które bierzesz i na jakich warunkach.
       </p>
@@ -597,7 +597,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       </p>
     </div>
 
-    <a href="/rejestracja/ekspert" class="inline-flex items-center justify-center gap-2 border border-[#d7b56d] text-[#d7b56d] hover:bg-[#d7b56d] hover:text-[#30302e] text-sm sm:text-base font-semibold rounded-full px-8 py-3.5 transition-colors">
+    <a href="/rejestracja/ekspert" class="inline-flex items-center justify-center gap-2 border border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground text-sm sm:text-base font-semibold rounded-full px-8 py-3.5 transition-colors">
       Dołącz jako specjalista
       <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -607,37 +607,37 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 </section>
 
 <!-- KTO ZA TYM STOI -->
-<section class="bg-[#181816] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+<section class="bg-background-sec py-16 md:py-24 px-4 sm:px-6 lg:px-8">
   <div class="max-w-4xl mx-auto">
-    <h2 class="font-playfair text-3xl sm:text-4xl text-white font-light mb-6">
+    <h2 class="font-playfair text-3xl sm:text-4xl text-foreground font-light mb-6">
       Kto <span class="font-bold">za tym stoi</span>
     </h2>
 
-    <p class="text-neutral-400 text-sm sm:text-base leading-relaxed mb-10">
+    <p class="text-muted-foreground text-sm sm:text-base leading-relaxed mb-10">
       ProstaSprawa.pl prowadzi Polska Grupa Identyfikacji Firm Sp. z o.o. z Kielc. Platformę budujemy z zespołem, który na co dzień zajmuje się marketingiem i produkcją internetową, więc dobrze wiemy, ile kosztuje dotarcie do klienta i dlaczego dobry specjalista nie powinien walczyć o to sam.
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
-        <p class="text-white text-sm font-semibold mb-3">Polska Grupa Identyfikacji Firm Sp. z o.o.</p>
-        <p class="text-neutral-400 text-sm leading-relaxed mb-3">
+      <div class="bg-background border border-border rounded-xl p-6">
+        <p class="text-foreground text-sm font-semibold mb-3">Polska Grupa Identyfikacji Firm Sp. z o.o.</p>
+        <p class="text-muted-foreground text-sm leading-relaxed mb-3">
           ul. Gen. Mariana Langiewicza 16 lok. 3<br />
           25-381 Kielce
         </p>
-        <p class="text-neutral-500 text-xs leading-relaxed">
+        <p class="text-muted-foreground text-xs leading-relaxed">
           KRS 0000768210<br />
           NIP 9592020678<br />
           REGON 382401289
         </p>
       </div>
 
-      <div class="bg-[#121212] border border-neutral-800 rounded-xl p-6">
-        <p class="text-white text-sm font-semibold mb-3">Kontakt</p>
+      <div class="bg-background border border-border rounded-xl p-6">
+        <p class="text-foreground text-sm font-semibold mb-3">Kontakt</p>
         <p class="mb-2">
-          <a href="mailto:bok@prostasprawa.pl" class="text-[#0da192] hover:text-[#0fbaa8] text-sm transition-colors">bok@prostasprawa.pl</a>
+          <a href="mailto:bok@prostasprawa.pl" class="text-primary hover:text-primary-hover text-sm transition-colors">bok@prostasprawa.pl</a>
         </p>
         <p>
-          <a href="tel:+48534888555" class="text-[#0da192] hover:text-[#0fbaa8] text-sm transition-colors">+48 534 888 555</a>
+          <a href="tel:+48534888555" class="text-primary hover:text-primary-hover text-sm transition-colors">+48 534 888 555</a>
         </p>
       </div>
     </div>

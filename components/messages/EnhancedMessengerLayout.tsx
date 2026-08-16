@@ -159,14 +159,14 @@ export function EnhancedMessengerLayout() {
               onBack={() => setSelectedConversationId(null)}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4 bg-zinc-950/20">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4 bg-background/20">
               <div className="text-center space-y-4 max-w-sm">
-                <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center mx-auto text-zinc-500">
+                <div className="h-16 w-16 rounded-full bg-muted/40 border border-border/40 flex items-center justify-center mx-auto text-muted-foreground">
                   <MessageCircle className="h-7 w-7" />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold text-white">Wybierz konwersację</h3>
-                  <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-light">
+                  <h3 className="text-base font-semibold text-foreground">Wybierz konwersację</h3>
+                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed font-light">
                     Wybierz czat z listy po lewej stronie lub przejdź do katalogu spraw/ekspertów, aby nawiązać nowy kontakt.
                   </p>
                 </div>

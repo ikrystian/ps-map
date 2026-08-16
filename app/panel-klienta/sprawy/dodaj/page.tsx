@@ -737,7 +737,7 @@ export default function ClientAddCasePage() {
                         "h-10 w-10 rounded-md flex items-center justify-center border transition-all duration-300",
                         isSelected
                           ? "bg-primary/10 border-primary/30 text-primary"
-                          : "bg-background-sec border-border/10 text-muted-foreground group-hover:text-white",
+                          : "bg-background-sec border-border/10 text-muted-foreground group-hover:text-foreground",
                       )}
                     >
                       <OptionIcon className="h-5 w-5" />
@@ -756,7 +756,7 @@ export default function ClientAddCasePage() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <h4 className="text-base font-semibold text-white">
+                    <h4 className="text-base font-semibold text-foreground">
                       {option.label}
                     </h4>
                     <p className="text-xs text-muted-foreground font-light leading-relaxed">
@@ -828,7 +828,7 @@ export default function ClientAddCasePage() {
                 <h5 className="text-xs font-bold text-primary uppercase tracking-wider">
                   Kategorie dobrane automatycznie
                 </h5>
-                <p className="text-xs text-zinc-300 leading-relaxed font-normal">
+                <p className="text-xs text-foreground/80 leading-relaxed font-normal">
                   Na podstawie opisu Twojej sprawy dobraliśmy kategorie
                   automatycznie.
                   {aiSuggestion.uzasadnienie &&
@@ -987,7 +987,7 @@ export default function ClientAddCasePage() {
                 </div>
                 <span
                   className={cn(
-                    "font-semibold text-xs text-white transition-colors block",
+                    "font-semibold text-xs text-foreground transition-colors block",
                     !isUploading && "group-hover:text-primary",
                   )}
                 >
@@ -1070,7 +1070,7 @@ export default function ClientAddCasePage() {
           <div className="space-y-0.5">
             <Label
               htmlFor="doNegocjacji"
-              className="cursor-pointer text-sm font-semibold text-white block"
+              className="cursor-pointer text-sm font-semibold text-foreground block"
             >
               Budżet pozostawiam do negocjacji z ekspertem
             </Label>
@@ -1304,7 +1304,7 @@ export default function ClientAddCasePage() {
       >
         <Heading
           level="h1"
-          className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+          className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground"
         >
           Dodaj nową sprawę
         </Heading>
@@ -1408,7 +1408,7 @@ export default function ClientAddCasePage() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin mr-1.5 text-white" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-1.5 text-foreground" />
                       Dodawanie...
                     </>
                   ) : (
@@ -1446,7 +1446,7 @@ export default function ClientAddCasePage() {
             >
               <CheckCircle2 className="h-9 w-9 text-success" />
             </motion.div>
-            <DialogTitle className="text-xl font-bold font-playfair text-white">
+            <DialogTitle className="text-xl font-bold font-playfair text-foreground">
               Sprawa została dodana!
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">
@@ -1503,7 +1503,7 @@ export default function ClientAddCasePage() {
             <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <DialogTitle className="text-xl font-bold font-playfair text-white">
+            <DialogTitle className="text-xl font-bold font-playfair text-foreground">
               Podaj kod weryfikacyjny
             </DialogTitle>
             <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">

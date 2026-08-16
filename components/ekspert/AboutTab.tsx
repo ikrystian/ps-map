@@ -29,15 +29,15 @@ export function AboutTab({
           <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <Sparkles className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl text-white font-playfair">O ekspercie</CardTitle>
+              <CardTitle className="text-xl text-foreground font-playfair">O ekspercie</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
             <div
-              className="about-description text-zinc-300 leading-relaxed text-sm md:text-base"
+              className="about-description text-foreground/80 leading-relaxed text-sm md:text-base"
               dangerouslySetInnerHTML={{ __html: lawFirm.opis }}
             />
           </CardContent>
@@ -55,20 +55,20 @@ export function AboutTab({
             <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
                   <FileText className="h-5 w-5" />
                 </div>
-                <CardTitle className="text-xl text-white font-playfair">Zakres usług i specjalizacje</CardTitle>
+                <CardTitle className="text-xl text-foreground font-playfair">Zakres usług i specjalizacje</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-5">
               {lawFirm.unikatowyOpisUslugi && (
-                <p className="whitespace-pre-wrap text-sm md:text-base text-zinc-300 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
+                <p className="whitespace-pre-wrap text-sm md:text-base text-foreground/80 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
               )}
 
               {lawFirm.categories.length > 0 && (
                 <div className="space-y-3">
-                  <p className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Kategorie spraw</p>
+                  <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Kategorie spraw</p>
                   <div className="flex flex-wrap gap-2">
                     {lawFirm.categories.map((cat) => cat.category && (
                       <Badge key={cat.category.slug} className="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 font-semibold rounded-lg text-xs py-1 px-3 transition-all">
@@ -81,10 +81,10 @@ export function AboutTab({
 
               {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
                 <div className="space-y-3 pt-4 border-t border-border/10">
-                  <p className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Obszary praktyki</p>
+                  <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Obszary praktyki</p>
                   <div className="flex flex-wrap gap-2">
                     {(lawFirm.slowaKluczowe as string[]).map((keyword: string, index: number) => (
-                      <Badge key={index} variant="outline" className="bg-white/5 border-border/20 hover:bg-white/10 text-zinc-300 text-xs py-1 px-3 rounded-lg font-medium transition-all">
+                      <Badge key={index} variant="outline" className="bg-foreground/5 border-border/20 hover:bg-foreground/10 text-foreground/80 text-xs py-1 px-3 rounded-lg font-medium transition-all">
                         {keyword}
                       </Badge>
                     ))}
@@ -101,10 +101,10 @@ export function AboutTab({
           <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <GraduationCap className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl text-white font-playfair">Wykształcenie i kwalifikacje</CardTitle>
+              <CardTitle className="text-xl text-foreground font-playfair">Wykształcenie i kwalifikacje</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -114,11 +114,11 @@ export function AboutTab({
                   {/* Timeline vertical bar */}
                   <div className="absolute left-[3px] top-2 bottom-0 w-0.5 bg-border/20 last:hidden" />
                   {/* Timeline node */}
-                  <div className="absolute left-0 top-[6px] h-2 w-2 rounded-full bg-primary ring-4 ring-[#1f1e1c]" />
+                  <div className="absolute left-0 top-[6px] h-2 w-2 rounded-full bg-primary ring-4 ring-border" />
 
                   <div className="space-y-2">
-                    <p className="font-bold text-white text-base leading-snug">{edu.uczelnia}</p>
-                    <p className="text-sm text-zinc-400 font-medium">{edu.wydzial}</p>
+                    <p className="font-bold text-foreground text-base leading-snug">{edu.uczelnia}</p>
+                    <p className="text-sm text-muted-foreground font-medium">{edu.wydzial}</p>
                     <p className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 rounded-md px-2.5 py-0.5 w-fit mt-1.5 uppercase tracking-wider">
                       {edu.rokOd} — {edu.rokDo}
                     </p>
@@ -136,10 +136,10 @@ export function AboutTab({
           <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <Award className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl text-white font-playfair">Certyfikaty i wyróżnienia</CardTitle>
+              <CardTitle className="text-xl text-foreground font-playfair">Certyfikaty i wyróżnienia</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -148,11 +148,11 @@ export function AboutTab({
                 <div key={cert.id} className="flex items-start gap-4 p-4 border border-border/30 hover:border-primary/25 rounded-xl hover:shadow-md transition-all duration-300 bg-card/10">
                   <Award className="h-8 w-8 text-primary flex-shrink-0 mt-0.5 p-1 rounded-lg bg-primary/10" />
                   <div className="flex-1 space-y-1">
-                    <p className="font-bold text-sm text-white leading-snug">{cert.nazwaCertyfikatu}</p>
-                    <p className="text-xs text-zinc-400">Wydawca: <span className="font-medium text-zinc-300">{cert.wydawca}</span></p>
-                    <p className="text-xs text-zinc-400">Uzyskano: <span className="font-medium text-zinc-300">{formatDate(cert.dataUzyskania)}</span></p>
+                    <p className="font-bold text-sm text-foreground leading-snug">{cert.nazwaCertyfikatu}</p>
+                    <p className="text-xs text-muted-foreground">Wydawca: <span className="font-medium text-foreground/80">{cert.wydawca}</span></p>
+                    <p className="text-xs text-muted-foreground">Uzyskano: <span className="font-medium text-foreground/80">{formatDate(cert.dataUzyskania)}</span></p>
                     {cert.numerCertyfikatu && (
-                      <p className="text-[10px] text-zinc-400 font-mono bg-zinc-700 border border-border/15 px-2 py-0.5 rounded w-fit">Nr: {cert.numerCertyfikatu}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono bg-muted border border-border/15 px-2 py-0.5 rounded w-fit">Nr: {cert.numerCertyfikatu}</p>
                     )}
                     {cert.skanCertyfikatu && (
                       <a
@@ -179,10 +179,10 @@ export function AboutTab({
           <BorderBeam lightColor="#0da192" lightWidth={350} duration={8} borderWidth={1} />
           <CardHeader className="border-b border-border/10 pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#0da192]/10 p-2 rounded-xl text-[#0da192]">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
                 <ImageIcon className="h-5 w-5" />
               </div>
-              <CardTitle className="text-xl text-white font-playfair">Galeria zdjęć</CardTitle>
+              <CardTitle className="text-xl text-foreground font-playfair">Galeria zdjęć</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -209,7 +209,7 @@ export function AboutTab({
                           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                         />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <ZoomIn className="h-8 w-8 text-white scale-90 group-hover:scale-100 transition-transform duration-300" />
+                          <ZoomIn className="h-8 w-8 text-foreground scale-90 group-hover:scale-100 transition-transform duration-300" />
                         </div>
                       </div>
                     ))}

@@ -44,11 +44,11 @@ export function SpecializationTab({
                 <Wrench className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-xl text-white font-playfair">Wybrane specjalizacje</CardTitle>
-                <CardDescription className="text-zinc-400 text-sm">Główne dziedziny prawa, w których świadczysz pomoc</CardDescription>
+                <CardTitle className="text-xl text-foreground font-playfair">Wybrane specjalizacje</CardTitle>
+                <CardDescription className="text-muted-foreground text-sm">Główne dziedziny prawa, w których świadczysz pomoc</CardDescription>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="rounded-xl border-border/30 hover:bg-zinc-800 text-white shadow-sm" asChild>
+            <Button variant="outline" size="sm" className="rounded-xl border-border/30 hover:bg-muted text-foreground shadow-sm" asChild>
               <Link href="/panel-eksperta/zakres-uslug">
                 Zarządzaj usługami
               </Link>
@@ -57,7 +57,7 @@ export function SpecializationTab({
         </CardHeader>
         <CardContent className="pt-6">
           {formData.categoriesIds.length > 0 ? (
-            <div className="flex flex-wrap gap-2 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+            <div className="flex flex-wrap gap-2 p-4 border border-border/20 rounded-xl bg-background/10">
               {formData.categoriesIds.map((id) => {
                 const category = categories.find((c) => c.id === id)
                 return category ? (
@@ -68,8 +68,8 @@ export function SpecializationTab({
               })}
             </div>
           ) : (
-            <div className="text-center py-8 border border-dashed border-border/30 rounded-xl bg-zinc-950/5">
-              <p className="text-zinc-400 mb-4 text-sm font-light">Nie wybrano jeszcze żadnych kategorii usług.</p>
+            <div className="text-center py-8 border border-dashed border-border/30 rounded-xl bg-background/5">
+              <p className="text-muted-foreground mb-4 text-sm font-light">Nie wybrano jeszcze żadnych kategorii usług.</p>
               <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl shadow-md" asChild>
                 <Link href="/panel-eksperta/zakres-uslug">
                   Dodaj pierwsze usługi
@@ -89,24 +89,24 @@ export function SpecializationTab({
               <Award className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-xl text-white font-playfair">Prezentacja oferty i specjalizacji</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Opisz unikalne cechy swojej oferty i dodaj słowa kluczowe</CardDescription>
+              <CardTitle className="text-xl text-foreground font-playfair">Prezentacja oferty i specjalizacji</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">Opisz unikalne cechy swojej oferty i dodaj słowa kluczowe</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           {/* Unikalny opis */}
           <div className="grid gap-2" data-score-target="unikatowyOpis">
-            <Label htmlFor="unikatowyOpisUslugi" className="text-zinc-300 font-medium">Unikalny opis usługi</Label>
+            <Label htmlFor="unikatowyOpisUslugi" className="text-foreground/80 font-medium">Unikalny opis usługi</Label>
             <Textarea
               id="unikatowyOpisUslugi"
               value={formData.unikatowyOpisUslugi}
               onChange={(e) => handleInputChange("unikatowyOpisUslugi", e.target.value)}
               rows={5}
               placeholder="Opisz swoje unikalne podejście do świadczenia usług, zalety i warunki współpracy..."
-              className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+              className="bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
             />
-            <p className="text-xs text-zinc-500 font-light">
+            <p className="text-xs text-muted-foreground font-light">
               Ten opis będzie widoczny na Twoim publicznym profilu w sekcji "Zakres usług".
             </p>
           </div>
@@ -116,14 +116,14 @@ export function SpecializationTab({
           {/* Słowa kluczowe */}
           <div className="grid gap-2" data-score-target="slowaKluczowe">
             <div className="flex justify-between items-center mb-1">
-              <Label htmlFor="slowoKluczowe" className="text-zinc-300 font-medium">Słowa kluczowe</Label>
-              <span className="text-xs text-zinc-500">
-                Dodano <span className="font-semibold text-white">{formData.slowaKluczowe.length}</span> z <span className="font-semibold text-white">{limitSlowKluczowych}</span> dostępnych
+              <Label htmlFor="slowoKluczowe" className="text-foreground/80 font-medium">Słowa kluczowe</Label>
+              <span className="text-xs text-muted-foreground">
+                Dodano <span className="font-semibold text-foreground">{formData.slowaKluczowe.length}</span> z <span className="font-semibold text-foreground">{limitSlowKluczowych}</span> dostępnych
               </span>
             </div>
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                   <Tag className="h-4 w-4" />
                 </div>
                 <Input
@@ -147,7 +147,7 @@ export function SpecializationTab({
                       }
                     }
                   }}
-                  className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                  className="pl-10 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
                 />
               </div>
               <Button
@@ -172,11 +172,11 @@ export function SpecializationTab({
             </div>
 
             {formData.slowaKluczowe.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3 p-3 border border-border/20 rounded-xl bg-zinc-950/10">
+              <div className="flex flex-wrap gap-2 mt-3 p-3 border border-border/20 rounded-xl bg-background/10">
                 {formData.slowaKluczowe.map((keyword, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-1.5 bg-zinc-900 border border-border/30 text-zinc-300 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:bg-zinc-800 hover:border-zinc-700"
+                    className="flex items-center gap-1.5 bg-card border border-border/30 text-foreground/80 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:bg-muted hover:border-border"
                   >
                     <span>{keyword}</span>
                     <button
@@ -187,7 +187,7 @@ export function SpecializationTab({
                           formData.slowaKluczowe.filter((_, i) => i !== index)
                         )
                       }}
-                      className="ml-1 text-zinc-500 hover:text-rose-400 font-semibold focus:outline-none transition-colors"
+                      className="ml-1 text-muted-foreground hover:text-rose-400 font-semibold focus:outline-none transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -207,14 +207,14 @@ export function SpecializationTab({
               <Scale className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-xl text-white font-playfair">Biegły sądowy</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">Wpis na listę biegłych sądowych pokażemy jako odznakę na Twojej wizytówce</CardDescription>
+              <CardTitle className="text-xl text-foreground font-playfair">Biegły sądowy</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">Wpis na listę biegłych sądowych pokażemy jako odznakę na Twojej wizytówce</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <div className="flex items-center justify-between gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-            <Label htmlFor="bieglySadowy" className="text-zinc-300 font-medium cursor-pointer">
+          <div className="flex items-center justify-between gap-4 p-4 border border-border/20 rounded-xl bg-background/10">
+            <Label htmlFor="bieglySadowy" className="text-foreground/80 font-medium cursor-pointer">
               Jestem wpisany/-a na listę biegłych sądowych
             </Label>
             <Switch
@@ -225,7 +225,7 @@ export function SpecializationTab({
           </div>
           {formData.bieglySadowy && (
             <div className="grid gap-2">
-              <Label htmlFor="bieglySadowyNazwaSadu" className="text-zinc-300 font-medium">
+              <Label htmlFor="bieglySadowyNazwaSadu" className="text-foreground/80 font-medium">
                 Sąd, przy którym prowadzona jest lista (opcjonalnie)
               </Label>
               <Input
@@ -233,7 +233,7 @@ export function SpecializationTab({
                 placeholder="np. Sąd Okręgowy w Warszawie"
                 value={formData.bieglySadowyNazwaSadu}
                 onChange={(e) => handleInputChange("bieglySadowyNazwaSadu", e.target.value)}
-                className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                className="bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
               />
             </div>
           )}

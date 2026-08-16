@@ -213,8 +213,8 @@ export default function NewReferralPage() {
                     >
                       <OptionIcon className="h-5 w-5" />
                     </div>
-                    <span className="font-semibold text-white">{option.label}</span>
-                    <span className="text-xs font-light text-zinc-400">{option.description}</span>
+                    <span className="font-semibold text-foreground">{option.label}</span>
+                    <span className="text-xs font-light text-muted-foreground">{option.description}</span>
                   </button>
                 )
               })}
@@ -229,7 +229,7 @@ export default function NewReferralPage() {
           </CardHeader>
           <CardContent className="space-y-5">
             {!form.typSprawy ? (
-              <p className="rounded-lg border border-dashed border-border/40 px-4 py-6 text-center text-sm font-light text-zinc-400">
+              <p className="rounded-lg border border-dashed border-border/40 px-4 py-6 text-center text-sm font-light text-muted-foreground">
                 Najpierw wybierz typ sprawy — od niego zależy lista dostępnych kategorii.
               </p>
             ) : (
@@ -297,7 +297,7 @@ export default function NewReferralPage() {
                 Adres e-mail klienta *
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
@@ -307,7 +307,7 @@ export default function NewReferralPage() {
                   className={cn("pl-9", errors.email && "border-destructive")}
                 />
               </div>
-              <p className="text-xs font-light text-zinc-500">
+              <p className="text-xs font-light text-muted-foreground">
                 Link będzie ważny {REFERRAL_TTL_DAYS} dni i zadziała tylko dla tego adresu.
               </p>
               {errors.email && (
@@ -325,7 +325,7 @@ export default function NewReferralPage() {
                 onChange={(e) => updateField("nazwaSprawy", e.target.value)}
                 placeholder="np. Rozwód bez orzekania o winie"
               />
-              <p className="text-xs font-light text-zinc-500">
+              <p className="text-xs font-light text-muted-foreground">
                 Podpowiedź dla klienta — będzie mógł ją zmienić przy dodawaniu sprawy.
               </p>
             </div>
@@ -349,7 +349,7 @@ export default function NewReferralPage() {
                 className={cn(errors.wiadomosc && "border-destructive")}
               />
               <div className="flex items-center justify-between">
-                <p className="text-xs font-light text-zinc-500">
+                <p className="text-xs font-light text-muted-foreground">
                   Trafi do treści e-maila i na stronę z linkiem.
                 </p>
                 <span
@@ -357,7 +357,7 @@ export default function NewReferralPage() {
                     "text-xs",
                     form.wiadomosc.length > MAX_WIADOMOSC_LENGTH
                       ? "text-destructive"
-                      : "text-zinc-500",
+                      : "text-muted-foreground",
                   )}
                 >
                   {form.wiadomosc.length}/{MAX_WIADOMOSC_LENGTH}
@@ -395,8 +395,8 @@ export default function NewReferralPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center gap-2 rounded-lg border border-border/30 bg-zinc-950/40 p-3">
-            <span className="min-w-0 flex-1 truncate font-mono text-xs text-zinc-300">
+          <div className="flex items-center gap-2 rounded-lg border border-border/30 bg-background/40 p-3">
+            <span className="min-w-0 flex-1 truncate font-mono text-xs text-foreground/80">
               {createdLink}
             </span>
             <Button size="sm" variant="outline" onClick={handleCopy}>

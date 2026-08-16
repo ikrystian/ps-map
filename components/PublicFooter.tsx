@@ -1,5 +1,6 @@
 "use client"
 
+import { SiteLogo } from "@/components/site-logo"
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
@@ -107,7 +108,7 @@ export default function PublicFooter() {
   ]
 
   return (
-    <footer id="public-footer" className="relative overflow-hidden shadow-lg bg-[#141414] text-neutral-300 border-t border-neutral-900">
+    <footer id="public-footer" className="relative overflow-hidden shadow-lg bg-background text-foreground/80 border-t border-border">
       {/* Labyrinth background pattern overlay */}
       <div className="absolute inset-0 opacity-100 z-10 pointer-events-none" />
 
@@ -118,24 +119,19 @@ export default function PublicFooter() {
           {/* Column 1: Logo & About (~35% / 4 cols) */}
           <div className="space-y-4 col-span-2 lg:col-span-4">
             <Link href="/" className="inline-block">
-              <Image
-                src="/logo.svg"
-                alt="Prosta Sprawa"
-                width={160}
-                height={40}
-              />
+              <SiteLogo width={160} height={40} />
             </Link>
-            <p className="text-sm text-neutral-400 leading-relaxed font-light max-w-sm">
+            <p className="text-sm text-muted-foreground leading-relaxed font-light max-w-sm">
               Prostasprawa.pl to nowoczesny portal, który łączy osoby potrzebujące pomocy prawnej z doświadczonymi specjalistami. Oferujemy szybki i bezpieczny dostęp do porad prawnych, umożliwiając łatwe znalezienie odpowiedniego prawnika w różnych dziedzinach prawa.
             </p>
           </div>
 
           {/* Column 2: Menu (~20% / 2 cols) */}
           <div className="lg:col-span-2">
-            <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
+            <h3 className="font-playfair text-foreground text-lg font-normal tracking-wide mb-4">
               Menu
             </h3>
-            <ul className="space-y-2 text-sm font-light text-neutral-400">
+            <ul className="space-y-2 text-sm font-light text-muted-foreground">
               <li>
                 <Link href="/kategorie" className="hover:text-[#d7b56d] transition-colors">
                   Sprawy prywatne
@@ -170,48 +166,48 @@ export default function PublicFooter() {
 
           {/* Column 3: Prosta sprawa (~20% / 3 cols) */}
           <div className="lg:col-span-3">
-            <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
+            <h3 className="font-playfair text-foreground text-lg font-normal tracking-wide mb-4">
               Prosta sprawa
             </h3>
             <ul className="space-y-2 text-xs md:text-sm font-light">
               <li>
-                <Link href="/blog" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/blog" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
                   <span>Artykuły</span>
                 </Link>
               </li>
               <li>
-                <Link href="/ranking" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/ranking" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
                   <span>Ranking eksperta</span>
                 </Link>
               </li>
               <li>
-                <Link href="/z-nami-wygrywasz" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/z-nami-wygrywasz" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
                   <span>Z nami wygrywasz</span>
                 </Link>
               </li>
               <li>
-                <Link href="/logowanie" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/logowanie" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
                   <span>Logowanie</span>
                 </Link>
               </li>
               <li>
-                <Link href="/rejestracja" className="text-neutral-400 hover:text-[#d7b56d] transition-colors flex items-center">
+                <Link href="/rejestracja" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
                   <span>Rejestracja</span>
                 </Link>
               </li>
               <li>
-                <Link href="/polityka-prywatnosci" className="text-neutral-400 hover:text-[#d7b56d] transition-colors font-medium">
+                <Link href="/polityka-prywatnosci" className="text-muted-foreground hover:text-secondary transition-colors font-medium">
                   <GoldCheck />
                   Prywatność
                 </Link>
               </li>
               <li>
-                <Link href="/reklama" className="text-neutral-400 hover:text-[#d7b56d] transition-colors font-medium">
+                <Link href="/reklama" className="text-muted-foreground hover:text-secondary transition-colors font-medium">
                   <GoldCheck />
                   Reklama
                 </Link>
@@ -221,17 +217,17 @@ export default function PublicFooter() {
 
           {/* Column 4: Kontakt (~25% / 3 cols) */}
           <div className="space-y-3 col-span-2 lg:col-span-3">
-            <h3 className="font-playfair text-white text-lg font-normal tracking-wide mb-4">
+            <h3 className="font-playfair text-foreground text-lg font-normal tracking-wide mb-4">
               Kontakt
             </h3>
 
             <div>Polska Grupa Identyfikacji Firm Sp. z o.o.</div>
-            <div className="text-xs text-neutral-400 font-light space-y-1 pt-1 leading-relaxed">
+            <div className="text-xs text-muted-foreground font-light space-y-1 pt-1 leading-relaxed">
               NIP: 9592020678
             </div>
-            <div className="flex items-center gap-2 text-xs md:text-sm font-light text-neutral-400">
+            <div className="flex items-center gap-2 text-xs md:text-sm font-light text-muted-foreground">
               <Mail className="h-4 w-4 text-[#d7b56d] flex-shrink-0" />
-              <a href="mailto:bok@prostasprawa.pl" className="hover:text-white transition-colors">
+              <a href="mailto:bok@prostasprawa.pl" className="hover:text-foreground transition-colors">
                 bok@prostasprawa.pl
               </a>
             </div>
@@ -247,9 +243,9 @@ export default function PublicFooter() {
 
         {/* Horizontal Category Tag Ribbon ("Artykuły branżowe") */}
         {blogCategories.length > 0 && (
-          <div className="mt-12 pt-6 border-t border-neutral-900">
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-xs text-neutral-500 justify-start items-center">
-              <span className="font-medium text-neutral-400 mr-1">Artykuły branżowe:</span>
+          <div className="mt-12 pt-6 border-t border-border">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-xs text-muted-foreground justify-start items-center">
+              <span className="font-medium text-muted-foreground mr-1">Artykuły branżowe:</span>
               {blogCategories.map((category, index) => (
                 <Fragment key={category.id}>
                   <Link href={`/blog?category=${category.slug}`} className="hover:text-[#d7b56d] transition-colors">
@@ -265,7 +261,7 @@ export default function PublicFooter() {
         )}
 
         {/* Sub-footer bottom bar */}
-        <div className="mt-6 pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
+        <div className="mt-6 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
             <p className="font-light">
               {copyrightText}
@@ -293,7 +289,7 @@ export default function PublicFooter() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-500 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Icon className="h-4 w-4" />
                 </Link>

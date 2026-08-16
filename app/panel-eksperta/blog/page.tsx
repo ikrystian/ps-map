@@ -167,7 +167,7 @@ export default function LawFirmBlogPage() {
         title="Mój blog"
         subtitle="Zarządzaj wpisami na blogu swojego profilu i publikuj profesjonalne artykuły."
       >
-        <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+        <Button id="tour-blog-new" asChild className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-border group gap-2">
           <Link href="/panel-eksperta/blog/nowy">
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             Napisz artykuł
@@ -188,12 +188,12 @@ export default function LawFirmBlogPage() {
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardContent className="flex flex-col items-center justify-center py-16 max-w-md mx-auto text-center space-y-4">
-                <div className="h-16 w-16 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
-                  <FileText className="h-8 w-8 text-zinc-500 animate-pulse" />
+                <div className="h-16 w-16 rounded-full bg-muted/40 border border-border/40 flex items-center justify-center">
+                  <FileText className="h-8 w-8 text-muted-foreground animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">Brak artykułów</h3>
-                  <p className="text-zinc-400 text-xs mt-1.5 leading-relaxed font-light">
+                  <h3 className="text-lg font-semibold text-foreground">Brak artykułów</h3>
+                  <p className="text-muted-foreground text-xs mt-1.5 leading-relaxed font-light">
                     Nie masz jeszcze żadnych artykułów na blogu. Zacznij dzielić się swoją wiedzą i doświadczeniem, aby przyciągać nowych klientów.
                   </p>
                 </div>
@@ -209,8 +209,8 @@ export default function LawFirmBlogPage() {
             <Card id="tour-blog-list" className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-4 px-6">
-                <CardTitle className="text-lg font-playfair text-white">Twoje artykuły ({pagination.total})</CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardTitle className="text-lg font-playfair text-foreground">Twoje artykuły ({pagination.total})</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">
                   Lista wszystkich artykułów opublikowanych oraz w wersji roboczej
                 </CardDescription>
               </CardHeader>
@@ -220,18 +220,18 @@ export default function LawFirmBlogPage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="border-b border-border/20 hover:bg-transparent">
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Tytuł</TableHead>
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-40">Kategoria</TableHead>
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-36">Status</TableHead>
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-48">Data utworzenia</TableHead>
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-32">Wyświetlenia</TableHead>
-                        <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Tytuł</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-40">Kategoria</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-36">Status</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-48">Data utworzenia</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-32">Wyświetlenia</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {posts.map((post) => (
-                        <TableRow key={post.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
-                          <TableCell className="py-4 px-6 font-semibold text-white max-w-md">
+                        <TableRow key={post.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-foreground/80 transition-colors">
+                          <TableCell className="py-4 px-6 font-semibold text-foreground max-w-md">
                             <div className="truncate" title={post.tytul}>{post.tytul}</div>
                           </TableCell>
                           <TableCell className="py-4 px-6">
@@ -240,7 +240,7 @@ export default function LawFirmBlogPage() {
                                 {post.category.nazwa}
                               </Badge>
                             ) : (
-                              <span className="text-zinc-500 text-xs font-light italic">Brak</span>
+                              <span className="text-muted-foreground text-xs font-light italic">Brak</span>
                             )}
                           </TableCell>
                           <TableCell className="py-4 px-6">
@@ -249,20 +249,20 @@ export default function LawFirmBlogPage() {
                                 Opublikowany
                               </Badge>
                             ) : (
-                              <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 px-2 py-0.5 rounded-md font-medium">
+                              <Badge className="bg-zinc-500/10 text-muted-foreground border border-zinc-500/30 px-2 py-0.5 rounded-md font-medium">
                                 Szkic
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell className="py-4 px-6 text-xs font-light text-zinc-400">
+                          <TableCell className="py-4 px-6 text-xs font-light text-muted-foreground">
                             <div className="flex items-center gap-1.5">
-                              <Calendar className="h-3.5 w-3.5 text-zinc-500" />
+                              <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                               {formatDate(post.createdAt)}
                             </div>
                           </TableCell>
                           <TableCell className="py-4 px-6 text-xs">
-                            <div className="flex items-center gap-1.5 text-zinc-300">
-                              <Eye className="h-3.5 w-3.5 text-zinc-400" />
+                            <div className="flex items-center gap-1.5 text-foreground/80">
+                              <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                               <span className="font-medium">{post.wyswietlenia}</span>
                             </div>
                           </TableCell>
@@ -272,7 +272,7 @@ export default function LawFirmBlogPage() {
                                 variant="outline"
                                 size="icon"
                                 asChild
-                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
+                                className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                 title="Podgląd wpisu (w nowej karcie)"
                               >
                                 <a href={`/blog/${post.slug}?preview=true`} target="_blank" rel="noopener noreferrer">
@@ -283,7 +283,7 @@ export default function LawFirmBlogPage() {
                                 variant="outline"
                                 size="icon"
                                 asChild
-                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
+                                className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                 title="Edytuj wpis"
                               >
                                 <Link href={`/panel-eksperta/blog/${post.id}`}>
@@ -294,7 +294,7 @@ export default function LawFirmBlogPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => openDeleteDialog(post)}
-                                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
+                                className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
                                 title="Usuń wpis"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -310,10 +310,10 @@ export default function LawFirmBlogPage() {
                 {/* Mobile Card List View */}
                 <div className="block md:hidden p-4 space-y-3">
                   {posts.map((post) => (
-                    <div key={post.id} className="p-4 rounded-xl border border-border/10 bg-zinc-900/40 text-xs space-y-3 relative hover:border-primary/30 transition-all">
+                    <div key={post.id} className="p-4 rounded-xl border border-border/10 bg-card/40 text-xs space-y-3 relative hover:border-primary/30 transition-all">
                       <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0">
-                          <h4 className="font-semibold text-white text-sm truncate" title={post.tytul}>
+                          <h4 className="font-semibold text-foreground text-sm truncate" title={post.tytul}>
                             {post.tytul}
                           </h4>
                           <div className="flex items-center gap-1.5 mt-1">
@@ -322,26 +322,26 @@ export default function LawFirmBlogPage() {
                                 {post.category.nazwa}
                               </Badge>
                             ) : (
-                              <span className="text-zinc-500 text-sm italic">Brak kategorii</span>
+                              <span className="text-muted-foreground text-sm italic">Brak kategorii</span>
                             )}
                           </div>
                         </div>
                         {post.opublikowany ? (
                           <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shrink-0">Opublikowany</Badge>
                         ) : (
-                          <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 shrink-0">Szkic</Badge>
+                          <Badge className="bg-zinc-500/10 text-muted-foreground border border-zinc-500/30 shrink-0">Szkic</Badge>
                         )}
                       </div>
 
                       <div className="flex justify-between items-center border-t border-border/5 pt-2 text-sm">
                         <div>
-                          <span className="text-zinc-500 block font-light">Utworzono</span>
-                          <span className="text-zinc-300 font-medium">{formatDate(post.createdAt)}</span>
+                          <span className="text-muted-foreground block font-light">Utworzono</span>
+                          <span className="text-foreground/80 font-medium">{formatDate(post.createdAt)}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-zinc-500 block font-light">Wyświetlenia</span>
-                          <span className="text-zinc-300 font-medium flex items-center gap-1 justify-end">
-                            <Eye className="h-3 w-3 text-zinc-400 animate-pulse" />
+                          <span className="text-muted-foreground block font-light">Wyświetlenia</span>
+                          <span className="text-foreground/80 font-medium flex items-center gap-1 justify-end">
+                            <Eye className="h-3 w-3 text-muted-foreground animate-pulse" />
                             {post.wyswietlenia}
                           </span>
                         </div>
@@ -352,7 +352,7 @@ export default function LawFirmBlogPage() {
                           variant="outline"
                           size="sm"
                           asChild
-                          className="h-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1.5 text-sm"
+                          className="h-8 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 gap-1.5 text-sm"
                         >
                           <Link href={`/panel-eksperta/blog/${post.id}`}>
                             <Edit className="h-3.5 w-3.5" />
@@ -363,7 +363,7 @@ export default function LawFirmBlogPage() {
                           variant="outline"
                           size="icon"
                           onClick={() => openDeleteDialog(post)}
-                          className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
+                          className="h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -380,19 +380,19 @@ export default function LawFirmBlogPage() {
                       size="sm"
                       onClick={() => fetchPosts(pagination.page - 1)}
                       disabled={pagination.page === 1}
-                      className="h-9 border-border/50 text-zinc-300 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:hover:bg-transparent rounded-xl transition-all"
+                      className="h-9 border-border/50 text-foreground/80 hover:text-foreground hover:bg-foreground/5 disabled:opacity-50 disabled:hover:bg-transparent rounded-xl transition-all"
                     >
                       Poprzednia
                     </Button>
-                    <span className="text-xs text-zinc-400">
-                      Strona <span className="text-white font-semibold">{pagination.page}</span> z <span className="text-white font-semibold">{pagination.pages || 1}</span>
+                    <span className="text-xs text-muted-foreground">
+                      Strona <span className="text-foreground font-semibold">{pagination.page}</span> z <span className="text-foreground font-semibold">{pagination.pages || 1}</span>
                     </span>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => fetchPosts(pagination.page + 1)}
                       disabled={pagination.page === (pagination.pages || 1)}
-                      className="h-9 border-border/50 text-zinc-300 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:hover:bg-transparent rounded-xl transition-all"
+                      className="h-9 border-border/50 text-foreground/80 hover:text-foreground hover:bg-foreground/5 disabled:opacity-50 disabled:hover:bg-transparent rounded-xl transition-all"
                     >
                       Następna
                     </Button>

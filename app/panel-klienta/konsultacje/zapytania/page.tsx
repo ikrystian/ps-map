@@ -30,7 +30,7 @@ const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   },
   ZAKONCZONA: {
     label: "Zakończona",
-    className: "bg-zinc-800/40 text-zinc-400 border-border/20",
+    className: "bg-muted/40 text-muted-foreground border-border/20",
   },
   ANULOWANA: {
     label: "Anulowana",
@@ -108,14 +108,14 @@ export default function ClientConsultationRequestsPage() {
           <CardContent className="p-6">
             {requests.length === 0 ? (
               <div className="mx-auto flex max-w-sm flex-col items-center justify-center space-y-4 py-16 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-zinc-800/40">
-                  <MessageCircle className="h-6 w-6 text-zinc-500" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-muted/40">
+                  <MessageCircle className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
                   <Heading level="h4" size="h4" className="text-base">
                     Brak zapytań
                   </Heading>
-                  <p className="mt-1.5 text-sm font-light leading-relaxed text-zinc-400">
+                  <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
                     Nie wysłałeś jeszcze żadnego zapytania o konsultację. Opisz swoją sprawę, a eksperci sami
                     zaproponują termin i cenę.
                   </p>
@@ -134,14 +134,14 @@ export default function ClientConsultationRequestsPage() {
                     <Link
                       key={request.id}
                       href={`/panel-klienta/konsultacje/zapytania/${request.id}`}
-                      className="group block rounded-lg border border-border/10 bg-zinc-950/20 p-5 transition-all hover:border-primary/30 hover:bg-zinc-950/30"
+                      className="group block rounded-lg border border-border/10 bg-background/20 p-5 transition-all hover:border-primary/30 hover:bg-background/30"
                     >
                       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div className="min-w-0 space-y-2.5">
-                          <h3 className="truncate font-playfair text-lg font-semibold text-white transition-colors group-hover:text-primary">
+                          <h3 className="truncate font-playfair text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                             {request.temat}
                           </h3>
-                          <p className="line-clamp-2 text-sm font-light leading-relaxed text-zinc-400">
+                          <p className="line-clamp-2 text-sm font-light leading-relaxed text-muted-foreground">
                             {request.opis}
                           </p>
                           <div className="flex flex-wrap gap-2">
@@ -149,21 +149,21 @@ export default function ClientConsultationRequestsPage() {
                               {badge.label}
                             </Badge>
                             {request.category && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 {request.category.nazwa}
                               </Badge>
                             )}
-                            <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                            <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                               {CONSULTATION_FORM_LABELS[request.forma]}
                             </Badge>
                             {request.preferowanyCzas && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 <Clock className="h-3 w-3" />
                                 {request.preferowanyCzas} min
                               </Badge>
                             )}
                             {request.budzetDo && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 <Wallet className="h-3 w-3" />
                                 do {request.budzetDo} PLN
                               </Badge>
@@ -172,15 +172,15 @@ export default function ClientConsultationRequestsPage() {
                         </div>
 
                         <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
-                          <div className="flex items-center gap-1.5 text-sm text-zinc-300">
+                          <div className="flex items-center gap-1.5 text-sm text-foreground/80">
                             <Users className="h-4 w-4 text-primary" />
-                            <span className="font-semibold text-white">{request.interests.length}</span>
-                            <span className="text-zinc-500">zgłoszeń</span>
+                            <span className="font-semibold text-foreground">{request.interests.length}</span>
+                            <span className="text-muted-foreground">zgłoszeń</span>
                           </div>
                           {pendingCount > 0 && (
                             <span className="text-xs text-primary">{pendingCount} do rozpatrzenia</span>
                           )}
-                          <span className="text-xs text-zinc-500">
+                          <span className="text-xs text-muted-foreground">
                             {format(new Date(request.createdAt), "d MMM yyyy", { locale: pl })}
                           </span>
                         </div>

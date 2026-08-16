@@ -169,14 +169,14 @@ export function MostConsultedCategories({
   };
 
   return (
-    <section className="py-8 lg:py-20 xl:py-24 bg-darker text-white overflow-hidden">
+    <section className="py-8 lg:py-20 xl:py-24 bg-darker text-foreground overflow-hidden">
       {/* Header + Tabs stay within the container */}
       <div className="container mx-auto px-4 max-w-8xl">
         <div className="flex items-center gap-6 mb-12">
-          <h2 className="text-2xl md:text-3xl font-light text-zinc-100 sm:whitespace-nowrap font-playfair">
+          <h2 className="text-2xl md:text-3xl font-light text-foreground sm:whitespace-nowrap font-playfair">
             Najczęściej konsultowane kategorie
           </h2>
-          <div className="flex-grow border-t border-zinc-800/80" />
+          <div className="flex-grow border-t border-border/80" />
         </div>
 
         <div
@@ -196,7 +196,7 @@ export function MostConsultedCategories({
                 }}
                 className={`flex flex-col items-center justify-center p-1 md:p-4 text-center h-[96px] md:h-[140px] rounded-2xl cursor-pointer select-none transition-all duration-300 shadow-md shrink-0 w-[124px] md:w-auto md:shrink ${isActive
                   ? "bg-[#0da192] text-white border border-transparent scale-[1.03]"
-                  : "bg-[#1c1c1e] text-zinc-300 border border-zinc-800/60 hover:bg-[#222225] hover:border-zinc-700/80 hover:text-white"
+                  : "bg-card text-foreground/80 border border-border/60 hover:bg-card hover:border-border/80 hover:text-foreground"
                   }`}
               >
                 <div className="mb-1 md:mb-4">
@@ -270,16 +270,16 @@ export function MostConsultedCategories({
                       type="button"
                       onClick={handleClick}
                       className={cn(
-                        "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
+                        "w-10 h-10 rounded-full bg-primary flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
                         isLoggedIn
-                          ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95"
+                          ? "hover:bg-primary-dark hover:scale-105 active:scale-95"
                           : "opacity-70 cursor-help",
                       )}
                       title={isLoggedIn ? title : undefined}
                     >
                       <Icon
                         className={cn(
-                          "w-4.5 h-4.5 text-white",
+                          "w-4.5 h-4.5 text-foreground",
                           Icon === Phone && "fill-white",
                         )}
                       />
@@ -293,7 +293,7 @@ export function MostConsultedCategories({
                       <TooltipTrigger asChild>{button}</TooltipTrigger>
                       <TooltipContent
                         side="top"
-                        className="bg-[#1a1a1a] border-zinc-800 text-white text-xs"
+                        className="bg-card border-border text-foreground text-xs"
                       >
                         Informacja dostępna po zalogowaniu
                       </TooltipContent>
@@ -305,10 +305,10 @@ export function MostConsultedCategories({
                   <Link
                     href={`/ekspert/${firm.slug}?src=home-consulted`}
                     key={`${firm.id}-${index}`}
-                    className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-[#1c1c1e] rounded-2xl border border-white/15 overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
+                    className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
-                    <div className="relative h-65 w-full overflow-hidden bg-zinc-900">
-                      <div className="absolute inset-0 z-100  bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
+                    <div className="relative h-65 w-full overflow-hidden bg-card">
+                      <div className="absolute inset-0 z-100  bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
                         alt={firm.nazwa}
@@ -316,8 +316,8 @@ export function MostConsultedCategories({
                       />
 
                       {firm.reviewCount > 0 && (
-                        <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-white/5">
-                          <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-101 backdrop-blur-md p-2 rounded-xl border border-border">
+                          <div className="bg-primary text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
                             {firm.avgRating.toFixed(1).replace(".", ",")}
                           </div>
                           <div className="flex flex-col justify-center">
@@ -345,16 +345,16 @@ export function MostConsultedCategories({
 
                     <div className="p-6 text-center flex-grow flex flex-col justify-between">
                       <div>
-                        <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5 line-clamp-1">
+                        <span className="text-[11px] font-bold text-muted-foreground tracking-widest uppercase block mb-1.5 line-clamp-1">
                           {getSubtitle(firm)}
                         </span>
-                        <h3 className="text-[19px] font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                        <h3 className="text-[19px] font-playfair text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors duration-200">
                           <span>
                             {firm.nazwa}
                           </span>
                         </h3>
                         <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-3">
-                          <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
+                          <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                           {firm.miasto}
                           {firm.voivodeship?.nazwa
                             ? `, ${firm.voivodeship.nazwa}`
@@ -362,7 +362,7 @@ export function MostConsultedCategories({
                         </p>
                       </div>
 
-                      <div className="flex justify-center items-center w-full pt-6 border-t border-zinc-800/80">
+                      <div className="flex justify-center items-center w-full pt-6 border-t border-border/80">
                         <div className="flex gap-2">
 
 
@@ -396,10 +396,10 @@ export function MostConsultedCategories({
                         </div>
 
                         <span
-                          className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] absolute right-0 bottom-0 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                          className="w-10 h-10 rounded-lg bg-primary hover:bg-primary-dark absolute right-0 bottom-0 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                           title="Zobacz pełny profil"
                         >
-                          <ArrowUpRight className="w-5 h-5 text-white" />
+                          <ArrowUpRight className="w-5 h-5 text-foreground" />
                         </span>
                       </div>
                     </div>
@@ -416,17 +416,17 @@ export function MostConsultedCategories({
         <div className="flex justify-center gap-3 mt-8">
           <button
             onClick={handlePrev}
-            className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-12 h-12 rounded-lg bg-primary hover:bg-primary-dark flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
             aria-label="Poprzedni slajd"
           >
-            <ChevronLeft className="w-5 h-5 text-white" />
+            <ChevronLeft className="w-5 h-5 text-foreground" />
           </button>
           <button
             onClick={handleNext}
-            className="w-12 h-12 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-12 h-12 rounded-lg bg-primary hover:bg-primary-dark flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
             aria-label="Następny slajd"
           >
-            <ChevronRight className="w-5 h-5 text-white" />
+            <ChevronRight className="w-5 h-5 text-foreground" />
           </button>
         </div>
       </div>

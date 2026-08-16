@@ -208,8 +208,8 @@ export default function ExpertReferralsPage() {
             <Card className="group relative overflow-hidden rounded-2xl border border-border/30 bg-card/25 backdrop-blur-md transition-all duration-300 hover:border-border/50 hover:bg-card/30">
               <CardContent className="flex items-center justify-between p-5">
                 <div className="space-y-1">
-                  <p className="text-xs font-light tracking-wide text-zinc-400">{card.label}</p>
-                  <h3 className="font-playfair text-3xl font-semibold tracking-tight text-white">
+                  <p className="text-xs font-light tracking-wide text-muted-foreground">{card.label}</p>
+                  <h3 className="font-playfair text-3xl font-semibold tracking-tight text-foreground">
                     {card.value}
                   </h3>
                   <p className="text-sm font-medium text-emerald-400">{card.hint}</p>
@@ -228,14 +228,14 @@ export default function ExpertReferralsPage() {
           <CardContent className="p-6">
             {referrals.length === 0 ? (
               <div className="mx-auto flex max-w-sm flex-col items-center justify-center space-y-4 py-16 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-zinc-800/40">
-                  <Share2 className="h-6 w-6 text-zinc-500" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-muted/40">
+                  <Share2 className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
                   <Heading level="h4" size="h4" className="text-base">
                     Brak polecenia
                   </Heading>
-                  <p className="mt-1.5 text-sm font-light leading-relaxed text-zinc-400">
+                  <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
                     Nie wysłałeś jeszcze żadnego polecenia. Wybierz zakres sprawy i miasto, a my
                     wyślemy klientowi gotowy link.
                   </p>
@@ -257,12 +257,12 @@ export default function ExpertReferralsPage() {
                   return (
                     <div
                       key={referral.id}
-                      className="rounded-lg border border-border/10 bg-zinc-950/20 p-5 transition-all hover:border-primary/30"
+                      className="rounded-lg border border-border/10 bg-background/20 p-5 transition-all hover:border-primary/30"
                     >
                       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div className="min-w-0 space-y-2.5">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-playfair text-lg font-semibold text-white">
+                            <h3 className="font-playfair text-lg font-semibold text-foreground">
                               {referral.email}
                             </h3>
                             <span
@@ -276,7 +276,7 @@ export default function ExpertReferralsPage() {
                           </div>
 
                           {referral.nazwaSprawy && (
-                            <p className="text-sm font-light text-zinc-300">
+                            <p className="text-sm font-light text-foreground/80">
                               {referral.nazwaSprawy}
                             </p>
                           )}
@@ -291,7 +291,7 @@ export default function ExpertReferralsPage() {
                               </Badge>
                             ))}
                             {referral.city && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 <MapPin className="h-3 w-3" />
                                 {referral.city.nazwa}
                                 {referral.voivodeship ? `, ${referral.voivodeship.nazwa}` : ""}
@@ -299,7 +299,7 @@ export default function ExpertReferralsPage() {
                             )}
                           </div>
 
-                          <p className="text-xs text-zinc-500">
+                          <p className="text-xs text-muted-foreground">
                             Wysłano {format(new Date(referral.createdAt), "d MMM yyyy", { locale: pl })}
                             {" · "}
                             {referral.status === "WYGASLE" ? "wygasł" : "ważny do"}{" "}

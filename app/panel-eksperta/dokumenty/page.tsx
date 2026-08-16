@@ -127,7 +127,7 @@ const getExtensionStyles = (ext: string) => {
     case "rtf":
     case "odt":
       return {
-        bg: "bg-zinc-500/10 border-zinc-500/20 text-zinc-400",
+        bg: "bg-zinc-500/10 border-zinc-500/20 text-muted-foreground",
         label: "Tekst",
       }
     default:
@@ -445,20 +445,20 @@ export default function DocumentsPage() {
         >
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-white/10 group gap-2">
+              <Button className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl shadow-md border-t border-border group gap-2">
                 <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
                 Dodaj dokument
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden">
+            <DialogContent className="sm:max-w-[500px] bg-background/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl p-6 overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+                <DialogTitle className="text-xl font-bold font-playfair text-foreground flex items-center gap-2">
                   <Upload className="h-5 w-5 text-primary" />
                   Dodaj nowy dokument
                 </DialogTitle>
-                <DialogDescription className="text-zinc-400 text-xs">
+                <DialogDescription className="text-muted-foreground text-xs">
                   Prześlij plik do biblioteki dokumentów swojej eksperta, aby mieć do niego szybki dostęp i móc go udostępniać.
                 </DialogDescription>
               </DialogHeader>
@@ -473,7 +473,7 @@ export default function DocumentsPage() {
 
                       return (
                         <FormItem>
-                          <FormLabel className="text-xs font-semibold text-zinc-300">Prześlij plik</FormLabel>
+                          <FormLabel className="text-xs font-semibold text-foreground/80">Prześlij plik</FormLabel>
                           <FormControl>
                             <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/50 hover:border-primary/50 hover:bg-primary/5 bg-background/30 rounded-xl p-6 cursor-pointer transition-all duration-300 group">
                               <input
@@ -493,34 +493,34 @@ export default function DocumentsPage() {
                                 }}
                                 {...field}
                               />
-                              <div className="h-12 w-12 rounded-full bg-zinc-800/50 group-hover:bg-primary/10 border border-border/40 group-hover:border-primary/30 flex items-center justify-center transition-all duration-300 mb-3">
+                              <div className="h-12 w-12 rounded-full bg-muted/50 group-hover:bg-primary/10 border border-border/40 group-hover:border-primary/30 flex items-center justify-center transition-all duration-300 mb-3">
                                 {fileSelected ? (
                                   <FileText className="h-6 w-6 text-primary" />
                                 ) : (
-                                  <Upload className="h-6 w-6 text-zinc-400 group-hover:text-primary transition-colors duration-300" />
+                                  <Upload className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
                                 )}
                               </div>
                               {fileSelected ? (
                                 <div className="text-center">
-                                  <p className="text-sm font-semibold text-white max-w-[280px] truncate">{fileSelected.name}</p>
-                                  <p className="text-[11px] text-zinc-400 mt-1">{formatFileSize(fileSelected.size)}</p>
+                                  <p className="text-sm font-semibold text-foreground max-w-[280px] truncate">{fileSelected.name}</p>
+                                  <p className="text-[11px] text-muted-foreground mt-1">{formatFileSize(fileSelected.size)}</p>
                                   <span className="inline-flex text-sm text-primary font-semibold bg-primary/10 px-2.5 py-0.5 rounded-full mt-2.5 border border-primary/20">
                                     Wybrano plik
                                   </span>
                                 </div>
                               ) : (
                                 <div className="text-center">
-                                  <p className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors duration-300">
+                                  <p className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors duration-300">
                                     Wybierz plik z dysku
                                   </p>
-                                  <p className="text-[11px] text-zinc-500 mt-1">
+                                  <p className="text-[11px] text-muted-foreground mt-1">
                                     lub przeciągnij go tutaj
                                   </p>
                                 </div>
                               )}
                             </label>
                           </FormControl>
-                          <FormDescription className="text-sm text-zinc-500">
+                          <FormDescription className="text-sm text-muted-foreground">
                             Obsługiwane formaty: PDF, DOC, DOCX, TXT, RTF, ODT (max 10MB)
                           </FormDescription>
                           <FormMessage />
@@ -534,11 +534,11 @@ export default function DocumentsPage() {
                     name="nazwa"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold text-zinc-300">Nazwa dokumentu w systemie</FormLabel>
+                        <FormLabel className="text-xs font-semibold text-foreground/80">Nazwa dokumentu w systemie</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="np. Umowa ramowa zlecenia"
-                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-white text-sm"
+                            className="h-11 bg-background/50 border-border/50 rounded-xl focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/80 transition-all text-foreground text-sm"
                             {...field}
                           />
                         </FormControl>
@@ -552,14 +552,14 @@ export default function DocumentsPage() {
                     name="typDokumentu"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold text-zinc-300">Typ dokumentu</FormLabel>
+                        <FormLabel className="text-xs font-semibold text-foreground/80">Typ dokumentu</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
-                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-sm">
+                            <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium text-sm">
                               <SelectValue placeholder="Wybierz typ dokumentu" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                          <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                             <SelectItem value="umowa" className="hover:bg-primary/10 focus:bg-primary/10">Umowa</SelectItem>
                             <SelectItem value="regulamin" className="hover:bg-primary/10 focus:bg-primary/10">Regulamin</SelectItem>
                             <SelectItem value="wzor-pisma" className="hover:bg-primary/10 focus:bg-primary/10">Wzór pisma</SelectItem>
@@ -581,19 +581,19 @@ export default function DocumentsPage() {
                       type="button"
                       variant="outline"
                       onClick={() => setIsCreateDialogOpen(false)}
-                      className="h-11 px-6 border-border/50 hover:bg-muted text-white rounded-xl w-full sm:w-auto"
+                      className="h-11 px-6 border-border/50 hover:bg-muted text-foreground rounded-xl w-full sm:w-auto"
                     >
                       Anuluj
                     </Button>
-                    <Button type="submit" disabled={uploadProgress} className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <Button type="submit" disabled={uploadProgress} className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-border shadow-md flex items-center justify-center gap-2 w-full sm:w-auto">
                       {uploadProgress ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin text-white" />
+                          <Loader2 className="h-4 w-4 animate-spin text-foreground" />
                           Przesyłanie...
                         </>
                       ) : (
                         <>
-                          <Upload className="h-4 w-4 text-white" />
+                          <Upload className="h-4 w-4 text-foreground" />
                           Dodaj dokument
                         </>
                       )}
@@ -618,9 +618,9 @@ export default function DocumentsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Wszystkie dokumenty</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{totalDocsCount}</h3>
-                <p className="text-sm text-zinc-500">Suma rozmiarów: {totalSizeFormatted}</p>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Wszystkie dokumenty</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{totalDocsCount}</h3>
+                <p className="text-sm text-muted-foreground">Suma rozmiarów: {totalSizeFormatted}</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-6 w-6" />
@@ -634,9 +634,9 @@ export default function DocumentsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Moje dokumenty</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{expertDocsCount}</h3>
-                <p className="text-sm text-zinc-500">Przesłane wzory i umowy</p>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Moje dokumenty</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{expertDocsCount}</h3>
+                <p className="text-sm text-muted-foreground">Przesłane wzory i umowy</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-300">
                 <Sparkles className="h-6 w-6" />
@@ -650,9 +650,9 @@ export default function DocumentsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Od klientów</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{clientDocsCount}</h3>
-                <p className="text-sm text-zinc-500">Dokumenty spraw i załączniki</p>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Od klientów</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{clientDocsCount}</h3>
+                <p className="text-sm text-muted-foreground">Dokumenty spraw i załączniki</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform duration-300">
                 <Users className="h-6 w-6" />
@@ -667,21 +667,21 @@ export default function DocumentsPage() {
             <CardContent className="p-5 flex flex-col justify-between h-full">
               <div className="flex items-center justify-between w-full mb-1">
                 <div>
-                  <p className="text-xs text-zinc-400 font-light tracking-wide">Użycie dysku</p>
-                  <h3 className="text-xl font-semibold text-white tracking-tight mt-1">{totalSizeFormatted} <span className="text-sm text-zinc-500 font-light">/ 100 MB</span></h3>
+                  <p className="text-xs text-muted-foreground font-light tracking-wide">Użycie dysku</p>
+                  <h3 className="text-xl font-semibold text-foreground tracking-tight mt-1">{totalSizeFormatted} <span className="text-sm text-muted-foreground font-light">/ 100 MB</span></h3>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                   <HardDrive className="h-5 w-5" />
                 </div>
               </div>
               <div className="w-full mt-2">
-                <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
                     style={{ width: `${diskPercentage}%` }}
                   />
                 </div>
-                <p className="text-sm text-zinc-500 text-right mt-1 font-mono">{diskPercentage}% wykorzystane</p>
+                <p className="text-sm text-muted-foreground text-right mt-1 font-mono">{diskPercentage}% wykorzystane</p>
               </div>
             </CardContent>
           </Card>
@@ -697,23 +697,23 @@ export default function DocumentsPage() {
       >
         <div className="p-4 bg-card/15 backdrop-blur-sm border border-border/20 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between shadow-inner">
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Szukaj dokumentu po nazwie..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 focus-visible:ring-primary/40 focus-visible:border-primary transition-all"
+              className="pl-10 h-11 bg-background/40 border-border/30 rounded-xl text-foreground placeholder-muted-foreground focus-visible:ring-primary/40 focus-visible:border-primary transition-all"
             />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             {/* Typ dokumentu */}
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Typ dokumentu" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+              <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                 <SelectItem value="ALL" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie typy</SelectItem>
                 <SelectItem value="umowa" className="hover:bg-primary/10 focus:bg-primary/10">Umowa</SelectItem>
                 <SelectItem value="regulamin" className="hover:bg-primary/10 focus:bg-primary/10">Regulamin</SelectItem>
@@ -729,10 +729,10 @@ export default function DocumentsPage() {
 
             {/* Źródło */}
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium text-xs w-full sm:w-[180px]">
+              <SelectTrigger className="h-11 bg-background/40 border-border/30 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium text-xs w-full sm:w-[180px]">
                 <SelectValue placeholder="Źródło dokumentu" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+              <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                 <SelectItem value="ALL" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie źródła</SelectItem>
                 <SelectItem value="EKSPERT" className="hover:bg-primary/10 focus:bg-primary/10">Od eksperta</SelectItem>
                 <SelectItem value="KLIENT" className="hover:bg-primary/10 focus:bg-primary/10">Od klienta</SelectItem>
@@ -753,8 +753,8 @@ export default function DocumentsPage() {
           <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={6} borderWidth={1} />
           <CardHeader className="border-b border-border/20 py-4 px-6 flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-playfair text-white">Wszystkie pliki</CardTitle>
-              <p className="text-xs text-zinc-400 mt-1 font-light">
+              <CardTitle className="text-lg font-playfair text-foreground">Wszystkie pliki</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1 font-light">
                 {searchQuery || typeFilter !== "ALL" || sourceFilter !== "ALL"
                   ? `Znaleziono ${filteredDocuments.length} pasujących plików`
                   : `Łącznie ${totalDocsCount} dokumentów w systemie`}
@@ -767,12 +767,12 @@ export default function DocumentsPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-b border-border/20 hover:bg-transparent">
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Nazwa dokumentu</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Data dodania</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Typ dokumentu</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Źródło</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Rozmiar</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Akcje</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Nazwa dokumentu</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Data dodania</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Typ dokumentu</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Źródło</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-4 uppercase tracking-wider">Rozmiar</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Akcje</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -781,11 +781,11 @@ export default function DocumentsPage() {
                       <TableRow className="hover:bg-transparent">
                         <TableCell colSpan={6} className="text-center py-16 bg-transparent border-0">
                           <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
-                            <div className="h-14 w-14 rounded-full bg-zinc-800/40 flex items-center justify-center border border-border/40">
-                              <FileText className="h-6 w-6 text-zinc-500" />
+                            <div className="h-14 w-14 rounded-full bg-muted/40 flex items-center justify-center border border-border/40">
+                              <FileText className="h-6 w-6 text-muted-foreground" />
                             </div>
                             <div>
-                              <h4 className="text-base font-semibold text-white">Brak dokumentów</h4>
+                              <h4 className="text-base font-semibold text-foreground">Brak dokumentów</h4>
                               <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed font-light">
                                 Nie znaleziono żadnych plików odpowiadających Twoim kryteriom wyszukiwania. Spróbuj zmienić filtry lub wyszukiwaną frazę.
                               </p>
@@ -797,7 +797,7 @@ export default function DocumentsPage() {
                                 setSourceFilter("ALL")
                               }}
                               variant="outline"
-                              className="h-10 px-5 border-border/50 hover:bg-muted text-white rounded-xl gap-2 mt-2"
+                              className="h-10 px-5 border-border/50 hover:bg-muted text-foreground rounded-xl gap-2 mt-2"
                             >
                               Resetuj filtry
                             </Button>
@@ -824,28 +824,28 @@ export default function DocumentsPage() {
                             animate="show"
                             exit="hidden"
                             layoutId={`doc-row-${document.id}`}
-                            className="border-b border-border/20 hover:bg-white/[0.02] transition-colors text-zinc-300 text-sm group"
+                            className="border-b border-border/20 hover:bg-white/[0.02] transition-colors text-foreground/80 text-sm group"
                           >
-                            <TableCell className="font-semibold py-4 px-6 text-white">
+                            <TableCell className="font-semibold py-4 px-6 text-foreground">
                               <div className="flex items-center gap-3">
                                 <div className={cn("h-9 w-9 rounded-lg border flex flex-col items-center justify-center font-bold text-sm tracking-wider shadow-md shrink-0 transition-transform duration-300 group-hover:scale-105", extStyle.bg)}>
                                   <FileText className="h-4 w-4 mb-0.5" />
                                   <span className="text-[8px] font-mono leading-none">{extStyle.label}</span>
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                  <span className="truncate max-w-xs sm:max-w-md text-zinc-100 group-hover:text-white transition-colors duration-200">{document.nazwa}</span>
-                                  <span className="text-sm text-zinc-500 uppercase tracking-widest font-semibold mt-0.5">.{document.rozszerzenie}</span>
+                                  <span className="truncate max-w-xs sm:max-w-md text-foreground group-hover:text-foreground transition-colors duration-200">{document.nazwa}</span>
+                                  <span className="text-sm text-muted-foreground uppercase tracking-widest font-semibold mt-0.5">.{document.rozszerzenie}</span>
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="py-4 px-4 font-light text-xs text-zinc-400">
+                            <TableCell className="py-4 px-4 font-light text-xs text-muted-foreground">
                               <div className="flex items-center gap-1.5">
-                                <Clock className="h-3 w-3 text-zinc-500" />
+                                <Clock className="h-3 w-3 text-muted-foreground" />
                                 {formatDate(document.createdAt)}
                               </div>
                             </TableCell>
                             <TableCell className="py-4 px-4">
-                              <span className="text-xs px-2.5 py-0.5 rounded-md bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 font-medium capitalize">
+                              <span className="text-xs px-2.5 py-0.5 rounded-md bg-muted/60 text-foreground/80 border border-border/50 font-medium capitalize">
                                 {getDocumentTypeLabel(document.typDokumentu)}
                               </span>
                             </TableCell>
@@ -856,7 +856,7 @@ export default function DocumentsPage() {
                                     Od klienta
                                   </span>
                                   {clientName && (
-                                    <span className="text-sm text-zinc-400 font-light truncate max-w-[120px] block mt-0.5" title={clientName}>
+                                    <span className="text-sm text-muted-foreground font-light truncate max-w-[120px] block mt-0.5" title={clientName}>
                                       {clientName}
                                     </span>
                                   )}
@@ -867,14 +867,14 @@ export default function DocumentsPage() {
                                 </span>
                               )}
                             </TableCell>
-                            <TableCell className="py-4 px-4 text-xs font-light text-zinc-400">{formatFileSize(document.rozmiar)}</TableCell>
+                            <TableCell className="py-4 px-4 text-xs font-light text-muted-foreground">{formatFileSize(document.rozmiar)}</TableCell>
                             <TableCell className="py-4 px-6 text-right">
                               <div className="flex items-center gap-2 justify-end">
                                 <Button
                                   variant="outline"
                                   size="icon"
                                   onClick={() => handlePreviewDocument(document)}
-                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                   title="Podgląd dokumentu"
                                 >
                                   <Eye className="h-4 w-4" />
@@ -883,7 +883,7 @@ export default function DocumentsPage() {
                                   variant="outline"
                                   size="icon"
                                   onClick={() => handleDownloadDocument(document)}
-                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all shrink-0"
                                   title="Pobierz dokument"
                                 >
                                   <Download className="h-4 w-4" />
@@ -892,7 +892,7 @@ export default function DocumentsPage() {
                                   variant="outline"
                                   size="icon"
                                   onClick={() => openDeleteDialog(document)}
-                                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
+                                  className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all shrink-0"
                                   title="Usuń dokument"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -913,10 +913,10 @@ export default function DocumentsPage() {
               <AnimatePresence mode="popLayout">
                 {filteredDocuments.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="h-12 w-12 rounded-full bg-zinc-800/40 flex items-center justify-center border border-border/40 mx-auto mb-3">
-                      <FileText className="h-5 w-5 text-zinc-500" />
+                    <div className="h-12 w-12 rounded-full bg-muted/40 flex items-center justify-center border border-border/40 mx-auto mb-3">
+                      <FileText className="h-5 w-5 text-muted-foreground" />
                     </div>
-                    <h4 className="text-base font-semibold text-white">Brak dokumentów</h4>
+                    <h4 className="text-base font-semibold text-foreground">Brak dokumentów</h4>
                     <p className="text-sm text-muted-foreground mt-1 max-w-[240px] mx-auto font-light leading-relaxed">
                       Brak plików pasujących do wybranych filtrów wyszukiwania.
                     </p>
@@ -942,7 +942,7 @@ export default function DocumentsPage() {
                           animate="show"
                           exit="hidden"
                           layoutId={`doc-card-${document.id}`}
-                          className="bg-zinc-900/40 border border-border/20 rounded-xl p-4 flex flex-col gap-3 relative hover:border-primary/30 transition-all"
+                          className="bg-card/40 border border-border/20 rounded-xl p-4 flex flex-col gap-3 relative hover:border-primary/30 transition-all"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
@@ -951,8 +951,8 @@ export default function DocumentsPage() {
                                 <span className="text-[8px] font-mono leading-none">{extStyle.label}</span>
                               </div>
                               <div className="flex flex-col min-w-0">
-                                <h4 className="text-sm font-semibold text-white truncate max-w-[180px]">{document.nazwa}</h4>
-                                <p className="text-sm text-zinc-500 mt-0.5">.{document.rozszerzenie} • {formatFileSize(document.rozmiar)}</p>
+                                <h4 className="text-sm font-semibold text-foreground truncate max-w-[180px]">{document.nazwa}</h4>
+                                <p className="text-sm text-muted-foreground mt-0.5">.{document.rozszerzenie} • {formatFileSize(document.rozmiar)}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
@@ -960,7 +960,7 @@ export default function DocumentsPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => handlePreviewDocument(document)}
-                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
+                                className="h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
                                 title="Podgląd dokumentu"
                               >
                                 <Eye className="h-3.5 w-3.5" />
@@ -969,7 +969,7 @@ export default function DocumentsPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => handleDownloadDocument(document)}
-                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
+                                className="h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
                               >
                                 <Download className="h-3.5 w-3.5" />
                               </Button>
@@ -977,7 +977,7 @@ export default function DocumentsPage() {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => openDeleteDialog(document)}
-                                className="h-8 w-8 rounded-lg border border-border/50 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all"
+                                className="h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/5 hover:border-rose-500/30 transition-all"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </Button>
@@ -985,7 +985,7 @@ export default function DocumentsPage() {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border/10">
-                            <span className="text-sm px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700/50 capitalize font-medium">
+                            <span className="text-sm px-2 py-0.5 rounded bg-muted text-foreground/80 border border-border/50 capitalize font-medium">
                               {getDocumentTypeLabel(document.typDokumentu)}
                             </span>
                             {document.zrodlo === "KLIENT" ? (
@@ -997,7 +997,7 @@ export default function DocumentsPage() {
                                 Moje (Ekspert)
                               </span>
                             )}
-                            <span className="text-sm text-zinc-500 ml-auto flex items-center gap-1 font-light">
+                            <span className="text-sm text-muted-foreground ml-auto flex items-center gap-1 font-light">
                               <Clock className="h-3 w-3 text-zinc-600" />
                               {formatDate(document.createdAt)}
                             </span>
@@ -1031,12 +1031,12 @@ export default function DocumentsPage() {
       }}>
         <DialogContent
           showCloseButton={false}
-          className="w-full max-w-full sm:w-full sm:max-w-full md:w-full md:max-w-full lg:w-[75vw] lg:max-w-[75vw] h-full lg:h-[92vh] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-none lg:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col"
+          className="w-full max-w-full sm:w-full sm:max-w-full md:w-full md:max-w-full lg:w-[75vw] lg:max-w-[75vw] h-full lg:h-[92vh] bg-background/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-none lg:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col"
         >
           <BorderBeam className="hidden lg:block" lightColor="var(--primary)" lightWidth={450} duration={8} borderWidth={1} />
 
           {/* Pasek nagłówka z metadanymi i akcjami */}
-          <DialogHeader className="flex flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-border/20 bg-zinc-950/80 shrink-0 space-y-0">
+          <DialogHeader className="flex flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-border/20 bg-background/80 shrink-0 space-y-0">
             <div className="flex items-center gap-3 min-w-0">
               {selectedDocument && (() => {
                 const extStyle = getExtensionStyles(selectedDocument.rozszerzenie)
@@ -1048,16 +1048,16 @@ export default function DocumentsPage() {
                 )
               })()}
               <div className="min-w-0 text-left">
-                <DialogTitle className="text-base sm:text-lg font-bold font-playfair text-white truncate">
+                <DialogTitle className="text-base sm:text-lg font-bold font-playfair text-foreground truncate">
                   {selectedDocument?.nazwa}
                 </DialogTitle>
-                <DialogDescription className="text-zinc-400 text-xs mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <DialogDescription className="text-muted-foreground text-xs mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                   <span className="capitalize">{getDocumentTypeLabel(selectedDocument?.typDokumentu || "")}</span>
                   <span className="text-zinc-600">•</span>
                   <span>{selectedDocument && formatFileSize(selectedDocument.rozmiar)}</span>
                   <span className="text-zinc-600 hidden sm:inline">•</span>
                   <span className="hidden sm:inline-flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-zinc-500" />
+                    <Clock className="h-3 w-3 text-muted-foreground" />
                     {selectedDocument && formatDate(selectedDocument.createdAt)}
                   </span>
                 </DialogDescription>
@@ -1070,7 +1070,7 @@ export default function DocumentsPage() {
                   variant="outline"
                   size="icon"
                   onClick={() => window.open(previewContent.url, "_blank", "noopener,noreferrer")}
-                  className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
+                  className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
                   title="Otwórz w nowej karcie"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -1079,7 +1079,7 @@ export default function DocumentsPage() {
               {selectedDocument && (
                 <Button
                   onClick={() => handleDownloadDocument(selectedDocument)}
-                  className="h-9 px-4 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-lg border-t border-white/10 shadow-md gap-2"
+                  className="h-9 px-4 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-lg border-t border-border shadow-md gap-2"
                 >
                   <Download className="h-4 w-4" />
                   <span className="hidden sm:inline">Pobierz</span>
@@ -1089,7 +1089,7 @@ export default function DocumentsPage() {
                 variant="outline"
                 size="icon"
                 onClick={closePreviewDialog}
-                className="h-9 w-9 rounded-lg border border-border/50 text-zinc-400 hover:text-white hover:bg-muted transition-all"
+                className="h-9 w-9 rounded-lg border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
                 title="Zamknij podgląd"
               >
                 <X className="h-4 w-4" />
@@ -1098,7 +1098,7 @@ export default function DocumentsPage() {
           </DialogHeader>
 
           {/* Obszar podglądu */}
-          <div className="flex-1 overflow-hidden bg-zinc-900/50 relative">
+          <div className="flex-1 overflow-hidden bg-card/50 relative">
             {previewLoading ? (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center space-y-4">
@@ -1119,7 +1119,7 @@ export default function DocumentsPage() {
                 {previewContent.type === "text" && (
                   <div className="h-full overflow-auto">
                     <div className="mx-auto max-w-4xl px-4 sm:px-8 py-6">
-                      <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-200 select-text bg-zinc-950/60 border border-border/20 rounded-xl p-5 sm:p-7 shadow-inner">
+                      <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-foreground select-text bg-background/60 border border-border/20 rounded-xl p-5 sm:p-7 shadow-inner">
                         {previewContent.text}
                       </pre>
                     </div>
@@ -1143,14 +1143,14 @@ export default function DocumentsPage() {
                         <ShieldAlert className="h-8 w-8" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-semibold text-white">Podgląd niedostępny</h4>
-                        <p className="text-sm text-zinc-400 mt-2 leading-relaxed">
-                          Natywny podgląd dla formatu <span className="font-semibold text-white">.{selectedDocument?.rozszerzenie}</span> nie jest bezpośrednio obsługiwany w przeglądarce. Pobierz plik na swój dysk, aby go otworzyć.
+                        <h4 className="text-lg font-semibold text-foreground">Podgląd niedostępny</h4>
+                        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                          Natywny podgląd dla formatu <span className="font-semibold text-foreground">.{selectedDocument?.rozszerzenie}</span> nie jest bezpośrednio obsługiwany w przeglądarce. Pobierz plik na swój dysk, aby go otworzyć.
                         </p>
                       </div>
                       <Button
                         onClick={() => selectedDocument && handleDownloadDocument(selectedDocument)}
-                        className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-white/10 shadow-md gap-2"
+                        className="h-11 px-6 bg-gradient-to-r from-primary to-[var(--primary-dark)] hover:from-[var(--primary-hover)] hover:to-primary text-white font-semibold rounded-xl border-t border-border shadow-md gap-2"
                       >
                         <Download className="h-4 w-4" />
                         Pobierz plik
@@ -1160,7 +1160,7 @@ export default function DocumentsPage() {
                 )}
               </>
             ) : (
-              <div className="h-full flex items-center justify-center text-zinc-500 text-sm">
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                 Wystąpił błąd podczas ładowania podglądu.
               </div>
             )}

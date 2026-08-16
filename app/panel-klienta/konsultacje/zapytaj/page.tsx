@@ -203,7 +203,7 @@ export default function AskForConsultationPage() {
                 rows={8}
               />
               <div className="flex items-center justify-between text-xs">
-                <span className={opisLength < MIN_OPIS_LENGTH ? "text-zinc-500" : "text-emerald-400"}>
+                <span className={opisLength < MIN_OPIS_LENGTH ? "text-muted-foreground" : "text-emerald-400"}>
                   {opisLength} / {MIN_OPIS_LENGTH} znaków minimum
                 </span>
               </div>
@@ -228,7 +228,7 @@ export default function AskForConsultationPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-muted-foreground">
                 Bez wskazanej dziedziny zapytanie trafi do wszystkich aktywnych ekspertów.
               </p>
             </div>
@@ -255,7 +255,7 @@ export default function AskForConsultationPage() {
                       className={`flex items-center gap-2.5 rounded-lg border p-3.5 text-sm transition-all ${
                         isActive
                           ? "border-primary/40 bg-primary/10 text-white"
-                          : "border-border/10 bg-zinc-950/20 text-zinc-400 hover:border-primary/20"
+                          : "border-border/10 bg-background/20 text-muted-foreground hover:border-primary/20"
                       }`}
                     >
                       <Icon className={`h-4 w-4 ${isActive ? "text-primary" : ""}`} />
@@ -357,7 +357,7 @@ export default function AskForConsultationPage() {
                   placeholder="+48 600 000 000"
                 />
                 {errors.telefonKontakt && <p className="text-sm text-red-400">{errors.telefonKontakt}</p>}
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-muted-foreground">
                   Numer zobaczy wyłącznie ekspert, którego zgłoszenie przyjmiesz.
                 </p>
               </div>

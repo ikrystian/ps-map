@@ -85,7 +85,7 @@ const BenefitIcon = ({ src, alt }: { src: string; alt: string }) => {
 
 export function BenefitsSection() {
   return (
-    <section className="py-8 lg:py-20 bg-[#121212] border-b border-neutral-900/40 select-none overflow-hidden relative z-10">
+    <section className="py-8 lg:py-20 bg-background border-b border-border/40 select-none overflow-hidden relative z-10">
       <div className="container mx-auto px-6">
         <motion.div
           variants={containerVariants}
@@ -101,7 +101,7 @@ export function BenefitsSection() {
               className="flex flex-col items-center text-center group cursor-pointer"
             >
               <BenefitIcon src={benefit.icon} alt={`Krok ${index + 1}`} />
-              <h3 className="text-xs md:text-sm font-medium tracking-wide text-neutral-300 group-hover:text-white leading-relaxed max-w-[180px] transition-colors duration-300 ">
+              <h3 className="text-xs md:text-sm font-medium tracking-wide text-foreground/80 group-hover:text-foreground leading-relaxed max-w-[180px] transition-colors duration-300 ">
                 {benefit.title}
               </h3>
             </motion.div>

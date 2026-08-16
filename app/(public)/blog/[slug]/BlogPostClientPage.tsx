@@ -102,8 +102,8 @@ export default function BlogPostPage() {
   if (error || !post) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center py-16 bg-background-sec border border-neutral-800/60 rounded-3xl max-w-xl mx-auto p-8 backdrop-blur-sm shadow-xl">
-          <h2 className="text-2xl font-bold mb-2 font-playfair text-white">
+        <div className="text-center py-16 bg-background-sec border border-border/60 rounded-3xl max-w-xl mx-auto p-8 backdrop-blur-sm shadow-xl">
+          <h2 className="text-2xl font-bold mb-2 font-playfair text-foreground">
             Artykuł nie znaleziony
           </h2>
           <p className="text-muted-foreground mb-6">
@@ -191,7 +191,7 @@ export default function BlogPostPage() {
 
       {/* Hero Section with Featured Image / Parallax */}
       {post.obrazekWyrozniajacy ? (
-        <div className="relative h-[55vh] min-h-[400px] max-h-[600px] w-full overflow-hidden bg-neutral-950">
+        <div className="on-dark relative h-[55vh] min-h-[400px] max-h-[600px] w-full overflow-hidden bg-background">
           {/* Parallax Image wrapper */}
           <motion.div
             className="absolute inset-0 bg-cover bg-center will-change-transform"
@@ -203,7 +203,7 @@ export default function BlogPostPage() {
           />
           {/* Immersive overlays */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background-sec" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a09]/95 via-[#0a0a09]/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/40 to-transparent pointer-events-none" />
 
           <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-12 relative z-10">
             <div className="max-w-4xl">
@@ -211,7 +211,7 @@ export default function BlogPostPage() {
               <div className="flex flex-wrap items-center gap-3 mb-5">
                 <Link
                   href="/blog"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors group"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors group"
                 >
                   <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                   Blog
@@ -229,15 +229,15 @@ export default function BlogPostPage() {
               </div>
 
               {/* Title */}
-              <h1 className="font-playfair text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-8">
+              <h1 className="font-playfair text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight mb-8">
                 {post.tytul}
               </h1>
 
               {/* Author & Stats bar */}
-              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-white/10 pt-6">
+              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-foreground/80 border-t border-border pt-6">
                 {/* Author Info */}
                 <div className="flex items-center gap-2.5">
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-neutral-900 flex-shrink-0 flex items-center justify-center">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-border bg-card flex-shrink-0 flex items-center justify-center">
                     {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
@@ -251,16 +251,16 @@ export default function BlogPostPage() {
                   {post.lawFirm ? (
                     <Link
                       href={`/ekspert/${post.lawFirm.slug}`}
-                      className="font-medium text-white hover:text-primary transition-colors"
+                      className="font-medium text-foreground hover:text-primary transition-colors"
                     >
                       {post.lawFirm.nazwa}
                     </Link>
                   ) : (
-                    <span className="font-medium text-white">Administracja</span>
+                    <span className="font-medium text-foreground">Administracja</span>
                   )}
                 </div>
 
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+                <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
 
                 {/* Date */}
                 <div className="flex items-center gap-2 text-neutral-455">
@@ -268,7 +268,7 @@ export default function BlogPostPage() {
                   <span>{formatDate(post.dataPublikacji)}</span>
                 </div>
 
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+                <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
 
                 {/* Views */}
                 <div className="flex items-center gap-2">
@@ -278,7 +278,7 @@ export default function BlogPostPage() {
 
                 {estimatedReadingTime > 0 && (
                   <>
-                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-700 hidden sm:block" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
                     {/* Reading Time */}
                     <div className="flex items-center gap-2">
                       <span>📖</span>
@@ -292,7 +292,7 @@ export default function BlogPostPage() {
         </div>
       ) : (
         /* Typographic Text Hero Fallback */
-        <div className="relative border-b border-neutral-900/60 bg-gradient-to-br from-[#121211] via-[#0a0a09] to-[#0d0d0c] py-20 overflow-hidden">
+        <div className="relative border-b border-border/60 bg-gradient-to-br from-background via-background to-background py-20 overflow-hidden">
           {/* Ambient Glows */}
           <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-primary/5 blur-[90px] pointer-events-none" />
           <div className="absolute bottom-10 right-1/4 w-[280px] h-[280px] rounded-full bg-teal-500/3 blur-[90px] pointer-events-none" />
@@ -303,7 +303,7 @@ export default function BlogPostPage() {
               <div className="flex flex-wrap items-center gap-3 mb-5">
                 <Link
                   href="/blog"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors group"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors group"
                 >
                   <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                   Blog
@@ -321,15 +321,15 @@ export default function BlogPostPage() {
               </div>
 
               {/* Title */}
-              <h1 className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-8">
+              <h1 className="font-playfair text-3xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-tight mb-8">
                 {post.tytul}
               </h1>
 
               {/* Author & Stats bar */}
-              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-neutral-300 border-t border-neutral-800/80 pt-6">
+              <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-sm text-foreground/80 border-t border-border/80 pt-6">
                 {/* Author Info */}
                 <div className="flex items-center gap-2.5">
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-neutral-850 bg-neutral-900 flex-shrink-0 flex items-center justify-center">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-border bg-card flex-shrink-0 flex items-center justify-center">
                     {post.lawFirm && post.lawFirm.logo ? (
                       <img
                         src={post.lawFirm.logo}
@@ -343,16 +343,16 @@ export default function BlogPostPage() {
                   {post.lawFirm ? (
                     <Link
                       href={`/ekspert/${post.lawFirm.slug}`}
-                      className="font-medium text-white hover:text-primary transition-colors"
+                      className="font-medium text-foreground hover:text-primary transition-colors"
                     >
                       {post.lawFirm.nazwa}
                     </Link>
                   ) : (
-                    <span className="font-medium text-white">Administracja</span>
+                    <span className="font-medium text-foreground">Administracja</span>
                   )}
                 </div>
 
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+                <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
 
                 {/* Date */}
                 <div className="flex items-center gap-2">
@@ -360,7 +360,7 @@ export default function BlogPostPage() {
                   <span>{formatDate(post.dataPublikacji)}</span>
                 </div>
 
-                <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+                <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
 
                 {/* Views */}
                 <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function BlogPostPage() {
 
                 {estimatedReadingTime > 0 && (
                   <>
-                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 hidden sm:block" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-muted hidden sm:block" />
                     {/* Reading Time */}
                     <div className="flex items-center gap-2">
                       <span>📖</span>
@@ -441,14 +441,14 @@ export default function BlogPostPage() {
             </article>
 
             {post.isSponsored && post.sponsoredLawFirm && (
-              <div className="relative overflow-hidden bg-gradient-to-br from-[#1f1a0e]/60 to-[#0e0d0a] border border-amber-500/20 rounded-3xl p-8 shadow-2xl group transition-all duration-300 hover:border-amber-500/30">
+              <div className="relative overflow-hidden bg-gradient-to-br from-[#1f1a0e]/60 to-background border border-amber-500/20 rounded-3xl p-8 shadow-2xl group transition-all duration-300 hover:border-amber-500/30">
                 {/* Visual ambient glows */}
                 <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-amber-500/10 blur-[70px] pointer-events-none" />
                 <div className="absolute -left-10 -top-10 w-48 h-48 rounded-full bg-yellow-500/5 blur-[70px] pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center md:items-start">
                   {post.sponsoredLawFirm.logo ? (
-                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-amber-500/20 shadow-lg flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-amber-500/20 shadow-lg flex-shrink-0 bg-card group-hover:border-amber-500/50 transition-colors">
                       <img
                         src={post.sponsoredLawFirm.logo}
                         alt={post.sponsoredLawFirm.nazwa}
@@ -456,7 +456,7 @@ export default function BlogPostPage() {
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-24 rounded-2xl bg-neutral-950 flex items-center justify-center border border-amber-500/20 shadow-lg flex-shrink-0">
+                    <div className="w-24 h-24 rounded-2xl bg-background flex items-center justify-center border border-amber-500/20 shadow-lg flex-shrink-0">
                       <Building2 className="w-10 h-10 text-amber-500/60" />
                     </div>
                   )}
@@ -467,12 +467,12 @@ export default function BlogPostPage() {
                         <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs uppercase tracking-wider font-semibold">
                           Partner merytoryczny publikacji
                         </Badge>
-                        <span className="text-xs text-neutral-500 flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" />
                           {post.sponsoredLawFirm.miasto}
                         </span>
                       </div>
-                      <h3 className="font-playfair text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                      <h3 className="font-playfair text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-amber-400 transition-colors">
                         {post.sponsoredLawFirm.nazwa}
                       </h3>
                       {post.sponsoredLawFirm.opis && (
@@ -495,7 +495,7 @@ export default function BlogPostPage() {
                       <Button
                         asChild
                         variant="outline"
-                        className="border-neutral-800 bg-[#0f0f0e]/50 hover:bg-neutral-850 hover:text-white text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer"
+                        className="border-border bg-background/50 hover:bg-card hover:text-foreground text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer"
                       >
                         <Link href={`/ekspert/${post.sponsoredLawFirm.slug}#kontakt`}>
                           Zadaj pytanie online
@@ -508,16 +508,16 @@ export default function BlogPostPage() {
             )}
 
             {/* Bottom Premium CTA Block */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#13201e]/60 to-[#0e0e0d] border border-primary/20 rounded-3xl p-8 shadow-2xl group">
+            <div className="relative overflow-hidden bg-gradient-to-br from-card/60 to-background border border-primary/20 rounded-3xl p-8 shadow-2xl group">
               {/* Blur accent glow */}
               <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-primary/10 blur-[70px] pointer-events-none" />
 
               <div className="relative z-10 space-y-6">
                 <div className="max-w-xl">
-                  <h3 className="font-playfair text-2xl md:text-3xl font-bold text-white mb-3">
+                  <h3 className="font-playfair text-2xl md:text-3xl font-bold text-foreground mb-3">
                     Potrzebujesz pomocy prawnej?
                   </h3>
-                  <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
+                  <p className="text-sm md:text-base text-foreground/80 leading-relaxed">
                     Skonsultuj się bezpośrednio z autorem tej publikacji lub
                     dodaj bezpłatnie opis swojej sprawy na platformie, a
                     zarejestrowani eksperci prawni sami zgłoszą się do Ciebie z
@@ -537,7 +537,7 @@ export default function BlogPostPage() {
                   <Button
                     asChild
                     variant="outline"
-                    className="border-neutral-800 bg-[#0f0f0e]/50 hover:bg-neutral-850 hover:text-white text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer"
+                    className="border-border bg-background/50 hover:bg-card hover:text-foreground text-neutral-350 rounded-xl px-6 py-6 transition-all text-sm cursor-pointer"
                   >
                     <Link href="/dodaj-sprawe">
                       Opisz swoją sprawę za darmo
@@ -552,7 +552,7 @@ export default function BlogPostPage() {
           <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[95px] h-fit">
             {post.isSponsored && post.sponsoredLawFirm ? (
               /* About Sponsor card */
-              <div className="bg-[#1e1a0f]/60 border border-amber-500/20 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+              <div className="bg-card/60 border border-amber-500/20 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
                 {/* Visual amber glow on hover */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-amber-500/25" />
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500/80 via-yellow-500/80 to-amber-500/80" />
@@ -560,7 +560,7 @@ export default function BlogPostPage() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     {post.sponsoredLawFirm.logo ? (
-                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/20 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-amber-500/50 transition-colors">
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/20 shadow-md flex-shrink-0 bg-card group-hover:border-amber-500/50 transition-colors">
                         <img
                           src={post.sponsoredLawFirm.logo}
                           alt={post.sponsoredLawFirm.nazwa}
@@ -568,7 +568,7 @@ export default function BlogPostPage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                      <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center border border-border shadow-md flex-shrink-0">
                         <Building2 className="w-8 h-8 text-amber-500/60" />
                       </div>
                     )}
@@ -577,19 +577,19 @@ export default function BlogPostPage() {
                       <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs uppercase tracking-wider mb-1.5 font-semibold animate-pulse">
                         Sponsor artykułu
                       </Badge>
-                      <h3 className="font-semibold text-white text-base leading-tight group-hover:text-amber-400 transition-colors">
+                      <h3 className="font-semibold text-foreground text-base leading-tight group-hover:text-amber-400 transition-colors">
                         {post.sponsoredLawFirm.nazwa}
                       </h3>
-                      <p className="text-xs text-neutral-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {post.sponsoredLawFirm.nazwa}
                       </p>
                     </div>
                   </div>
 
-                  <Separator className="bg-neutral-800/60" />
+                  <Separator className="bg-muted/60" />
 
                   {/* Location */}
-                  <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                  <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                     <MapPin className="w-4 h-4 text-amber-500/80 flex-shrink-0" />
                     <span>
                       {post.sponsoredLawFirm.miasto}, woj. {post.sponsoredLawFirm.voivodeship.nazwa}
@@ -599,9 +599,9 @@ export default function BlogPostPage() {
                   {/* Description excerpt */}
                   {post.sponsoredLawFirm.opis && (
                     <>
-                      <Separator className="bg-neutral-800/60" />
+                      <Separator className="bg-muted/60" />
                       <div
-                        className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
+                        className="text-sm text-muted-foreground line-clamp-4 leading-relaxed about-description"
                         dangerouslySetInnerHTML={{ __html: post.sponsoredLawFirm.opis }}
                       />
                     </>
@@ -621,14 +621,14 @@ export default function BlogPostPage() {
               </div>
             ) : post.lawFirm ? (
               /* About Author card */
-              <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+              <div className="bg-card/60 border border-border/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
                 {/* Visual glow on hover */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
 
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     {post.lawFirm.logo ? (
-                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-neutral-800/80 shadow-md flex-shrink-0 bg-neutral-900 group-hover:border-primary/40 transition-colors">
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-border/80 shadow-md flex-shrink-0 bg-card group-hover:border-primary/40 transition-colors">
                         <img
                           src={post.lawFirm.logo}
                           alt={post.lawFirm.nazwa}
@@ -636,8 +636,8 @@ export default function BlogPostPage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
-                        <Building2 className="w-8 h-8 text-neutral-500" />
+                      <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center border border-border shadow-md flex-shrink-0">
+                        <Building2 className="w-8 h-8 text-muted-foreground" />
                       </div>
                     )}
 
@@ -645,19 +645,19 @@ export default function BlogPostPage() {
                       <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
                         Ekspert prawny
                       </Badge>
-                      <h3 className="font-semibold text-white text-base leading-tight group-hover:text-primary transition-colors">
+                      <h3 className="font-semibold text-foreground text-base leading-tight group-hover:text-primary transition-colors">
                         {post.lawFirm.nazwa}
                       </h3>
-                      <p className="text-xs text-neutral-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {post.lawFirm.nazwa}
                       </p>
                     </div>
                   </div>
 
-                  <Separator className="bg-neutral-800/60" />
+                  <Separator className="bg-muted/60" />
 
                   {/* Location */}
-                  <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                  <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
                     <MapPin className="w-4 h-4 text-primary/80 flex-shrink-0" />
                     <span>
                       {post.lawFirm.miasto}, woj. {post.lawFirm.voivodeship.nazwa}
@@ -667,9 +667,9 @@ export default function BlogPostPage() {
                   {/* Description excerpt */}
                   {post.lawFirm.opis && (
                     <>
-                      <Separator className="bg-neutral-800/60" />
+                      <Separator className="bg-muted/60" />
                       <div
-                        className="text-sm text-neutral-400 line-clamp-4 leading-relaxed about-description"
+                        className="text-sm text-muted-foreground line-clamp-4 leading-relaxed about-description"
                         dangerouslySetInnerHTML={{ __html: post.lawFirm.opis }}
                       />
                     </>
@@ -689,12 +689,12 @@ export default function BlogPostPage() {
               </div>
             ) : (
               /* About Portal card */
-              <div className="bg-[#151513]/60 border border-neutral-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
+              <div className="bg-card/60 border border-border/80 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none transition-opacity duration-300 group-hover:from-primary/20" />
 
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-neutral-950 flex items-center justify-center border border-neutral-800 shadow-md flex-shrink-0">
+                    <div className="w-16 h-16 rounded-2xl bg-background flex items-center justify-center border border-border shadow-md flex-shrink-0">
                       <Building2 className="w-8 h-8 text-primary" />
                     </div>
 
@@ -702,18 +702,18 @@ export default function BlogPostPage() {
                       <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
                         Administracja
                       </Badge>
-                      <h3 className="font-semibold text-white text-base leading-tight">
+                      <h3 className="font-semibold text-foreground text-base leading-tight">
                         Prosta Sprawa
                       </h3>
-                      <p className="text-xs text-neutral-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         Portal Pomocy Prawnej
                       </p>
                     </div>
                   </div>
 
-                  <Separator className="bg-neutral-800/60" />
+                  <Separator className="bg-muted/60" />
 
-                  <p className="text-sm text-neutral-400 leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     Nasz portal pomaga w szybkim znajdowaniu sprawdzonych ekspertów w całej Polsce.
                   </p>
 
@@ -731,14 +731,14 @@ export default function BlogPostPage() {
             )}
 
             {/* Quick Contact CTA */}
-            <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 border border-primary/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-card to-background border border-primary/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
               <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
-              <h4 className="font-bold text-white text-base mb-2 flex items-center gap-2">
+              <h4 className="font-bold text-foreground text-base mb-2 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Szybki kontakt
               </h4>
-              <p className="text-sm text-neutral-400 mb-5 leading-relaxed">
+              <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
                 {post.lawFirm
                   ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do ekspercie."
                   : "Masz dodatkowe pytania? Wyślij wiadomość do redakcji portalu."
@@ -747,7 +747,7 @@ export default function BlogPostPage() {
               <Button
                 asChild
                 variant="outline"
-                className="w-full border-neutral-850 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-xl py-5 transition-all cursor-pointer"
+                className="w-full border-border hover:bg-muted text-foreground/80 hover:text-foreground rounded-xl py-5 transition-all cursor-pointer"
               >
                 <Link href={post.lawFirm ? `/ekspert/${post.lawFirm.slug}#kontakt` : "/kontakt"}>
                   Napisz wiadomość

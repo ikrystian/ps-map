@@ -217,7 +217,7 @@ export default function KlubPartnerskiPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-zinc-400 text-sm md:text-base font-light">Ładowanie programu partnerskiego...</p>
+        <p className="text-muted-foreground text-sm md:text-base font-light">Ładowanie programu partnerskiego...</p>
       </div>
     )
   }
@@ -256,11 +256,11 @@ export default function KlubPartnerskiPage() {
           <Card variant="glass" className="rounded-2xl relative overflow-hidden">
             <BorderBeam lightColor="var(--secondary)" lightWidth={400} duration={8} borderWidth={1} />
             <CardHeader className="p-6 pb-4">
-              <CardTitle className="text-xl font-bold text-white flex items-center gap-2.5">
+              <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2.5">
                 <Award className="h-5 w-5 text-secondary" />
                 Dołącz do Klubu Partnerskiego
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs font-light">
+              <CardDescription className="text-muted-foreground text-xs font-light">
                 Umieść nasz banner na swojej stronie i otrzymuj regularne punkty promocyjne
               </CardDescription>
             </CardHeader>
@@ -285,7 +285,7 @@ export default function KlubPartnerskiPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Benefits */}
                 <div className="space-y-4">
-                  <h3 className="font-bold text-base text-white">Korzyści programu</h3>
+                  <h3 className="font-bold text-base text-foreground">Korzyści programu</h3>
                   <div className="space-y-3.5">
                     {[
                       { icon: Gift, color: "var(--secondary)", title: "100 punktów miesięcznie", desc: "za umieszczenie i utrzymanie bannera na swojej witrynie internetowej." },
@@ -296,12 +296,12 @@ export default function KlubPartnerskiPage() {
                       const Icon = benefit.icon
                       return (
                         <div key={i} className="flex gap-3">
-                          <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border border-border/10 bg-zinc-950/40" style={{ color: benefit.color }}>
+                          <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border border-border/10 bg-background/40" style={{ color: benefit.color }}>
                             <Icon className="h-4.5 w-4.5" />
                           </div>
                           <div className="space-y-0.5">
-                            <h4 className="text-xs font-semibold text-white">{benefit.title}</h4>
-                            <p className="text-xs text-zinc-400 font-light leading-normal">{benefit.desc}</p>
+                            <h4 className="text-xs font-semibold text-foreground">{benefit.title}</h4>
+                            <p className="text-xs text-muted-foreground font-light leading-normal">{benefit.desc}</p>
                           </div>
                         </div>
                       )
@@ -311,7 +311,7 @@ export default function KlubPartnerskiPage() {
 
                 {/* How it works */}
                 <div className="space-y-4">
-                  <h3 className="font-bold text-base text-white">Jak to działa?</h3>
+                  <h3 className="font-bold text-base text-foreground">Jak to działa?</h3>
                   <div className="space-y-3.5">
                     {[
                       { step: "1", title: "Zgłoszenie udziału", desc: "Kliknij przycisk poniżej, aby wygenerować unikalny kod partnerski." },
@@ -319,12 +319,12 @@ export default function KlubPartnerskiPage() {
                       { step: "3", title: "Szybka weryfikacja", desc: "Kliknij 'Weryfikuj', by aktywować program i zacząć zbierać punkty." }
                     ].map((step, i) => (
                       <div key={i} className="flex gap-3">
-                        <div className="h-8 w-8 rounded-full border-2 border-border/30 flex items-center justify-center font-bold text-xs text-primary bg-zinc-950/40 shrink-0">
+                        <div className="h-8 w-8 rounded-full border-2 border-border/30 flex items-center justify-center font-bold text-xs text-primary bg-background/40 shrink-0">
                           {step.step}
                         </div>
                         <div className="space-y-0.5">
-                          <h4 className="text-xs font-semibold text-white">{step.title}</h4>
-                          <p className="text-xs text-zinc-400 font-light leading-normal">{step.desc}</p>
+                          <h4 className="text-xs font-semibold text-foreground">{step.title}</h4>
+                          <p className="text-xs text-muted-foreground font-light leading-normal">{step.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -352,7 +352,7 @@ export default function KlubPartnerskiPage() {
                 onClick={handleJoinProgram}
                 disabled={joining || !partnerStatus?.hasWebsite}
                 variant="secondary"
-                className="w-full h-11 text-zinc-950 font-bold rounded-xl shadow-md border-t border-white/20 transition-all text-sm mt-4 disabled:opacity-50"
+                className="w-full h-11 text-zinc-950 font-bold rounded-xl shadow-md border-t border-border transition-all text-sm mt-4 disabled:opacity-50"
                 size="lg"
               >
                 {joining && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -405,7 +405,7 @@ export default function KlubPartnerskiPage() {
         <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-primary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Status programu</p>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Status programu</p>
               <div className="flex items-center gap-2 mt-1.5">
                 {partnerStatus.active ? (
                   <>
@@ -432,10 +432,10 @@ export default function KlubPartnerskiPage() {
         <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-secondary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Miesięczna nagroda</p>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Miesięczna nagroda</p>
               <div className="flex items-baseline gap-1 mt-1.5">
-                <span className="text-2xl font-bold text-white">{partnerStatus.monthlyPoints}</span>
-                <span className="text-xs text-zinc-400 font-light">pkt</span>
+                <span className="text-2xl font-bold text-foreground">{partnerStatus.monthlyPoints}</span>
+                <span className="text-xs text-muted-foreground font-light">pkt</span>
               </div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-secondary/10 border border-secondary/20 text-secondary flex items-center justify-center">
@@ -447,10 +447,10 @@ export default function KlubPartnerskiPage() {
         <Card variant="glass" className="rounded-2xl overflow-hidden p-6 hover:border-primary/30 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-zinc-500 uppercase tracking-wider font-semibold">Łącznie zdobyte</p>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Łącznie zdobyte</p>
               <div className="flex items-baseline gap-1 mt-1.5">
-                <span className="text-2xl font-bold text-white">{partnerStatus.totalPointsEarned}</span>
-                <span className="text-xs text-zinc-400 font-light">pkt</span>
+                <span className="text-2xl font-bold text-foreground">{partnerStatus.totalPointsEarned}</span>
+                <span className="text-xs text-muted-foreground font-light">pkt</span>
               </div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
@@ -470,11 +470,11 @@ export default function KlubPartnerskiPage() {
         <Card variant="glass" className="rounded-2xl overflow-hidden">
           <CardHeader className="p-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4 space-y-0">
             <div>
-              <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2.5">
                 <Globe className="h-5 w-5 text-primary" />
                 Status weryfikacji bannera
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs font-light mt-1.5">
+              <CardDescription className="text-muted-foreground text-xs font-light mt-1.5">
                 {partnerStatus.websiteUrl && (
                   <a
                     href={partnerStatus.websiteUrl}
@@ -490,7 +490,7 @@ export default function KlubPartnerskiPage() {
             </div>
           </CardHeader>
           <CardContent className="p-6 pt-0 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-zinc-950/20 border border-border/10 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-background/20 border border-border/10 rounded-xl">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   {partnerStatus.bannerPlaced ? (
@@ -500,16 +500,16 @@ export default function KlubPartnerskiPage() {
                     </>
                   ) : (
                     <>
-                      <AlertCircle className="h-5 w-5 text-zinc-500" />
-                      <span className="font-semibold text-zinc-400 text-sm">Banner niezweryfikowany</span>
+                      <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                      <span className="font-semibold text-muted-foreground text-sm">Banner niezweryfikowany</span>
                     </>
                   )}
                 </div>
                 {partnerStatus.lastVerificationDate && (
-                  <p className="text-xs text-zinc-400 font-light">
+                  <p className="text-xs text-muted-foreground font-light">
                     Ostatnia weryfikacja: {formatDateTime(partnerStatus.lastVerificationDate)}
                     {partnerStatus.daysSinceVerification !== null && (
-                      <span className="ml-1 text-zinc-500">({partnerStatus.daysSinceVerification} {partnerStatus.daysSinceVerification === 1 ? 'dzień' : 'dni'} temu)</span>
+                      <span className="ml-1 text-muted-foreground">({partnerStatus.daysSinceVerification} {partnerStatus.daysSinceVerification === 1 ? 'dzień' : 'dni'} temu)</span>
                     )}
                   </p>
                 )}
@@ -555,23 +555,23 @@ export default function KlubPartnerskiPage() {
         {/* Banner Code */}
         <Card variant="glass" className="rounded-2xl overflow-hidden">
           <CardHeader className="p-6 pb-4">
-            <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
+            <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2.5">
               <Code className="h-5 w-5 text-secondary" />
               Kod bannera do umieszczenia
             </CardTitle>
-            <CardDescription className="text-zinc-400 text-xs font-light">
+            <CardDescription className="text-muted-foreground text-xs font-light">
               Skopiuj i wklej jeden z poniższych kodów w strukturze swojej witryny internetowej
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 pt-0 space-y-5">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-zinc-300">Kod HTML (zalecany)</Label>
+                <Label className="text-xs font-semibold text-foreground/80">Kod HTML (zalecany)</Label>
                 <Button
                   onClick={() => copyToClipboard(bannerHtml, 'code')}
                   variant="ghost"
                   size="sm"
-                  className="h-8 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white text-xs font-semibold"
+                  className="h-8 rounded-lg hover:bg-foreground/5 text-muted-foreground hover:text-foreground text-xs font-semibold"
                 >
                   {copiedCode ? (
                     <>
@@ -586,19 +586,19 @@ export default function KlubPartnerskiPage() {
                   )}
                 </Button>
               </div>
-              <pre className="bg-zinc-950/60 text-zinc-300 p-4 rounded-xl border border-border/10 overflow-x-auto text-xs font-mono leading-relaxed">
+              <pre className="bg-background/60 text-foreground/80 p-4 rounded-xl border border-border/10 overflow-x-auto text-xs font-mono leading-relaxed">
                 <code>{bannerHtml}</code>
               </pre>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-zinc-300">Kod JavaScript (alternatywny)</Label>
+                <Label className="text-xs font-semibold text-foreground/80">Kod JavaScript (alternatywny)</Label>
                 <Button
                   onClick={() => copyToClipboard(bannerScript, 'script')}
                   variant="ghost"
                   size="sm"
-                  className="h-8 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white text-xs font-semibold"
+                  className="h-8 rounded-lg hover:bg-foreground/5 text-muted-foreground hover:text-foreground text-xs font-semibold"
                 >
                   {copiedScript ? (
                     <>
@@ -613,16 +613,16 @@ export default function KlubPartnerskiPage() {
                   )}
                 </Button>
               </div>
-              <pre className="bg-zinc-950/60 text-zinc-300 p-4 rounded-xl border border-border/10 overflow-x-auto text-xs font-mono leading-relaxed">
+              <pre className="bg-background/60 text-foreground/80 p-4 rounded-xl border border-border/10 overflow-x-auto text-xs font-mono leading-relaxed">
                 <code>{bannerScript}</code>
               </pre>
             </div>
 
-            <Alert className="bg-zinc-950/30 border border-border/10 rounded-xl">
+            <Alert className="bg-background/30 border border-border/10 rounded-xl">
               <AlertCircle className="h-4 w-4 text-secondary" />
-              <AlertTitle className="font-semibold text-sm text-white">Ważne wskazówki instalacji</AlertTitle>
-              <AlertDescription className="text-xs text-zinc-400 font-light mt-1.5 leading-relaxed">
-                Banner must be physically visible on your home page or subpages. Usually placed in footer or sidebar. After embedding the code click <strong className="text-white font-medium">Verify now</strong> to immediately verify installation.
+              <AlertTitle className="font-semibold text-sm text-foreground">Ważne wskazówki instalacji</AlertTitle>
+              <AlertDescription className="text-xs text-muted-foreground font-light mt-1.5 leading-relaxed">
+                Banner must be physically visible on your home page or subpages. Usually placed in footer or sidebar. After embedding the code click <strong className="text-foreground font-medium">Verify now</strong> to immediately verify installation.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -632,11 +632,11 @@ export default function KlubPartnerskiPage() {
         {partnerStatus.pointsHistory && partnerStatus.pointsHistory.length > 0 && (
           <Card variant="glass" className="rounded-2xl overflow-hidden">
             <CardHeader className="p-6 pb-4">
-              <CardTitle className="text-lg font-bold text-white flex items-center gap-2.5">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2.5">
                 <Calendar className="h-5 w-5 text-primary" />
                 Historia przyznanych punktów
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs font-light">
+              <CardDescription className="text-muted-foreground text-xs font-light">
                 Ostatnie {partnerStatus.pointsHistory.length} miesięcy aktywności
               </CardDescription>
             </CardHeader>
@@ -646,16 +646,16 @@ export default function KlubPartnerskiPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent border-b border-border/10">
-                      <TableHead className="text-zinc-400 font-semibold text-xs uppercase tracking-wider">Miesiąc</TableHead>
-                      <TableHead className="text-zinc-400 font-semibold text-xs uppercase tracking-wider">Punkty</TableHead>
-                      <TableHead className="text-zinc-400 font-semibold text-xs uppercase tracking-wider">Status weryfikacji</TableHead>
-                      <TableHead className="text-zinc-400 font-semibold text-xs uppercase tracking-wider text-right">Data przyznania</TableHead>
+                      <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Miesiąc</TableHead>
+                      <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Punkty</TableHead>
+                      <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Status weryfikacji</TableHead>
+                      <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider text-right">Data przyznania</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {partnerStatus.pointsHistory.map((history) => (
-                      <TableRow key={history.id} className="hover:bg-zinc-950/10 border-b border-border/5">
-                        <TableCell className="font-medium text-white text-sm">
+                      <TableRow key={history.id} className="hover:bg-background/10 border-b border-border/5">
+                        <TableCell className="font-medium text-foreground text-sm">
                           {MONTH_NAMES[history.month - 1]} {history.year}
                         </TableCell>
                         <TableCell>
@@ -676,7 +676,7 @@ export default function KlubPartnerskiPage() {
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="text-right text-xs text-zinc-400 font-light">
+                        <TableCell className="text-right text-xs text-muted-foreground font-light">
                           {formatDate(history.createdAt)}
                         </TableCell>
                       </TableRow>
@@ -688,9 +688,9 @@ export default function KlubPartnerskiPage() {
               {/* Mobile Cards List View */}
               <div className="grid grid-cols-1 gap-3 md:hidden">
                 {partnerStatus.pointsHistory.map((history) => (
-                  <div key={history.id} className="border border-border/10 bg-zinc-950/20 rounded-xl p-4 space-y-3">
+                  <div key={history.id} className="border border-border/10 bg-background/20 rounded-xl p-4 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-white text-sm">
+                      <span className="font-bold text-foreground text-sm">
                         {MONTH_NAMES[history.month - 1]} {history.year}
                       </span>
                       <Badge className="bg-primary/10 border border-primary/20 text-primary text-xs font-semibold py-0.5 rounded-lg">
@@ -698,7 +698,7 @@ export default function KlubPartnerskiPage() {
                       </Badge>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-500 font-light">Status:</span>
+                      <span className="text-muted-foreground font-light">Status:</span>
                       {history.verificationStatus ? (
                         <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium py-0.5 rounded-lg flex items-center gap-1">
                           <CheckCircle2 className="h-3 w-3" />
@@ -712,8 +712,8 @@ export default function KlubPartnerskiPage() {
                       )}
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-500 font-light">Dodano:</span>
-                      <span className="text-zinc-400 font-light">{formatDate(history.createdAt)}</span>
+                      <span className="text-muted-foreground font-light">Dodano:</span>
+                      <span className="text-muted-foreground font-light">{formatDate(history.createdAt)}</span>
                     </div>
                   </div>
                 ))}
@@ -725,12 +725,12 @@ export default function KlubPartnerskiPage() {
         {/* Info Card */}
         <Card variant="glass" className="border-primary/30 bg-primary/5 rounded-2xl shadow-lg overflow-hidden">
           <CardHeader className="p-6 pb-2">
-            <CardTitle className="text-white text-base font-bold flex items-center gap-2.5">
+            <CardTitle className="text-foreground text-base font-bold flex items-center gap-2.5">
               <Sparkles className="h-5 w-5 text-primary" />
               Jak zdobywać punkty w Klubie?
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 pt-0 space-y-2.5 text-xs text-zinc-300 font-light">
+          <CardContent className="p-6 pt-0 space-y-2.5 text-xs text-foreground/80 font-light">
             <p className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Upewnij się, że kod bannera jest umieszczony w widocznym miejscu na Twojej stronie WWW.

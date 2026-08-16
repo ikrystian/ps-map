@@ -119,7 +119,7 @@ export function CityCombobox({
             className,
           )}
         >
-          <span className={cn("truncate", cityName ? "text-white font-medium" : "text-muted-foreground")}>
+          <span className={cn("truncate", cityName ? "text-foreground font-medium" : "text-muted-foreground")}>
             {cityName || placeholder}
           </span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-primary opacity-80" />
@@ -133,15 +133,15 @@ export function CityCombobox({
           <CommandInput placeholder="Wyszukaj miasto..." value={search} onValueChange={setSearch} />
           <CommandList className="max-h-60 overflow-y-auto">
             {isQueryTooShort && (
-              <div className="text-neutral-400 py-3 text-center text-xs px-3">
+              <div className="text-muted-foreground py-3 text-center text-xs px-3">
                 Wpisz co najmniej 2 znaki...
               </div>
             )}
             {!isQueryTooShort && isLoading && (
-              <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+              <div className="text-muted-foreground py-3 text-center text-xs">Wyszukiwanie...</div>
             )}
             {!isQueryTooShort && !isLoading && visibleCities.length === 0 && (
-              <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+              <div className="text-muted-foreground py-3 text-center text-xs">Nie znaleziono miasta.</div>
             )}
             <CommandGroup>
               {visibleCities.map((city) => {
@@ -165,7 +165,7 @@ export function CityCombobox({
                       });
                       setOpen(false);
                     }}
-                    className="cursor-pointer flex items-center justify-between gap-2 py-2.5 px-3 text-sm rounded-lg hover:bg-primary/15 hover:text-white data-[selected=true]:bg-primary/20 text-zinc-200 my-0.5 border border-transparent hover:border-primary/30 transition-all"
+                    className="cursor-pointer flex items-center justify-between gap-2 py-2.5 px-3 text-sm rounded-lg hover:bg-primary/15 hover:text-white data-[selected=true]:bg-primary/20 text-foreground my-0.5 border border-transparent hover:border-primary/30 transition-all"
                   >
                     <div className="flex items-center gap-2">
                       <Check

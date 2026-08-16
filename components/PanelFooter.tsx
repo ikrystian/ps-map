@@ -51,7 +51,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
       {/* Partners banner */}
       {logos.length > 0 && (
         <div className="flex flex-wrap items-center justify-center gap-6 shadow-lg rounded-xl bg-card/30 backdrop-blur-sm border border-border/40 p-5 w-full mx-auto mb-6">
-          <span className="hidden sm:block text-sm font-medium text-zinc-400">Nasi partnerzy:</span>
+          <span className="hidden sm:block text-sm font-medium text-muted-foreground">Nasi partnerzy:</span>
 
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
             {logos.map((logo, idx) => {
@@ -67,7 +67,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
 
               return (
                 <Fragment key={logo.id}>
-                  {idx > 0 && <div className="hidden sm:block h-4 w-px bg-zinc-800/80" />}
+                  {idx > 0 && <div className="hidden sm:block h-4 w-px bg-muted/80" />}
                   {logo.linkUrl ? (
                     <PreviewLinkCard href={logo.linkUrl}>
                       <PreviewLinkCardTrigger
@@ -77,7 +77,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
                       >
                         {image}
                       </PreviewLinkCardTrigger>
-                      <PreviewLinkCardContent className="z-50 zp-1 bg-zinc-900/90 border-zinc-800 backdrop-blur-md rounded-lg shadow-xl">
+                      <PreviewLinkCardContent className="z-50 zp-1 bg-card/90 border-border backdrop-blur-md rounded-lg shadow-xl">
                         <PreviewLinkCardImage
                           alt={logo.name}
                           className="w-[240px] h-[135px] object-cover rounded"
@@ -95,17 +95,17 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
       )}
 
       {/* Separator line */}
-      <div className="border-t border-zinc-800/40 my-3 max-w-3xl mx-auto" />
+      <div className="border-t border-border/40 my-3 max-w-3xl mx-auto" />
 
       {/* Bottom Copyright and Social Links */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
         <span>2026 © ProstaSprawa.pl</span>
         <div className="flex gap-2">
           <a
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/40 text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border/20 transition-all"
           >
             <Instagram className="h-4 w-4" />
           </a>
@@ -113,7 +113,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/40 text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border/20 transition-all"
           >
             <Facebook className="h-4 w-4" />
           </a>
@@ -121,7 +121,7 @@ export function PanelFooter({ className = "", id }: PanelFooterProps) {
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/40 text-zinc-400 hover:bg-zinc-800/80 hover:text-white border border-zinc-800/20 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/40 text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border/20 transition-all"
           >
             <Linkedin className="h-4 w-4" />
           </a>

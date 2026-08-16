@@ -205,7 +205,7 @@ export default function AccountManagersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Ładowanie...</div>
+        <div className="text-muted-foreground">Ładowanie...</div>
       </div>
     )
   }
@@ -370,7 +370,7 @@ export default function AccountManagersPage() {
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-muted-foreground py-8">
                   Brak przypisanych ekspertów
                 </div>
               )}
@@ -404,7 +404,7 @@ export default function AccountManagersPage() {
             <TableBody>
               {accountManagers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground">
                     Brak opiekunów
                   </TableCell>
                 </TableRow>
@@ -431,7 +431,7 @@ export default function AccountManagersPage() {
                     <TableCell>{manager.telefon || '-'}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-1">
-                        <Users className="h-4 w-4 text-gray-500" />
+                        <Users className="h-4 w-4 text-muted-foreground" />
                         <span>{manager._count.lawFirms}</span>
                       </div>
                     </TableCell>

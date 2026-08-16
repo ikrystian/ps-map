@@ -37,8 +37,8 @@ export const LayoutGrid = ({ cards }: { cards: Card[] }) => {
               selected?.id === card.id
                 ? "absolute inset-0 h-[60vh] w-full md:w-[70vw] max-w-4xl m-auto z-50 flex justify-center items-center flex-wrap flex-col"
                 : lastSelected?.id === card.id
-                ? "z-40 bg-white dark:bg-neutral-900 h-full w-full"
-                : "bg-white dark:bg-neutral-900 h-full w-full"
+                ? "z-40 bg-white dark:bg-card h-full w-full"
+                : "bg-white dark:bg-card h-full w-full"
             )}
             layoutId={`card-${card.id}`}
           >
@@ -93,7 +93,7 @@ const SelectedCard = ({ selected, handleClose }: { selected: Card | null; handle
           e.stopPropagation();
           handleClose(e);
         }}
-        className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/75 text-white transition-colors border border-white/10"
+        className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 hover:bg-black/75 text-white transition-colors border border-border"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

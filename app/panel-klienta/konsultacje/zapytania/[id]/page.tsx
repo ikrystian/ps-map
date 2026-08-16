@@ -141,7 +141,7 @@ export default function ClientConsultationRequestDetailPage() {
   if (!request) {
     return (
       <div className="space-y-6 py-16 text-center">
-        <p className="text-zinc-400">Nie znaleziono zapytania.</p>
+        <p className="text-muted-foreground">Nie znaleziono zapytania.</p>
         <Button asChild variant="outline">
           <Link href="/panel-klienta/konsultacje/zapytania">Wróć do listy</Link>
         </Button>
@@ -167,8 +167,8 @@ export default function ClientConsultationRequestDetailPage() {
           isAccepted
             ? "border-emerald-500/30 bg-emerald-500/5"
             : isRejected
-              ? "border-border/10 bg-zinc-950/10 opacity-60"
-              : "border-border/10 bg-zinc-950/20 hover:border-primary/30"
+              ? "border-border/10 bg-background/10 opacity-60"
+              : "border-border/10 bg-background/20 hover:border-primary/30"
         }`}
       >
         <div className="flex flex-col gap-4 md:flex-row md:justify-between">
@@ -176,7 +176,7 @@ export default function ClientConsultationRequestDetailPage() {
             <Link href={`/ekspert/${interest.lawFirm.slug}`} className="shrink-0 transition-opacity hover:opacity-80">
               <Avatar className="h-16 w-16 rounded-md border border-border/40">
                 <AvatarImage src={expertAvatar(interest.lawFirm.logo)} alt={interest.lawFirm.nazwa} />
-                <AvatarFallback className="bg-zinc-800 text-sm font-semibold text-zinc-200">
+                <AvatarFallback className="bg-muted text-sm font-semibold text-foreground">
                   {interest.lawFirm.nazwa.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -186,7 +186,7 @@ export default function ClientConsultationRequestDetailPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={`/ekspert/${interest.lawFirm.slug}`}
-                  className="font-playfair text-lg font-semibold text-white transition-colors hover:text-primary"
+                  className="font-playfair text-lg font-semibold text-foreground transition-colors hover:text-primary"
                 >
                   {interest.lawFirm.nazwa}
                 </Link>
@@ -196,12 +196,12 @@ export default function ClientConsultationRequestDetailPage() {
                   </Badge>
                 )}
                 {isRejected && (
-                  <Badge className="border border-border/20 bg-zinc-800/40 text-zinc-400">Odrzucone</Badge>
+                  <Badge className="border border-border/20 bg-muted/40 text-muted-foreground">Odrzucone</Badge>
                 )}
               </div>
 
               {location && (
-                <p className="flex items-center gap-1.5 text-xs text-zinc-500">
+                <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <MapPin className="h-3 w-3" />
                   {location}
                 </p>
@@ -212,24 +212,24 @@ export default function ClientConsultationRequestDetailPage() {
                   <Calendar className="h-3 w-3" />
                   {format(new Date(interest.proponowanyTermin), "PPP p", { locale: pl })}
                 </Badge>
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   <Clock className="h-3 w-3" />
                   {interest.duration} min
                 </Badge>
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   {CONSULTATION_FORM_LABELS[interest.forma]}
                 </Badge>
               </div>
 
               {interest.alternatywnyTermin && (
-                <p className="flex items-center gap-1.5 text-xs text-zinc-500">
+                <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <CalendarClock className="h-3 w-3" />
                   Termin alternatywny:{" "}
                   {format(new Date(interest.alternatywnyTermin), "PPP p", { locale: pl })}
                 </p>
               )}
 
-              <p className="whitespace-pre-line text-sm font-light leading-relaxed text-zinc-300">
+              <p className="whitespace-pre-line text-sm font-light leading-relaxed text-foreground/80">
                 {interest.wiadomosc}
               </p>
             </div>
@@ -237,8 +237,8 @@ export default function ClientConsultationRequestDetailPage() {
 
           <div className="flex shrink-0 flex-col items-start gap-3 md:items-end">
             <div className="text-right">
-              <p className="font-playfair text-2xl font-semibold text-white">{interest.cena} PLN</p>
-              <p className="text-xs text-zinc-500">za konsultację</p>
+              <p className="font-playfair text-2xl font-semibold text-foreground">{interest.cena} PLN</p>
+              <p className="text-xs text-muted-foreground">za konsultację</p>
             </div>
 
             {interest.status === "ZLOZONE" && !isClosed && (
@@ -268,7 +268,7 @@ export default function ClientConsultationRequestDetailPage() {
     <div className="relative space-y-8">
       <div className="absolute left-1/4 top-0 pointer-events-none h-[300px] w-[300px] rounded-full bg-primary/5 blur-[120px]" />
 
-      <Button asChild variant="ghost" size="sm" className="relative z-10 gap-1.5 text-zinc-400">
+      <Button asChild variant="ghost" size="sm" className="relative z-10 gap-1.5 text-muted-foreground">
         <Link href="/panel-klienta/konsultacje/zapytania">
           <ArrowLeft className="h-4 w-4" />
           Wróć do zapytań
@@ -282,33 +282,33 @@ export default function ClientConsultationRequestDetailPage() {
           <CardContent className="space-y-4 p-6">
             <div className="flex flex-wrap gap-2">
               {request.category && (
-                <Badge className="rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+                <Badge className="rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                   {request.category.nazwa}
                 </Badge>
               )}
-              <Badge className="rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+              <Badge className="rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                 {CONSULTATION_FORM_LABELS[request.forma]}
               </Badge>
               {request.preferowanyCzas && (
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                   <Clock className="h-3 w-3" />
                   {request.preferowanyCzas} min
                 </Badge>
               )}
               {request.budzetDo && (
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                   <Wallet className="h-3 w-3" />
                   do {request.budzetDo} PLN
                 </Badge>
               )}
             </div>
 
-            <p className="whitespace-pre-line text-sm font-light leading-relaxed text-zinc-300">
+            <p className="whitespace-pre-line text-sm font-light leading-relaxed text-foreground/80">
               {request.opis}
             </p>
 
             {(request.terminOd || request.terminDo || request.preferowanyTermin) && (
-              <div className="space-y-1.5 border-t border-border/10 pt-4 text-sm text-zinc-400">
+              <div className="space-y-1.5 border-t border-border/10 pt-4 text-sm text-muted-foreground">
                 {(request.terminOd || request.terminDo) && (
                   <p>
                     Dostępność:{" "}
@@ -330,7 +330,7 @@ export default function ClientConsultationRequestDetailPage() {
                 <Heading level="h4" size="h4" className="text-base">
                   Konsultacja umówiona
                 </Heading>
-                <p className="mt-1 text-sm font-light text-zinc-400">
+                <p className="mt-1 text-sm font-light text-muted-foreground">
                   Szczegóły, link do spotkania i status płatności znajdziesz w zakładce umówionych konsultacji.
                 </p>
               </div>
@@ -352,7 +352,7 @@ export default function ClientConsultationRequestDetailPage() {
 
             {request.interests.length === 0 ? (
               <div className="mx-auto max-w-sm space-y-3 py-12 text-center">
-                <p className="text-sm font-light leading-relaxed text-zinc-400">
+                <p className="text-sm font-light leading-relaxed text-muted-foreground">
                   Żaden ekspert nie zgłosił się jeszcze do tej konsultacji. Powiadomimy Cię, gdy pojawi się
                   pierwsza propozycja terminu i ceny.
                 </p>

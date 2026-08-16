@@ -55,7 +55,7 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   ZLOZONE: { label: "Oczekuje na decyzję klienta", className: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
   ZAAKCEPTOWANE: { label: "Przyjęte – konsultacja umówiona", className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
   ODRZUCONE: { label: "Odrzucone przez klienta", className: "bg-red-500/10 text-red-400 border-red-500/20" },
-  WYGASLE: { label: "Wygasłe", className: "bg-zinc-800/40 text-zinc-400 border-border/20" },
+  WYGASLE: { label: "Wygasłe", className: "bg-muted/40 text-muted-foreground border-border/20" },
 }
 
 export default function ExpertConsultationRequestDetailPage() {
@@ -227,7 +227,7 @@ export default function ExpertConsultationRequestDetailPage() {
   if (!request) {
     return (
       <div className="space-y-6 py-16 text-center">
-        <p className="text-zinc-400">Nie znaleziono zapytania lub nie masz do niego dostępu.</p>
+        <p className="text-muted-foreground">Nie znaleziono zapytania lub nie masz do niego dostępu.</p>
         <Button asChild variant="outline">
           <Link href="/panel-eksperta/konsultacje/zapytania">Wróć do listy</Link>
         </Button>
@@ -243,7 +243,7 @@ export default function ExpertConsultationRequestDetailPage() {
     <div className="relative space-y-8">
       <div className="absolute left-1/4 top-0 pointer-events-none h-[300px] w-[300px] rounded-full bg-primary/5 blur-[120px]" />
 
-      <Button asChild variant="ghost" size="sm" className="relative z-10 gap-1.5 text-zinc-400">
+      <Button asChild variant="ghost" size="sm" className="relative z-10 gap-1.5 text-muted-foreground">
         <Link href="/panel-eksperta/konsultacje/zapytania">
           <ArrowLeft className="h-4 w-4" />
           Wróć do zapytań
@@ -264,33 +264,33 @@ export default function ExpertConsultationRequestDetailPage() {
                   {request.category.nazwa}
                 </Badge>
               )}
-              <Badge className="rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+              <Badge className="rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                 {CONSULTATION_FORM_LABELS[request.forma]}
               </Badge>
               {request.preferowanyCzas && (
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                   <Clock className="h-3 w-3" />
                   {request.preferowanyCzas} min
                 </Badge>
               )}
               {request.budzetDo && (
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                   <Wallet className="h-3 w-3" />
                   budżet do {request.budzetDo} PLN
                 </Badge>
               )}
-              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm text-zinc-300">
+              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm text-foreground/80">
                 <Users className="h-3 w-3" />
                 {request.liczbaZgloszen} zgłoszeń
               </Badge>
             </div>
 
-            <p className="whitespace-pre-line text-sm font-light leading-relaxed text-zinc-300">
+            <p className="whitespace-pre-line text-sm font-light leading-relaxed text-foreground/80">
               {request.opis}
             </p>
 
             {(request.terminOd || request.terminDo || request.preferowanyTermin) && (
-              <div className="space-y-1.5 border-t border-border/10 pt-4 text-sm text-zinc-400">
+              <div className="space-y-1.5 border-t border-border/10 pt-4 text-sm text-muted-foreground">
                 {(request.terminOd || request.terminDo) && (
                   <p>
                     Dostępność klienta:{" "}
@@ -335,20 +335,20 @@ export default function ExpertConsultationRequestDetailPage() {
                   <Calendar className="h-3 w-3" />
                   {format(new Date(ownInterest.proponowanyTermin), "PPP p", { locale: pl })}
                 </Badge>
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   <Clock className="h-3 w-3" />
                   {ownInterest.duration} min
                 </Badge>
-                <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   <Wallet className="h-3 w-3" />
                   {ownInterest.cena} PLN
                 </Badge>
-                <Badge className="rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                <Badge className="rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   {CONSULTATION_FORM_LABELS[ownInterest.forma]}
                 </Badge>
               </div>
 
-              <p className="whitespace-pre-line text-sm font-light leading-relaxed text-zinc-300">
+              <p className="whitespace-pre-line text-sm font-light leading-relaxed text-foreground/80">
                 {ownInterest.wiadomosc}
               </p>
 
@@ -361,7 +361,7 @@ export default function ExpertConsultationRequestDetailPage() {
           </Card>
         ) : !isOpen ? (
           <Card variant="glass">
-            <CardContent className="p-6 text-center text-sm text-zinc-400">
+            <CardContent className="p-6 text-center text-sm text-muted-foreground">
               To zapytanie nie przyjmuje już zgłoszeń.
             </CardContent>
           </Card>
@@ -373,7 +373,7 @@ export default function ExpertConsultationRequestDetailPage() {
                   <Heading level="h3" size="h4" className="text-base">
                     Zgłoś zainteresowanie
                   </Heading>
-                  <p className="mt-1 text-sm font-light text-zinc-400">
+                  <p className="mt-1 text-sm font-light text-muted-foreground">
                     Zaproponuj konkretny termin, czas trwania i cenę. Klient porówna zgłoszenia i wybierze jedno.
                   </p>
                 </div>
@@ -461,7 +461,7 @@ export default function ExpertConsultationRequestDetailPage() {
                           className={`flex items-center gap-2.5 rounded-lg border p-3.5 text-sm transition-all ${
                             isActive
                               ? "border-primary/40 bg-primary/10 text-white"
-                              : "border-border/10 bg-zinc-950/20 text-zinc-400 hover:border-primary/20"
+                              : "border-border/10 bg-background/20 text-muted-foreground hover:border-primary/20"
                           } ${isBlocked ? "cursor-not-allowed opacity-40 hover:border-border/10" : ""}`}
                         >
                           <Icon className={`h-4 w-4 ${isActive ? "text-primary" : ""}`} />
@@ -471,7 +471,7 @@ export default function ExpertConsultationRequestDetailPage() {
                     })}
                   </div>
                   {request.forma !== "DOWOLNA" && (
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-muted-foreground">
                       Klient oczekuje konsultacji w formie: {CONSULTATION_FORM_LABELS[request.forma]}.
                     </p>
                   )}
@@ -487,7 +487,7 @@ export default function ExpertConsultationRequestDetailPage() {
                     placeholder="Przedstaw się, opisz swoje doświadczenie w tego typu sprawach i wyjaśnij, co uda się ustalić podczas konsultacji."
                   />
                   <span
-                    className={`text-xs ${wiadomoscLength < MIN_WIADOMOSC_LENGTH ? "text-zinc-500" : "text-emerald-400"}`}
+                    className={`text-xs ${wiadomoscLength < MIN_WIADOMOSC_LENGTH ? "text-muted-foreground" : "text-emerald-400"}`}
                   >
                     {wiadomoscLength} / {MIN_WIADOMOSC_LENGTH} znaków minimum
                   </span>

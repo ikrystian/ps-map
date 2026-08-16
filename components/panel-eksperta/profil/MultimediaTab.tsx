@@ -43,8 +43,8 @@ export function MultimediaTab({
               <ImageIcon className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-xl text-white font-playfair">Galeria zdjęć</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">
+              <CardTitle className="text-xl text-foreground font-playfair">Galeria zdjęć</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">
                 Dodaj zdjęcia prezentujące Twoją działalność (maksymalnie 10 zdjęć, do 5MB każde)
               </CardDescription>
             </div>
@@ -59,12 +59,12 @@ export function MultimediaTab({
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-foreground" />
                   Przesyłanie...
                 </>
               ) : (
                 <>
-                  <Upload className="mr-2 h-4 w-4 text-white" />
+                  <Upload className="mr-2 h-4 w-4 text-foreground" />
                   Dodaj zdjęcia
                 </>
               )}
@@ -78,17 +78,17 @@ export function MultimediaTab({
               onChange={handleImageUpload}
               disabled={isUploading || formData.galeriaZdjec.length >= 10}
             />
-            <span className="text-sm text-zinc-400 font-light">
-              Dodano <span className="font-semibold text-white">{formData.galeriaZdjec.length}</span> z <span className="font-semibold text-white">10</span> zdjęć
+            <span className="text-sm text-muted-foreground font-light">
+              Dodano <span className="font-semibold text-foreground">{formData.galeriaZdjec.length}</span> z <span className="font-semibold text-foreground">10</span> zdjęć
             </span>
           </div>
 
           {/* Grid zdjęć */}
           {formData.galeriaZdjec.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 border border-border/20 rounded-xl bg-background/10">
               {formData.galeriaZdjec.map((imageUrl, index) => (
                 <div key={index} className="relative group">
-                  <div className="relative aspect-square rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shadow-md">
+                  <div className="relative aspect-square rounded-xl overflow-hidden border border-border/30 bg-card shadow-md">
                     <Image
                       src={imageUrl}
                       alt={`Galeria ${index + 1}`}
@@ -104,17 +104,17 @@ export function MultimediaTab({
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-center text-zinc-500 mt-1.5 font-light">
+                  <p className="text-xs text-center text-muted-foreground mt-1.5 font-light">
                     Zdjęcie {index + 1}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 border border-dashed border-border/30 rounded-xl bg-zinc-950/5">
+            <div className="flex flex-col items-center justify-center py-12 border border-dashed border-border/30 rounded-xl bg-background/5">
               <ImageIcon className="h-12 w-12 text-zinc-600 mb-4" />
-              <p className="text-zinc-300 text-sm font-medium">Brak zdjęć w galerii</p>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-foreground/80 text-sm font-medium">Brak zdjęć w galerii</p>
+              <p className="text-xs text-muted-foreground mt-1">
                 Kliknij przycisk powyżej, aby przesłać pierwsze zdjęcia
               </p>
             </div>
@@ -122,8 +122,8 @@ export function MultimediaTab({
 
           {formData.galeriaZdjec.length > 0 && (
             <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                <strong className="text-white font-medium">Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twoim profilu publicznym. Najedź kursorem na wybrane zdjęcie i kliknij przycisk z ikoną kosza (X), aby je usunąć z galerii.
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground font-medium">Wskazówka:</strong> Zdjęcia będą wyświetlane w galerii na Twoim profilu publicznym. Najedź kursorem na wybrane zdjęcie i kliknij przycisk z ikoną kosza (X), aby je usunąć z galerii.
               </p>
             </div>
           )}
@@ -139,8 +139,8 @@ export function MultimediaTab({
               <Video className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-xl text-white font-playfair">Prezentacja wideo (opcjonalnie)</CardTitle>
-              <CardDescription className="text-zinc-400 text-sm">
+              <CardTitle className="text-xl text-foreground font-playfair">Prezentacja wideo (opcjonalnie)</CardTitle>
+              <CardDescription className="text-muted-foreground text-sm">
                 Dodaj film promocyjny ze swojego kanału YouTube
               </CardDescription>
             </div>
@@ -148,9 +148,9 @@ export function MultimediaTab({
         </CardHeader>
         <CardContent className="space-y-5 pt-6">
           <div className="grid gap-2">
-            <Label htmlFor="filmYouTube" className="text-zinc-300 font-medium">Link do filmu YouTube</Label>
+            <Label htmlFor="filmYouTube" className="text-foreground/80 font-medium">Link do filmu YouTube</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                 <Video className="h-4 w-4" />
               </div>
               <Input
@@ -158,23 +158,23 @@ export function MultimediaTab({
                 value={formData.filmYouTube}
                 onChange={(e) => handleInputChange("filmYouTube", e.target.value)}
                 placeholder="np. https://www.youtube.com/watch?v=..."
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                className="pl-10 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
               />
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="kolejnoscMultimedia" className="text-zinc-300 font-medium">Kolejność wyświetlania na profilu</Label>
+            <Label htmlFor="kolejnoscMultimedia" className="text-foreground/80 font-medium">Kolejność wyświetlania na profilu</Label>
             <Select
               value={formData.kolejnoscMultimedia}
               onValueChange={(value) => handleInputChange("kolejnoscMultimedia", value)}
             >
-              <SelectTrigger className="bg-zinc-950/20 border-border/30 text-white rounded-xl">
+              <SelectTrigger className="bg-background/20 border-border/30 text-foreground rounded-xl">
                 <SelectValue placeholder="Wybierz kolejność..." />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
-                <SelectItem value="zdjecia" className="text-zinc-300 focus:text-white">Najpierw galeria zdjęć, potem film wideo</SelectItem>
-                <SelectItem value="film" className="text-zinc-300 focus:text-white">Najpierw film wideo, potem galeria zdjęć</SelectItem>
+              <SelectContent className="bg-background border-border/30 rounded-xl">
+                <SelectItem value="zdjecia" className="text-foreground/80 focus:text-foreground">Najpierw galeria zdjęć, potem film wideo</SelectItem>
+                <SelectItem value="film" className="text-foreground/80 focus:text-foreground">Najpierw film wideo, potem galeria zdjęć</SelectItem>
               </SelectContent>
             </Select>
           </div>

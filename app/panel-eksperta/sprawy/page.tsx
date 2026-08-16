@@ -494,9 +494,9 @@ const SprawyPage = () => {
       label: "Zamknięte",
       count: statusCounts.CLOSED,
       icon: Archive,
-      activeClass: "bg-gradient-to-br from-zinc-500/15 to-transparent border-zinc-700/30 text-white shadow-lg shadow-zinc-500/5",
-      labelColor: "text-zinc-400",
-      iconContainerClass: "bg-zinc-800/40 border-border/50 text-zinc-400"
+      activeClass: "bg-gradient-to-br from-zinc-500/15 to-transparent border-border/30 text-white shadow-lg shadow-zinc-500/5",
+      labelColor: "text-muted-foreground",
+      iconContainerClass: "bg-muted/40 border-border/50 text-muted-foreground"
     }
   ]
 
@@ -541,7 +541,7 @@ const SprawyPage = () => {
                 "rounded-2xl p-6 relative flex flex-col justify-between h-[130px] shadow-lg group overflow-hidden transition-all duration-300 w-full border text-left",
                 isSelected
                   ? card.activeClass
-                  : "bg-card/30 backdrop-blur-sm border-border/40 text-white shadow-md hover:border-primary/20"
+                  : "bg-card/30 backdrop-blur-sm border-border/40 text-foreground shadow-md hover:border-primary/20"
               )}
             >
               {/* Glow effect */}
@@ -571,7 +571,7 @@ const SprawyPage = () => {
                   "text-sm font-medium transition-colors",
                   isSelected
                     ? card.labelColor
-                    : "text-zinc-400 group-hover:text-white"
+                    : "text-muted-foreground group-hover:text-foreground"
                 )}>
                   {card.label}
                 </span>
@@ -579,13 +579,13 @@ const SprawyPage = () => {
                   "h-8 w-8 rounded-lg flex items-center justify-center border transition-colors",
                   isSelected
                     ? card.iconContainerClass
-                    : "bg-zinc-800/40 border-border/50 text-zinc-400 group-hover:text-white group-hover:border-primary/30"
+                    : "bg-muted/40 border-border/50 text-muted-foreground group-hover:text-foreground group-hover:border-primary/30"
                 )}>
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
 
-              <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+              <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
                 {card.count}
               </div>
             </motion.button>
@@ -643,10 +643,10 @@ const SprawyPage = () => {
                 value={selectedVoivodeship || "all"}
                 onValueChange={(v) => setSelectedVoivodeship(v === "all" ? "" : v)}
               >
-                <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
+                <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium">
                   <SelectValue placeholder="Województwo" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+                <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                   <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie województwa</SelectItem>
                   {voivodeships.map((v) => (
                     <SelectItem key={v.id} value={v.id} className="hover:bg-primary/10 focus:bg-primary/10">
@@ -671,10 +671,10 @@ const SprawyPage = () => {
           {/* Category Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium">
                 <SelectValue placeholder="Kategoria" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+              <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                 <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie kategorie</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id} className="hover:bg-primary/10 focus:bg-primary/10">
@@ -688,10 +688,10 @@ const SprawyPage = () => {
           {/* Client Type Selector */}
           <div className="lg:col-span-3">
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-zinc-300 font-medium">
+              <SelectTrigger className="h-11 bg-background/50 border-border/50 rounded-xl focus:ring-primary/40 focus:border-primary focus:bg-background/80 text-foreground/80 font-medium">
                 <SelectValue placeholder="Typ klienta" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-border/40 text-white rounded-xl">
+              <SelectContent className="bg-card border-border/40 text-foreground rounded-xl">
                 <SelectItem value="all" className="hover:bg-primary/10 focus:bg-primary/10">Wszystkie typy</SelectItem>
                 <SelectItem value="OSOBA_PRYWATNA" className="hover:bg-primary/10 focus:bg-primary/10">Osoba prywatna</SelectItem>
                 <SelectItem value="FIRMA" className="hover:bg-primary/10 focus:bg-primary/10">Firma</SelectItem>
@@ -707,7 +707,7 @@ const SprawyPage = () => {
         <div className="text-center py-16 px-6 rounded-2xl bg-card/10 border border-border/30 max-w-lg mx-auto relative overflow-hidden z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
           <Briefcase className="mx-auto h-14 w-14 text-muted-foreground/60 mb-4 animate-pulse" />
-          <h3 className="text-xl font-bold text-white mb-2 font-playfair">Brak spraw w bazie</h3>
+          <h3 className="text-xl font-bold text-foreground mb-2 font-playfair">Brak spraw w bazie</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             Nie znaleźliśmy żadnych zleceń spełniających Twoje kryteria filtrowania.
           </p>
@@ -721,7 +721,7 @@ const SprawyPage = () => {
               setSelectedType("all")
               setStatusFilter("all")
             }}
-            className="border-border/50 hover:bg-muted text-white rounded-xl h-10 px-5"
+            className="border-border/50 hover:bg-muted text-foreground rounded-xl h-10 px-5"
           >
             Resetuj filtry
           </Button>
@@ -782,11 +782,11 @@ const SprawyPage = () => {
                           ? sprawa.categories.map((link) => link.category)
                           : [sprawa.category]
                         ).map((cat) => (
-                          <span key={cat.id} className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
+                          <span key={cat.id} className="inline-flex items-center px-3 py-1 rounded-full bg-muted/60 text-foreground/80 border border-border/50 text-xs font-medium">
                             {cat.nazwa}
                           </span>
                         ))}
-                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-muted/40 text-muted-foreground border border-border/30 text-xs font-medium">
                           {getTypeLabel(sprawa.typSprawy)}
                         </span>
                         {sprawa.zTwojegoPolecenia && (
@@ -807,7 +807,7 @@ const SprawyPage = () => {
 
                       {/* Views count and actions */}
                       <div className="flex items-center gap-2 sm:gap-3.5">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 bg-zinc-800/30 px-2.5 py-1 rounded-lg border border-border/30">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 bg-muted/30 px-2.5 py-1 rounded-lg border border-border/30">
                           <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -847,7 +847,7 @@ const SprawyPage = () => {
                       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                         <div className="flex-grow space-y-4 w-full">
                           {/* Case Title */}
-                          <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-white group-hover:text-primary transition-colors leading-tight">
+                          <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">
                             {sprawa.nazwaSprawy}
                           </h3>
 
@@ -859,22 +859,22 @@ const SprawyPage = () => {
                           {/* Metadata grid redesigned */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 pt-2">
                             {/* Lokalizacja */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/30">
                               <MapPin className="h-4 w-4 mr-2.5 text-primary flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
-                                <span className="font-medium text-white text-sm leading-none truncate">
+                                <span className="font-medium text-foreground text-sm leading-none truncate">
                                   {sprawa.city ? `${sprawa.city.nazwa}, ${sprawa.voivodeship.nazwa}` : sprawa.voivodeship.nazwa}
                                 </span>
                               </div>
                             </div>
 
                             {/* Termin */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/30">
                               <Calendar className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin</span>
-                                <span className="font-medium text-white text-sm leading-none">
+                                <span className="font-medium text-foreground text-sm leading-none">
                                   {sprawa.oczekiwanyTerminRealizacji
                                     ? formatDate(sprawa.oczekiwanyTerminRealizacji)
                                     : "Elastyczny"}
@@ -883,24 +883,24 @@ const SprawyPage = () => {
                             </div>
 
                             {/* Budżet */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-success flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
-                                <span className="font-medium text-white text-sm leading-none">
+                                <span className="font-medium text-foreground text-sm leading-none">
                                   {formatBudget(sprawa.budzetOd, sprawa.budzetDo, sprawa.doNegocjacji)}
                                 </span>
                               </div>
                             </div>
 
                             {/* Klient Avatar and Details */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-xl border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/30">
                               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-semibold mr-2.5 flex-shrink-0">
                                 {sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}
                               </div>
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Klient</span>
-                                <span className="font-medium text-white text-sm leading-none truncate">
+                                <span className="font-medium text-foreground text-sm leading-none truncate">
                                   {sprawa.client.imie} {sprawa.client.nazwisko}
                                 </span>
                               </div>
@@ -912,7 +912,7 @@ const SprawyPage = () => {
                         <div className="flex-shrink-0 w-full lg:w-auto pt-4 lg:pt-0">
                           <Button
                             onClick={() => router.push(`/panel-eksperta/sprawy/${sprawa.id}`)}
-                            className="w-full lg:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-white/10 group/btn gap-2"
+                            className="w-full lg:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-border group/btn gap-2"
                           >
                             <span>Zobacz szczegóły</span>
                             <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
@@ -943,17 +943,17 @@ const SprawyPage = () => {
                   <Sparkles className="h-6 w-6 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white font-playfair">
+                  <h4 className="text-lg font-bold text-foreground font-playfair">
                     Dostępne są dodatkowe oferty spraw!
                   </h4>
-                  <p className="text-sm text-zinc-300 mt-1 max-w-xl">
+                  <p className="text-sm text-foreground/80 mt-1 max-w-xl">
                     Twój obecny pakiet pozwala na wyświetlenie maksymalnie {powiadomieniaSprawy} spraw (widzisz {powiadomieniaSprawy} z {totalCountBeforeLimit} pasujących ofert). Przejdź na wyższy pakiet subskrypcji, aby zobaczyć wszystkie dostępne zlecenia i zdobyć więcej klientów.
                   </p>
                 </div>
               </div>
               <Button
                 onClick={() => router.push("/panel-eksperta/pakiet")}
-                className="w-full md:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-white/10 flex items-center justify-center gap-2 group whitespace-nowrap"
+                className="w-full md:w-auto h-11 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 border-t border-border flex items-center justify-center gap-2 group whitespace-nowrap"
               >
                 <span>Ulepsz pakiet</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -966,14 +966,14 @@ const SprawyPage = () => {
 
       {/* Reject Modal */}
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
-        <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
+        <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
           <BorderBeam lightColor="var(--error)" lightWidth={350} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-white">
+            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-foreground">
               <AlertCircle className="h-5 w-5 animate-pulse text-error" />
               <span>Ukryj sprawę</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-400">
+            <DialogDescription className="text-xs text-muted-foreground">
               Ta akcja trwale usunie wybraną sprawę z Twojego widoku. Będzie ona nadal widoczna dla innych ekspertów, ale nie pojawi się już w tym panelu.
             </DialogDescription>
           </DialogHeader>
@@ -982,7 +982,7 @@ const SprawyPage = () => {
               type="button"
               variant="ghost"
               onClick={() => setRejectModalOpen(false)}
-              className="rounded-xl text-xs font-semibold px-4 h-9 text-zinc-400 hover:text-white"
+              className="rounded-xl text-xs font-semibold px-4 h-9 text-muted-foreground hover:text-foreground"
             >
               Anuluj
             </Button>

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="fixed inset-0 z-[9999] w-screen h-screen flex items-center justify-center overflow-hidden bg-black text-white  selection:bg-white/20 selection:text-white">
+    <div className="on-dark fixed inset-0 z-[9999] w-screen h-screen flex items-center justify-center overflow-hidden bg-black text-white  selection:bg-white/20 selection:text-white">
       {/* Background Image with Zoom and Grayscale/Brightness filters */}
       <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -24,7 +24,7 @@ export default function NotFound() {
       <div className="relative z-10 w-full max-w-3xl px-6 text-center flex flex-col items-center justify-center">
         {/* "Error" tag */}
         <motion.p
-          className="text-zinc-400 uppercase tracking-[0.25em] text-xs sm:text-sm font-semibold mb-1"
+          className="text-muted-foreground uppercase tracking-[0.25em] text-xs sm:text-sm font-semibold mb-1"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -43,12 +43,12 @@ export default function NotFound() {
             404
           </motion.h1>
           {/* Ambient glow behind 404 */}
-          <div className="absolute inset-0 -z-10 bg-white/5 blur-[80px] rounded-full scale-75" />
+          <div className="absolute inset-0 -z-10 bg-foreground/5 blur-[80px] rounded-full scale-75" />
         </div>
 
         {/* Subheading - Wordplay on "Prosta Sprawa" */}
         <motion.h2
-          className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white/95 max-w-xl mb-4"
+          className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground/95 max-w-xl mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
@@ -58,7 +58,7 @@ export default function NotFound() {
 
         {/* Supporting description */}
         <motion.p
-          className="text-zinc-400 text-sm sm:text-base font-light max-w-md mb-8 leading-relaxed"
+          className="text-muted-foreground text-sm sm:text-base font-light max-w-md mb-8 leading-relaxed"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
@@ -73,15 +73,15 @@ export default function NotFound() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <p className="text-zinc-300 text-sm sm:text-base flex items-center justify-center gap-2">
+          <p className="text-foreground/80 text-sm sm:text-base flex items-center justify-center gap-2">
             Nie przejmuj się, spróbuj wrócić do{" "}
             <Link
               href="/"
-              className="font-semibold text-white underline underline-offset-4 decoration-white/30 hover:decoration-white hover:text-white transition-all duration-300 relative group"
+              className="font-semibold text-foreground underline underline-offset-4 decoration-white/30 hover:decoration-white hover:text-foreground transition-all duration-300 relative group"
             >
               strony głównej.
               {/* Subtle pulsing glow on hover */}
-              <span className="absolute -inset-1 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm -z-10" />
+              <span className="absolute -inset-1 rounded-lg bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm -z-10" />
             </Link>
           </p>
 
@@ -93,7 +93,7 @@ export default function NotFound() {
               viewBox="0 0 90 60"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="text-white/65"
+              className="text-foreground/65"
             >
               {/* Loop Path */}
               <motion.path

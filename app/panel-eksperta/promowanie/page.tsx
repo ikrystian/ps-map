@@ -545,7 +545,7 @@ export default function LawFirmPromotionPage() {
             <Button
               variant="outline"
               onClick={() => setHistoryDialogOpen(true)}
-              className="bg-zinc-800/60 border-border/60 text-white hover:bg-zinc-700/50 hover:text-white transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
+              className="bg-muted/60 border-border/60 text-foreground hover:bg-muted/50 hover:text-foreground transition-all duration-200 rounded-xl px-5 h-11 text-sm font-medium gap-2 shadow-sm"
             >
               <Clock className="h-4 w-4 text-muted-foreground" />
               Historia zakupów
@@ -575,7 +575,7 @@ export default function LawFirmPromotionPage() {
         handleOpenDialog={handleOpenDialog}
       />
 
-      <Separator className="bg-[#3e3e38]/50 relative z-10" />
+      <Separator className="bg-muted/50 relative z-10" />
 
       {/* Control Center - Active Promotions List */}
       <CampaignControlCenter

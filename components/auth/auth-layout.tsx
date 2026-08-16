@@ -74,7 +74,7 @@ export function AuthLayout({
       <div
         className={`hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary overflow-hidden ${
           !heroImage ? "hero-image" : ""
-        }`}
+        } on-dark`}
         style={
           heroImage
             ? {
@@ -87,7 +87,7 @@ export function AuthLayout({
         }
       >
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-foreground">
           <div className="max-w-md space-y-8 text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -98,13 +98,13 @@ export function AuthLayout({
               <h2 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight font-playfair">
                 {heroTitle}
               </h2>
-              <p className="text-lg text-white/90 leading-relaxed font-medium">
+              <p className="text-lg text-foreground/90 leading-relaxed font-medium">
                 {heroDescription}
               </p>
             </motion.div>
 
             {heroStats && heroStats.length > 0 && (
-              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/20">
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-border">
                 {heroStats.map((stat, index) => (
                   <motion.div
                     key={index}
@@ -117,11 +117,11 @@ export function AuthLayout({
                         value={stat.value}
                         decimalPlaces={0}
                         delay={index * 0.2}
-                        className="text-white"
+                        className="text-foreground"
                       />
                       {stat.unit}
                     </div>
-                    <div className="text-xs uppercase tracking-wider text-white/70 font-semibold mt-1">
+                    <div className="text-xs uppercase tracking-wider text-foreground/70 font-semibold mt-1">
                       {stat.label}
                     </div>
                   </motion.div>

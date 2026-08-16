@@ -158,7 +158,7 @@ export const getPromotionStatusBadge = (promotion: Promotion) => {
 
   if (end < now) {
     return (
-      <Badge variant="outline" className="gap-1 text-muted-foreground border-white/10">
+      <Badge variant="outline" className="gap-1 text-muted-foreground border-border">
         <XCircle className="h-3 w-3" />
         Zakończona
       </Badge>

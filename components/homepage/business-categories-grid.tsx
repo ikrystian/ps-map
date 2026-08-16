@@ -57,7 +57,7 @@ const BusinessCategoryCard = memo(({
       onMouseLeave={() => setHovered(null)}
       data-area={gridArea}
       className={cn(
-        "relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
+        "on-dark relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
         gridArea && `[grid-area:${gridArea}]`,
         aspectRatio,
         hovered !== null && hovered !== index && "md:blur-sm md:scale-[0.98]"
@@ -77,10 +77,10 @@ const BusinessCategoryCard = memo(({
           ikona={category.ikona}
           ikonaUrl={category.ikonaUrl}
           animate={hovered === index}
-          className="h-12 w-12 text-white hidden md:block"
+          className="h-12 w-12 text-foreground hidden md:block"
           imageClassName="brightness-0 invert"
         />
-        <h3 className="text-white font-playfair md:text-xl font-light text-center">{category.nazwa}</h3>
+        <h3 className="text-foreground font-playfair md:text-xl font-light text-center">{category.nazwa}</h3>
       </div>
     </MotionLink>
   )
@@ -101,7 +101,7 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
   ]
 
   return (
-    <section className="py-8 md:py-16 lg:py-20 xl:py-24 bg-[#121212]">
+    <section className="py-8 md:py-16 lg:py-20 xl:py-24 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -111,10 +111,10 @@ export function BusinessCategoriesGrid({ categories }: BusinessCategoriesGridPro
         >
           <div className="mb-12">
             <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-2xl md:text-3xl  font-light text-zinc-100 sm:whitespace-nowrap font-playfair" id="categories-business">
+              <h2 className="text-2xl md:text-3xl  font-light text-foreground sm:whitespace-nowrap font-playfair" id="categories-business">
                 Popularne sprawy firmowe
               </h2>
-              <div className="flex-grow border-t border-zinc-800/80" />
+              <div className="flex-grow border-t border-border/80" />
             </div>
           </div>
 

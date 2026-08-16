@@ -206,15 +206,15 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
   }
 
   return (
-    <section className="py-8 xl:py-24 text-white overflow-hidden bg-darker">
+    <section className="py-8 xl:py-24 text-foreground overflow-hidden bg-darker">
       {/* Top Header Row is wrapped in its own container to align perfectly */}
       <div className="container mx-auto px-4 max-w-8xl mb-12">
         <div className="mb-12">
           <div className="flex items-center gap-6 mb-12">
-            <h2 className="text-2xl md:text-3xl  font-light text-zinc-100 sm:whitespace-nowrap font-playfair">
+            <h2 className="text-2xl md:text-3xl  font-light text-foreground sm:whitespace-nowrap font-playfair">
               Polecani prawnicy i adwokaci
             </h2>
-            <div className="flex-grow border-t border-zinc-800/80" />
+            <div className="flex-grow border-t border-border/80" />
           </div>
         </div>
 
@@ -247,12 +247,12 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                 className={cn(
                   "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer",
                   clickedArrow === "prev"
-                    ? "bg-[#0b8b7e] ring-2 ring-white/40 scale-90"
-                    : "bg-[#0da192] hover:bg-[#0b8b7e]"
+                    ? "bg-primary-dark ring-2 ring-white/40 scale-90"
+                    : "bg-primary hover:bg-primary-dark"
                 )}
                 aria-label="Poprzedni slajd"
               >
-                <ChevronLeft className="w-5 h-5 text-white" />
+                <ChevronLeft className="w-5 h-5 text-foreground" />
               </motion.button>
               <motion.button
                 onClick={handleNext}
@@ -260,12 +260,12 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                 className={cn(
                   "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer",
                   clickedArrow === "next"
-                    ? "bg-[#0b8b7e] ring-2 ring-white/40 scale-90"
-                    : "bg-[#0da192] hover:bg-[#0b8b7e]"
+                    ? "bg-primary-dark ring-2 ring-white/40 scale-90"
+                    : "bg-primary hover:bg-primary-dark"
                 )}
                 aria-label="Następny slajd"
               >
-                <ChevronRight className="w-5 h-5 text-white" />
+                <ChevronRight className="w-5 h-5 text-foreground" />
               </motion.button>
             </div>
           </div>
@@ -317,12 +317,12 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                     type="button"
                     onClick={handleClick}
                     className={cn(
-                      "w-10 h-10 rounded-full bg-[#0da192] flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
-                      isLoggedIn ? "hover:bg-[#0b8b7e] hover:scale-105 active:scale-95" : "opacity-70 cursor-help"
+                      "w-10 h-10 rounded-full bg-primary flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer",
+                      isLoggedIn ? "hover:bg-primary-dark hover:scale-105 active:scale-95" : "opacity-70 cursor-help"
                     )}
                     title={isLoggedIn ? title : undefined}
                   >
-                    <Icon className={cn("w-4.5 h-4.5 text-white", Icon === Phone && "fill-white")} />
+                    <Icon className={cn("w-4.5 h-4.5 text-foreground", Icon === Phone && "fill-white")} />
                   </button>
                 );
 
@@ -333,7 +333,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                     <TooltipTrigger asChild>
                       {button}
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="bg-[#1a1a1a] border-zinc-800 text-white text-xs">
+                    <TooltipContent side="top" className="bg-card border-border text-foreground text-xs">
                       Informacja dostępna po zalogowaniu
                     </TooltipContent>
                   </Tooltip>
@@ -344,10 +344,10 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                 <Link
                   href={`/ekspert/${firm.slug}?src=home-recommended`}
                   key={`${firm.id}-${index}`}
-                  className="w-[290px] sm:w-[340px] md:w-[calc(25%-12px)] shrink-0 snap-start flex flex-col h-full bg-[#1c1c1e] rounded-xl border border-white/15 overflow-hidden  hover:shadow-xl transition-all duration-300 group"
+                  className="w-[290px] sm:w-[340px] md:w-[calc(25%-12px)] shrink-0 snap-start flex flex-col h-full bg-card rounded-xl border border-border overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                 >
                   {/* Image Container with Rating Overlay */}
-                  <div className="relative h-65 w-full overflow-hidden aspect-[6/2] bg-zinc-900">
+                  <div className="relative h-65 w-full overflow-hidden aspect-[6/2] bg-card">
                     <img
                       src={getFirmImage(firm, index)}
                       alt={firm.nazwa}
@@ -355,13 +355,13 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                     />
 
                     {/* Bottom-fade black gradient to blend image into card background */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-[#1d1d1f]/20 to-transparent to-[96%]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
 
                     {/* Rating Badge Overlay - exact visual layout from mockup */}
                     {firm.reviewCount > 0 && (
-                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 p-2 rounded-xl border border-white/5">
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2.5 z-10 p-2 rounded-xl border border-border">
                         {/* Teal Box */}
-                        <div className="bg-[#0da192] text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
+                        <div className="bg-primary text-white font-extrabold text-[13px] px-2.5 py-1.5 rounded-lg leading-none">
                           {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace('.', ',') : "5,0"}
                         </div>
                         {/* Star Rating & Review Count Stack */}
@@ -379,7 +379,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                               />
                             ))}
                           </div>
-                          <span className="text-sm text-zinc-300 font-semibold mt-1">
+                          <span className="text-sm text-foreground/80 font-semibold mt-1">
                             {firm.reviewCount} {getOpinieText(firm.reviewCount)}
                           </span>
                         </div>
@@ -391,24 +391,24 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                   <div className="relative px-6 py-6 text-center flex-grow flex flex-col justify-between">
                     <div>
                       {/* Upper Case Category subtitle */}
-                      <span className="text-[11px] font-bold text-zinc-400 tracking-widest uppercase block mb-1.5">
+                      <span className="text-[11px] font-bold text-muted-foreground tracking-widest uppercase block mb-1.5">
                         {categoriesList[safeActiveIdx]}
                       </span>
                       {/* Lawyer / Firm Name */}
-                      <h3 className="text-[19px] font-bold font-playfair text-white mb-2 line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                      <h3 className="text-[19px] font-bold font-playfair text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors duration-200">
                         <span>
                           {firm.nazwa}
                         </span>
                       </h3>
                       {/* Location text */}
                       <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-4">
-                        <MapPin className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                         {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ", Świętokrzyskie"}
                       </p>
                     </div>
 
                     {/* Bottom Action Row with Circular and Square buttons */}
-                    <div className="flex justify-center items-center w-full pt-4 border-t border-zinc-800/80">
+                    <div className="flex justify-center items-center w-full pt-4 border-t border-border/80">
                       <div className="flex gap-3">
                         {/* Circular Phone Action */}
                         <ContactButton
@@ -436,10 +436,10 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
 
                       {/* Square Profile Navigation Link */}
                       <span
-                        className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] absolute right-0.25 bottom-0.25 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                        className="w-10 h-10 rounded-lg bg-primary hover:bg-primary-dark absolute right-0.25 bottom-0.25 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
                         title="Zobacz pełny profil"
                       >
-                        <ArrowUpRight className="w-5 h-5 text-white" />
+                        <ArrowUpRight className="w-5 h-5 text-foreground" />
                       </span>
                     </div>
                   </div>

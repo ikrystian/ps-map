@@ -50,19 +50,19 @@ export function CategoryPromotedExpertsSlider({
   }
 
   return (
-    <div className="mt-10 pt-10 border-t border-neutral-900/60" id="category-promoted-experts">
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#121211] via-[#0c0c0b]/90 to-[#0e0e0d] border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+    <div className="mt-10 pt-10 border-t border-border/60" id="category-promoted-experts">
+      <div className="relative overflow-hidden bg-gradient-to-br from-background via-background/90 to-background border border-border/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
         {/* Decorative Background Glows */}
-        <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-[#0da192]/5 blur-[100px] pointer-events-none" />
+        <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
         <div className="absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
 
         {/* Section Header */}
-        <div className="flex items-center gap-3 mb-8 pb-4 border-b border-neutral-800/40 relative z-10">
+        <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border/40 relative z-10">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0da192]/20 to-primary/10 flex items-center justify-center border border-[#0da192]/20 shadow-inner">
             <Sparkles className="w-5 h-5 text-[#0da192]" />
           </div>
           <div>
-            <h2 className="font-playfair text-xl md:text-2xl font-bold text-white tracking-tight">
+            <h2 className="font-playfair text-xl md:text-2xl font-bold text-foreground tracking-tight">
               Promowani eksperci w kategorii: {categoryName}
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -77,7 +77,7 @@ export function CategoryPromotedExpertsSlider({
             <button
               type="button"
               onClick={() => scroll("left")}
-              className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
+              className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg bg-primary hover:bg-primary-dark items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
               aria-label="Poprzedni ekspert"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -97,30 +97,30 @@ export function CategoryPromotedExpertsSlider({
               <Link
                 key={firm.id}
                 href={`/ekspert/${firm.slug}?src=category-promoted`}
-                className="w-[260px] sm:w-[290px] shrink-0 snap-start flex flex-col bg-[#18181a] rounded-2xl border border-neutral-800/60 overflow-hidden hover:border-[#0da192]/50 hover:shadow-xl hover:shadow-[#0da192]/5 transition-all duration-300 group"
+                className="w-[260px] sm:w-[290px] shrink-0 snap-start flex flex-col bg-card rounded-2xl border border-border/60 overflow-hidden hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group"
               >
                 {/* Image */}
-                <div className="relative h-40 w-full overflow-hidden bg-zinc-900">
+                <div className="relative h-40 w-full overflow-hidden bg-card">
                   <img
                     src={expertAvatar(firm.logo)}
                     alt={firm.nazwa}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#18181a] via-[#18181a]/10 to-transparent to-[85%]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/10 to-transparent to-[85%]" />
 
                   {/* Badge "Promowany ekspert" */}
-                  <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#0da192]/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-md">
+                  <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-md">
                     <Sparkles className="w-3 h-3" />
                     Promowany
                   </div>
 
                   {firm.reviewCount > 0 && (
-                    <div className="absolute bottom-2.5 left-3 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/50 border border-white/10">
+                    <div className="absolute bottom-2.5 left-3 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/50 border border-border">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      <span className="text-xs font-bold text-white">
+                      <span className="text-xs font-bold text-foreground">
                         {firm.avgRating > 0 ? firm.avgRating.toFixed(1).replace(".", ",") : "5,0"}
                       </span>
-                      <span className="text-[10px] text-zinc-300">
+                      <span className="text-[10px] text-foreground/80">
                         ({firm.reviewCount} {getOpinieText(firm.reviewCount)})
                       </span>
                     </div>
@@ -130,7 +130,7 @@ export function CategoryPromotedExpertsSlider({
                 {/* Content */}
                 <div className="p-4 flex flex-col flex-grow">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <h3 className="text-[15px] font-bold font-playfair text-white line-clamp-1 group-hover:text-[#0da192] transition-colors duration-200">
+                    <h3 className="text-[15px] font-bold font-playfair text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-200">
                       {firm.nazwa}
                     </h3>
                     {firm.zweryfikowana && (
@@ -138,7 +138,7 @@ export function CategoryPromotedExpertsSlider({
                     )}
                   </div>
 
-                  <p className="text-xs text-zinc-500 flex items-center gap-1.5 mb-3">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 mb-3">
                     <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                     <span className="truncate">
                       {firm.miasto}
@@ -147,22 +147,22 @@ export function CategoryPromotedExpertsSlider({
                   </p>
 
                   {firm.opis && (
-                    <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2 mb-3">
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-3">
                       {stripHtmlTags(firm.opis)}
                     </p>
                   )}
 
-                  <div className="mt-auto pt-3 border-t border-neutral-800/60 flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-zinc-400 group-hover:text-white transition-colors">
+                  <div className="mt-auto pt-3 border-t border-border/60 flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
                       Zobacz profil
                     </span>
                     <span
                       className={cn(
-                        "w-8 h-8 rounded-lg bg-[#0da192] group-hover:bg-[#0b8b7e] flex items-center justify-center transition-all duration-200",
+                        "w-8 h-8 rounded-lg bg-primary group-hover:bg-primary-dark flex items-center justify-center transition-all duration-200",
                         "group-hover:scale-105"
                       )}
                     >
-                      <ArrowUpRight className="w-4 h-4 text-white" />
+                      <ArrowUpRight className="w-4 h-4 text-foreground" />
                     </span>
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export function CategoryPromotedExpertsSlider({
             <button
               type="button"
               onClick={() => scroll("right")}
-              className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
+              className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg bg-primary hover:bg-primary-dark items-center justify-center text-white transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer shadow-lg z-30"
               aria-label="Następny ekspert"
             >
               <ChevronRight className="w-5 h-5" />

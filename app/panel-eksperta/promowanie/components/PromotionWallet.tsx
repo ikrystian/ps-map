@@ -94,7 +94,7 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
             <a href="/panel-eksperta/punkty" className="block w-full">
               <Button
                 variant="outline"
-                className="w-full border-border/60 hover:bg-muted text-white font-medium h-10 rounded-xl gap-2 transition-all duration-200 shadow-md"
+                className="w-full border-border/60 hover:bg-muted text-foreground font-medium h-10 rounded-xl gap-2 transition-all duration-200 shadow-md"
               >
                 Kup dodatkowe punkty
                 <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
@@ -108,33 +108,33 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
       <Card variant="glass" className="lg:col-span-2 rounded-2xl p-6 flex flex-col justify-center">
         <div className="grid gap-6 md:grid-cols-3">
           {/* Benefit 1 */}
-          <div className="space-y-2.5 p-4 rounded-xl bg-zinc-800/10 border border-border/20 hover:bg-zinc-800/20 transition-all duration-200 group">
+          <div className="space-y-2.5 p-4 rounded-xl bg-muted/10 border border-border/20 hover:bg-muted/20 transition-all duration-200 group">
             <div className="w-8.5 h-8.5 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center group-hover:scale-105 transition-all">
               <TrendingUp className="h-4.5 w-4.5" />
             </div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Pozycjonowanie premium</h3>
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Pozycjonowanie premium</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Profil ląduje ponad konkurentami, zapewniając nawet 3.5x większą szansę na kontakt od klienta.
             </p>
           </div>
 
           {/* Benefit 2 */}
-          <div className="space-y-2.5 p-4 rounded-xl bg-zinc-800/10 border border-border/20 hover:bg-zinc-800/20 transition-all duration-200 group">
+          <div className="space-y-2.5 p-4 rounded-xl bg-muted/10 border border-border/20 hover:bg-muted/20 transition-all duration-200 group">
             <div className="w-8.5 h-8.5 rounded-lg bg-secondary/10 text-secondary border border-secondary/20 flex items-center justify-center group-hover:scale-105 transition-all">
               <Sparkles className="h-4.5 w-4.5" />
             </div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Złote Wyróżnienie</h3>
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Złote Wyróżnienie</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Prestiżowa złota oprawa wizualna na listach wyszukiwania drastycznie zwiększa współczynnik klikalności (CTR).
             </p>
           </div>
 
           {/* Benefit 3 */}
-          <div className="space-y-2.5 p-4 rounded-xl bg-zinc-800/10 border border-border/20 hover:bg-zinc-800/20 transition-all duration-200 group">
+          <div className="space-y-2.5 p-4 rounded-xl bg-muted/10 border border-border/20 hover:bg-muted/20 transition-all duration-200 group">
             <div className="w-8.5 h-8.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center group-hover:scale-105 transition-all">
               <MapPin className="h-4.5 w-4.5" />
             </div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Maksymalny Prestiż</h3>
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Maksymalny Prestiż</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Obecność na stronie głównej oraz w elitarnej sekcji polecanych buduje silną markę eksperta w regionie.
             </p>

@@ -56,15 +56,15 @@ export default function RegistrationPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10 group-hover:via-black/45 transition-all duration-500 z-10" />
 
             {/* Content */}
-            <div className="relative z-20 p-6 sm:p-8 space-y-3">
-              <h3 className="text-3xl font-bold font-playfair text-white group-hover:text-primary transition-colors duration-300">
+            <div className="on-dark relative z-20 p-6 sm:p-8 space-y-3">
+              <h3 className="text-3xl font-bold font-playfair text-foreground group-hover:text-primary transition-colors duration-300">
                 Jestem klientem
               </h3>
-              <p className="text-base text-neutral-300 leading-relaxed font-light">
+              <p className="text-base text-foreground/80 leading-relaxed font-light">
                 Szukam profesjonalnej pomocy prawnej dla siebie, swojej rodziny lub mojej firmy. Chcę szybko i bezpłatnie opisać sprawę.
               </p>
               <div className="pt-2">
-                <span className="inline-flex items-center gap-2 text-xs font-semibold text-white group-hover:text-primary transition-colors">
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                   Zarejestruj się jako klient
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-300" />
                 </span>
@@ -90,15 +90,15 @@ export default function RegistrationPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10 group-hover:via-black/45 transition-all duration-500 z-10" />
 
             {/* Content */}
-            <div className="relative z-20 p-6 sm:p-8 space-y-3">
-              <h3 className="text-3xl font-bold font-playfair text-white group-hover:text-primary transition-colors duration-300">
+            <div className="on-dark relative z-20 p-6 sm:p-8 space-y-3">
+              <h3 className="text-3xl font-bold font-playfair text-foreground group-hover:text-primary transition-colors duration-300">
                 Jestem ekspertem
               </h3>
-              <p className="text-base text-neutral-300 leading-relaxed font-light">
+              <p className="text-base text-foreground/80 leading-relaxed font-light">
                 Oferuję profesjonalne usługi prawne. Chcę pozyskiwać nowych klientów online, budować markę i wygodnie zarządzać sprawami.
               </p>
               <div className="pt-2">
-                <span className="inline-flex items-center gap-2 text-xs font-semibold text-white group-hover:text-primary transition-colors">
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                   Zarejestruj się jako ekspert
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-300" />
                 </span>

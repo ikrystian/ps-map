@@ -21,7 +21,7 @@ function highlightHTML(code: string) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
 
-  escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="text-slate-500 font-normal">$1</span>')
+  escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="text-muted-foreground font-normal">$1</span>')
   escaped = escaped.replace(/(\{[^{}]*?\})/g, '<span class="text-pink-400 font-bold bg-pink-950/40 px-1 rounded border border-pink-800/30">$1</span>')
   escaped = escaped.replace(/(&lt;\/?[a-zA-Z0-9:-]+)/g, '<span class="text-cyan-400">$1</span>')
   escaped = escaped.replace(/(\/?&gt;)/g, '<span class="text-cyan-400">$1</span>')
@@ -69,8 +69,8 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#090d16]">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="flex items-center justify-center h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -78,9 +78,9 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
   if (!module) return null
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-[#090d16]">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-background">
       {/* Header Bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/80 bg-[#0c1220] shrink-0">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border/80 bg-[#0c1220] shrink-0">
         {/* Left */}
         <div className="flex items-center gap-4">
           <Button
@@ -88,14 +88,14 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
             variant="ghost"
             size="sm"
             onClick={() => router.push("/admin/modules")}
-            className="text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors gap-2"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Wróć do listy</span>
           </Button>
-          <div className="h-4 w-[1px] bg-slate-800" />
+          <div className="h-4 w-[1px] bg-muted" />
           <div className="flex items-center gap-3">
-            <h1 className="font-semibold text-lg text-white">{module.name}</h1>
+            <h1 className="font-semibold text-lg text-foreground">{module.name}</h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-medium border border-indigo-500/20">
               Podgląd modułu
             </span>
@@ -104,7 +104,7 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
 
         {/* Center: Device switcher */}
         {previewMode === "visual" && (
-          <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-lg p-0.5 shadow-inner">
+          <div className="flex items-center bg-card/90 border border-border rounded-lg p-0.5 shadow-inner">
             {(["desktop", "tablet", "mobile"] as const).map((device) => {
               const Icon = device === "desktop" ? Monitor : device === "tablet" ? Tablet : Smartphone
               const label = device === "desktop" ? "Desktop" : device === "tablet" ? "Tablet" : "Mobilny"
@@ -115,7 +115,7 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                   onClick={() => setViewportDevice(device)}
                   className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewportDevice === device
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
-                      : "text-slate-400 hover:text-slate-200"
+                      : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -147,13 +147,13 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden bg-[#070b13]">
+      <div className="flex-1 flex overflow-hidden bg-background">
         {previewMode === "visual" ? (
           <>
             {/* Preview Area */}
-            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-[#070b13] overflow-auto">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-background overflow-auto">
               <div
-                className="transition-all duration-300 ease-in-out flex flex-col shadow-2xl shadow-black/60 rounded-xl overflow-hidden border border-slate-800 bg-[#0e1626]"
+                className="transition-all duration-300 ease-in-out flex flex-col shadow-2xl shadow-black/10 dark:shadow-black/60 rounded-xl overflow-hidden border border-border bg-[#0e1626]"
                 style={{
                   width: viewportDevice === "desktop" ? "100%" : viewportDevice === "tablet" ? "768px" : "375px",
                   height: viewportDevice === "desktop" ? "100%" : "667px",
@@ -161,13 +161,13 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                 }}
               >
                 {/* Browser chrome */}
-                <div className="bg-[#0b0f19] px-4 py-2 flex items-center gap-2 border-b border-slate-800 shrink-0">
+                <div className="bg-background px-4 py-2 flex items-center gap-2 border-b border-border shrink-0">
                   <div className="flex gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-rose-500/80" />
                     <span className="w-3 h-3 rounded-full bg-amber-500/80" />
                     <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
                   </div>
-                  <div className="mx-auto max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-md py-0.5 px-3 text-sm text-slate-500 text-center truncate">
+                  <div className="mx-auto max-w-md w-full bg-card border border-border/80 rounded-md py-0.5 px-3 text-sm text-muted-foreground text-center truncate">
                     https://prostasprawa.pl/modules/{module.name.toLowerCase().replace(/\s+/g, "-")}
                   </div>
                 </div>
@@ -194,10 +194,10 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
             </div>
 
             {/* Right Panel: Fields */}
-            <div className="w-80 border-l border-slate-800 bg-[#090d16] flex flex-col shrink-0">
-              <div className="p-5 border-b border-slate-800">
-                <h4 className="font-semibold text-slate-200">Pola edytowalne</h4>
-                <p className="text-xs text-slate-400 mt-1">
+            <div className="w-80 border-l border-border bg-background flex flex-col shrink-0">
+              <div className="p-5 border-b border-border">
+                <h4 className="font-semibold text-foreground">Pola edytowalne</h4>
+                <p className="text-xs text-muted-foreground mt-1">
                   Wpisz tekst poniżej, aby na żywo edytować moduł w podglądzie
                 </p>
               </div>
@@ -207,12 +207,12 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                   return parsed.fields.length > 0 ? (
                     parsed.fields.map((field) => (
                       <div key={field.name} className="space-y-1.5">
-                        <label className="text-xs font-medium text-slate-300">{field.label}</label>
+                        <label className="text-xs font-medium text-foreground/80">{field.label}</label>
                         {field.type === "textarea" || field.type === "textarea-wysiwyg" ? (
                           <textarea
                             value={liveValues[field.name] || ""}
                             onChange={(e) => setLiveValues((prev) => ({ ...prev, [field.name]: e.target.value }))}
-                            className="w-full min-h-[80px] bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="w-full min-h-[80px] bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             placeholder={field.placeholder || "Wpisz tekst..."}
                           />
                         ) : (
@@ -220,14 +220,14 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                             type="text"
                             value={liveValues[field.name] || ""}
                             onChange={(e) => setLiveValues((prev) => ({ ...prev, [field.name]: e.target.value }))}
-                            className="w-full bg-slate-900 border border-slate-800 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             placeholder={field.placeholder || "Wpisz tekst..."}
                           />
                         )}
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-slate-500 text-sm">
+                    <div className="text-center py-8 text-muted-foreground text-sm">
                       Ten moduł nie ma dynamicznych pól edytowalnych (kod statyczny)
                     </div>
                   )
@@ -238,11 +238,11 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
         ) : (
           /* Code Viewer */
           <div className="flex-1 flex flex-col p-8 overflow-hidden">
-            <div className="flex-1 flex flex-col bg-[#0b0f19] border border-slate-800/80 rounded-xl overflow-hidden shadow-2xl">
-              <div className="px-5 py-3.5 bg-[#0e1626] border-b border-slate-800/80 flex items-center justify-between shrink-0">
+            <div className="flex-1 flex flex-col bg-background border border-border/80 rounded-xl overflow-hidden shadow-2xl">
+              <div className="px-5 py-3.5 bg-[#0e1626] border-b border-border/80 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <Code className="h-4 w-4 text-indigo-400" />
-                  <span className="text-xs font-mono text-slate-300">
+                  <span className="text-xs font-mono text-foreground/80">
                     {module.name.toLowerCase().replace(/\s+/g, "-")}.html
                   </span>
                 </div>
@@ -255,7 +255,7 @@ export default function ModulePreviewPage({ params }: { params: Promise<{ id: st
                     setCopied(true)
                     setTimeout(() => setCopied(false), 2000)
                   }}
-                  className="text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors gap-2"
+                  className="text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors gap-2"
                 >
                   {copied ? (
                     <>

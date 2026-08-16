@@ -1,48 +1,72 @@
 @import "tailwindcss";
 
+/* Tailwind v4 nie czyta `tailwind.config.ts` bez dyrektywy `@config`, więc
+   ustawione tam `darkMode: "class"` nie działało — wszystkie warianty `dark:`
+   kompilowały się do `@media (prefers-color-scheme: dark)` i reagowały na
+   ustawienie systemu zamiast na klasę `.dark` z next-themes. Efekt: na
+   systemie w ciemnym motywie jasny motyw aplikacji dostawał ciemne style
+   (m.in. białe logo na jasnym pasku). Wiążemy wariant z klasą `.dark`. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
-    --background: #faf9f5;
-    --foreground: #3d3929;
-    --card: #faf9f5;
-    --card-foreground: #141413;
+    /* ── Powierzchnie ──────────────────────────────────────────────────────
+       Neutralne szarości z minimalnym zielonym podtonem, żeby firmowa zieleń
+       siadała naturalnie zamiast wyglądać na doklejoną. */
+    --background: #f5f7f6;
+    --background-sec: #ffffff;
+    --bg-darker: #eaeeec;
+    --foreground: #14201e;
+    --card: #ffffff;
+    --card-foreground: #14201e;
     --popover: #ffffff;
-    --popover-foreground: #28261b;
-    --primary: #c96442;
-    --primary-hover: #d87553;
-    --primary-dark: #b05730;
+    --popover-foreground: #14201e;
+
+    /* ── Primary: ta sama zieleń marki, przyciemniona pod jasne tło ────────
+       #0da192 daje na bieli tylko 3.2:1 — biały tekst na przycisku byłby
+       nieczytelny. #0a8276 to ten sam odcień przy 4.7:1 (WCAG AA). */
+    --primary: #0a8276;
+    --primary-hover: #0b9185;
+    --primary-dark: #06655c;
     --primary-foreground: #ffffff;
-    --secondary: #e9e6dc;
-    --secondary-hover: #dfdbcc;
-    --secondary-foreground: #535146;
-    --muted: #ede9de;
-    --muted-foreground: #83827d;
-    --accent: #e9e6dc;
-    --accent-foreground: #28261b;
-    --destructive: #141413;
+
+    /* ── Secondary: złoto marki, pogłębione pod jasne tło (5.0:1) ────────── */
+    --secondary: #8a6a2a;
+    --secondary-hover: #775c22;
+    --secondary-foreground: #ffffff;
+
+    --muted: #eceff0;
+    --muted-foreground: #5b6b68;
+    --accent: #e6efed;
+    --accent-foreground: #0a5f56;
+
+    --destructive: #c62828;
     --destructive-foreground: #ffffff;
-    --success: #10b981;
+    --success: #0f8f5f;
     --success-foreground: #ffffff;
-    --warning: #f59e0b;
+    --warning: #a35a06;
     --warning-foreground: #ffffff;
-    --error: #dc2626;
+    --error: #c62828;
     --error-foreground: #ffffff;
-    --border: #dad9d4;
-    --input: #b4b2a7;
-    --ring: #c96442;
-    --chart-1: #b05730;
-    --chart-2: #9c87f5;
-    --chart-3: #ded8c4;
-    --chart-4: #dbd3f0;
-    --chart-5: #b4552d;
-    --sidebar: #f5f4ee;
-    --sidebar-foreground: #3d3d3a;
-    --sidebar-primary: #c96442;
-    --sidebar-primary-foreground: #fbfbfb;
-    --sidebar-accent: #e9e6dc;
-    --sidebar-accent-foreground: #343434;
-    --sidebar-border: #ebebeb;
-    --sidebar-ring: #b5b5b5;
+
+    --border: #e0e5e3;
+    --input: #c8d1ce;
+    --ring: #0a8276;
+
+    --chart-1: #0a8276;
+    --chart-2: #6d5bd0;
+    --chart-3: #8a6a2a;
+    --chart-4: #2b7fb8;
+    --chart-5: #c0562c;
+
+    --sidebar: #ffffff;
+    --sidebar-foreground: #3c4a47;
+    --sidebar-primary: #0a8276;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e6efed;
+    --sidebar-accent-foreground: #0a5f56;
+    --sidebar-border: #e0e5e3;
+    --sidebar-ring: #0a8276;
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -53,17 +77,18 @@
     --shadow-spread: 0px;
     --shadow-opacity: 0.1;
     --shadow-color: oklch(0 0 0);
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    /* Cienie w jasnym motywie: chłodny, zielonkawy cień zamiast czystej czerni
+       — czysta czerń na jasnym tle robi się „brudna". */
+    --shadow-2xs: 0 1px 2px 0px hsl(170 12% 20% / 0.04);
+    --shadow-xs: 0 1px 2px 0px hsl(170 12% 20% / 0.05);
+    --shadow-sm: 0 1px 2px 0px hsl(170 12% 20% / 0.06), 0 1px 3px -1px hsl(170 12% 20% / 0.07);
+    --shadow: 0 1px 3px 0px hsl(170 12% 20% / 0.07), 0 1px 2px -1px hsl(170 12% 20% / 0.06);
+    --shadow-md: 0 2px 4px -1px hsl(170 12% 20% / 0.07), 0 4px 8px -2px hsl(170 12% 20% / 0.08);
+    --shadow-lg: 0 4px 8px -2px hsl(170 12% 20% / 0.08), 0 12px 20px -4px hsl(170 12% 20% / 0.10);
+    --shadow-xl: 0 8px 16px -4px hsl(170 12% 20% / 0.09), 0 20px 32px -8px hsl(170 12% 20% / 0.12);
+    --shadow-2xl: 0 24px 48px -12px hsl(170 12% 20% / 0.18);
     --tracking-normal: 0em;
     --spacing: 0.25rem;
-    --background-sec: #f5f4ee;
   }
 
   .dark {
@@ -97,20 +122,20 @@
     --error-foreground: #ffffff;
     --border: #3e3e38;
     --input: #52514a;
-    --ring: #d97757;
-    --chart-1: #b05730;
+    --ring: #0da192;
+    --chart-1: #0da192;
     --chart-2: #9c87f5;
-    --chart-3: #1a1915;
-    --chart-4: #2f2b48;
-    --chart-5: #b4552d;
+    --chart-3: #d7b56d;
+    --chart-4: #4f9bd4;
+    --chart-5: #e08a5c;
     --sidebar: #1f1e1d;
     --sidebar-foreground: #c3c0b6;
-    --sidebar-primary: #343434;
-    --sidebar-primary-foreground: #fbfbfb;
+    --sidebar-primary: #0da192;
+    --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #0f0f0e;
     --sidebar-accent-foreground: #c3c0b6;
-    --sidebar-border: #ebebeb;
-    --sidebar-ring: #b5b5b5;
+    --sidebar-border: #3e3e38;
+    --sidebar-ring: #0da192;
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -129,6 +154,45 @@
     --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
     --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  }
+
+  /* ── Sekcje zawsze leżące na ciemnym tle ────────────────────────────────
+     Hero ze zdjęciem, czarne pasy CTA, odtwarzacze wideo — treść musi tam
+     zostać jasna niezależnie od wybranego motywu. Zamiast hardkodować kolory
+     w komponentach, przypinamy tokeny do wartości z motywu ciemnego: wszystko
+     w środku (text-foreground, text-muted-foreground, border-border, bg-card…)
+     samo renderuje się „po ciemnemu". */
+  .on-dark {
+    --background: #20201d;
+    --background-sec: #222222;
+    --bg-darker: #212121;
+    --foreground: #ffffff;
+    --card: #363431;
+    --card-foreground: #faf9f5;
+    --popover: #30302e;
+    --popover-foreground: #e5e5e2;
+    --primary: #0da192;
+    --primary-hover: #0fbaa8;
+    --primary-dark: #0a8276;
+    --primary-foreground: #ffffff;
+    --secondary: #d7b56d;
+    --secondary-hover: #e3c583;
+    --secondary-foreground: #30302e;
+    --muted: #1b1b19;
+    --muted-foreground: #b7b5a9;
+    --accent: #1a1915;
+    --accent-foreground: #f5f4ee;
+    --destructive: #ef4444;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --error: #ef4444;
+    --border: #3e3e38;
+    --input: #52514a;
+    --ring: #0da192;
+    --sidebar: #1f1e1d;
+    --sidebar-foreground: #c3c0b6;
+    --sidebar-border: #3e3e38;
+    color: var(--foreground);
   }
 
   @theme inline {
@@ -389,7 +453,7 @@ a .bg-card {
   font-size: 1.0625rem;
   /* 17px for superior readability */
   line-height: 1.8;
-  color: hsl(var(--foreground) / 0.88);
+  color: color-mix(in srgb, var(--foreground) 88%, transparent);
   letter-spacing: -0.01em;
 }
 
@@ -403,7 +467,7 @@ a .bg-card {
 .about-description h2,
 .about-description h3,
 .about-description h4 {
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.02em;
@@ -418,7 +482,7 @@ a .bg-card {
 .about-description h2 {
   font-size: 1.75rem;
   margin-top: 2.5rem;
-  border-bottom: 1px solid hsl(var(--border) / 0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
   padding-bottom: 0.5rem;
 }
 
@@ -461,12 +525,12 @@ a .bg-card {
 }
 
 .about-description li::marker {
-  color: hsl(var(--primary) / 0.7);
+  color: color-mix(in srgb, var(--primary) 70%, transparent);
 }
 
 .about-description strong {
   font-weight: 700;
-  color: hsl(var(--foreground));
+  color: var(--foreground);
 }
 
 .about-description em {
@@ -474,7 +538,7 @@ a .bg-card {
 }
 
 .about-description a {
-  color: hsl(var(--primary));
+  color: var(--primary);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -483,19 +547,19 @@ a .bg-card {
 }
 
 .about-description a:hover {
-  color: hsl(var(--primary) / 0.8);
+  color: color-mix(in srgb, var(--primary) 80%, transparent);
   text-decoration-color: currentColor;
 }
 
 .about-description blockquote {
   margin: 2rem 0;
   padding: 1rem 1.5rem;
-  border-left: 4px solid hsl(var(--primary));
-  background-color: hsl(var(--muted) / 0.25);
+  border-left: 4px solid var(--primary);
+  background-color: color-mix(in srgb, var(--muted) 25%, transparent);
   border-radius: 0 0.75rem 0.75rem 0;
   font-style: italic;
   font-size: 1.125rem;
-  color: hsl(var(--foreground) / 0.8);
+  color: color-mix(in srgb, var(--foreground) 80%, transparent);
 }
 
 .about-description blockquote p:last-child {
@@ -504,26 +568,26 @@ a .bg-card {
 
 .about-description hr {
   border: 0;
-  border-top: 1px solid hsl(var(--border) / 0.5);
+  border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   margin: 2.5rem 0;
 }
 
 .about-description pre {
-  background-color: hsl(var(--muted) / 0.4);
+  background-color: color-mix(in srgb, var(--muted) 40%, transparent);
   padding: 1rem 1.25rem;
   border-radius: 0.75rem;
   overflow-x: auto;
   margin-bottom: 1.5rem;
-  border: 1px solid hsl(var(--border) / 0.3);
+  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
 }
 
 .about-description code {
   font-family: var(--font-mono);
   font-size: 0.875em;
-  background-color: hsl(var(--muted) / 0.5);
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
   padding: 0.2rem 0.4rem;
   border-radius: 0.375rem;
-  border: 1px solid hsl(var(--border) / 0.2);
+  border: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
 }
 
 .about-description pre code {
@@ -677,9 +741,15 @@ a .bg-card {
   background-size: cover;
 }
 
+/* Wzór tła — jasny motyw rysuje go ciemnym atramentem, ciemny białym,
+   inaczej w jednym z motywów wzór znika. */
 .bg-pattern-labyrinth {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M0 0 L40 40 L80 0 M0 80 L40 40 L80 80 M40 0 L40 80 M0 40 L80 40' stroke='%23ffffff' stroke-opacity='0.02' stroke-width='1.5' fill='none'/%3E%3Cpath d='M20 20 L40 40 L60 20 M20 60 L40 40 L60 60' stroke='%23ffffff' stroke-opacity='0.035' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M0 0 L40 40 L80 0 M0 80 L40 40 L80 80 M40 0 L40 80 M0 40 L80 40' stroke='%2314201e' stroke-opacity='0.035' stroke-width='1.5' fill='none'/%3E%3Cpath d='M20 20 L40 40 L60 20 M20 60 L40 40 L60 60' stroke='%2314201e' stroke-opacity='0.055' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat: repeat;
+}
+
+.dark .bg-pattern-labyrinth {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M0 0 L40 40 L80 0 M0 80 L40 40 L80 80 M40 0 L40 80 M0 40 L80 40' stroke='%23ffffff' stroke-opacity='0.02' stroke-width='1.5' fill='none'/%3E%3Cpath d='M20 20 L40 40 L60 20 M20 60 L40 40 L60 60' stroke='%23ffffff' stroke-opacity='0.035' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
 }
 
 /* Custom scrollbar utility for horizontally scrollable tabs */
@@ -688,18 +758,18 @@ a .bg-card {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1c1c1e;
+  background: var(--muted);
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #0da192;
+  background: var(--primary);
   border-radius: 4px;
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #0da192 #1c1c1e;
+  scrollbar-color: var(--primary) var(--muted);
 }
 
 /* Hide scrollbar utility */
@@ -885,7 +955,11 @@ a .bg-card {
 }
 
 .top-bar-public {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .top-bar-public {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 /* Editor.js Dark Mode Overrides */
@@ -1326,28 +1400,29 @@ a .bg-card {
 
 /* ===== Cookie consent (vanilla-cookieconsent) – dopasowanie do złotego motywu ===== */
 #cc-main {
-  /* Akcent zgodny z kolorystyką marki (złoto) */
-  --cc-btn-primary-bg: #d7b56d;
-  --cc-btn-primary-border-color: #d7b56d;
-  --cc-btn-primary-hover-bg: #c5a35c;
-  --cc-btn-primary-hover-border-color: #c5a35c;
-  --cc-btn-primary-color: #141414;
-  --cc-btn-primary-hover-color: #141414;
-  --cc-toggle-on-bg: #d7b56d;
-  --cc-toggle-readonly-bg: #4a4a4a;
-  --cc-link-color: #d7b56d;
-  --cc-cookie-category-block-bg-hover: #1f1f1f;
+  /* Akcent zgodny z kolorystyką marki — złoto z tokenu, więc w jasnym motywie
+     schodzi do ciemniejszego odcienia i zachowuje kontrast. */
+  --cc-btn-primary-bg: var(--secondary);
+  --cc-btn-primary-border-color: var(--secondary);
+  --cc-btn-primary-hover-bg: var(--secondary-hover);
+  --cc-btn-primary-hover-border-color: var(--secondary-hover);
+  --cc-btn-primary-color: var(--secondary-foreground);
+  --cc-btn-primary-hover-color: var(--secondary-foreground);
+  --cc-toggle-on-bg: var(--primary);
+  --cc-toggle-readonly-bg: var(--input);
+  --cc-link-color: var(--primary);
+  --cc-cookie-category-block-bg-hover: var(--muted);
 }
 
 #cc-main a,
 #cc-main a:hover {
-  color: #d7b56d;
+  color: var(--primary);
 }
 
 /* ===== Blog Post Content (User Generated HTML) Styling ===== */
 #post-content .prose {
   font-family: var(--font-poppins), sans-serif;
-  color: #e5e7eb; /* text-neutral-200 */
+  color: color-mix(in srgb, var(--foreground) 90%, transparent); /* text-neutral-200 */
   line-height: 1.8;
   font-size: 1.1rem;
 }
@@ -1355,7 +1430,7 @@ a .bg-card {
 #post-content .prose p {
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #d1d5db; /* text-neutral-300 */
+  color: color-mix(in srgb, var(--foreground) 85%, transparent); /* text-neutral-300 */
 }
 
 #post-content .prose h2,
@@ -1364,7 +1439,7 @@ a .bg-card {
 #post-content .prose h5,
 #post-content .prose h6 {
   font-family: var(--font-playfair), serif;
-  color: #ffffff;
+  color: var(--foreground);
   font-weight: 700;
   line-height: 1.3;
   margin-bottom: 1rem;
@@ -1373,7 +1448,7 @@ a .bg-card {
 #post-content .prose h2 {
   font-size: 1.85rem;
   margin-top: 3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.5rem;
 }
 
@@ -1389,13 +1464,13 @@ a .bg-card {
 
 #post-content .prose strong,
 #post-content .prose b {
-  color: #ffffff;
+  color: var(--foreground);
   font-weight: 600;
 }
 
 #post-content .prose em,
 #post-content .prose i {
-  color: #e5e7eb;
+  color: color-mix(in srgb, var(--foreground) 90%, transparent);
 }
 
 #post-content .prose a {
@@ -1432,7 +1507,7 @@ a .bg-card {
 #post-content .prose li {
   margin-bottom: 0.625rem;
   line-height: 1.7;
-  color: #d1d5db; /* text-neutral-300 */
+  color: color-mix(in srgb, var(--foreground) 85%, transparent); /* text-neutral-300 */
 }
 
 #post-content .prose li::marker {
@@ -1456,12 +1531,12 @@ a .bg-card {
 /* Blockquotes */
 #post-content .prose blockquote {
   border-left: 4px solid var(--primary);
-  background-color: rgba(13, 161, 146, 0.05); /* matches teal primary in dark mode */
+  background-color: color-mix(in srgb, var(--primary) 7%, transparent); /* matches teal primary in dark mode */
   padding: 1.25rem 1.75rem;
   margin: 2rem 0;
   border-radius: 0 1rem 1rem 0;
   font-style: italic;
-  color: #f3f4f6; /* text-neutral-100 */
+  color: var(--foreground); /* text-neutral-100 */
   font-size: 1.15rem;
 }
 
@@ -1477,11 +1552,11 @@ a .bg-card {
   margin: 2.5rem 0;
   font-size: 0.95rem;
   text-align: left;
-  background-color: rgba(21, 21, 19, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--card);
+  border: 1px solid var(--border);
   border-radius: 1rem;
   border-style: hidden;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 1px var(--border);
   overflow: hidden;
 }
 
@@ -1491,18 +1566,18 @@ a .bg-card {
 }
 
 #post-content .prose th {
-  background-color: rgba(13, 161, 146, 0.08); /* teal accent */
-  color: #ffffff;
+  background-color: color-mix(in srgb, var(--primary) 10%, transparent); /* teal accent */
+  color: var(--foreground);
   font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--border);
   font-family: var(--font-playfair), serif;
   font-size: 1rem;
   letter-spacing: 0.02em;
 }
 
 #post-content .prose td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: #d1d5db; /* text-neutral-300 */
+  border-bottom: 1px solid var(--border);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent); /* text-neutral-300 */
 }
 
 #post-content .prose tr:last-child td {
@@ -1510,11 +1585,11 @@ a .bg-card {
 }
 
 #post-content .prose tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.015);
+  background-color: color-mix(in srgb, var(--foreground) 3%, transparent);
 }
 
 #post-content .prose tr:hover td {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 
 /* Make table responsive if it overflows */
@@ -1534,20 +1609,20 @@ a .bg-card {
   border-radius: 1rem;
   margin: 2.5rem auto;
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Horizontal Rules */
 #post-content .prose hr {
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border);
   margin: 3rem 0;
 }
 
 /* Inline Code & Code Blocks */
 #post-content .prose code {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--muted);
   color: var(--secondary); /* golden secondary accent */
   padding: 0.2rem 0.45rem;
   border-radius: 0.375rem;
@@ -1557,12 +1632,12 @@ a .bg-card {
 }
 
 #post-content .prose pre {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--muted);
   padding: 1.25rem;
   border-radius: 0.75rem;
   overflow-x: auto;
   margin: 2rem 0;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
 }
 
 #post-content .prose pre code {

@@ -260,7 +260,7 @@ export function PackageActivatedModal({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent
-        className={`max-w-2xl bg-zinc-950 p-6 shadow-2xl backdrop-blur-xl md:p-8 text-white ${content.dialogBorder}`}
+        className={`max-w-2xl bg-background p-6 shadow-2xl backdrop-blur-xl md:p-8 text-foreground ${content.dialogBorder}`}
       >
         <AlertDialogHeader className="space-y-4">
           <div
@@ -269,17 +269,17 @@ export function PackageActivatedModal({
             <HeaderIcon className="h-8 w-8 text-zinc-950 fill-zinc-950 animate-bounce" />
           </div>
 
-          <AlertDialogTitle className="text-center text-2xl font-bold tracking-tight text-white md:text-3xl font-playfair">
+          <AlertDialogTitle className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl font-playfair">
             {content.title}
           </AlertDialogTitle>
 
-          <AlertDialogDescription className="text-center text-sm text-zinc-400 md:text-base max-w-lg mx-auto">
+          <AlertDialogDescription className="text-center text-sm text-muted-foreground md:text-base max-w-lg mx-auto">
             {content.description}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         {/* Korzyści pakietu */}
-        <div className="my-6 space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 md:p-6">
+        <div className="my-6 space-y-4 rounded-2xl border border-border bg-card/50 p-5 md:p-6">
           <h4
             className={`text-sm font-semibold uppercase tracking-wider flex items-center gap-2 ${content.accentText}`}
           >
@@ -293,8 +293,8 @@ export function PackageActivatedModal({
                 <div key={benefit.title} className="flex gap-3">
                   <BenefitIcon className={`h-5 w-5 shrink-0 mt-0.5 ${content.benefitIconColor}`} />
                   <div>
-                    <h5 className="font-semibold text-sm text-zinc-200">{benefit.title}</h5>
-                    <p className="text-xs text-zinc-400 mt-1">{benefit.description}</p>
+                    <h5 className="font-semibold text-sm text-foreground">{benefit.title}</h5>
+                    <p className="text-xs text-muted-foreground mt-1">{benefit.description}</p>
                   </div>
                 </div>
               );
@@ -302,20 +302,20 @@ export function PackageActivatedModal({
           </div>
 
           {punktyGratis > 0 && (
-            <div className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5">
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5">
               <Gift className={`h-4 w-4 shrink-0 ${content.accentText}`} />
-              <span className="text-xs text-zinc-300">
+              <span className="text-xs text-foreground/80">
                 Na Twoje saldo trafiło już{" "}
                 <strong className={content.accentText}>+{punktyGratis} punktów gratis</strong>!
               </span>
             </div>
           )}
 
-          <div className="mt-4 pt-4 border-t border-zinc-800 text-center text-xs text-zinc-500">
+          <div className="mt-4 pt-4 border-t border-border text-center text-xs text-muted-foreground">
             Pakiet {planNazwa} został aktywowany na Twoim profilu
             {dataPakietuDo ? (
               <>
-                {" "}i pozostanie ważny do <strong className="text-zinc-300">{formatDate(dataPakietuDo)}</strong>.
+                {" "}i pozostanie ważny do <strong className="text-foreground/80">{formatDate(dataPakietuDo)}</strong>.
               </>
             ) : (
               "."

@@ -339,7 +339,7 @@ export default function SearchLawyerPage() {
     <div className="min-h-screen bg-background-sec">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900"
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-border on-dark"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -456,9 +456,9 @@ export default function SearchLawyerPage() {
                               </div>
                             </button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[240px] p-3 bg-card border-neutral-800 text-white" align="start">
+                          <PopoverContent className="w-[240px] p-3 bg-card border-border text-foreground" align="start">
                             <div className="space-y-2">
-                              <p className="text-xs text-neutral-400">Wpisz nazwę powiatu</p>
+                              <p className="text-xs text-muted-foreground">Wpisz nazwę powiatu</p>
                               <input
                                 autoFocus
                                 type="text"
@@ -473,7 +473,7 @@ export default function SearchLawyerPage() {
                                   }
                                 }}
                                 placeholder="np. powiat warszawski"
-                                className="w-full bg-neutral-900 border border-neutral-700 rounded-md px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-teal-500"
                               />
                               <button
                                 type="button"
@@ -527,25 +527,25 @@ export default function SearchLawyerPage() {
                                   </div>
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-[240px] p-0 bg-card border-neutral-800 text-white" align="start">
-                                <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                              <PopoverContent className="w-[240px] p-0 bg-card border-border text-foreground" align="start">
+                                <Command shouldFilter={false} className="bg-background text-foreground">
                                   <CommandInput
                                     placeholder="Szukaj miasta..."
                                     value={locationSearch}
                                     onValueChange={setLocationSearch}
-                                    className="text-white bg-transparent border-neutral-800"
+                                    className="text-foreground bg-transparent border-border"
                                   />
                                   <CommandList className="max-h-60 overflow-y-auto">
                                     {isLoadingCities && (
-                                      <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                                      <div className="text-muted-foreground py-3 text-center text-xs">Wyszukiwanie...</div>
                                     )}
                                     {!isLoadingCities && locationSearch.trim().length < 2 && (
-                                      <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                      <div className="text-muted-foreground py-3 text-center text-xs px-3">
                                         Wpisz co najmniej 2 znaki...
                                       </div>
                                     )}
                                     {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                                      <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono.</div>
+                                      <div className="text-muted-foreground py-3 text-center text-xs">Nie znaleziono.</div>
                                     )}
                                     <CommandGroup>
                                       {cities.map((city) => {
@@ -567,7 +567,7 @@ export default function SearchLawyerPage() {
                                               }
                                               setLocationOpen(false)
                                             }}
-                                            className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                            className="text-foreground hover:bg-card cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-muted"
                                           >
                                             <div className="flex items-center gap-2">
                                               <Check
@@ -578,7 +578,7 @@ export default function SearchLawyerPage() {
                                               />
                                               <span>{displayValue}</span>
                                             </div>
-                                            <span className="text-xs text-neutral-400 ml-2 text-right">
+                                            <span className="text-xs text-muted-foreground ml-2 text-right">
                                               {city.voivodeship?.nazwa}
                                             </span>
                                           </CommandItem>
@@ -691,7 +691,7 @@ export default function SearchLawyerPage() {
         {/* Results */}
         <div>
           {/* Results Count */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border/60" id="sort-and-count">
             <p className="text-lg font-medium text-foreground">
               Znaleziono <span className="text-primary font-semibold">{total}</span> {total === 1 ? 'eksperta' : 'ekspertów'}
             </p>
@@ -709,7 +709,7 @@ export default function SearchLawyerPage() {
                 <span className="sm:hidden">Filtry</span>
                 {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
-              <div className="flex items-center gap-1 border rounded-md p-1 bg-neutral-950/40 border-neutral-800 h-9">
+              <div className="flex items-center gap-1 border rounded-md p-1 bg-background/40 border-border h-9">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"

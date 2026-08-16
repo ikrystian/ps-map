@@ -6,10 +6,10 @@ import Link from "next/link"
 
 export function LawyerBenefitsSection() {
     return (
-        <section className="bg-[#222222] text-white py-24">
+        <section className="bg-card text-foreground py-24">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                    <p className="text-sm uppercase tracking-widest text-gray-400 mb-4 font-medium">
+                    <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4 font-medium">
                         Zyskaj klientów
                     </p>
                     <h2 className="text-4xl md:text-5xl ">
@@ -19,7 +19,7 @@ export function LawyerBenefitsSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
                     {/* Card 1 */}
-                    <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
+                    <div className="bg-card p-12 rounded-sm flex flex-col items-center text-center group hover:bg-card transition-colors duration-300">
                         <h3 className="text-2xl  mb-2">Zwiększ</h3>
                         <h3 className="text-2xl  mb-12">zasięg</h3>
 
@@ -32,7 +32,7 @@ export function LawyerBenefitsSection() {
                     </div>
 
                     {/* Card 2 */}
-                    <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
+                    <div className="bg-card p-12 rounded-sm flex flex-col items-center text-center group hover:bg-card transition-colors duration-300">
                         <h3 className="text-2xl  mb-2">Buduj</h3>
                         <h3 className="text-2xl  mb-12">markę</h3>
 
@@ -45,7 +45,7 @@ export function LawyerBenefitsSection() {
                     </div>
 
                     {/* Card 3 */}
-                    <div className="bg-[#1a1a1a] p-12 rounded-sm flex flex-col items-center text-center group hover:bg-[#252525] transition-colors duration-300">
+                    <div className="bg-card p-12 rounded-sm flex flex-col items-center text-center group hover:bg-card transition-colors duration-300">
                         <h3 className="text-2xl  mb-2">Zdobywaj</h3>
                         <h3 className="text-2xl  mb-12">więcej spraw</h3>
 

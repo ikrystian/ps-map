@@ -64,7 +64,7 @@ function CityLazyLoadTrigger({
   }, [voivodeshipId, fetchMoreCities, isLoadingMore])
 
   return (
-    <div ref={triggerRef} className="py-2 flex justify-center items-center gap-2 text-xs text-zinc-500">
+    <div ref={triggerRef} className="py-2 flex justify-center items-center gap-2 text-xs text-muted-foreground">
       {isLoadingMore ? (
         <>
           <Loader2 className="h-3 w-3 animate-spin text-primary" />
@@ -130,9 +130,9 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex flex-col gap-2.5 p-3 border rounded-xl bg-zinc-950/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
+      className={`flex flex-col gap-2.5 p-3 border rounded-xl bg-background/20 backdrop-blur-sm transition-all duration-200 group ${isMainCategory
           ? "border-primary/60 shadow-lg shadow-primary/5 bg-primary/5"
-          : "border-border/30 hover:border-primary/20 hover:bg-zinc-800/10"
+          : "border-border/30 hover:border-primary/20 hover:bg-muted/10"
         }`}
     >
       <div className="flex items-center justify-between w-full">
@@ -140,7 +140,7 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
           <div
             {...listeners}
             {...attributes}
-            className="cursor-grab active:cursor-grabbing text-zinc-500 hover:text-zinc-300 p-1 transition-colors"
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground/80 p-1 transition-colors"
           >
             <GripVertical className="h-4 w-4" />
           </div>
@@ -150,14 +150,14 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
             )}
             <div>
               <div className="flex items-center gap-2">
-                <p className="font-semibold text-sm text-white">{item.category.nazwa}</p>
+                <p className="font-semibold text-sm text-foreground">{item.category.nazwa}</p>
                 {isMainCategory && (
                   <Badge variant="default" className="text-[10px] py-0.5 px-1.5 bg-primary hover:bg-primary-hover text-white rounded-md border-none">
                     Główna
                   </Badge>
                 )}
               </div>
-              <Badge variant="outline" className="text-[10px] mt-1 text-zinc-400 border-border/40 rounded-md">
+              <Badge variant="outline" className="text-[10px] mt-1 text-muted-foreground border-border/40 rounded-md">
                 {item.category.typ === "SPRAWY_FIRMOWE" ? "Firmowe" : "Prywatne"}
               </Badge>
             </div>
@@ -206,7 +206,7 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
               step="5"
               value={item.percentage || 0}
               onChange={(e) => onPercentageChange(item.categoryId, Math.min(maxAllowed, parseInt(e.target.value) || 0))}
-              className="flex-1 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
+              className="flex-1 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none"
             />
             <div className="flex items-center gap-1 shrink-0">
               <input
@@ -218,12 +218,12 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
                   const val = Math.max(0, Math.min(maxAllowed, parseInt(e.target.value) || 0))
                   onPercentageChange(item.categoryId, val)
                 }}
-                className="w-12 h-7 bg-zinc-900 border border-border/30 rounded-md text-xs text-center text-white focus:outline-none focus:border-primary"
+                className="w-12 h-7 bg-card border border-border/30 rounded-md text-xs text-center text-foreground focus:outline-none focus:border-primary"
               />
-              <span className="text-zinc-400 text-xs">%</span>
+              <span className="text-muted-foreground text-xs">%</span>
             </div>
           </div>
-          <p className="text-[10px] text-zinc-500">
+          <p className="text-[10px] text-muted-foreground">
             {maxAllowed <= (item.percentage || 0)
               ? "Osiągnięto limit — pula 100% jest w pełni rozdzielona. Zmniejsz inną specjalizację, aby zwiększyć tę."
               : `Możesz przydzielić jeszcze maks. ${maxAllowed - (item.percentage || 0)}% z pozostałej puli.`}
@@ -792,13 +792,13 @@ export default function LawFirmServicesPage() {
       <div key={category.id} className="mb-1">
         <div className={`flex items-center p-2 rounded-xl transition-all duration-200 ${selected
             ? "bg-primary/5 border border-primary/20 text-primary"
-            : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
+            : "hover:bg-muted/20 text-foreground/80 hover:text-foreground"
           } ${level > 0 ? 'ml-6 border-l border-border/10 pl-4' : ''}`}>
           {hasChildren ? (
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 mr-2 p-0 text-zinc-400 hover:text-white hover:bg-transparent"
+              className="h-6 w-6 mr-2 p-0 text-muted-foreground hover:text-foreground hover:bg-transparent"
               onClick={() => toggleExpanded(category.id)}
             >
               {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -818,7 +818,7 @@ export default function LawFirmServicesPage() {
             <div className="grid gap-1.5 leading-none flex-1">
               <label
                 htmlFor={`cat-${category.id}`}
-                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-primary font-bold" : "text-zinc-200"
+                className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2 ${isMain ? "text-primary font-bold" : "text-foreground"
                   }`}
               >
                 {category.nazwa}
@@ -830,7 +830,7 @@ export default function LawFirmServicesPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 text-xs text-zinc-400 hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded-lg transition-all ml-1"
+                    className="h-6 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-0.5 rounded-lg transition-all ml-1"
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
@@ -842,7 +842,7 @@ export default function LawFirmServicesPage() {
                 )}
               </label>
               {category.opis && (
-                <p className="text-xs text-zinc-500 line-clamp-1">
+                <p className="text-xs text-muted-foreground line-clamp-1">
                   {category.opis}
                 </p>
               )}
@@ -905,14 +905,14 @@ export default function LawFirmServicesPage() {
       <PageHeader
         title="Zakres i obszar usług"
         subtitle="Zarządzaj swoimi specjalizacjami oraz terenem, na którym świadczysz usługi."
-        titleClassName="text-white text-3xl sm:text-4xl"
+        titleClassName="text-foreground text-3xl sm:text-4xl"
       >
         <div className="flex items-center gap-4 relative z-10">
           <Button
             onClick={handleSave}
             disabled={saving}
             variant="primary"
-            className="h-11 px-6 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-white/10 group gap-2"
+            className="h-11 px-6 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border-t border-border group gap-2"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -937,8 +937,8 @@ export default function LawFirmServicesPage() {
                   <Star className="h-5 w-5 fill-primary text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-white font-playfair">Dostępne specjalizacje</CardTitle>
-                  <CardDescription className="text-zinc-400 text-sm">
+                  <CardTitle className="text-xl text-foreground font-playfair">Dostępne specjalizacje</CardTitle>
+                  <CardDescription className="text-muted-foreground text-sm">
                     Zaznacz dziedziny prawa, w których świadczysz pomoc. Klienci znajdą Cię po tych kategoriach.
                   </CardDescription>
                 </div>
@@ -948,20 +948,20 @@ export default function LawFirmServicesPage() {
               {/* Search & Collapse/Expand Toolbar */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b border-border/10">
                 <div className="relative flex-1 group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-primary transition-colors" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input
                     type="text"
                     placeholder="Wyszukaj specjalizację..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                    className="pl-9 h-10 bg-background/20 border-border/30 text-foreground rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                   />
                   {searchQuery && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-zinc-400 hover:text-white"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
                     >
                       ✕
                     </Button>
@@ -972,7 +972,7 @@ export default function LawFirmServicesPage() {
                     variant="outline"
                     size="sm"
                     onClick={expandAll}
-                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-white transition-all duration-200"
+                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-foreground transition-all duration-200"
                   >
                     Rozwiń wszystkie
                   </Button>
@@ -980,7 +980,7 @@ export default function LawFirmServicesPage() {
                     variant="outline"
                     size="sm"
                     onClick={collapseAll}
-                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-white transition-all duration-200"
+                    className="h-10 text-xs px-4 font-semibold rounded-xl border-border/50 hover:bg-muted text-foreground transition-all duration-200"
                   >
                     Zwiń wszystkie
                   </Button>
@@ -997,7 +997,7 @@ export default function LawFirmServicesPage() {
                     {filteredFirmowe.length > 0 ? (
                       filteredFirmowe.map(cat => renderCategoryTree(cat))
                     ) : (
-                      <p className="text-sm text-zinc-500 italic py-4">Brak specjalizacji</p>
+                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
                     )}
                   </div>
                 </div>
@@ -1011,7 +1011,7 @@ export default function LawFirmServicesPage() {
                     {filteredPrywatne.length > 0 ? (
                       filteredPrywatne.map(cat => renderCategoryTree(cat))
                     ) : (
-                      <p className="text-sm text-zinc-500 italic py-4">Brak specjalizacji</p>
+                      <p className="text-sm text-muted-foreground italic py-4">Brak specjalizacji</p>
                     )}
                   </div>
                 </div>
@@ -1028,8 +1028,8 @@ export default function LawFirmServicesPage() {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-white font-playfair">Obszar działania</CardTitle>
-                  <CardDescription className="text-zinc-400 text-sm">
+                  <CardTitle className="text-xl text-foreground font-playfair">Obszar działania</CardTitle>
+                  <CardDescription className="text-muted-foreground text-sm">
                     Zdefiniuj, gdzie i w jaki sposób świadczysz pomoc prawną.
                   </CardDescription>
                 </div>
@@ -1041,7 +1041,7 @@ export default function LawFirmServicesPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.calaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
+                    areaData.calaPolska ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-background/20 hover:bg-muted/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, calaPolska: !prev.calaPolska }))}>
                     <div className="flex items-center gap-3">
                       <div className={cn("p-2 rounded-lg", areaData.calaPolska ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
@@ -1057,7 +1057,7 @@ export default function LawFirmServicesPage() {
 
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
-                    areaData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-zinc-950/20 hover:bg-zinc-800/10"
+                    areaData.onlineOnly ? "bg-primary/5 border-primary shadow-sm" : "border-border/40 bg-background/20 hover:bg-muted/10"
                   )} onClick={() => setAreaData(prev => ({ ...prev, onlineOnly: !prev.onlineOnly }))}>
                     <div className="flex items-center gap-3">
                       <div className={cn("p-2 rounded-lg", areaData.onlineOnly ? "bg-primary text-white" : "bg-muted text-muted-foreground")}>
@@ -1076,9 +1076,9 @@ export default function LawFirmServicesPage() {
               {!areaData.calaPolska && (
                 <div className="pt-4 border-t border-border/10">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                    <h4 className="text-sm font-semibold text-white">Lokalizacje stacjonarne</h4>
+                    <h4 className="text-sm font-semibold text-foreground">Lokalizacje stacjonarne</h4>
                     <div className="flex flex-wrap gap-3 text-xs">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted border border-border/50 text-foreground/80">
                         Województwa:{" "}
                         <span className={cn(
                           "font-semibold",
@@ -1086,11 +1086,11 @@ export default function LawFirmServicesPage() {
                         )}>
                           {areaData.selectedVoivodeships.length}
                         </span>
-                        <span className="text-zinc-500">/</span>
-                        <span className="text-zinc-400">{areaData.maxVoivodeships}</span>
+                        <span className="text-muted-foreground">/</span>
+                        <span className="text-muted-foreground">{areaData.maxVoivodeships}</span>
                       </span>
                       {showCounties && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted border border-border/50 text-foreground/80">
                           Powiaty:{" "}
                           <span className={cn(
                             "font-semibold",
@@ -1098,12 +1098,12 @@ export default function LawFirmServicesPage() {
                           )}>
                             {areaData.selectedCounties.length}
                           </span>
-                          <span className="text-zinc-500">/</span>
-                          <span className="text-zinc-400">{areaData.maxCounties}</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-muted-foreground">{areaData.maxCounties}</span>
                         </span>
                       )}
                       {showCities && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-700 border border-zinc-800/50 text-zinc-300">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted border border-border/50 text-foreground/80">
                           Miasta:{" "}
                           <span className={cn(
                             "font-semibold",
@@ -1111,8 +1111,8 @@ export default function LawFirmServicesPage() {
                           )}>
                             {areaData.selectedCities.length}
                           </span>
-                          <span className="text-zinc-500">/</span>
-                          <span className="text-zinc-400">{areaData.maxCities}</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-muted-foreground">{areaData.maxCities}</span>
                         </span>
                       )}
                     </div>
@@ -1120,14 +1120,14 @@ export default function LawFirmServicesPage() {
 
                   <div className={cn("grid gap-6", showCounties && "md:grid-cols-2")}>
                     <div className="space-y-3">
-                      <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">Województwa</h5>
-                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
+                      <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">Województwa</h5>
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-background/40 backdrop-blur-sm shadow-inner">
                         {allVoivodeships.map(v => (
                           <div key={v.id} className={cn(
                             "flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer",
                             areaData.selectedVoivodeships.includes(v.id)
                               ? "bg-primary/5 border-primary/30 text-primary font-medium"
-                              : "border-transparent bg-transparent hover:bg-zinc-800/20 text-zinc-300 hover:text-white"
+                              : "border-transparent bg-transparent hover:bg-muted/20 text-foreground/80 hover:text-foreground"
                           )} onClick={() => toggleVoivodeship(v.id)}>
                             <Checkbox
                               checked={areaData.selectedVoivodeships.includes(v.id)}
@@ -1143,19 +1143,19 @@ export default function LawFirmServicesPage() {
                     {showCounties && (
                     <div className="space-y-3">
                       <div className="flex flex-col gap-2">
-                        <h5 className="text-xs font-bold uppercase text-zinc-500 tracking-wider px-1">{showCities ? "Powiaty i miasta w wybranych województwach" : "Powiaty w wybranych województwach"}</h5>
+                        <h5 className="text-xs font-bold uppercase text-muted-foreground tracking-wider px-1">{showCities ? "Powiaty i miasta w wybranych województwach" : "Powiaty w wybranych województwach"}</h5>
                         {areaData.selectedVoivodeships.length > 0 && (
                           <Input
                             placeholder={showCities ? "Wyszukaj miasto..." : "Wyszukaj powiat..."}
                             value={citySearch}
                             onChange={(e) => setCitySearch(e.target.value)}
-                            className="bg-zinc-950/20 border-border/30 text-white rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
+                            className="bg-background/20 border-border/30 text-foreground rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                           />
                         )}
                       </div>
-                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-zinc-950/40 backdrop-blur-sm shadow-inner">
+                      <div className="space-y-1 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border/20 rounded-2xl p-4 bg-background/40 backdrop-blur-sm shadow-inner">
                         {areaData.selectedVoivodeships.length === 0 ? (
-                          <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-zinc-500 py-16 opacity-60">
+                          <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-muted-foreground py-16 opacity-60">
                             <MapPin className="h-8 w-8 mb-2 text-zinc-600 animate-pulse" />
                             <p className="text-xs font-medium">Wybierz województwo po lewej stronie</p>
                           </div>
@@ -1176,7 +1176,7 @@ export default function LawFirmServicesPage() {
                                 "flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 cursor-pointer",
                                 areaData.selectedCities.includes(city.id)
                                   ? "bg-primary/10 text-primary border border-primary/20"
-                                  : "hover:bg-zinc-800/20 text-zinc-300 hover:text-white border border-transparent"
+                                  : "hover:bg-muted/20 text-foreground/80 hover:text-foreground border border-transparent"
                               )} onClick={() => toggleCity(city.id)}>
                                 <Checkbox
                                   checked={areaData.selectedCities.includes(city.id)}
@@ -1203,10 +1203,10 @@ export default function LawFirmServicesPage() {
                                         const countyCities = filteredCities.filter(c => c.countyId === county.id)
                                         const countySelected = areaData.selectedCounties.includes(county.id)
                                         return (
-                                          <div key={county.id} className="rounded-xl border border-border/10 bg-zinc-950/30 overflow-hidden">
+                                          <div key={county.id} className="rounded-xl border border-border/10 bg-background/30 overflow-hidden">
                                             <div className={cn(
                                               "flex items-center gap-2 p-2 transition-all duration-200 cursor-pointer",
-                                              countySelected ? "bg-secondary/10 text-secondary" : "hover:bg-zinc-800/20 text-zinc-200"
+                                              countySelected ? "bg-secondary/10 text-secondary" : "hover:bg-muted/20 text-foreground"
                                             )} onClick={() => toggleCounty(county.id)}>
                                               <Checkbox
                                                 checked={countySelected}
@@ -1230,14 +1230,14 @@ export default function LawFirmServicesPage() {
                                 {showCities && (
                                   <div className="grid grid-cols-1 gap-1">
                                     {isLoading ? (
-                                      <div className="py-2 flex items-center gap-2 text-xs text-zinc-500">
+                                      <div className="py-2 flex items-center gap-2 text-xs text-muted-foreground">
                                         <Loader2 className="h-3 w-3 animate-spin text-primary" />
                                         Ładowanie miast...
                                       </div>
                                     ) : cities.length === 0 ? (
-                                      <div className="py-2 text-xs italic text-zinc-500">Brak miast w bazie.</div>
+                                      <div className="py-2 text-xs italic text-muted-foreground">Brak miast w bazie.</div>
                                     ) : filteredCities.length === 0 && counties.length === 0 ? (
-                                      <div className="py-2 text-xs italic text-zinc-500">Brak pasujących miast.</div>
+                                      <div className="py-2 text-xs italic text-muted-foreground">Brak pasujących miast.</div>
                                     ) : (
                                       <>
                                         {noCountyCities.length > 0 && (
@@ -1261,7 +1261,7 @@ export default function LawFirmServicesPage() {
                                 )}
 
                                 {!showCities && counties.length === 0 && !loadingCounties[vId] && (
-                                  <div className="py-2 text-xs italic text-zinc-500">Brak powiatów w bazie.</div>
+                                  <div className="py-2 text-xs italic text-muted-foreground">Brak powiatów w bazie.</div>
                                 )}
                               </div>
                             )
@@ -1284,7 +1284,7 @@ export default function LawFirmServicesPage() {
           <Card variant="glass" className="rounded-2xl relative overflow-hidden transition-all duration-300">
             <BorderBeam lightColor="var(--primary)" lightWidth={200} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-3">
-              <CardTitle className="text-base flex items-center gap-2 font-bold text-white">
+              <CardTitle className="text-base flex items-center gap-2 font-bold text-foreground">
                 <Info className="h-4 w-4 text-primary" />
                 Twój pakiet i limity
               </CardTitle>
@@ -1292,13 +1292,13 @@ export default function LawFirmServicesPage() {
             <CardContent className="space-y-5 pt-4">
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <div className="flex justify-between text-sm font-medium text-white">
-                    <span className="text-zinc-400 flex items-center gap-1.5">
+                  <div className="flex justify-between text-sm font-medium text-foreground">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
                       <Star className="h-3.5 w-3.5 text-primary fill-primary" /> Specjalizacje
                     </span>
                     <span>{selectedCategories.length} / {maxCategories}</span>
                   </div>
-                  <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-card rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-300",
@@ -1317,13 +1317,13 @@ export default function LawFirmServicesPage() {
                 ) : (
                   <>
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-sm font-medium text-white">
-                        <span className="text-zinc-400 flex items-center gap-1.5">
+                      <div className="flex justify-between text-sm font-medium text-foreground">
+                        <span className="text-muted-foreground flex items-center gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-secondary" /> Województwa
                         </span>
                         <span>{areaData.selectedVoivodeships.length} / {areaData.maxVoivodeships}</span>
                       </div>
-                      <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-card rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
@@ -1336,13 +1336,13 @@ export default function LawFirmServicesPage() {
 
                     {showCounties && (
                       <div className="space-y-1.5">
-                        <div className="flex justify-between text-sm font-medium text-white">
-                          <span className="text-zinc-400 flex items-center gap-1.5">
+                        <div className="flex justify-between text-sm font-medium text-foreground">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <Landmark className="h-3.5 w-3.5 text-secondary" /> Powiaty
                           </span>
                           <span>{areaData.selectedCounties.length} / {areaData.maxCounties}</span>
                         </div>
-                        <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-card rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full transition-all duration-300",
@@ -1356,13 +1356,13 @@ export default function LawFirmServicesPage() {
 
                     {showCities && (
                       <div className="space-y-1.5">
-                        <div className="flex justify-between text-sm font-medium text-white">
-                          <span className="text-zinc-400 flex items-center gap-1.5">
+                        <div className="flex justify-between text-sm font-medium text-foreground">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <MapPin className="h-3.5 w-3.5 text-secondary" /> Miasta
                           </span>
                           <span>{areaData.selectedCities.length} / {areaData.maxCities}</span>
                         </div>
-                        <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-card rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full transition-all duration-300",
@@ -1384,24 +1384,24 @@ export default function LawFirmServicesPage() {
             <BorderBeam lightColor="var(--secondary)" lightWidth={200} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/10 pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
                   <Star className="h-4 w-4 text-primary" />
                   Kolejność
                 </CardTitle>
-                <Badge variant="secondary" className="text-xs bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border-none rounded-lg">
+                <Badge variant="secondary" className="text-xs bg-muted text-foreground/80 hover:bg-muted border-none rounded-lg">
                   {selectedCategories.length} / {maxCategories}
                 </Badge>
               </div>
-              <CardDescription className="text-zinc-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 Przeciągnij elementy, aby ustalić ich kolejność. Główna specjalizacja (oznaczona gwiazdką) musi pozostać na pierwszym miejscu.
                 {skillLawFocusActive && " Suwakami rozdziel pulę 100% między specjalizacje — określasz, jaką część Twojej praktyki stanowi każda z nich. Suma musi wynosić dokładnie 100%, nie da się jej przekroczyć."}
               </CardDescription>
             </CardHeader>
             <CardContent className="max-h-[400px] overflow-y-auto custom-scrollbar pt-4">
               {skillLawFocusActive && selectedCategories.length > 0 && (
-                <div className="mb-4 p-3.5 rounded-xl border border-border/20 bg-zinc-950/40 space-y-2">
+                <div className="mb-4 p-3.5 rounded-xl border border-border/20 bg-background/40 space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-400 font-medium">Podział procentowy (Skill Law Focus):</span>
+                    <span className="text-muted-foreground font-medium">Podział procentowy (Skill Law Focus):</span>
                     <span className={cn(
                       "font-bold",
                       percentageSum === 100 ? "text-emerald-400 animate-pulse" : "text-amber-400"
@@ -1411,7 +1411,7 @@ export default function LawFirmServicesPage() {
                   </div>
                   
                   {/* Progress bar */}
-                  <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full transition-all duration-300",
@@ -1422,7 +1422,7 @@ export default function LawFirmServicesPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <p className="text-[10px] text-zinc-500">
+                    <p className="text-[10px] text-muted-foreground">
                       {percentageSum === 100
                         ? "Pula w pełni rozdzielona. Aby zwiększyć jedną specjalizację, najpierw zmniejsz inną."
                         : `Pozostało do rozdania: ${100 - percentageSum}%. Suma musi wynosić dokładnie 100%.`
@@ -1442,10 +1442,10 @@ export default function LawFirmServicesPage() {
               )}
 
               {selectedCategories.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-zinc-500 border-2 border-dashed border-border/20 rounded-2xl bg-zinc-950/10">
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed border-border/20 rounded-2xl bg-background/10">
                   <Info className="h-8 w-8 mb-2 opacity-40 animate-pulse text-primary" />
-                  <p className="font-semibold text-xs text-white">Brak specjalizacji</p>
-                  <p className="text-xs text-center px-4 mt-1 text-zinc-400">Wybierz je z listy po lewej stronie</p>
+                  <p className="font-semibold text-xs text-foreground">Brak specjalizacji</p>
+                  <p className="text-xs text-center px-4 mt-1 text-muted-foreground">Wybierz je z listy po lewej stronie</p>
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

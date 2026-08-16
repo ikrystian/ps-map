@@ -35,7 +35,7 @@ function ArticleCard({ post, index }: { post: BlogPost; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Link href={`/blog/${post.slug}`} className="block group">
-        <div className="relative overflow-hidden rounded-2xl aspect-[5/4] md:aspect-[4/5] cursor-pointer shadow-2xl bg-neutral-900 transition-all duration-500">
+        <div className="relative overflow-hidden rounded-2xl aspect-[5/4] md:aspect-[4/5] cursor-pointer shadow-2xl bg-card transition-all duration-500">
           {/* Background Image with subtle zoom on hover */}
           <Image
             src={post.obrazekWyrozniajacy || "/images/blog-placeholder.jpg"}
@@ -49,24 +49,24 @@ function ArticleCard({ post, index }: { post: BlogPost; index: number }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
 
           {/* Accent highlight on hover */}
-          <div className="absolute inset-0 bg-[#0da192]/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <div className="absolute inset-0 bg-primary/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
           {/* Content Container */}
-          <div className="absolute inset-0 flex flex-col justify-end p-8 text-white z-10">
+          <div className="on-dark absolute inset-0 flex flex-col justify-end p-8 text-foreground z-10">
             {/* Elegant Gold/Amber Date */}
             <span className="text-xs md:text-sm text-[#eab308]/90 font-medium mb-3 block tracking-widest uppercase">
               {getFormattedDate(post)}
             </span>
 
             {/* Title with improved typography */}
-            <h3 className="font-semibold text-xl md:text-2xl leading-tight line-clamp-3 mb-6 group-hover:text-white transition-colors duration-300">
+            <h3 className="font-semibold text-xl md:text-2xl leading-tight line-clamp-3 mb-6 group-hover:text-foreground transition-colors duration-300">
               {post.tytul}
             </h3>
 
             {/* Animated "Read More" trigger */}
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-8 h-[1px] bg-[#0da192] transition-all duration-500 group-hover:w-16" />
-              <span className="text-sm font-medium text-white/80 group-hover:text-white flex items-center gap-1.5 transition-all duration-300">
+              <div className="w-8 h-[1px] bg-primary transition-all duration-500 group-hover:w-16" />
+              <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground flex items-center gap-1.5 transition-all duration-300">
                 Przeczytaj artykuł
                 <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </span>
@@ -118,10 +118,10 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
         >
           {/* Header section with elegant title and divider line */}
           <div className="flex items-center gap-6 mb-12 w-full">
-            <h2 className="text-2xl md:text-3xl font-playfair text-white tracking-wide font-medium">
+            <h2 className="text-2xl md:text-3xl font-playfair text-foreground tracking-wide font-medium">
               Aktualności
             </h2>
-            <div className="h-[1px] bg-neutral-800 flex-grow" />
+            <div className="h-[1px] bg-muted flex-grow" />
           </div>
 
           {/* Cards Grid */}
@@ -131,8 +131,8 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                 <ArticleCard key={post.id} post={post} index={index} />
               ))
             ) : (
-              <div className="col-span-3 text-center py-20 bg-neutral-900/50 rounded-2xl border border-neutral-800">
-                <p className="text-neutral-500 font-medium">Brak artykułów do wyświetlenia</p>
+              <div className="col-span-3 text-center py-20 bg-card/50 rounded-2xl border border-border">
+                <p className="text-muted-foreground font-medium">Brak artykułów do wyświetlenia</p>
               </div>
             )}
           </div>
@@ -142,10 +142,10 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
             <div className="mt-16">
               {/* Header section for promoted articles */}
               <div className="flex items-center gap-6 mb-12 w-full">
-                <h3 className="text-2xl md:text-3xl font-playfair text-white tracking-wide font-medium">
+                <h3 className="text-2xl md:text-3xl font-playfair text-foreground tracking-wide font-medium">
                   Promowane artykuły
                 </h3>
-                <div className="h-[1px] bg-neutral-800 flex-grow" />
+                <div className="h-[1px] bg-muted flex-grow" />
               </div>
 
               {loadingPromoted ? (
@@ -159,8 +159,8 @@ export function LatestArticles({ blogPosts }: LatestArticlesProps) {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20 bg-neutral-900/50 rounded-2xl border border-neutral-800">
-                  <p className="text-neutral-500 font-medium">Brak promowanych artykułów</p>
+                <div className="text-center py-20 bg-card/50 rounded-2xl border border-border">
+                  <p className="text-muted-foreground font-medium">Brak promowanych artykułów</p>
                 </div>
               )}
             </div>

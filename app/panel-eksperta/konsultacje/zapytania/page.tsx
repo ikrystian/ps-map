@@ -92,7 +92,7 @@ export default function ExpertConsultationRequestsPage() {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative z-10 space-y-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -105,14 +105,14 @@ export default function ExpertConsultationRequestsPage() {
           <CardContent className="p-6">
             {filtered.length === 0 ? (
               <div className="mx-auto flex max-w-sm flex-col items-center justify-center space-y-4 py-16 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-zinc-800/40">
-                  <CalendarClock className="h-6 w-6 text-zinc-500" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/40 bg-muted/40">
+                  <CalendarClock className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
                   <Heading level="h4" size="h4" className="text-base">
                     {requests.length === 0 ? "Brak zapytań" : "Brak wyników"}
                   </Heading>
-                  <p className="mt-1.5 text-sm font-light leading-relaxed text-zinc-400">
+                  <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
                     {requests.length === 0
                       ? "Nie ma obecnie żadnych otwartych zapytań o konsultacje. Nowe pojawią się tutaj, gdy tylko klienci je wyślą."
                       : "Żadne zapytanie nie pasuje do wyszukiwanej frazy."}
@@ -128,12 +128,12 @@ export default function ExpertConsultationRequestsPage() {
                     <Link
                       key={request.id}
                       href={`/panel-eksperta/konsultacje/zapytania/${request.id}`}
-                      className="group block rounded-lg border border-border/10 bg-zinc-950/20 p-5 transition-all hover:border-primary/30 hover:bg-zinc-950/30"
+                      className="group block rounded-lg border border-border/10 bg-background/20 p-5 transition-all hover:border-primary/30 hover:bg-background/30"
                     >
                       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div className="min-w-0 space-y-2.5">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-playfair text-lg font-semibold text-white transition-colors group-hover:text-primary">
+                            <h3 className="font-playfair text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
                               {request.temat}
                             </h3>
                             {hasApplied && (
@@ -144,7 +144,7 @@ export default function ExpertConsultationRequestsPage() {
                             )}
                           </div>
 
-                          <p className="line-clamp-2 text-sm font-light leading-relaxed text-zinc-400">
+                          <p className="line-clamp-2 text-sm font-light leading-relaxed text-muted-foreground">
                             {request.opis}
                           </p>
 
@@ -154,17 +154,17 @@ export default function ExpertConsultationRequestsPage() {
                                 {request.category.nazwa}
                               </Badge>
                             )}
-                            <Badge className="rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                            <Badge className="rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                               {CONSULTATION_FORM_LABELS[request.forma]}
                             </Badge>
                             {request.preferowanyCzas && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 <Clock className="h-3 w-3" />
                                 {request.preferowanyCzas} min
                               </Badge>
                             )}
                             {request.budzetDo && (
-                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-zinc-950/40 px-2.5 py-0.5 text-sm font-medium text-zinc-300">
+                              <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                                 <Wallet className="h-3 w-3" />
                                 do {request.budzetDo} PLN
                               </Badge>
@@ -172,7 +172,7 @@ export default function ExpertConsultationRequestsPage() {
                           </div>
 
                           {(request.terminOd || request.preferowanyTermin) && (
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-muted-foreground">
                               Dostępność klienta:{" "}
                               {request.terminOd
                                 ? format(new Date(request.terminOd), "d MMM", { locale: pl })
@@ -185,10 +185,10 @@ export default function ExpertConsultationRequestsPage() {
                         </div>
 
                         <div className="flex shrink-0 flex-col items-start gap-1.5 md:items-end">
-                          <span className="text-sm text-zinc-400">
-                            <span className="font-semibold text-white">{request.liczbaZgloszen}</span> zgłoszeń
+                          <span className="text-sm text-muted-foreground">
+                            <span className="font-semibold text-foreground">{request.liczbaZgloszen}</span> zgłoszeń
                           </span>
-                          <span className="text-xs text-zinc-500">
+                          <span className="text-xs text-muted-foreground">
                             {format(new Date(request.createdAt), "d MMM yyyy", { locale: pl })}
                           </span>
                           {!hasApplied && (

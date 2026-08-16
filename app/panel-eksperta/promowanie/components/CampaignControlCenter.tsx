@@ -52,7 +52,7 @@ export function CampaignControlCenter({
   return (
     <div id="tour-promo-list" className="space-y-6 relative z-10">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+        <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
           Panel Kontrolny Kampanii
         </h2>
@@ -62,7 +62,7 @@ export function CampaignControlCenter({
       </div>
 
       <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-[#20201d]/60 border border-[#3e3e38] rounded-xl p-1 max-w-md">
+        <TabsList className="grid w-full grid-cols-3 bg-background/60 border border-border rounded-xl p-1 max-w-md">
           <TabsTrigger
             value="active"
             className="rounded-lg text-xs font-semibold data-[state=active]:bg-primary data-[state=active]:text-white transition-all py-2"
@@ -86,13 +86,13 @@ export function CampaignControlCenter({
         {/* Active Promotions Tab */}
         <TabsContent value="active" className="mt-4">
           {activePromotions.length === 0 ? (
-            <Card className="border-[#3e3e38] bg-[#363431]/20">
+            <Card className="border-border bg-card/20">
               <CardContent className="py-16 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-[#3e3e38]/50 flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
                   <Info className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-white">Brak aktywnych kampanii</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Brak aktywnych kampanii</h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                     Twoja ekspert nie ma obecnie uruchomionych promowań. Wybierz format powyżej, aby zacząć.
                   </p>
@@ -100,11 +100,11 @@ export function CampaignControlCenter({
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-[#3e3e38] bg-[#363431]/20 rounded-2xl overflow-hidden shadow-xl">
+            <Card className="border-border bg-card/20 rounded-2xl overflow-hidden shadow-xl">
               {/* Desktop View */}
               <div className="hidden md:block">
                 <Table>
-                  <TableHeader className="bg-[#20201d]/60 border-b border-[#3e3e38]/60">
+                  <TableHeader className="bg-background/60 border-b border-border/60">
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Format promowania</TableHead>
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Zasięg / Parametr</TableHead>
@@ -117,8 +117,8 @@ export function CampaignControlCenter({
                   </TableHeader>
                   <TableBody>
                     {activePromotions.map((promo) => (
-                      <TableRow key={promo.id} className="hover:bg-[#363431]/40 border-b border-[#3e3e38]/30 transition-colors">
-                        <TableCell className="font-bold text-sm text-white py-4">
+                      <TableRow key={promo.id} className="hover:bg-card/40 border-b border-border/30 transition-colors">
+                        <TableCell className="font-bold text-sm text-foreground py-4">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">
@@ -133,14 +133,14 @@ export function CampaignControlCenter({
                         <TableCell className="text-right py-4">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-muted-foreground hover:text-white rounded-lg">
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 border border-border bg-card/50 hover:bg-card text-muted-foreground hover:text-foreground rounded-lg">
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-[#30302e] border-[#3e3e38] text-[#e5e5e2]">
+                            <DropdownMenuContent align="end" className="bg-popover border-border text-[#e5e5e2]">
                               <DropdownMenuItem
                                 onClick={() => handleToggleAutoRenewal(promo)}
-                                className="gap-2 focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs py-2"
+                                className="gap-2 focus:bg-muted focus:text-foreground cursor-pointer text-xs py-2"
                               >
                                 <RefreshCw className="h-3.5 w-3.5" />
                                 {promo.automatyczneOdnowienie
@@ -166,10 +166,10 @@ export function CampaignControlCenter({
               {/* Mobile View */}
               <div className="block md:hidden p-4 space-y-4">
                 {activePromotions.map((promo) => (
-                  <div key={promo.id} className="p-4 rounded-xl border border-[#3e3e38]/80 bg-[#363431]/10 space-y-3">
+                  <div key={promo.id} className="p-4 rounded-xl border border-border/80 bg-card/10 space-y-3">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <div className="font-bold text-white text-sm">
+                        <div className="font-bold text-foreground text-sm">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -179,7 +179,7 @@ export function CampaignControlCenter({
                       {getPromotionStatusBadge(promo)}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
@@ -198,15 +198,15 @@ export function CampaignControlCenter({
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 px-2 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-xs font-medium gap-1 text-muted-foreground hover:text-white rounded-lg">
+                          <Button variant="ghost" size="sm" className="h-8 px-2 border border-border bg-card/50 hover:bg-card text-xs font-medium gap-1 text-muted-foreground hover:text-foreground rounded-lg">
                             Zarządzaj
                             <MoreVertical className="h-3 w-3" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-[#30302e] border-[#3e3e38] text-[#e5e5e2]">
+                        <DropdownMenuContent align="end" className="bg-popover border-border text-[#e5e5e2]">
                           <DropdownMenuItem
                             onClick={() => handleToggleAutoRenewal(promo)}
-                            className="gap-2 focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs py-2"
+                            className="gap-2 focus:bg-muted focus:text-foreground cursor-pointer text-xs py-2"
                           >
                             <RefreshCw className="h-3.5 w-3.5" />
                             {promo.automatyczneOdnowienie
@@ -233,13 +233,13 @@ export function CampaignControlCenter({
         {/* Upcoming Promotions Tab */}
         <TabsContent value="upcoming" className="mt-4">
           {upcomingPromotions.length === 0 ? (
-            <Card className="border-[#3e3e38] bg-[#363431]/20">
+            <Card className="border-border bg-card/20">
               <CardContent className="py-16 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-[#3e3e38]/50 flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
                   <Info className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-white">Brak zaplanowanych kampanii</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Brak zaplanowanych kampanii</h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                     Nie masz obecnie żadnych oczekujących na start lub zaplanowanych promowań.
                   </p>
@@ -247,11 +247,11 @@ export function CampaignControlCenter({
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-[#3e3e38] bg-[#363431]/20 rounded-2xl overflow-hidden shadow-xl">
+            <Card className="border-border bg-card/20 rounded-2xl overflow-hidden shadow-xl">
               {/* Desktop View */}
               <div className="hidden md:block">
                 <Table>
-                  <TableHeader className="bg-[#20201d]/60 border-b border-[#3e3e38]/60">
+                  <TableHeader className="bg-background/60 border-b border-border/60">
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Format promowania</TableHead>
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Zasięg / Parametr</TableHead>
@@ -264,8 +264,8 @@ export function CampaignControlCenter({
                   </TableHeader>
                   <TableBody>
                     {upcomingPromotions.map((promo) => (
-                      <TableRow key={promo.id} className="hover:bg-[#363431]/40 border-b border-[#3e3e38]/30 transition-colors">
-                        <TableCell className="font-bold text-sm text-white py-4">
+                      <TableRow key={promo.id} className="hover:bg-card/40 border-b border-border/30 transition-colors">
+                        <TableCell className="font-bold text-sm text-foreground py-4">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">
@@ -280,14 +280,14 @@ export function CampaignControlCenter({
                         <TableCell className="text-right py-4">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-muted-foreground hover:text-white rounded-lg">
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 border border-border bg-card/50 hover:bg-card text-muted-foreground hover:text-foreground rounded-lg">
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-[#30302e] border-[#3e3e38] text-[#e5e5e2]">
+                            <DropdownMenuContent align="end" className="bg-popover border-border text-[#e5e5e2]">
                               <DropdownMenuItem
                                 onClick={() => handleToggleAutoRenewal(promo)}
-                                className="gap-2 focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs py-2"
+                                className="gap-2 focus:bg-muted focus:text-foreground cursor-pointer text-xs py-2"
                               >
                                 <RefreshCw className="h-3.5 w-3.5" />
                                 {promo.automatyczneOdnowienie
@@ -313,10 +313,10 @@ export function CampaignControlCenter({
               {/* Mobile View */}
               <div className="block md:hidden p-4 space-y-4">
                 {upcomingPromotions.map((promo) => (
-                  <div key={promo.id} className="p-4 rounded-xl border border-[#3e3e38]/80 bg-[#363431]/10 space-y-3">
+                  <div key={promo.id} className="p-4 rounded-xl border border-border/80 bg-card/10 space-y-3">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <div className="font-bold text-white text-sm">
+                        <div className="font-bold text-foreground text-sm">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -326,7 +326,7 @@ export function CampaignControlCenter({
                       {getPromotionStatusBadge(promo)}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
@@ -345,15 +345,15 @@ export function CampaignControlCenter({
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 px-2 border border-[#3e3e38] bg-[#363431]/50 hover:bg-[#363431] text-xs font-medium gap-1 text-muted-foreground hover:text-white rounded-lg">
+                          <Button variant="ghost" size="sm" className="h-8 px-2 border border-border bg-card/50 hover:bg-card text-xs font-medium gap-1 text-muted-foreground hover:text-foreground rounded-lg">
                             Zarządzaj
                             <MoreVertical className="h-3 w-3" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-[#30302e] border-[#3e3e38] text-[#e5e5e2]">
+                        <DropdownMenuContent align="end" className="bg-popover border-border text-[#e5e5e2]">
                           <DropdownMenuItem
                             onClick={() => handleToggleAutoRenewal(promo)}
-                            className="gap-2 focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs py-2"
+                            className="gap-2 focus:bg-muted focus:text-foreground cursor-pointer text-xs py-2"
                           >
                             <RefreshCw className="h-3.5 w-3.5" />
                             {promo.automatyczneOdnowienie
@@ -380,13 +380,13 @@ export function CampaignControlCenter({
         {/* Archiwalne / Past Promotions Tab */}
         <TabsContent value="past" className="mt-4">
           {pastPromotions.length === 0 ? (
-            <Card className="border-[#3e3e38] bg-[#363431]/20">
+            <Card className="border-border bg-card/20">
               <CardContent className="py-16 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-[#3e3e38]/50 flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
                   <Info className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-white">Brak historii kampanii</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Brak historii kampanii</h4>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                     Nie posiadasz jeszcze zakończonych kampanii w tym portalu.
                   </p>
@@ -394,11 +394,11 @@ export function CampaignControlCenter({
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-[#3e3e38] bg-[#363431]/20 rounded-2xl overflow-hidden shadow-xl">
+            <Card className="border-border bg-card/20 rounded-2xl overflow-hidden shadow-xl">
               {/* Desktop View */}
               <div className="hidden md:block">
                 <Table>
-                  <TableHeader className="bg-[#20201d]/60 border-b border-[#3e3e38]/60">
+                  <TableHeader className="bg-background/60 border-b border-border/60">
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Format promowania</TableHead>
                       <TableHead className="text-xs font-semibold tracking-wider text-muted-foreground uppercase py-4">Zasięg / Parametr</TableHead>
@@ -410,8 +410,8 @@ export function CampaignControlCenter({
                   </TableHeader>
                   <TableBody>
                     {pastPromotions.map((promo) => (
-                      <TableRow key={promo.id} className="hover:bg-[#363431]/40 border-b border-[#3e3e38]/30 transition-colors">
-                        <TableCell className="font-bold text-sm text-white py-4">
+                      <TableRow key={promo.id} className="hover:bg-card/40 border-b border-border/30 transition-colors">
+                        <TableCell className="font-bold text-sm text-foreground py-4">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </TableCell>
                         <TableCell className="text-xs text-[#b7b5a9]">
@@ -432,10 +432,10 @@ export function CampaignControlCenter({
               {/* Mobile View */}
               <div className="block md:hidden p-4 space-y-4">
                 {pastPromotions.map((promo) => (
-                  <div key={promo.id} className="p-4 rounded-xl border border-[#3e3e38]/80 bg-[#363431]/10 space-y-3 opacity-75">
+                  <div key={promo.id} className="p-4 rounded-xl border border-border/80 bg-card/10 space-y-3 opacity-75">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <div className="font-bold text-white text-sm">
+                        <div className="font-bold text-foreground text-sm">
                           {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -445,7 +445,7 @@ export function CampaignControlCenter({
                       {getPromotionStatusBadge(promo)}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-[#3e3e38]/40">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
                         <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>

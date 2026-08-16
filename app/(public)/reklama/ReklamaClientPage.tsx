@@ -513,20 +513,20 @@ ${formData.tresc}`
                       className="bg-card border border-border rounded-3xl p-6 md:p-8 space-y-6 shadow-xl glass-panel text-left"
                     >
                       {/* Interactive Visual Browser Mockup Preview */}
-                      <div className="w-full bg-zinc-950/90 border border-white/10 rounded-2xl overflow-hidden shadow-md select-none mb-2">
+                      <div className="w-full bg-background/90 border border-border rounded-2xl overflow-hidden shadow-md select-none mb-2">
                         {/* Browser Bar */}
-                        <div className="bg-zinc-900/80 border-b border-white/5 px-4 py-2 flex items-center gap-2">
+                        <div className="bg-card/80 border-b border-border px-4 py-2 flex items-center gap-2">
                           <div className="flex gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-red-500/80" />
                             <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
                             <span className="w-2 h-2 rounded-full bg-green-500/80" />
                           </div>
-                          <div className="bg-zinc-950/80 text-[9px] text-muted-foreground/75 px-3 py-0.5 rounded-sm mx-auto w-48 text-center truncate font-mono">
+                          <div className="bg-background/80 text-[9px] text-muted-foreground/75 px-3 py-0.5 rounded-sm mx-auto w-48 text-center truncate font-mono">
                             prostawsprawa.pl/wyszukiwarka
                           </div>
                         </div>
                         {/* Browser Window Body */}
-                        <div className="p-4 bg-[#faf9f5] dark:bg-[#20201d] text-foreground min-h-[140px] relative flex flex-col justify-center">
+                        <div className="p-4 bg-[#faf9f5] dark:bg-background text-foreground min-h-[140px] relative flex flex-col justify-center">
                           {format.id === "banner-top" && (
                             <div className="space-y-3">
                               {/* Top Horizontal Banner mockup */}
@@ -923,7 +923,7 @@ ${formData.tresc}`
                       {/* Bar 2: Kliknięcia */}
                       <div className="flex flex-col items-center gap-1.5 w-1/3">
                         <motion.div 
-                          className="w-7 bg-[#0da192] rounded-t-md shadow-lg"
+                          className="w-7 bg-primary rounded-t-md shadow-lg"
                           style={{ transformOrigin: "bottom" }}
                           animate={{ height: `${clicksBarHeight}%` }}
                           transition={{ type: "spring", stiffness: 100, damping: 15 }}

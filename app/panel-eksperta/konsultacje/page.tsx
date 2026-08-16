@@ -264,11 +264,11 @@ export default function ConsultationsPage() {
     if (bookingsList.length === 0) {
       return (
         <div className="text-center py-12 px-4 space-y-4 max-w-md mx-auto">
-          <div className="h-12 w-12 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center mx-auto">
-            <Calendar className="h-5 w-5 text-zinc-500" />
+          <div className="h-12 w-12 rounded-full bg-muted/40 border border-border/40 flex items-center justify-center mx-auto">
+            <Calendar className="h-5 w-5 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
+            <p className="text-muted-foreground text-sm md:text-base font-light leading-relaxed">
               {emptyMessage}
             </p>
           </div>
@@ -281,19 +281,19 @@ export default function ConsultationsPage() {
         {bookingsList.map((booking) => (
           <div
             key={booking.id}
-            className="border border-border/10 bg-zinc-950/20 hover:border-primary/30 hover:bg-zinc-950/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
+            className="border border-border/10 bg-background/20 hover:border-primary/30 hover:bg-background/30 transition-all p-5 rounded-2xl relative overflow-hidden group"
           >
             <div className="flex flex-col gap-5 lg:flex-row lg:justify-between lg:items-center">
               <div className="flex-col sm:flex gap-4 flex-1 min-w-0">
                 <Avatar className="h-32 w-32 sm:h-32 sm:w-32 rounded-xl flex-shrink-0 border border-border/40">
                   <AvatarImage src={clientAvatar(booking.client?.user?.image)} alt={booking.client?.user?.name} />
-                  <AvatarFallback className="bg-zinc-800 text-zinc-200 font-semibold text-sm">
+                  <AvatarFallback className="bg-muted text-foreground font-semibold text-sm">
                     {booking.client?.user?.name ? booking.client.user.name.substring(0, 2).toUpperCase() : "KL"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-2.5 min-w-0">
-                  <div className="flex items-center gap-2 text-white">
-                    <User className="h-4 w-4 text-zinc-400" />
+                  <div className="flex items-center gap-2 text-foreground">
+                    <User className="h-4 w-4 text-muted-foreground" />
                     <span className="font-semibold text-xl font-playfair">{booking.client.user.name}</span>
                   </div>
 
@@ -302,11 +302,11 @@ export default function ConsultationsPage() {
                       <Calendar className="h-3 w-3" />
                       {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
                     </Badge>
-                    <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
+                    <Badge className="bg-background/40 text-foreground/80 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Clock className="h-3 w-3" />
                       {booking.duration} min
                     </Badge>
-                    <Badge className="bg-zinc-950/40 text-zinc-300 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm max-w-[200px] truncate" title={booking.topic}>
+                    <Badge className="bg-background/40 text-foreground/80 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm max-w-[200px] truncate" title={booking.topic}>
                       <FileText className="h-3 w-3" />
                       {booking.topic}
                     </Badge>
@@ -328,7 +328,7 @@ export default function ConsultationsPage() {
                     {booking.paymentStatus === 'ZAPLACONE' ? (
                       <Badge className="bg-success/10 text-success border border-success/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
                     ) : (
-                      <Badge className="bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
+                      <Badge className="bg-zinc-500/10 text-muted-foreground border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
                     )}
 
                     {booking.status === 'ACCEPTED' && (
@@ -341,7 +341,7 @@ export default function ConsultationsPage() {
                       {booking.googleMeetUrl ? (
                         <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/10 p-2.5 rounded-xl">
                           <Video className="h-4 w-4 text-blue-400 shrink-0" />
-                          <span className="text-zinc-500 text-xs font-light pr-1">Link spotkania:</span>
+                          <span className="text-muted-foreground text-xs font-light pr-1">Link spotkania:</span>
                           <a href={booking.googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 hover:underline truncate">
                             {booking.googleMeetUrl}
                           </a>
@@ -349,7 +349,7 @@ export default function ConsultationsPage() {
                       ) : (
                         <div className="flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-xl">
                           <Video className="h-4 w-4 text-amber-400 shrink-0 animate-pulse" />
-                          <p className="text-xs text-zinc-400 font-light">
+                          <p className="text-xs text-muted-foreground font-light">
                             Link do Google Meet pojawi się na 5 minut przed planowaną konsultacją.
                           </p>
                         </div>
@@ -367,7 +367,7 @@ export default function ConsultationsPage() {
                       size="sm"
                       variant="primary"
                       onClick={() => handleStatusChange(booking.id, "ACCEPTED")}
-                      className="h-9 px-4 text-white rounded-xl text-xs font-semibold shadow-md border-t border-white/10 transition-all"
+                      className="h-9 px-4 text-white rounded-xl text-xs font-semibold shadow-md border-t border-border transition-all"
                     >
                       Akceptuj
                     </Button>
@@ -387,16 +387,16 @@ export default function ConsultationsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-9 w-9 border border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      className="h-9 w-9 border border-border/50 text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-xl transition-all"
                     >
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border border-border/20 text-zinc-300 rounded-xl p-1.5 shadow-xl">
+                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border/20 text-foreground/80 rounded-xl p-1.5 shadow-xl">
                     <DropdownMenuItem
                       disabled={isChatLoading === booking.id}
                       onClick={() => handleGoToChat(booking)}
-                      className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors"
+                      className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/5 hover:text-foreground cursor-pointer transition-colors"
                     >
                       {isChatLoading === booking.id ? (
                         <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -409,7 +409,7 @@ export default function ConsultationsPage() {
                     {booking.paymentStatus !== "ZAPLACONE" && (
                       <DropdownMenuItem
                         onClick={() => handlePaymentStatusChange(booking.id, "ZAPLACONE")}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-emerald-400 focus:text-emerald-300"
+                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/5 hover:text-foreground cursor-pointer transition-colors text-emerald-400 focus:text-emerald-300"
                       >
                         <CreditCard className="h-4 w-4 text-emerald-400" />
                         <span>Oznacz jako opłacone</span>
@@ -419,7 +419,7 @@ export default function ConsultationsPage() {
                     {booking.paymentStatus !== "OCZEKUJE" && (
                       <DropdownMenuItem
                         onClick={() => handlePaymentStatusChange(booking.id, "OCZEKUJE")}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-amber-500 focus:text-amber-400"
+                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/5 hover:text-foreground cursor-pointer transition-colors text-amber-500 focus:text-amber-400"
                       >
                         <CreditCard className="h-4 w-4 text-amber-500" />
                         <span>Oznacz jako nieopłacone</span>
@@ -429,7 +429,7 @@ export default function ConsultationsPage() {
                     {!booking.isArchived ? (
                       <DropdownMenuItem
                         onClick={() => handleArchive(booking.id, true)}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-secondary focus:text-secondary-hover"
+                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/5 hover:text-foreground cursor-pointer transition-colors text-secondary focus:text-secondary-hover"
                       >
                         <Archive className="h-4 w-4 text-secondary" />
                         <span>Archiwizuj</span>
@@ -437,14 +437,14 @@ export default function ConsultationsPage() {
                     ) : (
                       <DropdownMenuItem
                         onClick={() => handleArchive(booking.id, false)}
-                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-white/5 hover:text-white cursor-pointer transition-colors text-emerald-400 focus:text-emerald-300"
+                        className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-foreground/5 hover:text-foreground cursor-pointer transition-colors text-emerald-400 focus:text-emerald-300"
                       >
                         <RotateCcw className="h-4 w-4 text-emerald-400" />
                         <span>Przywróć z archiwum</span>
                       </DropdownMenuItem>
                     )}
 
-                    <DropdownMenuSeparator className="bg-zinc-800/50 my-1" />
+                    <DropdownMenuSeparator className="bg-muted/50 my-1" />
 
                     <DropdownMenuItem
                       onClick={() => handleDelete(booking.id)}
@@ -535,19 +535,19 @@ export default function ConsultationsPage() {
                   </svg>
 
                   <div className="space-y-2">
-                    <p className="text-zinc-400 text-sm md:text-base font-light">
+                    <p className="text-muted-foreground text-sm md:text-base font-light">
                       Obecnie nie masz żadnych próśb o konsultacje od klientów.
                     </p>
                   </div>
 
                   {!hasAvailability && (
-                    <div className="bg-zinc-950/30 border border-border/10 rounded-2xl p-6 text-sm md:text-base space-y-4 shadow-sm text-left max-w-lg mx-auto">
-                      <p className="text-zinc-400 leading-relaxed font-light">
+                    <div className="bg-background/30 border border-border/10 rounded-2xl p-6 text-sm md:text-base space-y-4 shadow-sm text-left max-w-lg mx-auto">
+                      <p className="text-muted-foreground leading-relaxed font-light">
                         Nie masz obecnie ustawionych <strong>godzin konsultacji</strong>. Zdefiniuj je w swoim profilu, aby klienci mogli bezpośrednio i wygodnie rezerwować dostępne terminy spotkań online:
                       </p>
 
                       <div className="pt-2 text-center">
-                        <Button asChild variant="primary" className="w-full sm:w-auto h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 transition-all">
+                        <Button asChild variant="primary" className="w-full sm:w-auto h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-border transition-all">
                           <Link href="/panel-eksperta/profil?tab=consultations">
                             Skonfiguruj godziny konsultacji
                           </Link>
@@ -558,14 +558,14 @@ export default function ConsultationsPage() {
                 </div>
               ) : (
                 <Tabs defaultValue="upcoming" className="w-full space-y-6">
-                  <TabsList className="bg-zinc-950/20 border border-border/30 p-1 rounded-xl flex w-full max-w-md">
-                    <TabsTrigger value="upcoming" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
+                  <TabsList className="bg-background/20 border border-border/30 p-1 rounded-xl flex w-full max-w-md">
+                    <TabsTrigger value="upcoming" className="flex-1 text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Nadchodzące ({upcomingBookings.length})
                     </TabsTrigger>
-                    <TabsTrigger value="past" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="past" className="flex-1 text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Minione ({pastBookings.length})
                     </TabsTrigger>
-                    <TabsTrigger value="archived" className="flex-1 text-zinc-400 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
+                    <TabsTrigger value="archived" className="flex-1 text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 rounded-lg py-2 text-sm font-medium transition-all">
                       Zarchiwizowane ({archivedBookings.length})
                     </TabsTrigger>
                   </TabsList>

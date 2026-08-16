@@ -23,7 +23,7 @@ export function ConsultationsSubnav({ variant }: { variant: "client" | "expert" 
   const links = variant === "client" ? CLIENT_LINKS : EXPERT_LINKS
 
   return (
-    <div className="relative z-10 flex w-full max-w-lg items-center gap-1 rounded-md border border-border/10 bg-zinc-950/40 p-1">
+    <div className="relative z-10 flex w-full max-w-lg items-center gap-1 rounded-md border border-border/10 bg-background/40 p-1">
       {links.map((link) => {
         // Ostatni link jest bardziej szczegółowy, więc dopasowanie po prefiksie
         const isActive =
@@ -38,8 +38,8 @@ export function ConsultationsSubnav({ variant }: { variant: "client" | "expert" 
             className={cn(
               "flex-1 rounded-lg py-2 text-center text-sm font-medium transition-all",
               isActive
-                ? "bg-zinc-700 text-white"
-                : "text-zinc-400 hover:text-zinc-200"
+                ? "bg-muted text-foreground"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             {link.name}

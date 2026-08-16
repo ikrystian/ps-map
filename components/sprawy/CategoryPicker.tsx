@@ -168,7 +168,7 @@ export function CategoryPicker({
               <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary border border-primary/30 shadow-xs">
                 <FolderOpen className="h-5 w-5" />
               </div>
-              <p className="text-xs text-white uppercase tracking-wider font-bold">
+              <p className="text-xs text-foreground uppercase tracking-wider font-bold">
                 Wybrane kategorie ({selectedCategories.length})
               </p>
             </div>
@@ -192,7 +192,7 @@ export function CategoryPicker({
                 <button
                   type="button"
                   onClick={() => toggleCategory(cat.id)}
-                  className="h-5 w-5 rounded-full flex items-center justify-center text-zinc-300 hover:text-white hover:bg-destructive/80 transition-colors cursor-pointer"
+                  className="h-5 w-5 rounded-full flex items-center justify-center text-foreground/80 hover:text-white hover:bg-destructive/80 transition-colors cursor-pointer"
                   aria-label={`Usuń kategorię ${cat.path}`}
                 >
                   <X className="h-3 w-3" />
@@ -215,11 +215,11 @@ export function CategoryPicker({
             <div className="h-12 w-12 rounded-xl bg-primary/15 border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex items-center justify-center transition-all mb-3 shadow-xs">
               <Search className="h-5 w-5" />
             </div>
-            <span className="font-bold text-base text-white group-hover:text-primary transition-colors flex items-center gap-2">
+            <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
               Wybierz kategorie sprawy
               <ChevronRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
             </span>
-            <span className="text-xs text-muted-foreground mt-1 font-normal group-hover:text-zinc-300">
+            <span className="text-xs text-muted-foreground mt-1 font-normal group-hover:text-foreground/80">
               Kliknij, aby otworzyć wyszukiwarkę i pełny spis dziedzin prawa
             </span>
             <span className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/30 text-xs font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all">
@@ -232,11 +232,11 @@ export function CategoryPicker({
       <DialogContent className="sm:max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col p-5 sm:p-6 overflow-hidden border-border/40">
         <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/10 blur-[70px] rounded-full pointer-events-none" />
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+          <DialogTitle className="text-xl font-bold font-playfair text-foreground flex items-center gap-2">
             <FolderOpen className="h-5 w-5 text-primary" />
             Wybierz kategorie sprawy
           </DialogTitle>
-          <DialogDescription className="text-zinc-400 text-xs">
+          <DialogDescription className="text-muted-foreground text-xs">
             Wyszukaj odpowiednie kategorie prawne lub wybierz je z podziału tematycznego. Możesz
             zaznaczyć więcej niż jedną.
           </DialogDescription>
@@ -255,7 +255,7 @@ export function CategoryPicker({
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
@@ -281,11 +281,11 @@ export function CategoryPicker({
                       "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer group my-1",
                       isSelected
                         ? "border-primary bg-primary/15 text-white shadow-sm ring-1 ring-primary/30"
-                        : "border-border/30 bg-background-sec/30 text-zinc-200 hover:border-primary/60 hover:bg-primary/10 hover:text-white shadow-xs",
+                        : "border-border/30 bg-background-sec/30 text-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-white shadow-xs",
                     )}
                   >
                     <div className="flex flex-col">
-                      <span className="font-semibold text-sm text-white">{cat.nazwa}</span>
+                      <span className="font-semibold text-sm text-foreground">{cat.nazwa}</span>
                       {cat.parentName && (
                         <span className="text-xs text-muted-foreground font-normal mt-0.5">
                           Dziedzina nadrzędna: {cat.parentName}
@@ -357,7 +357,7 @@ export function CategoryPicker({
                               "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left text-xs transition-all cursor-pointer group my-0.5 border",
                               isActive
                                 ? "bg-primary text-primary-foreground font-bold border-primary shadow-md"
-                                : "bg-background-sec/30 text-zinc-300 border-border/20 hover:border-primary/40 hover:bg-primary/15 hover:text-white",
+                                : "bg-background-sec/30 text-foreground/80 border-border/20 hover:border-primary/40 hover:bg-primary/15 hover:text-white",
                             )}
                           >
                             <span className="truncate flex items-center gap-1.5">
@@ -409,7 +409,7 @@ export function CategoryPicker({
                     <ChevronLeft className="h-4 w-4" />
                     Wróć do kategorii
                   </Button>
-                  <div className="text-xs font-bold text-white px-2.5 py-1 uppercase tracking-wider flex items-center justify-between">
+                  <div className="text-xs font-bold text-foreground px-2.5 py-1 uppercase tracking-wider flex items-center justify-between">
                     <span>Specjalizacje: {activeParent.nazwa}</span>
                   </div>
 
@@ -425,11 +425,11 @@ export function CategoryPicker({
                             "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer group my-1",
                             isParentSelected
                               ? "border-primary bg-primary/15 text-white ring-1 ring-primary/30 shadow-xs"
-                              : "border-dashed border-border/40 bg-background-sec/30 text-zinc-200 hover:border-primary/60 hover:bg-primary/15 hover:text-white shadow-xs",
+                              : "border-dashed border-border/40 bg-background-sec/30 text-foreground hover:border-primary/60 hover:bg-primary/15 hover:text-white shadow-xs",
                           )}
                         >
                           <div className="flex flex-col pr-2">
-                            <span className="font-bold text-xs text-white group-hover:text-primary transition-colors">
+                            <span className="font-bold text-xs text-foreground group-hover:text-primary transition-colors">
                               Ogólny zakres: {activeParent.nazwa}
                             </span>
                             <span className="text-[11px] text-muted-foreground font-normal mt-0.5 leading-snug">
@@ -463,7 +463,7 @@ export function CategoryPicker({
                             "w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all text-xs font-medium cursor-pointer group my-0.5",
                             isChildSelected
                               ? "border-primary bg-primary/15 text-white font-semibold shadow-xs ring-1 ring-primary/20"
-                              : "border-border/30 bg-background-sec/25 text-zinc-200 hover:border-primary/50 hover:bg-primary/15 hover:text-white shadow-xs",
+                              : "border-border/30 bg-background-sec/25 text-foreground hover:border-primary/50 hover:bg-primary/15 hover:text-white shadow-xs",
                           )}
                         >
                           <span className="pr-2">{child.nazwa}</span>

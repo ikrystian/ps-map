@@ -294,7 +294,7 @@ export default function AdminPozycjonowaniePage() {
       case "STANDARD":
         return "bg-blue-500/15 border-blue-500/35 text-blue-400"
       default:
-        return "bg-zinc-800 border-zinc-700 text-zinc-400"
+        return "bg-muted border-border text-muted-foreground"
     }
   }
 
@@ -313,7 +313,7 @@ export default function AdminPozycjonowaniePage() {
       case "NAJCZESCIEJ_KONSULTOWANE":
         return "bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-400"
       default:
-        return "bg-zinc-800 text-zinc-400"
+        return "bg-muted text-muted-foreground"
     }
   }
 
@@ -372,7 +372,7 @@ export default function AdminPozycjonowaniePage() {
             onClick={() => setContext(c.value)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${context === c.value
               ? "bg-primary text-primary-foreground shadow"
-              : "text-muted-foreground hover:text-foreground hover:bg-zinc-800/40"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
               }`}
           >
             {c.label}
@@ -382,7 +382,7 @@ export default function AdminPozycjonowaniePage() {
           onClick={() => setContext("OVERVIEW")}
           className={`px-4 py-2 text-sm font-bold rounded-md transition-all duration-200 flex items-center gap-1.5 ${context === "OVERVIEW"
             ? "bg-amber-600 text-white shadow"
-            : "text-amber-500 hover:text-amber-400 hover:bg-zinc-800/40"
+            : "text-amber-500 hover:text-amber-400 hover:bg-muted/40"
             }`}
         >
           <Layers className="h-4 w-4" />
@@ -404,9 +404,9 @@ export default function AdminPozycjonowaniePage() {
               </p>
               <div className="flex flex-wrap gap-3 mt-3">
                 {conflicts.map((conf) => (
-                  <div key={conf.position} className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs">
+                  <div key={conf.position} className="bg-card border border-border px-3 py-1.5 rounded-lg text-xs">
                     <span className="font-bold text-amber-500 font-mono">Pozycja #{conf.position}:</span>{" "}
-                    <span className="text-zinc-300 font-medium">{conf.firms.join(" oraz ")}</span>
+                    <span className="text-foreground/80 font-medium">{conf.firms.join(" oraz ")}</span>
                   </div>
                 ))}
               </div>
@@ -525,7 +525,7 @@ export default function AdminPozycjonowaniePage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
-                    <tr className="bg-zinc-800/40 text-muted-foreground border-b border-border/80 text-xs uppercase font-mono">
+                    <tr className="bg-muted/40 text-muted-foreground border-b border-border/80 text-xs uppercase font-mono">
                       <th className="px-6 py-4">Ekspert</th>
                       <th className="px-6 py-4">Kontekst Widoku</th>
                       <th className="px-6 py-4 text-center">Narzucana Pozycja</th>
@@ -536,10 +536,10 @@ export default function AdminPozycjonowaniePage() {
                   </thead>
                   <tbody className="divide-y divide-border/60">
                     {globalOverrides.map((ov) => (
-                      <tr key={ov.id} className="hover:bg-zinc-800/20 transition-colors">
+                      <tr key={ov.id} className="hover:bg-muted/20 transition-colors">
                         <td className="px-6 py-4 font-medium text-foreground">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded bg-muted border border-border/60 overflow-hidden flex items-center justify-center flex-shrink-0">
                               <img src={expertAvatar(ov.lawFirm.logo)} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
                             </div>
                             <div>
@@ -549,14 +549,14 @@ export default function AdminPozycjonowaniePage() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <Badge variant="outline" className="text-xs font-semibold bg-zinc-800 text-zinc-300">
+                          <Badge variant="outline" className="text-xs font-semibold bg-muted text-foreground/80">
                             {getContextLabel(ov.context)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-center font-bold text-base text-amber-500 font-mono">
                           #{ov.position}
                         </td>
-                        <td className="px-6 py-4 text-zinc-400 italic">
+                        <td className="px-6 py-4 text-muted-foreground italic">
                           {ov.notes || <span className="text-zinc-600">— brak notatki —</span>}
                         </td>
                         <td className="px-6 py-4 text-xs text-muted-foreground">
@@ -706,7 +706,7 @@ export default function AdminPozycjonowaniePage() {
             <CardHeader className="border-b border-border py-4">
               <CardTitle className="text-lg flex justify-between items-center">
                 <span>Rzeczywista symulacja rankingu na żywo</span>
-                <Badge variant="outline" className="text-xs uppercase bg-zinc-800 text-zinc-300">
+                <Badge variant="outline" className="text-xs uppercase bg-muted text-foreground/80">
                   Tryb: {getContextLabel(context)}
                 </Badge>
               </CardTitle>
@@ -740,7 +740,7 @@ export default function AdminPozycjonowaniePage() {
                           transition={{ type: "spring", stiffness: 350, damping: 30 }}
                           className={`p-6 flex flex-col xl:flex-row gap-6 items-start xl:items-center justify-between transition-colors ${hasOverride
                             ? "bg-amber-600/5 hover:bg-amber-600/10 border-l-[4px] border-amber-500"
-                            : "hover:bg-zinc-800/20"
+                            : "hover:bg-muted/20"
                             }`}
                         >
                           {/* Left: Position Indicator & Avatar */}
@@ -756,7 +756,7 @@ export default function AdminPozycjonowaniePage() {
                                   className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-amber-600 flex items-center justify-center border border-background shadow"
                                   title={`Pozycja algorytmiczna: #${firm.originalPosition}`}
                                 >
-                                  <span className="text-sm font-bold text-white font-mono">
+                                  <span className="text-sm font-bold text-foreground font-mono">
                                     {firm.originalPosition}
                                   </span>
                                 </div>
@@ -764,7 +764,7 @@ export default function AdminPozycjonowaniePage() {
                             </div>
 
                             {/* Logo avatar */}
-                            <div className="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center relative flex-shrink-0">
+                            <div className="w-12 h-12 rounded-lg bg-muted border border-border/60 overflow-hidden flex items-center justify-center relative flex-shrink-0">
                               <img src={expertAvatar(firm.logo)} alt={firm.nazwa} className="w-full h-full object-cover" />
                             </div>
 
@@ -786,7 +786,7 @@ export default function AdminPozycjonowaniePage() {
                               </p>
                               <div className="flex flex-wrap gap-1 pt-1">
                                 {firm.categories.slice(0, 3).map((c) => (
-                                  <span key={c} className="text-sm px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-mono">
+                                  <span key={c} className="text-sm px-1.5 py-0.5 rounded bg-muted/80 text-foreground/80 font-mono">
                                     {c}
                                   </span>
                                 ))}
@@ -985,7 +985,7 @@ export default function AdminPozycjonowaniePage() {
                     })}
                   </AnimatePresence>
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-zinc-900/20">
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-card/20">
                       <span className="text-sm text-muted-foreground">
                         Strona <span className="font-semibold text-foreground">{currentPage}</span> z{" "}
                         <span className="font-semibold text-foreground">{totalPages}</span>

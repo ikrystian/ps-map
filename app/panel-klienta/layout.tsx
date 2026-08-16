@@ -1,5 +1,6 @@
 "use client"
 import Image from "next/image"
+import { SiteLogo } from "@/components/site-logo"
 
 import { AddCaseButton } from "@/components/AddCaseButton"
 import { MessageNotificationSound } from "@/components/MessageNotificationSound"
@@ -8,6 +9,7 @@ import { PanelFooter } from "@/components/PanelFooter"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import ImpersonationNotice from "@/components/ImpersonationNotice"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
@@ -158,7 +160,7 @@ export default function ClientPanelLayout({
               "group relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none",
               isActive
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                : "text-muted-foreground hover:text-white",
+                : "text-muted-foreground hover:text-foreground",
               !inSheet && isCollapsed && "justify-center"
             )}
             title={!inSheet && isCollapsed ? item.name : undefined}
@@ -185,7 +187,7 @@ export default function ClientPanelLayout({
                 icon={item.icon}
                 isHovered={hoveredIndex === index}
                 size={20}
-                className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")}
+                className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-foreground")}
               />
             </div>
 
@@ -239,7 +241,7 @@ export default function ClientPanelLayout({
         onMouseEnter={() => setHoveredIndex(navigation.length)}
         onMouseLeave={() => setHoveredIndex(null)}
         className={cn(
-          "group w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
+          "group w-full h-auto relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
@@ -267,7 +269,7 @@ export default function ClientPanelLayout({
             icon={ArrowRightStartOnRectangleIcon}
             isHovered={hoveredIndex === navigation.length}
             size={24}
-            className="h-6 w-6 transition-colors duration-200 text-muted-foreground group-hover:text-white"
+            className="h-6 w-6 transition-colors duration-200 text-muted-foreground group-hover:text-foreground"
           />
         </div>
 
@@ -306,7 +308,7 @@ export default function ClientPanelLayout({
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
             {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden sm:block" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <SiteLogo className="hidden sm:block" title="Przystąp do sprawy" width={200} height={50} />
               <span className="sm:hidden text-lg font-semibold">PS</span>
               <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>}
@@ -352,6 +354,7 @@ export default function ClientPanelLayout({
           <div className="flex items-center gap-3">
             <AddCaseButton href="/panel-klienta/sprawy/dodaj" />
 
+            <ThemeToggle />
             <NotificationBell />
             <UserMenu
               userRole="CLIENT"

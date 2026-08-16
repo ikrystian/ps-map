@@ -43,7 +43,7 @@ export function ConfirmDeleteDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-[400px] border border-zinc-800/80 bg-zinc-950/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/50 text-white">
+      <AlertDialogContent className="max-w-[400px] border border-border/80 bg-background/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/10 dark:shadow-black/50 text-foreground">
         <AlertDialogHeader className="space-y-4">
           <div className="flex justify-center">
             <div className={`p-3.5 rounded-full ${variant === "danger"
@@ -59,10 +59,10 @@ export function ConfirmDeleteDialog({
           </div>
 
           <div className="space-y-2 text-center">
-            <AlertDialogTitle className="font-playfair text-xl font-semibold text-white tracking-tight leading-6">
+            <AlertDialogTitle className="font-playfair text-xl font-semibold text-foreground tracking-tight leading-6">
               {title}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
+            <AlertDialogDescription className="text-muted-foreground text-sm md:text-base font-light leading-relaxed">
               {description}
             </AlertDialogDescription>
           </div>
@@ -74,7 +74,7 @@ export function ConfirmDeleteDialog({
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
-            className="w-full sm:w-1/2 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:text-white text-zinc-300 h-11 text-sm font-medium transition-all"
+            className="w-full sm:w-1/2 rounded-xl border border-border bg-card/50 hover:bg-muted hover:text-foreground text-foreground/80 h-11 text-sm font-medium transition-all"
           >
             {cancelText}
           </Button>

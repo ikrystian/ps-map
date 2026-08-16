@@ -116,10 +116,10 @@ export default function CategoriesPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#0f0f0e]bg-bg-[#0f0f0e] selection:bg-primary/30 relative"
+      className="min-h-screen bg-backgroundbg-bg-background selection:bg-primary/30 relative"
     >
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32" style={{
+      <section className="relative overflow-hidden bg-primary/10 py-20 text-white lg:py-32 on-dark" style={{
         backgroundImage: "linear-gradient(to bottom, rgba(20, 20, 18, 0.85), rgba(20, 20, 18, 0.95)), url('/4085ef6e-74b2-4e6e-aa70-a2135f53b9cb.jpeg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -130,7 +130,7 @@ export default function CategoriesPage() {
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
-          <div className="absolute top-1/2 -right-24 w-64 h-64 bg-[#d7b56d]/10 rounded-full blur-[80px]"></div>
+          <div className="absolute top-1/2 -right-24 w-64 h-64 bg-secondary/10 rounded-full blur-[80px]"></div>
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center">
@@ -145,7 +145,7 @@ export default function CategoriesPage() {
           <h1 className="mb-6 text-4xl  font-playfair tracking-tight md:text-6xl lg:text-7xl">
             Znajdź <span className="text-primary">właściwą</span> pomoc
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-foreground/80 md:text-xl">
             Od spraw codziennych po skomplikowane procesy biznesowe.
             Wybierz kategorię i połącz się z najlepszymi specjalistami w Polsce.
           </p>
@@ -154,12 +154,12 @@ export default function CategoriesPage() {
           <div className="mx-auto max-w-2xl">
             <div className="group relative">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-[#d7b56d] opacity-20 blur transition duration-1000 group-hover:opacity-40 group-hover:duration-200"></div>
-              <div className="relative flex  items-center rounded-xl bg-slate-900 border border-slate-800 p-1 shadow-2xl">
+              <div className="relative flex  items-center rounded-xl bg-card border border-border p-1 shadow-2xl">
                 <Input
                   placeholder="Czego szukasz? (np. alimenty, spółki, nieruchomości)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-14 flex flex-1 w-full border-none bg-transparent text-lg text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="h-14 flex flex-1 w-full border-none bg-transparent text-lg text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
             </div>
@@ -167,29 +167,29 @@ export default function CategoriesPage() {
 
           {/* Hero Stats */}
           <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-4 max-w-4xl mx-auto">
-            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <p className="text-3xl md:text-4xl font-bold text-white">
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-foreground/5 backdrop-blur-sm border border-border">
+              <p className="text-3xl md:text-4xl font-bold text-foreground">
                 <NumberTicker value={stats.all} />
               </p>
-              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Wszystkich kategorii</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Wszystkich kategorii</p>
             </div>
-            <div className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+            <div className="flex flex-col items-center p-4 rounded-2xl bg-foreground/5 backdrop-blur-sm border border-border">
               <p className="text-3xl md:text-4xl font-bold text-[#d7b56d]">
                 <NumberTicker value={stats.private} />
               </p>
-              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Prywatnych</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Prywatnych</p>
             </div>
-            <div className="hidden md:flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+            <div className="hidden md:flex flex-col items-center p-4 rounded-2xl bg-foreground/5 backdrop-blur-sm border border-border">
               <p className="text-3xl md:text-4xl font-bold text-primary">
                 <NumberTicker value={stats.business} />
               </p>
-              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Firmowych</p>
             </div>
-            <div className="md:hidden col-span-2 flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+            <div className="md:hidden col-span-2 flex flex-col items-center p-4 rounded-2xl bg-foreground/5 backdrop-blur-sm border border-border">
               <p className="text-3xl font-bold text-primary">
                 <NumberTicker value={stats.business} />
               </p>
-              <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mt-1">Firmowych</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mt-1">Firmowych</p>
             </div>
           </div>
         </div>
@@ -327,8 +327,8 @@ function CategoryGrid({ categories }: { categories: Category[] }) {
               <div className="absolute top-4 right-4 z-20">
                 <Badge
                   className={`backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-bold gap-1.5 border transition-all ${isBusiness
-                    ? "bg-slate-900/70 text-[#0da192] border-[#0da192]/30 hover:bg-slate-900/90"
-                    : "bg-slate-900/70 text-[#d7b56d] border-[#d7b56d]/30 hover:bg-slate-900/90"
+                    ? "bg-card/70 text-[#0da192] border-[#0da192]/30 hover:bg-card/90"
+                    : "bg-card/70 text-[#d7b56d] border-[#d7b56d]/30 hover:bg-card/90"
                     }`}
                 >
                   {isBusiness ? (

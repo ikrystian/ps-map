@@ -241,7 +241,7 @@ export default function ClientCasesPage() {
               <AlertCircle className="h-5 w-5 text-rose-500" />
               Wystąpił błąd
             </Heading>
-            <CardDescription className="text-zinc-400">{error}</CardDescription>
+            <CardDescription className="text-muted-foreground">{error}</CardDescription>
           </CardHeader>
           <CardContent className="pt-2">
             <Button variant="secondary" onClick={() => window.location.reload()} className="w-full border border-border/50">
@@ -269,13 +269,13 @@ export default function ClientCasesPage() {
         <PageHeader
           title="Moje Sprawy"
           subtitle="Zarządzaj swoimi sprawami prawnymi, monitoruj ich status oraz przeglądaj i akceptuj oferty od ekspertów."
-          titleClassName="text-white text-3xl sm:text-4xl"
+          titleClassName="text-foreground text-3xl sm:text-4xl"
         >
           <Button
             variant="primary"
             size="lg"
             onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
-            className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-white/10 group gap-2"
+            className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-border group gap-2"
           >
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             Dodaj sprawę
@@ -298,7 +298,7 @@ export default function ClientCasesPage() {
               <Sparkles className="h-4 w-4 text-primary" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {activeCasesCount}
           </div>
         </motion.div>
@@ -306,16 +306,16 @@ export default function ClientCasesPage() {
         {/* Stat: Offers Received */}
         <motion.div
           whileHover={{ y: -3 }}
-          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Otrzymane oferty</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Otrzymane oferty</span>
             <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
               <MessageSquare className="h-4 w-4 text-secondary" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {totalOffersCount}
           </div>
         </motion.div>
@@ -323,16 +323,16 @@ export default function ClientCasesPage() {
         {/* Stat: Completed */}
         <motion.div
           whileHover={{ y: -3 }}
-          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Zakończone</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Zakończone</span>
             <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
               <Archive className="h-4 w-4 text-indigo-400" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {completedCasesCount}
           </div>
         </motion.div>
@@ -340,16 +340,16 @@ export default function ClientCasesPage() {
         {/* Stat: Total */}
         <motion.div
           whileHover={{ y: -3 }}
-          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-zinc-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Wszystkie sprawy</span>
-            <div className="h-8 w-8 rounded-lg bg-zinc-800/40 flex items-center justify-center border border-border/50">
-              <Briefcase className="h-4 w-4 text-zinc-500" />
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Wszystkie sprawy</span>
+            <div className="h-8 w-8 rounded-lg bg-muted/40 flex items-center justify-center border border-border/50">
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {totalCasesCount}
           </div>
         </motion.div>
@@ -443,7 +443,7 @@ export default function ClientCasesPage() {
                 variant="primary"
                 size="lg"
                 onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
-                className="shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-white/10"
+                className="shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-border"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Dodaj pierwszą sprawę
@@ -463,7 +463,7 @@ export default function ClientCasesPage() {
                   setCategoryFilter("ALL")
                   setStatusFilter("ALL")
                 }}
-                className="border-border/50 hover:bg-muted text-white rounded-md h-10 px-5"
+                className="border-border/50 hover:bg-muted text-foreground rounded-md h-10 px-5"
               >
                 Resetuj filtry
               </Button>
@@ -511,7 +511,7 @@ export default function ClientCasesPage() {
                           variant="outline"
                           className={cn(
                             "inline-flex items-center text-xs font-semibold tracking-wide",
-                            statusLabels[caseItem.status]?.className || "bg-zinc-800/40 text-zinc-400 border border-zinc-700/30"
+                            statusLabels[caseItem.status]?.className || "bg-muted/40 text-muted-foreground border border-border/30"
                           )}
                         >
                           {statusLabels[caseItem.status]?.label || caseItem.status}
@@ -519,13 +519,13 @@ export default function ClientCasesPage() {
 
                         {/* Category Labels */}
                         {getCaseCategories(caseItem).map((cat) => (
-                          <Badge key={cat.id} variant="outline" className="inline-flex items-center bg-zinc-800/60 text-zinc-300 border border-zinc-700/50 text-xs font-medium">
+                          <Badge key={cat.id} variant="outline" className="inline-flex items-center bg-muted/60 text-foreground/80 border border-border/50 text-xs font-medium">
                             {cat.nazwa}
                           </Badge>
                         ))}
 
                         {/* Client Type Label */}
-                        <Badge variant="outline" className="inline-flex items-center bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 text-xs font-medium">
+                        <Badge variant="outline" className="inline-flex items-center bg-muted/40 text-muted-foreground border border-border/30 text-xs font-medium">
                           {caseTypeLabels[caseItem.typSprawy] || caseItem.typSprawy}
                         </Badge>
 
@@ -560,7 +560,7 @@ export default function ClientCasesPage() {
                           </span>
                           <AvatarGroup max={4} size={20} className="shrink-0">
                             {caseItem.offers.map((offer) => (
-                              <Avatar key={offer.id} className="h-5 w-5 border border-secondary/40 bg-zinc-800">
+                              <Avatar key={offer.id} className="h-5 w-5 border border-secondary/40 bg-muted">
                                 <AvatarImage
                                   src={expertAvatar(offer.lawFirm?.logo || offer.lawFirm?.zdjecieGlowne)}
                                   alt={offer.lawFirm?.nazwa || "Ekspert"}
@@ -591,11 +591,11 @@ export default function ClientCasesPage() {
                           {/* Metadata grid */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 pt-2">
                             {/* Lokalizacja */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-md border border-border/30">
                               <MapPin className="h-4 w-4 mr-2.5 text-primary flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Lokalizacja</span>
-                                <span className="font-medium text-white text-sm leading-none truncate">
+                                <span className="font-medium text-foreground text-sm leading-none truncate">
                                   {caseItem.city
                                     ? `${caseItem.city.nazwa}, ${caseItem.voivodeship.nazwa}`
                                     : caseItem.voivodeship.nazwa}
@@ -604,11 +604,11 @@ export default function ClientCasesPage() {
                             </div>
 
                             {/* Termin */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-md border border-border/30">
                               <Calendar className="h-4 w-4 mr-2.5 text-indigo-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
-                                <span className="font-medium text-white text-sm leading-none">
+                                <span className="font-medium text-foreground text-sm leading-none">
                                   {caseItem.oczekiwanyTerminRealizacji
                                     ? formatDate(caseItem.oczekiwanyTerminRealizacji)
                                     : "Elastyczny"}
@@ -617,22 +617,22 @@ export default function ClientCasesPage() {
                             </div>
 
                             {/* Budżet */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-md border border-border/30">
                               <Euro className="h-4 w-4 mr-2.5 text-emerald-400 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Budżet</span>
-                                <span className="font-medium text-white text-sm leading-none">
+                                <span className="font-medium text-foreground text-sm leading-none">
                                   {formatBudget(caseItem.budzetOd, caseItem.budzetDo, caseItem.doNegocjacji)}
                                 </span>
                               </div>
                             </div>
 
                             {/* Data utworzenia */}
-                            <div className="flex items-center text-sm text-muted-foreground bg-zinc-800/20 px-3 py-2 rounded-md border border-border/30">
-                              <Clock className="h-4 w-4 mr-2.5 text-zinc-400 flex-shrink-0" />
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-md border border-border/30">
+                              <Clock className="h-4 w-4 mr-2.5 text-muted-foreground flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Dodano dnia</span>
-                                <span className="font-medium text-white text-sm leading-none">
+                                <span className="font-medium text-foreground text-sm leading-none">
                                   {formatDate(caseItem.createdAt)}
                                 </span>
                               </div>
@@ -649,7 +649,7 @@ export default function ClientCasesPage() {
                               e.stopPropagation()
                               router.push(`/panel-klienta/sprawy/${caseItem.id}`)
                             }}
-                            className="w-full lg:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-white/10 group/btn gap-2"
+                            className="w-full lg:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-border group/btn gap-2"
                           >
                             <span>Zobacz szczegóły</span>
                             <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />

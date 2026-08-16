@@ -118,7 +118,7 @@ export function LimitIndicator({
       {/* Progress bar */}
       {!isUnlimited && (
         <div className="mb-3">
-          <Progress value={percentage} className={cn(sizes.progress, "bg-gray-200 dark:bg-gray-800")}>
+          <Progress value={percentage} className={cn(sizes.progress, "bg-gray-200 dark:bg-muted")}>
             <div
               className={cn("h-full rounded-full transition-all", getProgressColor())}
               style={{ width: `${percentage}%` }}

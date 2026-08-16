@@ -127,14 +127,14 @@ export function ConsultationHoursForm() {
     return (
       <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-white">Godziny konsultacji</CardTitle>
+          <CardTitle className="text-foreground">Godziny konsultacji</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center min-h-[200px] text-center space-y-4">
-            <AlertCircle className="h-12 w-12 text-zinc-500 animate-bounce" />
+            <AlertCircle className="h-12 w-12 text-muted-foreground animate-bounce" />
             <div>
-              <p className="text-lg font-semibold text-white">Brak danych eksperta</p>
-              <p className="text-sm text-zinc-400">
+              <p className="text-lg font-semibold text-foreground">Brak danych eksperta</p>
+              <p className="text-sm text-muted-foreground">
                 Zaloguj się ponownie, aby zaktualizować swoje dane sesji.
               </p>
             </div>
@@ -153,8 +153,8 @@ export function ConsultationHoursForm() {
             <Calendar className="h-5 w-5" />
           </div>
           <div>
-            <CardTitle className="text-xl text-white font-playfair">Dostępność konsultacji online</CardTitle>
-            <CardDescription className="text-zinc-400 text-sm">
+            <CardTitle className="text-xl text-foreground font-playfair">Dostępność konsultacji online</CardTitle>
+            <CardDescription className="text-muted-foreground text-sm">
               Ustaw swoją dostępność na konsultacje online. Klienci będą mogli rezerwować spotkania w tych godzinach.
             </CardDescription>
           </div>
@@ -162,11 +162,11 @@ export function ConsultationHoursForm() {
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         {/* Cennik */}
-        <div className="grid md:grid-cols-2 gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+        <div className="grid md:grid-cols-2 gap-4 p-4 border border-border/20 rounded-xl bg-background/10">
           <div className="grid gap-2">
-            <Label htmlFor="price15min" className="text-zinc-300 font-medium">Cena za konsultację 15 min (zł)</Label>
+            <Label htmlFor="price15min" className="text-foreground/80 font-medium">Cena za konsultację 15 min (zł)</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                 <Coins className="h-4 w-4" />
               </div>
               <Input
@@ -175,14 +175,14 @@ export function ConsultationHoursForm() {
                 value={price15min}
                 onChange={(e) => setPrice15min(parseFloat(e.target.value))}
                 placeholder="np. 100"
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                className="pl-10 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
               />
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="price30min" className="text-zinc-300 font-medium">Cena za konsultację 30 min (zł)</Label>
+            <Label htmlFor="price30min" className="text-foreground/80 font-medium">Cena za konsultację 30 min (zł)</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                 <Coins className="h-4 w-4" />
               </div>
               <Input
@@ -191,7 +191,7 @@ export function ConsultationHoursForm() {
                 value={price30min}
                 onChange={(e) => setPrice30min(parseFloat(e.target.value))}
                 placeholder="np. 150"
-                className="pl-10 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                className="pl-10 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
               />
             </div>
           </div>
@@ -204,14 +204,14 @@ export function ConsultationHoursForm() {
             const isEnabled = !!dayAvailability
 
             return (
-              <div key={id} className="grid grid-cols-1 sm:grid-cols-[160px_1fr_auto_1fr] gap-3 items-center p-2.5 rounded-xl border border-border/10 bg-zinc-950/5">
+              <div key={id} className="grid grid-cols-1 sm:grid-cols-[160px_1fr_auto_1fr] gap-3 items-center p-2.5 rounded-xl border border-border/10 bg-background/5">
                 <div className="flex items-center space-x-3 sm:pl-2">
                   <Switch
                     id={`switch-${id}`}
                     checked={isEnabled}
                     onCheckedChange={(checked) => handleEnabledChange(id, checked)}
                   />
-                  <Label htmlFor={`switch-${id}`} className="font-semibold text-white cursor-pointer text-sm">{name}</Label>
+                  <Label htmlFor={`switch-${id}`} className="font-semibold text-foreground cursor-pointer text-sm">{name}</Label>
                 </div>
 
                 {isEnabled ? (
@@ -220,40 +220,40 @@ export function ConsultationHoursForm() {
                       value={dayAvailability.startTime}
                       onValueChange={(value) => handleTimeChange(id, "startTime", value)}
                     >
-                      <SelectTrigger id={`from-${id}`} className="bg-zinc-950/20 border-border/30 text-white rounded-xl">
+                      <SelectTrigger id={`from-${id}`} className="bg-background/20 border-border/30 text-foreground rounded-xl">
                         <SelectValue placeholder="Od" />
                       </SelectTrigger>
-                      <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
+                      <SelectContent className="bg-background border-border/30 rounded-xl">
                         {Array.from({ length: 48 }, (_, i) => {
                           const hour = Math.floor(i / 2)
                           const minute = i % 2 === 0 ? "00" : "30"
                           const time = `${hour.toString().padStart(2, "0")}:${minute}`
-                          return <SelectItem key={time} value={time} className="text-zinc-300 focus:text-white">{time}</SelectItem>
+                          return <SelectItem key={time} value={time} className="text-foreground/80 focus:text-foreground">{time}</SelectItem>
                         })}
                       </SelectContent>
                     </Select>
 
-                    <span className="text-center text-zinc-500 hidden sm:inline">-</span>
+                    <span className="text-center text-muted-foreground hidden sm:inline">-</span>
 
                     <Select
                       value={dayAvailability.endTime}
                       onValueChange={(value) => handleTimeChange(id, "endTime", value)}
                     >
-                      <SelectTrigger id={`to-${id}`} className="bg-zinc-950/20 border-border/30 text-white rounded-xl">
+                      <SelectTrigger id={`to-${id}`} className="bg-background/20 border-border/30 text-foreground rounded-xl">
                         <SelectValue placeholder="Do" />
                       </SelectTrigger>
-                      <SelectContent className="bg-zinc-950 border-border/30 rounded-xl">
+                      <SelectContent className="bg-background border-border/30 rounded-xl">
                         {Array.from({ length: 48 }, (_, i) => {
                           const hour = Math.floor(i / 2)
                           const minute = i % 2 === 0 ? "00" : "30"
                           const time = `${hour.toString().padStart(2, "0")}:${minute}`
-                          return <SelectItem key={time} value={time} className="text-zinc-300 focus:text-white">{time}</SelectItem>
+                          return <SelectItem key={time} value={time} className="text-foreground/80 focus:text-foreground">{time}</SelectItem>
                         })}
                       </SelectContent>
                     </Select>
                   </>
                 ) : (
-                  <div className="sm:col-span-3 text-xs italic text-zinc-500 py-1.5 sm:pl-4">
+                  <div className="sm:col-span-3 text-xs italic text-muted-foreground py-1.5 sm:pl-4">
                     Brak dostępności w tym dniu
                   </div>
                 )}

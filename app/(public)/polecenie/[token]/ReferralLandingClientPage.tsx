@@ -83,7 +83,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
               <Heading level="h2" size="h3">
                 Link jest nieaktywny
               </Heading>
-              <p className="mt-2 text-sm font-light leading-relaxed text-zinc-400">{error}</p>
+              <p className="mt-2 text-sm font-light leading-relaxed text-muted-foreground">{error}</p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
               <Button variant="outline" asChild>
@@ -143,7 +143,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
     if (referral.emailZarejestrowany) {
       return (
         <div className="space-y-3">
-          <p className="text-sm font-light text-zinc-400">
+          <p className="text-sm font-light text-muted-foreground">
             Pod adresem {referral.emailMasked} istnieje już konto — zaloguj się, aby dokończyć
             zgłoszenie.
           </p>
@@ -183,7 +183,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
           <Heading level="h1" size="h2">
             Twoja sprawa jest już wstępnie przygotowana
           </Heading>
-          <p className="text-sm font-light leading-relaxed text-zinc-400">
+          <p className="text-sm font-light leading-relaxed text-muted-foreground">
             Wystarczy, że {referral.emailZarejestrowany ? "zalogujesz się" : "założysz konto"} i
             uzupełnisz pozostałe informacje. Zakres i lokalizację wybrał już ekspert.
           </p>
@@ -201,12 +201,12 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
                 className="h-14 w-14 rounded-xl border border-border/30 object-cover"
               />
               <div className="min-w-0">
-                <p className="text-xs font-light uppercase tracking-wider text-zinc-500">
+                <p className="text-xs font-light uppercase tracking-wider text-muted-foreground">
                   Sprawę poleca
                 </p>
                 <Link
                   href={`/ekspert/${referral.ekspert.slug}`}
-                  className="font-playfair text-lg font-semibold text-white hover:text-primary"
+                  className="font-playfair text-lg font-semibold text-foreground hover:text-primary"
                 >
                   {referral.ekspert.nazwa}
                 </Link>
@@ -214,7 +214,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
             </div>
 
             {referral.wiadomosc && (
-              <blockquote className="rounded-lg border-l-2 border-primary/60 bg-primary/5 px-4 py-3 text-sm font-light italic leading-relaxed text-zinc-300">
+              <blockquote className="rounded-lg border-l-2 border-primary/60 bg-primary/5 px-4 py-3 text-sm font-light italic leading-relaxed text-foreground/80">
                 {referral.wiadomosc}
               </blockquote>
             )}
@@ -225,13 +225,13 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
             <div className="space-y-3">
               {referral.nazwaSprawy && (
                 <div>
-                  <p className="text-xs font-light uppercase tracking-wider text-zinc-500">Sprawa</p>
-                  <p className="mt-1 font-medium text-white">{referral.nazwaSprawy}</p>
+                  <p className="text-xs font-light uppercase tracking-wider text-muted-foreground">Sprawa</p>
+                  <p className="mt-1 font-medium text-foreground">{referral.nazwaSprawy}</p>
                 </div>
               )}
 
               <div>
-                <p className="text-xs font-light uppercase tracking-wider text-zinc-500">Zakres</p>
+                <p className="text-xs font-light uppercase tracking-wider text-muted-foreground">Zakres</p>
                 <div className="mt-1.5 flex flex-wrap gap-2">
                   {referral.kategorie.map((category) => (
                     <Badge
@@ -245,14 +245,14 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
               </div>
 
               {referral.miasto && (
-                <div className="flex items-center gap-1.5 text-sm text-zinc-300">
-                  <MapPin className="h-4 w-4 text-zinc-500" />
+                <div className="flex items-center gap-1.5 text-sm text-foreground/80">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
                   {referral.miasto.nazwa}
                   {referral.wojewodztwo ? `, ${referral.wojewodztwo.nazwa}` : ""}
                 </div>
               )}
 
-              <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3.5 w-3.5" />
                 Link ważny do{" "}
                 {format(new Date(referral.expiresAt), "d MMMM yyyy", { locale: pl })}
@@ -265,7 +265,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs font-light text-zinc-500">
+        <p className="text-center text-xs font-light text-muted-foreground">
           Skorzystanie z linku jest bezpłatne i niezobowiązujące. Po dodaniu sprawy otrzymasz oferty
           od ekspertów — również innych niż polecający.
         </p>

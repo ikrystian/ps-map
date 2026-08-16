@@ -35,9 +35,9 @@ export function PromotionHistoryDialog({
 }: PromotionHistoryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[768px] max-h-[85vh] overflow-y-auto bg-[#20201d] border-[#3e3e38] text-white rounded-2xl">
-        <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-          <DialogTitle className="flex items-center gap-2 text-white font-bold">
+      <DialogContent className="max-w-[768px] max-h-[85vh] overflow-y-auto bg-background border-border text-foreground rounded-2xl">
+        <DialogHeader className="pb-3 border-b border-border/60">
+          <DialogTitle className="flex items-center gap-2 text-foreground font-bold">
             <Clock className="h-5 w-5 text-primary" />
             Historia Zamówień Promowań
           </DialogTitle>
@@ -52,9 +52,9 @@ export function PromotionHistoryDialog({
               Brak zarejestrowanych operacji marketingowych na tym koncie.
             </div>
           ) : (
-            <div className="border border-[#3e3e38] bg-[#363431]/10 rounded-xl overflow-hidden">
+            <div className="border border-border bg-card/10 rounded-xl overflow-hidden">
               <Table>
-                <TableHeader className="bg-[#20201d]/60 border-b border-[#3e3e38]/60">
+                <TableHeader className="bg-background/60 border-b border-border/60">
                   <TableRow className="hover:bg-transparent">
                     <TableHead className="text-xs font-semibold text-muted-foreground uppercase py-3">
                       Format promowania
@@ -80,9 +80,9 @@ export function PromotionHistoryDialog({
                   {promotions.map((promo) => (
                     <TableRow
                       key={promo.id}
-                      className="hover:bg-[#363431]/40 border-b border-[#3e3e38]/30 transition-colors"
+                      className="hover:bg-card/40 border-b border-border/30 transition-colors"
                     >
-                      <TableCell className="font-bold text-xs text-white py-3">
+                      <TableCell className="font-bold text-xs text-foreground py-3">
                         {getPromotionTypeLabel(promo.typPromocji, promotionTypes)}
                       </TableCell>
                       <TableCell className="text-xs text-[#b7b5a9]">
@@ -107,10 +107,10 @@ export function PromotionHistoryDialog({
           )}
         </div>
 
-        <DialogFooter className="border-t border-[#3e3e38]/60 pt-4">
+        <DialogFooter className="border-t border-border/60 pt-4">
           <Button
             onClick={() => onOpenChange(false)}
-            className="bg-[#363431] hover:bg-[#3e3e38] text-white rounded-xl px-5"
+            className="bg-card hover:bg-muted text-foreground rounded-xl px-5"
           >
             Zamknij
           </Button>

@@ -170,7 +170,7 @@ export default function ReviewDetailsPage() {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`h-4 w-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+            className={`h-4 w-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-foreground/80"
               }`}
           />
         ))}
@@ -551,7 +551,7 @@ export default function ReviewDetailsPage() {
                     {review.zweryfikowana ? (
                       <CheckCircle className="h-5 w-5 text-green-600" />
                     ) : (
-                      <XCircle className="h-5 w-5 text-gray-400" />
+                      <XCircle className="h-5 w-5 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex items-center justify-between">
@@ -567,7 +567,7 @@ export default function ReviewDetailsPage() {
                     {review.polecam ? (
                       <CheckCircle className="h-5 w-5 text-green-600" />
                     ) : (
-                      <XCircle className="h-5 w-5 text-gray-400" />
+                      <XCircle className="h-5 w-5 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex items-center justify-between">
@@ -575,7 +575,7 @@ export default function ReviewDetailsPage() {
                     {review.anonimowa ? (
                       <CheckCircle className="h-5 w-5 text-blue-600" />
                     ) : (
-                      <XCircle className="h-5 w-5 text-gray-400" />
+                      <XCircle className="h-5 w-5 text-muted-foreground" />
                     )}
                   </div>
                 </>

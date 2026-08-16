@@ -700,15 +700,15 @@ export default function ClientRegistrationPage() {
                         />
                         <CommandList>
                           {isLoadingCities && (
-                            <div className="text-neutral-500 py-3 text-center text-xs">Wyszukiwanie...</div>
+                            <div className="text-muted-foreground py-3 text-center text-xs">Wyszukiwanie...</div>
                           )}
                           {!isLoadingCities && locationSearch.trim().length < 2 && cities.length === 0 && (
-                            <div className="text-neutral-500 py-3 text-center text-xs px-3">
+                            <div className="text-muted-foreground py-3 text-center text-xs px-3">
                               Wpisz co najmniej 2 znaki...
                             </div>
                           )}
                           {!isLoadingCities && (locationSearch.trim().length >= 2 || cities.length > 0) && cities.length === 0 && (
-                            <div className="text-neutral-500 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                            <div className="text-muted-foreground py-3 text-center text-xs">Nie znaleziono miasta.</div>
                           )}
                           <CommandGroup>
                             {cities.map((city) => {

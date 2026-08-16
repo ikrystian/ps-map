@@ -35,7 +35,7 @@ export const testimonialsBlockHtml = `<section class="py-16 px-4 bg-white">
           </div>
           <div>
             <p class="font-semibold text-gray-900">Anna Kowalska</p>
-            <p class="text-sm text-gray-500">Klient indywidualny</p>
+            <p class="text-sm text-muted-foreground">Klient indywidualny</p>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export const testimonialsBlockHtml = `<section class="py-16 px-4 bg-white">
           </div>
           <div>
             <p class="font-semibold text-gray-900">Piotr Nowak</p>
-            <p class="text-sm text-gray-500">Właściciel firmy</p>
+            <p class="text-sm text-muted-foreground">Właściciel firmy</p>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export const testimonialsBlockHtml = `<section class="py-16 px-4 bg-white">
           </div>
           <div>
             <p class="font-semibold text-gray-900">Maria Wiśniewska</p>
-            <p class="text-sm text-gray-500">Klient biznesowy</p>
+            <p class="text-sm text-muted-foreground">Klient biznesowy</p>
           </div>
         </div>
       </div>

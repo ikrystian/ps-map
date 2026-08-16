@@ -142,7 +142,7 @@ export default function TeamExpertsSection() {
   };
 
   return (
-    <section className="relative w-full border-t border-zinc-900/60 bg-zinc-950/20 py-16 md:py-24 lg:py-28 overflow-hidden select-none">
+    <section className="relative w-full border-t border-border/60 bg-background/20 py-16 md:py-24 lg:py-28 overflow-hidden select-none">
       {/* Decorative background grid pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#c7b56d_1px,transparent_1px),linear-gradient(to_bottom,#c7b57d_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-10 -z-10 pointer-events-none" />
 
@@ -159,7 +159,7 @@ export default function TeamExpertsSection() {
           <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
             Poznaj naszych Specjalistów
           </h2>
-          <p className="max-w-[750px] text-zinc-400 text-sm sm:text-base md:text-lg font-light leading-relaxed">
+          <p className="max-w-[750px] text-muted-foreground text-sm sm:text-base md:text-lg font-light leading-relaxed">
             Prezentujemy 24 losowo wyselekcjonowanych specjalistów z naszej
             bazy. Za każdym razem dobieramy inny zestaw ekspertów prawnych
             gotowych odpowiedzieć na Twoje potrzeby.
@@ -172,24 +172,24 @@ export default function TeamExpertsSection() {
             {Array.from({ length: 24 }).map((_, i) => (
               <Card
                 key={i}
-                className="bg-zinc-900/40 border-zinc-800/50 p-6 flex flex-col justify-between h-[280px]"
+                className="bg-card/40 border-border/50 p-6 flex flex-col justify-between h-[280px]"
               >
                 <div>
                   <div className="flex items-center gap-4">
-                    <Skeleton className="h-14 w-14 rounded-full bg-zinc-800/80" />
+                    <Skeleton className="h-14 w-14 rounded-full bg-muted/80" />
                     <div className="space-y-2 flex-1">
-                      <Skeleton className="h-5 w-32 bg-zinc-800/80" />
-                      <Skeleton className="h-4 w-24 bg-zinc-800/80" />
+                      <Skeleton className="h-5 w-32 bg-muted/80" />
+                      <Skeleton className="h-4 w-24 bg-muted/80" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-full bg-zinc-800/80" />
-                    <Skeleton className="h-4 w-5/6 bg-zinc-800/80" />
+                    <Skeleton className="h-4 w-full bg-muted/80" />
+                    <Skeleton className="h-4 w-5/6 bg-muted/80" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-4">
-                  <Skeleton className="h-5 w-16 bg-zinc-800/80 rounded-md" />
-                  <Skeleton className="h-5 w-20 bg-zinc-800/80 rounded-md" />
+                  <Skeleton className="h-5 w-16 bg-muted/80 rounded-md" />
+                  <Skeleton className="h-5 w-20 bg-muted/80 rounded-md" />
                 </div>
               </Card>
             ))}
@@ -228,20 +228,20 @@ export default function TeamExpertsSection() {
                   key={expert.id}
                   variants={cardVariants}
                   whileHover={{ y: -6, scale: 1.015 }}
-                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-zinc-900/60 bg-zinc-950/45 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
+                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-border/60 bg-background/45 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
                 >
                   <Link href={`/ekspert/${expert.slug}`}>
                     {/* Header */}
                     <div className="flex items-center gap-4">
-                      <Avatar className="h-14 w-14 border border-zinc-800/60 transition-transform duration-500 group-hover:scale-105">
+                      <Avatar className="h-14 w-14 border border-border/60 transition-transform duration-500 group-hover:scale-105">
                         <AvatarImage src={avatarSrc} alt={displayName} />
-                        <AvatarFallback className="bg-gradient-to-br from-zinc-800 to-zinc-900 text-primary font-medium text-lg uppercase">
+                        <AvatarFallback className="bg-gradient-to-br from-muted to-card text-primary font-medium text-lg uppercase">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
-                          <h4 className="text-base font-semibold text-zinc-100 truncate group-hover:text-primary transition-colors duration-300">
+                          <h4 className="text-base font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-300">
                             {displayName}
                           </h4>
                           {expert.id.startsWith("mock-") === false && (
@@ -252,7 +252,7 @@ export default function TeamExpertsSection() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-zinc-400 font-medium truncate">
+                        <p className="text-xs text-muted-foreground font-medium truncate">
                           {roleName}
                         </p>
                       </div>

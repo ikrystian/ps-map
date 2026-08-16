@@ -20,7 +20,7 @@ export default function ClientOfferDetailsPage() {
         <PageHeader
           title="Szczegóły Oferty"
           subtitle="Szczegółowe informacje o wybranej ofercie od eksperta prawnego."
-          titleClassName="text-white text-3xl sm:text-4xl"
+          titleClassName="text-foreground text-3xl sm:text-4xl"
         />
       </motion.div>
     </div>

@@ -363,7 +363,7 @@ export default function ForLawyersClientPage() {
         <>
             {/* Breadcrumbs Banner */}
             <div
-                className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+                className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 on-dark"
                 style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -378,6 +378,10 @@ export default function ForLawyersClientPage() {
                 </div>
             </div>
 
+            {/* Landing ma własny arkusz (dla-prawnika.css) z paletą `--lp-*`,
+                która przełącza się razem z motywem aplikacji. Sekcje leżące na
+                ciemnym zdjęciu (hero) i makiety produktu zostają ciemne — mają
+                `on-dark` na swoich kontenerach. */}
             <div ref={rootRef} className={`ps-lp ${inter.variable}`}>
                 {/* Section 1: Hero */}
                 <section className="hero" id="hero">

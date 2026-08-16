@@ -11,7 +11,7 @@ export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")
 
     return (
-        <section className="bg-black text-white py-8 lg:py-20 xl:py-24 overflow-hidden relative">
+        <section className="on-dark bg-black text-white py-8 lg:py-20 xl:py-24 overflow-hidden relative">
             <div className="container mx-auto px-4 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -23,25 +23,25 @@ export function HowItWorksSection() {
                     <h2 className="text-3xl md:text-4xl font-playfair font-light mb-12">Jak to działa?</h2>
 
                     {/* Tabs */}
-                    <div className="flex justify-center gap-4 md:gap-12 border-b border-gray-800 w-fit mx-auto">
+                    <div className="flex justify-center gap-4 md:gap-12 border-b border-border w-fit mx-auto">
                         <button
                             onClick={() => setActiveTab("user")}
-                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "user" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "user" ? "text-white" : "text-muted-foreground hover:text-foreground/80"
                                 }`}
                         >
                             Dla użytkowników
                             {activeTab === "user" && (
-                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
+                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-secondary" />
                             )}
                         </button>
                         <button
                             onClick={() => setActiveTab("expert")}
-                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "expert" ? "text-white" : "text-gray-500 hover:text-gray-300"
+                            className={`pb-4 text-sm md:text-lg font-medium transition-colors relative px-4 ${activeTab === "expert" ? "text-white" : "text-muted-foreground hover:text-foreground/80"
                                 }`}
                         >
                             Dla ekspertów
                             {activeTab === "expert" && (
-                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-[#C5A66F]" />
+                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 w-full h-0.5 bg-secondary" />
                             )}
                         </button>
                     </div>
@@ -63,7 +63,7 @@ export function HowItWorksSection() {
                                     : "Rozwijaj swój biznes i zdobywaj nowych klientów!"}
                             </h3>
 
-                            <div className="space-y-4 text-gray-400">
+                            <div className="space-y-4 text-muted-foreground">
                                 <p>
                                     {activeTab === "user"
                                         ? "Nie musisz szukać na własną rękę – wystarczy, że dodasz swoją sprawę, a specjaliści sami przedstawią Ci swoje oferty. Ty decydujesz, z kim chcesz współpracować."
@@ -140,24 +140,24 @@ export function HowItWorksSection() {
 
                         <div className="space-y-4">
                             <h4 className="font-bold text-lg">Dlaczego warto?</h4>
-                            <ul className="space-y-2 text-sm text-gray-300">
+                            <ul className="space-y-2 text-sm text-foreground/80">
                                 {activeTab === "user" ? (
                                     <>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Szeroki wybór ekspertów</span> – prawnicy, doradcy finansowi, biura rachunkowe w jednym miejscu.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Szeroki wybór ekspertów</span> – prawnicy, doradcy finansowi, biura rachunkowe w jednym miejscu.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Porównanie ofert</span> – wybierasz najlepszego specjalistę według ceny, opinii i doświadczenia.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Porównanie ofert</span> – wybierasz najlepszego specjalistę według ceny, opinii i doświadczenia.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Bezpieczne rozliczenia</span> – płacisz dopiero po akceptacji oferty.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Bezpieczne rozliczenia</span> – płacisz dopiero po akceptacji oferty.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Blog ekspercki, artykuły i porady</span> – poszerzaj swoją wiedzę dzięki poradom specjalistów.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Blog ekspercki, artykuły i porady</span> – poszerzaj swoją wiedzę dzięki poradom specjalistów.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
                                             <span>Dodaj sprawę i znajdź pomoc dopasowaną do Twoich potrzeb.</span>
@@ -166,16 +166,16 @@ export function HowItWorksSection() {
                                 ) : (
                                     <>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Stały dopływ klientów</span> – dostęp do bazy spraw z całej Polski.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Stały dopływ klientów</span> – dostęp do bazy spraw z całej Polski.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Wygodny panel</span> – zarządzaj zleceniami i komunikacją w jednym miejscu.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Wygodny panel</span> – zarządzaj zleceniami i komunikacją w jednym miejscu.</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
-                                            <Check className="w-4 h-4 text-white mt-1 shrink-0" />
-                                            <span><span className="font-bold text-white">Promocja usług</span> – wyróżnij się na tle konkurencji.</span>
+                                            <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
+                                            <span><span className="font-bold text-foreground">Promocja usług</span> – wyróżnij się na tle konkurencji.</span>
                                         </li>
                                     </>
                                 )}

@@ -87,14 +87,19 @@ export default async function DynamicPage({ params }: PageProps) {
   })
 
   return (
-    <div className="min-h-screen bg-background-sec text-neutral-300">
+    <div className="min-h-screen bg-background-sec text-foreground/80">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-32 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        id="breadcrumbs-banner"
+        className="relative w-full h-32 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
-        <div className="absolute inset-0 bg-black/10" />
+        {/* Przesłona z tokenu tła, nie z czerni: w jasnym motywie rozjaśnia
+            zdjęcie (breadcrumby są wtedy ciemne), w ciemnym przyciemnia je tak
+            jak wcześniej. Dzięki temu baner wtapia się w stronę zamiast być
+            czarnym pasem doklejonym do jasnej treści. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/40" />
+        <div className="absolute inset-0 bg-background/10" />
         <div className="container mx-auto px-4 relative z-10">
           <ResponsiveBreadcrumbs
             items={[

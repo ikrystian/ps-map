@@ -248,7 +248,7 @@ export default function ClientNewsCenterPage() {
           {/* Search bar */}
           <div className="relative w-full md:w-[320px] group">
             <div className="absolute inset-0 bg-primary/5 rounded-full blur-md opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <div className="relative flex items-center bg-zinc-950/40 border border-border/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 rounded-full px-4 py-1.5 transition-all">
+            <div className="relative flex items-center bg-background/40 border border-border/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 rounded-full px-4 py-1.5 transition-all">
               <Search className="w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
@@ -264,7 +264,7 @@ export default function ClientNewsCenterPage() {
                     setDebouncedSearch("")
                     setPagination((prev) => ({ ...prev, page: 1 }))
                   }}
-                  className="p-1 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+                  className="p-1 hover:bg-foreground/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
@@ -341,17 +341,17 @@ export default function ClientNewsCenterPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-20 bg-card/20 border border-border/40 rounded-2xl max-w-md mx-auto p-8 backdrop-blur-sm shadow-xl"
           >
-            <div className="w-14 h-14 bg-zinc-800/40 border border-border/40 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="w-6 h-6 text-zinc-500" />
+            <div className="w-14 h-14 bg-muted/40 border border-border/40 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-6 h-6 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Brak wpisów</h3>
-            <p className="text-zinc-400 text-xs md:text-sm font-light leading-relaxed mb-6">
+            <h3 className="text-lg font-bold text-foreground mb-2">Brak wpisów</h3>
+            <p className="text-muted-foreground text-xs md:text-sm font-light leading-relaxed mb-6">
               Nie odnaleźliśmy newsów pasujących do wybranych filtrów lub wyszukiwanej frazy.
             </p>
             <Button
               onClick={handleResetFilters}
               variant="outline"
-              className="rounded-xl border-border/80 px-6 hover:bg-white/5 transition-colors cursor-pointer text-xs"
+              className="rounded-xl border-border/80 px-6 hover:bg-foreground/5 transition-colors cursor-pointer text-xs"
             >
               Wyczyść filtry i wyszukiwanie
             </Button>
@@ -407,7 +407,7 @@ export default function ClientNewsCenterPage() {
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2.5">
                       {/* Meta data */}
-                      <div className="flex items-center justify-between text-[11px] text-zinc-400">
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                         {post.category && (
                           <Badge
                             variant="secondary"
@@ -417,37 +417,37 @@ export default function ClientNewsCenterPage() {
                           </Badge>
                         )}
                         <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
                           {getReadingTime(post.tresc)} min
                         </span>
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-playfair text-base font-bold text-white group-hover:text-primary leading-snug transition-colors line-clamp-2">
+                      <h3 className="font-playfair text-base font-bold text-foreground group-hover:text-primary leading-snug transition-colors line-clamp-2">
                         {post.tytul}
                       </h3>
 
                       {/* Excerpt */}
-                      <p className="text-zinc-400 text-xs font-light leading-relaxed line-clamp-3">
+                      <p className="text-muted-foreground text-xs font-light leading-relaxed line-clamp-3">
                         {getExcerpt(post.tresc, 130)}
                       </p>
                     </div>
 
                     {/* Author & Footer info */}
-                    <div className="pt-4 border-t border-border/20 flex items-center justify-between text-xs text-zinc-400">
+                    <div className="pt-4 border-t border-border/20 flex items-center justify-between text-xs text-muted-foreground">
                       <div className="flex items-center gap-2 truncate pr-2">
                         {post.lawFirm ? (
                           <img
                             src={expertAvatar(post.lawFirm.logo)}
                             alt={post.lawFirm.nazwa}
-                            className="w-6 h-6 rounded-full object-cover border border-border/50 bg-neutral-900 flex-shrink-0"
+                            className="w-6 h-6 rounded-full object-cover border border-border/50 bg-card flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center border border-border/50 flex-shrink-0">
-                            <User className="w-3 h-3 text-zinc-400" />
+                          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center border border-border/50 flex-shrink-0">
+                            <User className="w-3 h-3 text-muted-foreground" />
                           </div>
                         )}
-                        <span className="font-semibold text-white truncate max-w-[120px]">
+                        <span className="font-semibold text-foreground truncate max-w-[120px]">
                           {post.lawFirm ? post.lawFirm.nazwa : "Administracja"}
                         </span>
                       </div>
@@ -455,7 +455,7 @@ export default function ClientNewsCenterPage() {
                       {/* Date & Views */}
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span className="flex items-center gap-0.5" title={`${post.wyswietlenia} wyświetleń`}>
-                          <Eye className="w-3.5 h-3.5 text-zinc-500" />
+                          <Eye className="w-3.5 h-3.5 text-muted-foreground" />
                           {post.wyswietlenia}
                         </span>
                         <span>•</span>
@@ -484,13 +484,13 @@ export default function ClientNewsCenterPage() {
                     }))
                   }
                   disabled={pagination.page === 1}
-                  className="rounded-xl border-border/50 hover:bg-white/5 flex items-center gap-1.5 h-9 text-xs transition-colors cursor-pointer"
+                  className="rounded-xl border-border/50 hover:bg-foreground/5 flex items-center gap-1.5 h-9 text-xs transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Poprzednia
                 </Button>
 
-                <span className="text-xs font-semibold tracking-wider text-zinc-400">
+                <span className="text-xs font-semibold tracking-wider text-muted-foreground">
                   Strona {pagination.page} z {pagination.pages}
                 </span>
 
@@ -503,7 +503,7 @@ export default function ClientNewsCenterPage() {
                     }))
                   }
                   disabled={pagination.page === pagination.pages}
-                  className="rounded-xl border-border/50 hover:bg-white/5 flex items-center gap-1.5 h-9 text-xs transition-colors cursor-pointer"
+                  className="rounded-xl border-border/50 hover:bg-foreground/5 flex items-center gap-1.5 h-9 text-xs transition-colors cursor-pointer"
                 >
                   Następna
                   <ChevronRight className="w-4 h-4" />
@@ -524,7 +524,7 @@ export default function ClientNewsCenterPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedPost(null)}
-              className="absolute inset-0 bg-zinc-950/75 backdrop-blur-md cursor-pointer"
+              className="absolute inset-0 bg-background/75 backdrop-blur-md cursor-pointer"
             />
 
             {/* Modal Box */}
@@ -533,10 +533,10 @@ export default function ClientNewsCenterPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
-              className="relative w-full max-w-4xl h-[85vh] max-h-[800px] flex flex-col bg-zinc-900 border border-border/60 rounded-3xl overflow-hidden shadow-2xl z-10"
+              className="relative w-full max-w-4xl h-[85vh] max-h-[800px] flex flex-col bg-card border border-border/60 rounded-3xl overflow-hidden shadow-2xl z-10"
             >
               {/* Reading Progress Indicator */}
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-zinc-800 z-50">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-muted z-50">
                 <motion.div
                   className="h-full bg-gradient-to-r from-primary to-teal-400 origin-left"
                   style={{ scaleX: scrollProgress }}
@@ -544,10 +544,10 @@ export default function ClientNewsCenterPage() {
               </div>
 
               {/* Modal Top Header (Sticky) */}
-              <div className="flex items-center justify-between border-b border-border/20 px-6 py-4 bg-zinc-900/90 backdrop-blur-sm z-30 shrink-0">
+              <div className="flex items-center justify-between border-b border-border/20 px-6 py-4 bg-card/90 backdrop-blur-sm z-30 shrink-0">
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-5 h-5 text-primary" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Czytasz wpis
                   </span>
                 </div>
@@ -568,7 +568,7 @@ export default function ClientNewsCenterPage() {
                         alert("Skopiowano link do wpisu!")
                       }
                     }}
-                    className="h-9 w-9 rounded-full border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                    className="h-9 w-9 rounded-full border-border/50 text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all"
                     title="Udostępnij artykuł"
                   >
                     <Share2 className="w-4 h-4" />
@@ -577,7 +577,7 @@ export default function ClientNewsCenterPage() {
                     variant="outline"
                     size="icon"
                     onClick={() => setSelectedPost(null)}
-                    className="h-9 w-9 rounded-full border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                    className="h-9 w-9 rounded-full border-border/50 text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -617,18 +617,18 @@ export default function ClientNewsCenterPage() {
                         Sponsorowany
                       </Badge>
                     )}
-                    <span className="flex items-center gap-1.5 text-xs text-zinc-400">
-                      <Clock className="w-4 h-4 text-zinc-500" />
+                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
                       {getReadingTime(selectedPost.tresc)} min czytania
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs text-zinc-400">
-                      <Eye className="w-4 h-4 text-zinc-500" />
+                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Eye className="w-4 h-4 text-muted-foreground" />
                       {selectedPost.wyswietlenia} wyświetleń
                     </span>
                   </div>
 
                   {/* Main Title */}
-                  <h1 className="text-2xl md:text-4xl font-playfair font-bold text-white leading-tight tracking-tight">
+                  <h1 className="text-2xl md:text-4xl font-playfair font-bold text-foreground leading-tight tracking-tight">
                     {selectedPost.tytul}
                   </h1>
 
@@ -639,19 +639,19 @@ export default function ClientNewsCenterPage() {
                         <img
                           src={expertAvatar(selectedPost.lawFirm.logo)}
                           alt={selectedPost.lawFirm.nazwa}
-                          className="w-10 h-10 rounded-full object-cover border border-border/50 bg-neutral-900"
+                          className="w-10 h-10 rounded-full object-cover border border-border/50 bg-card"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-border/50">
-                          <User className="w-5 h-5 text-zinc-400" />
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center border border-border/50">
+                          <User className="w-5 h-5 text-muted-foreground" />
                         </div>
                       )}
                       <div>
-                        <span className="block text-sm font-semibold text-white leading-none mb-1">
+                        <span className="block text-sm font-semibold text-foreground leading-none mb-1">
                           {selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Administracja"}
                         </span>
-                        <span className="flex items-center gap-1 text-xs text-zinc-400">
-                          <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
                           Opublikowano: {formatDate(selectedPost.dataPublikacji)}
                         </span>
                       </div>
@@ -661,7 +661,7 @@ export default function ClientNewsCenterPage() {
 
                 {/* HTML content rendering in a beautiful tailwind prose wrapper */}
                 <article
-                  className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-neutral-300 dark:prose-p:text-zinc-300 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/85 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-zinc-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-zinc-300"
+                  className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white prose-p:text-foreground/80 dark:prose-p:text-foreground/80 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/85 prose-strong:text-white prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/80 prose-img:rounded-2xl prose-img:shadow-2xl prose-li:text-foreground/80"
                   dangerouslySetInnerHTML={{ __html: selectedPost.tresc || "" }}
                 />
 
@@ -673,7 +673,7 @@ export default function ClientNewsCenterPage() {
                         <Badge
                           key={tag}
                           variant="outline"
-                          className="text-[11px] font-medium text-zinc-400 border-border/60 hover:text-white hover:border-primary/40 rounded px-2.5 py-0.5 transition-colors"
+                          className="text-[11px] font-medium text-muted-foreground border-border/60 hover:text-foreground hover:border-primary/40 rounded px-2.5 py-0.5 transition-colors"
                         >
                           #{tag}
                         </Badge>

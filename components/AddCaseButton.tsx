@@ -35,7 +35,9 @@ export function AddCaseButton({
         whileTap={{ scale: 0.97 }}
         transition={{ duration: 0.15 }}
         className={cn(
-          "relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 cursor-pointer select-none transition-colors",
+          // `secondary` to złoto marki — w jasnym motywie pogłębione, żeby
+          // etykieta nie znikała na jasnym pasku nagłówka.
+          "relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-secondary bg-secondary/10 border border-secondary/25 hover:border-secondary/40 cursor-pointer select-none transition-colors",
           innerClassName
         )}
       >

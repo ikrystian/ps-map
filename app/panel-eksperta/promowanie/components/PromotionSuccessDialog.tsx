@@ -43,7 +43,7 @@ export function PromotionSuccessDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[620px] p-0 overflow-hidden rounded-2xl border border-emerald-500/30 bg-[#20201d] shadow-2xl">
+      <DialogContent className="sm:max-w-[620px] p-0 overflow-hidden rounded-2xl border border-emerald-500/30 bg-background shadow-2xl">
         <div className="relative p-6 sm:p-8 space-y-6">
           {/* Header backdrop effect */}
           <div className="absolute top-0 inset-x-0 h-44 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
@@ -64,11 +64,11 @@ export function PromotionSuccessDialog({
 
           <div className="space-y-6 relative z-10">
             {/* Visual Campaign Ticket */}
-            <div className="relative overflow-hidden rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/20 to-[#363431]/20 p-5 shadow-inner">
+            <div className="relative overflow-hidden rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/20 to-muted/20 p-5 shadow-inner">
               <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-8 -mt-8 blur-lg"></div>
 
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-[#20201d] border border-emerald-500/20 flex-shrink-0 shadow-sm text-emerald-400">
+                <div className="p-3 rounded-xl bg-background border border-emerald-500/20 flex-shrink-0 shadow-sm text-emerald-400">
                   {(() => {
                     const promoType = promotionTypes.find((p) => p.type === purchasedPromotion.typPromocji)
                     const Icon = getIconComponent(purchasedPromotion.typPromocji)
@@ -81,7 +81,7 @@ export function PromotionSuccessDialog({
                   <div className="text-sm text-muted-foreground uppercase font-bold tracking-wider">
                     Format kampanii
                   </div>
-                  <div className="font-extrabold text-base text-white truncate mt-0.5">
+                  <div className="font-extrabold text-base text-foreground truncate mt-0.5">
                     {getPromotionTypeLabel(purchasedPromotion.typPromocji, promotionTypes)}
                   </div>
 
@@ -111,7 +111,7 @@ export function PromotionSuccessDialog({
             </div>
 
             {/* Campaign Roadmap (Gdzie, Jak, Kiedy) */}
-            <div className="space-y-4 bg-[#363431]/20 border border-[#3e3e38] rounded-xl p-4">
+            <div className="space-y-4 bg-card/20 border border-border rounded-xl p-4">
               {(() => {
                 const isMonthly =
                   purchasedPromotion.typPromocji === "POLECANI_PRAWNICY" ||
@@ -151,7 +151,7 @@ export function PromotionSuccessDialog({
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                           GDZIE będzie promowane?
                         </h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">
@@ -166,7 +166,7 @@ export function PromotionSuccessDialog({
                         <Sparkles className="h-4 w-4" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                           JAK będzie promowane?
                         </h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">
@@ -181,13 +181,13 @@ export function PromotionSuccessDialog({
                         <Calendar className="h-4 w-4" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                           KIEDY będzie promowane?
                         </h4>
                         <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
                           <p>{details.kiedy}</p>
-                          <div className="mt-1 px-3 py-2 bg-[#20201d]/60 border border-[#3e3e38] rounded-lg inline-flex items-center gap-1.5">
-                            <span className="font-semibold text-white">Okres ważności:</span>
+                          <div className="mt-1 px-3 py-2 bg-background/60 border border-border rounded-lg inline-flex items-center gap-1.5">
+                            <span className="font-semibold text-foreground">Okres ważności:</span>
                             {isMonthly ? (
                               <span className="text-primary font-semibold">
                                 {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
@@ -228,9 +228,9 @@ export function PromotionSuccessDialog({
           </div>
         </div>
 
-        <div className="bg-[#363431]/20 px-6 py-4 border-t border-[#3e3e38]/60 flex justify-end">
+        <div className="bg-card/20 px-6 py-4 border-t border-border/60 flex justify-end">
           <Button
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 shadow-lg shadow-emerald-950/20 transition-all rounded-xl border-t border-white/10"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 shadow-lg shadow-emerald-950/20 transition-all rounded-xl border-t border-border"
             onClick={() => onOpenChange(false)}
           >
             Rozumiem, dziękuję!

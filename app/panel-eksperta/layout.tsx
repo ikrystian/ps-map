@@ -1,6 +1,7 @@
 "use client"
 
 import { cn, clearAppCacheAndStorage, resolveActiveNavHref } from "@/lib/utils"
+import { SiteLogo } from "@/components/site-logo"
 import { AnimatePresence, motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
@@ -22,6 +23,7 @@ import { ExpiredPackageModal } from "@/components/permissions"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
@@ -328,7 +330,7 @@ export default function LawFirmPanelLayout({
 
 
                 <div className="flex items-center justify-center flex-shrink-0">
-                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
+                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-foreground")} />
                 </div>
 
                 {/* Text label with elegant fade-slide */}
@@ -384,7 +386,7 @@ export default function LawFirmPanelLayout({
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length + 1)}
         className={cn(
-          "group w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
+          "group w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
@@ -463,7 +465,7 @@ export default function LawFirmPanelLayout({
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
             {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden sm:block" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <SiteLogo className="hidden sm:block" title="Przystąp do sprawy" width={200} height={50} />
               <span className="sm:hidden text-lg font-semibold">PS</span>
               <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>}
@@ -507,6 +509,7 @@ export default function LawFirmPanelLayout({
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <NotificationBell />
             <UserMenu
               userRole="LAW_FIRM"

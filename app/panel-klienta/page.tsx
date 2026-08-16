@@ -88,7 +88,7 @@ const offerStatusStyles: Record<string, { label: string; className: string }> = 
   ZAAKCEPTOWANA: { label: "Zaakceptowana", className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
   ODRZUCONA: { label: "Odrzucona", className: "bg-rose-500/10 text-rose-400 border-rose-500/20" },
   NEGOCJACJE: { label: "Negocjacje", className: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
-  WYGASLA: { label: "Wygasła", className: "bg-zinc-800 text-zinc-400 border-zinc-700/50" },
+  WYGASLA: { label: "Wygasła", className: "bg-muted text-muted-foreground border-border/50" },
 }
 
 const formatCurrency = (amount: number) =>
@@ -185,13 +185,13 @@ export default function ClientDashboardPage() {
         <PageHeader
           title="Panel Klienta"
           subtitle={`Witaj, ${clientData?.imie || "Użytkowniku"}! Zarządzaj swoimi sprawami prawnymi w jednym, zintegrowanym miejscu.`}
-          titleClassName="text-white text-3xl sm:text-4xl"
+          titleClassName="text-foreground text-3xl sm:text-4xl"
         >
           <Button
             variant="primary"
             size="lg"
             onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
-            className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-white/10 group gap-2"
+            className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-border group gap-2"
           >
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
             Dodaj nową sprawę
@@ -206,16 +206,16 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-zinc-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Wszystkie sprawy</span>
-            <div className="h-8 w-8 rounded-lg bg-zinc-800/40 flex items-center justify-center border border-border/50">
-              <Briefcase className="h-4 w-4 text-zinc-400" />
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Wszystkie sprawy</span>
+            <div className="h-8 w-8 rounded-lg bg-muted/40 flex items-center justify-center border border-border/50">
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {totalCasesCount}
           </div>
         </motion.div>
@@ -233,7 +233,7 @@ export default function ClientDashboardPage() {
               <Sparkles className="h-4 w-4 text-primary" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair">
             {activeCasesCount}
           </div>
         </motion.div>
@@ -242,16 +242,16 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/sprawy")}
-          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Otrzymane oferty</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Otrzymane oferty</span>
             <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
               <MessageSquare className="h-4 w-4 text-secondary" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair flex items-baseline gap-2">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair flex items-baseline gap-2">
             <span>{totalOffersCount}</span>
             {totalOffersCount > 0 && activeCasesCount > 0 && (
               <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground">Nowe</span>
@@ -263,16 +263,16 @@ export default function ClientDashboardPage() {
         <motion.div
           whileHover={{ y: -3 }}
           onClick={() => router.push("/panel-klienta/wiadomosci")}
-          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-white p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
+          className="cursor-pointer rounded-lg bg-card/30 backdrop-blur-sm border border-border/40 text-foreground p-6 relative flex flex-col justify-between h-[130px] shadow-md group overflow-hidden"
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">Wiadomości</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Wiadomości</span>
             <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
               <MessageSquare className="h-4 w-4 text-indigo-400" />
             </div>
           </div>
-          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-white font-playfair flex items-baseline gap-2">
+          <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair flex items-baseline gap-2">
             <span>{unreadCount}</span>
             {unreadCount > 0 && (
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-500 text-white animate-pulse">Nowe</span>
@@ -337,7 +337,7 @@ export default function ClientDashboardPage() {
                               <Heading level="h4" size="h4" className="text-sm font-semibold truncate group-hover:text-primary transition-colors">
                                 {caseItem.nazwaSprawy}
                               </Heading>
-                              <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700/50 text-xs">
+                              <Badge variant="outline" className="bg-muted text-foreground/80 border-border/50 text-xs">
                                 {caseItem.category.nazwa}
                               </Badge>
                               {caseItem.trybPilny && (
@@ -377,7 +377,7 @@ export default function ClientDashboardPage() {
                                       ? "Zakończona"
                                       : "Anulowana"}
                             </Badge>
-                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5 duration-200" />
+                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors group-hover:translate-x-0.5 duration-200" />
                           </div>
                         </div>
 
@@ -390,7 +390,7 @@ export default function ClientDashboardPage() {
                               {visibleOffers.map((offer) => {
                                 const offerStatus = offerStatusStyles[offer.status] || {
                                   label: offer.status,
-                                  className: "bg-zinc-800 text-zinc-300 border-zinc-700/50",
+                                  className: "bg-muted text-foreground/80 border-border/50",
                                 }
                                 return (
                                   <div
@@ -404,7 +404,7 @@ export default function ClientDashboardPage() {
                                       </AvatarFallback>
                                     </Avatar>
                                     <div className="min-w-0 flex-1">
-                                      <p className="text-xs font-medium text-white truncate">{offer.lawFirm.nazwa}</p>
+                                      <p className="text-xs font-medium text-foreground truncate">{offer.lawFirm.nazwa}</p>
                                       <p className="text-xs text-muted-foreground">
                                         {formatCurrency(offer.kwotaBrutto)} • {offer.terminRealizacjiDni} dni
                                       </p>
@@ -484,7 +484,7 @@ export default function ClientDashboardPage() {
                         )}
                       </div>
                       <div className="p-4 flex-1 flex flex-col justify-between space-y-2">
-                        <h4 className="text-xs font-semibold text-white group-hover:text-secondary transition-colors line-clamp-2 leading-relaxed">
+                        <h4 className="text-xs font-semibold text-foreground group-hover:text-secondary transition-colors line-clamp-2 leading-relaxed">
                           {post.tytul}
                         </h4>
                         <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
@@ -521,7 +521,7 @@ export default function ClientDashboardPage() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="font-semibold text-white truncate text-base">
+                  <p className="font-semibold text-foreground truncate text-base">
                     {clientData?.imie} {clientData?.nazwisko}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -535,20 +535,20 @@ export default function ClientDashboardPage() {
               <div className="space-y-3 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2.5">
                   <User className="h-4 w-4 text-primary shrink-0" />
-                  <span className="text-white">
+                  <span className="text-foreground">
                     Typ konta: {clientData?.clientType === "BUSINESS" ? "Biznesowe" : "Indywidualne"}
                   </span>
                 </div>
                 {clientData?.telefon && (
                   <div className="flex items-center gap-2.5">
                     <Phone className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-white">{clientData.telefon}</span>
+                    <span className="text-foreground">{clientData.telefon}</span>
                   </div>
                 )}
                 {clientData?.miasto && (
                   <div className="flex items-center gap-2.5">
                     <MapPin className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-white">
+                    <span className="text-foreground">
                       {clientData.miasto}
                       {clientData.voivodeship ? `, ${clientData.voivodeship.nazwa}` : ""}
                     </span>
@@ -559,7 +559,7 @@ export default function ClientDashboardPage() {
               <Button
                 variant="secondary"
                 onClick={() => router.push("/panel-klienta/profil")}
-                className="w-full border-t border-white/5 gap-2 shadow-sm"
+                className="w-full border-t border-border gap-2 shadow-sm"
               >
                 <Settings className="h-4 w-4" />
                 Zarządzaj profilem
@@ -583,11 +583,11 @@ export default function ClientDashboardPage() {
                     <Briefcase className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <h5 className="text-xs font-semibold text-white">Zarządzaj sprawami</h5>
+                    <h5 className="text-xs font-semibold text-foreground">Zarządzaj sprawami</h5>
                     <p className="text-sm text-muted-foreground font-light mt-0.5">Dodawaj nowe i sprawdzaj statusy</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors group-hover:translate-x-0.5" />
               </div>
 
               {/* Shortcut: Wiadomosci */}
@@ -600,11 +600,11 @@ export default function ClientDashboardPage() {
                     <MessageSquare className="h-4 w-4 text-indigo-400" />
                   </div>
                   <div>
-                    <h5 className="text-xs font-semibold text-white">Wiadomości i czat</h5>
+                    <h5 className="text-xs font-semibold text-foreground">Wiadomości i czat</h5>
                     <p className="text-sm text-muted-foreground font-light mt-0.5">Rozmawiaj z ekspertami</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors group-hover:translate-x-0.5" />
               </div>
 
               {/* Shortcut: Eksperci */}
@@ -617,11 +617,11 @@ export default function ClientDashboardPage() {
                     <Star className="h-4 w-4 text-secondary fill-secondary/10" />
                   </div>
                   <div>
-                    <h5 className="text-xs font-semibold text-white">Wybrani eksperci</h5>
+                    <h5 className="text-xs font-semibold text-foreground">Wybrani eksperci</h5>
                     <p className="text-sm text-muted-foreground font-light mt-0.5">Lista obserwowanych ekspertów</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-white transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors group-hover:translate-x-0.5" />
               </div>
             </CardContent>
           </Card>

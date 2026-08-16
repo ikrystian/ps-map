@@ -83,7 +83,7 @@ export function AreaRequiredModal({ isOpenOverride, onCloseOverride }: AreaRequi
         }
       }}
     >
-      <DialogContent className="max-w-md sm:max-w-lg border border-primary/30 bg-zinc-950/95 p-6 sm:p-8 shadow-2xl shadow-primary/15 backdrop-blur-2xl text-white rounded-3xl overflow-hidden [&>button]:hidden">
+      <DialogContent className="max-w-md sm:max-w-lg border border-primary/30 bg-background/95 p-6 sm:p-8 shadow-2xl shadow-primary/15 backdrop-blur-2xl text-foreground rounded-3xl overflow-hidden [&>button]:hidden">
         {/* Decorative Background Ambient Glow */}
         <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-teal-500/15 blur-3xl pointer-events-none" />
@@ -97,7 +97,7 @@ export function AreaRequiredModal({ isOpenOverride, onCloseOverride }: AreaRequi
             <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-teal-400 text-white shadow-lg shadow-primary/30">
               <MapPin className="h-7 w-7 stroke-[2.5]" />
             </div>
-            <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-zinc-950 border border-primary/50 text-primary shadow-md">
+            <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-background border border-primary/50 text-primary shadow-md">
               <ShieldAlert className="h-4 w-4" />
             </div>
           </div>
@@ -110,23 +110,23 @@ export function AreaRequiredModal({ isOpenOverride, onCloseOverride }: AreaRequi
         </div>
 
         <DialogHeader className="text-center space-y-2">
-          <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-playfair">
+          <DialogTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-playfair">
             Uzupełnij obszar działania
           </DialogTitle>
-          <DialogDescription className="text-sm text-zinc-300 leading-relaxed max-w-md mx-auto">
+          <DialogDescription className="text-sm text-foreground/80 leading-relaxed max-w-md mx-auto">
             Nie zaznaczono żadnego obszaru działania w Zakresie Usług. Aby móc przeglądać sprawy i składać oferty klientom, wymagane jest określenie swojego zasięgu działania.
           </DialogDescription>
         </DialogHeader>
 
         {/* Feature Highlights */}
-        <div className="my-6 space-y-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-4 sm:p-5">
+        <div className="my-6 space-y-3 rounded-2xl border border-border/80 bg-card/60 p-4 sm:p-5">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
               <Globe className="h-3.5 w-3.5" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-zinc-200">Elastyczny wybór zasięgu</h4>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
+              <h4 className="text-xs font-semibold text-foreground">Elastyczny wybór zasięgu</h4>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
                 Możesz wybrać Całą Polskę, obsługę wyłącznie online lub wybrane województwa i miasta.
               </p>
             </div>
@@ -137,8 +137,8 @@ export function AreaRequiredModal({ isOpenOverride, onCloseOverride }: AreaRequi
               <CheckCircle2 className="h-3.5 w-3.5" />
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-zinc-200">Dopasowane sprawy od klientów</h4>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
+              <h4 className="text-xs font-semibold text-foreground">Dopasowane sprawy od klientów</h4>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
                 Dzięki obszarowi działania zobaczysz zlecenia z Twojego rejonu i nie przegapisz nowych spraw.
               </p>
             </div>
@@ -158,7 +158,7 @@ export function AreaRequiredModal({ isOpenOverride, onCloseOverride }: AreaRequi
           <Button
             variant="ghost"
             onClick={handleBackToDashboard}
-            className="w-full text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-xl text-xs h-9"
+            className="w-full text-muted-foreground hover:text-foreground hover:bg-card rounded-xl text-xs h-9"
           >
             Wróć do pulpitu
           </Button>

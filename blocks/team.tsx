@@ -26,7 +26,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
         </h2>
 
         <!-- Description -->
-        <p class="text-base text-neutral-400 leading-relaxed font-normal">
+        <p class="text-base text-muted-foreground leading-relaxed font-normal">
           {textarea:label:Opis sekcji,default:Sed ut perspiciatis unde omnis iste natus error sit volupta temes accusantium doloremque laudantium, totam rem}
         </p>
       </div>
@@ -34,7 +34,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
       <!-- Member 1: Robert E. Whitmore (Row 1, Col 3) -->
       <div class="col-span-1 group flex flex-col w-full transition-all duration-300 hover:-translate-y-1.5">
         <!-- Rounded Image -->
-        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-neutral-900 border border-border/40 shadow-md">
+        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-card border border-border/40 shadow-md">
           <img 
             src="{input-url:label:1. Zdjęcie (link),default:https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600&h=450}" 
             alt="Robert E. Whitmore" 
@@ -48,7 +48,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
             <a href="{input-url:label:1. Profil (link),default:/eksperci}" class="text-lg md:text-xl font-bold text-foreground hover:text-primary transition-colors duration-300 tracking-tight leading-tight">
               {input-text:label:1. Imię i nazwisko,default:Robert E. Whitmore}
             </a>
-            <span class="text-sm text-neutral-400 mt-1.5 font-medium">
+            <span class="text-sm text-muted-foreground mt-1.5 font-medium">
               {input-text:label:1. Rola/Specjalizacja,default:Product Designer}
             </span>
           </div>
@@ -64,7 +64,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
       <!-- Member 2: Johnny M. Smith (Row 1, Col 4) -->
       <div class="col-span-1 group flex flex-col w-full transition-all duration-300 hover:-translate-y-1.5">
         <!-- Rounded Image -->
-        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-neutral-900 border border-border/40 shadow-md">
+        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-card border border-border/40 shadow-md">
           <img 
             src="{input-url:label:2. Zdjęcie (link),default:https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600&h=450}" 
             alt="Johnny M. Smith" 
@@ -78,7 +78,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
             <a href="{input-url:label:2. Profil (link),default:/eksperci}" class="text-lg md:text-xl font-bold text-foreground hover:text-primary transition-colors duration-300 tracking-tight leading-tight">
               {input-text:label:2. Imię i nazwisko,default:Johnny M. Smith}
             </a>
-            <span class="text-sm text-neutral-400 mt-1.5 font-medium">
+            <span class="text-sm text-muted-foreground mt-1.5 font-medium">
               {input-text:label:2. Rola/Specjalizacja,default:IT Consultant}
             </span>
           </div>
@@ -94,7 +94,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
       <!-- Member 3: Angelo H. Tomlin (Row 2, Col 1) -->
       <div class="col-span-1 group flex flex-col w-full transition-all duration-300 hover:-translate-y-1.5">
         <!-- Rounded Image -->
-        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-neutral-900 border border-border/40 shadow-md">
+        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-card border border-border/40 shadow-md">
           <img 
             src="{input-url:label:3. Zdjęcie (link),default:https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600&h=450}" 
             alt="Angelo H. Tomlin" 
@@ -108,7 +108,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
             <a href="{input-url:label:3. Profil (link),default:/eksperci}" class="text-lg md:text-xl font-bold text-foreground hover:text-primary transition-colors duration-300 tracking-tight leading-tight">
               {input-text:label:3. Imię i nazwisko,default:Angelo H. Tomlin}
             </a>
-            <span class="text-sm text-neutral-400 mt-1.5 font-medium">
+            <span class="text-sm text-muted-foreground mt-1.5 font-medium">
               {input-text:label:3. Rola/Specjalizacja,default:Senior Manager}
             </span>
           </div>
@@ -124,7 +124,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
       <!-- Member 4: Robert E. Whitmore 2 (Row 2, Col 2) -->
       <div class="col-span-1 group flex flex-col w-full transition-all duration-300 hover:-translate-y-1.5">
         <!-- Rounded Image -->
-        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-neutral-900 border border-border/40 shadow-md">
+        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-card border border-border/40 shadow-md">
           <img 
             src="{input-url:label:4. Zdjęcie (link),default:https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600&h=450}" 
             alt="Robert E. Whitmore" 
@@ -138,7 +138,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
             <a href="{input-url:label:4. Profil (link),default:/eksperci}" class="text-lg md:text-xl font-bold text-foreground hover:text-primary transition-colors duration-300 tracking-tight leading-tight">
               {input-text:label:4. Imię i nazwisko,default:Robert E. Whitmore}
             </a>
-            <span class="text-sm text-neutral-400 mt-1.5 font-medium">
+            <span class="text-sm text-muted-foreground mt-1.5 font-medium">
               {input-text:label:4. Rola/Specjalizacja,default:Web Designer}
             </span>
           </div>
@@ -154,7 +154,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
       <!-- Member 5: Manuel G. Wilmer (Row 2, Col 3) -->
       <div class="col-span-1 group flex flex-col w-full transition-all duration-300 hover:-translate-y-1.5">
         <!-- Rounded Image -->
-        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-neutral-900 border border-border/40 shadow-md">
+        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-[24px] bg-card border border-border/40 shadow-md">
           <img 
             src="{input-url:label:5. Zdjęcie (link),default:https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600&h=450}" 
             alt="Manuel G. Wilmer" 
@@ -168,7 +168,7 @@ export const teamBlockHtml = `<section class="team-section relative overflow-hid
             <a href="{input-url:label:5. Profil (link),default:/eksperci}" class="text-lg md:text-xl font-bold text-foreground hover:text-primary transition-colors duration-300 tracking-tight leading-tight">
               {input-text:label:5. Imię i nazwisko,default:Manuel G. Wilmer}
             </a>
-            <span class="text-sm text-neutral-400 mt-1.5 font-medium">
+            <span class="text-sm text-muted-foreground mt-1.5 font-medium">
               {input-text:label:5. Rola/Specjalizacja,default:CEO & Founder}
             </span>
           </div>

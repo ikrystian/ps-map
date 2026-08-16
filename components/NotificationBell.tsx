@@ -182,13 +182,13 @@ export function NotificationBell() {
   const getNotificationStyle = (typ: string) => {
     switch (typ) {
       case "NOWA_WIADOMOSC":
-        return "text-white"
+        return "text-foreground"
       case "NOWA_OFERTA":
         return "text-green-600"
       case "ZMIANA_STATUSU":
         return "text-yellow-600"
       case "NOWA_OPINIA":
-        return "text-white"
+        return "text-foreground"
       case "MALY_STAN_PUNKTOW":
         return "text-destructive"
       case "KONIEC_SUBSKRYPCJI":
