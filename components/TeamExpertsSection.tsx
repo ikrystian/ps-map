@@ -160,7 +160,7 @@ export default function TeamExpertsSection() {
             Poznaj naszych Specjalistów
           </h2>
           <p className="max-w-[750px] text-muted-foreground text-sm sm:text-base md:text-lg font-light leading-relaxed">
-            Prezentujemy 24 losowo wyselekcjonowanych specjalistów z naszej
+            Prezentujemy losowych specjalistów z naszej
             bazy. Za każdym razem dobieramy inny zestaw ekspertów prawnych
             gotowych odpowiedzieć na Twoje potrzeby.
           </p>
