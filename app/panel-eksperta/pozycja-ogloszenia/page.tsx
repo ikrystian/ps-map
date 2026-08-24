@@ -698,7 +698,6 @@ export default function RankingBoostPage() {
                 <p>Dodane punkty podnoszą pozycję na stałe, chyba że inny ekspert zdobędzie więcej punktów i wyprzedzi Twój wynik.</p>
               </div>
               <div className="space-y-1">
-<<<<<<< HEAD
                 <h4 className="font-semibold text-zinc-300">3. Bonus za pakiet abonamentowy</h4>
                 <p>
                   Cały Twój wynik rankingowy jest powiększany procentowo w zależności od pakietu:{" "}
@@ -722,9 +721,6 @@ export default function RankingBoostPage() {
               </div>
               <div className="space-y-1">
                 <h4 className="font-semibold text-zinc-300">4. Pozyskiwanie punktów</h4>
-=======
-                <h4 className="font-semibold text-foreground/80">3. Pozyskiwanie punktów</h4>
->>>>>>> 1b6a6948 (feat: implement site-wide theme support with logo and theme toggle components)
                 <p>Dodatkowe punkty zakupisz w zakładce <a href="/panel-eksperta/punkty" className="text-primary hover:underline font-medium">Punkty</a> lub otrzymasz w pakiecie abonamentowym.</p>
               </div>
             </div>
