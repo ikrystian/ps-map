@@ -1,4 +1,5 @@
 import { auth } from '@/auth'
+import { validateUploadedFile } from '@/lib/file-validation'
 import { mkdir, writeFile } from 'fs/promises'
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
@@ -21,14 +22,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Walidacja typu pliku
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json(
-        { error: 'Plik musi być obrazem' },
-        { status: 400 }
-      )
-    }
-
     // Walidacja rozmiaru (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
@@ -37,26 +30,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generowanie unikalnej nazwy pliku
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
+
+    // Weryfikacja sygnatury pliku (magic bytes) — odporna na podrobiony MIME.
+    const validation = validateUploadedFile(buffer, file.name, ['jpg', 'jpeg', 'png', 'webp', 'gif'])
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
+    }
+
+    // Generowanie unikalnej nazwy pliku
     const ext = path.extname(file.name)
     const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`
-    const uploadDir = path.join(process.cwd(), 'public/uploads/account-managers')
+    const uploadDir = path.join(process.cwd(), '.uploads', 'account-managers')
 
     // Utworzenie katalogu, jeśli nie istnieje
-    try {
-      await mkdir(uploadDir, { recursive: true })
-    } catch (error) {
-      // Katalog już istnieje
-    }
+    await mkdir(uploadDir, { recursive: true })
 
     const filepath = path.join(uploadDir, filename)
 
     // Zapisanie pliku
     await writeFile(filepath, buffer)
 
-    const url = `/uploads/account-managers/${filename}`
+    const url = `/api/uploads/account-managers/${filename}`
 
     return NextResponse.json({ url })
   } catch (error) {
