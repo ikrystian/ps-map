@@ -154,13 +154,15 @@ export default function AccountManagersPage() {
         body: formData,
       })
 
-      if (response.ok) {
+      const isJson = response.headers.get('content-type')?.includes('application/json')
+
+      if (response.ok && isJson) {
         const data = await response.json()
         setFormData((prev) => ({ ...prev, avatar: data.url }))
         toast.success('Avatar został przesłany')
       } else {
-        const error = await response.json()
-        toast.error(error.error || 'Wystąpił błąd')
+        const error = isJson ? await response.json() : null
+        toast.error(error?.error || 'Wystąpił błąd, spróbuj ponownie')
       }
     } catch (error) {
       console.error('Error uploading avatar:', error)
