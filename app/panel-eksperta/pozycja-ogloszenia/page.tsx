@@ -19,6 +19,10 @@ import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/components/ui/use-toast"
 import { InfoDialog } from "@/components/ui/info-dialog"
+import {
+  RANKING_PACKAGE_BONUS_PERCENT,
+  RANKING_PACKAGE_ORDER,
+} from "@/lib/ranking-score"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -44,11 +48,20 @@ interface RankingLawFirm {
   punktySaldo: number
   mainCategoryId: string
   mainCategoryName?: string
+  pakietSubskrypcji: string | null
   /** Wynik wg pełnego wzoru punktowego (nie tylko punktów wydanych na promocje). */
   rankingScore: number
   scoreBeforeBoost: number
   boostMultiplier: number
   promoSpentScore: number
+  /** Wynik przed doliczeniem bonusu za pakiet abonamentowy. */
+  scoreBeforePackage: number
+  /** Procentowy bonus pakietu (np. 20 dla PREMIUM). */
+  packageBonusPercent: number
+  /** Mnożnik pakietu (np. 1.2 dla PREMIUM). */
+  packageMultiplier: number
+  /** Ile punktów dołożył pakiet do obecnego wyniku. */
+  packageBonusScore: number
 }
 
 interface Competitor {
@@ -83,6 +96,16 @@ const itemVariants = {
 }
 
 const PRESETS = [50, 100, 500, 1000]
+
+/**
+ * Wynik po przeznaczeniu dodatkowych punktów. Punkty trafiają do składnika
+ * "Wydano na prom." (1:1, poza mnożnikiem promocji), ale cały wynik jest
+ * jeszcze przemnażany przez mnożnik pakietu abonamentowego — dlatego każdy
+ * przeznaczony punkt daje w rankingu `1 × mnożnik pakietu` punktu.
+ */
+function projectedScore(currentScore: number, points: number, packageMultiplier: number) {
+  return Math.round((currentScore + points * (packageMultiplier || 1)) * 10) / 10
+}
 
 function RankingIllustration() {
   return (
@@ -191,9 +214,9 @@ export default function RankingBoostPage() {
     const rank = allFirms.findIndex(f => f.id === lawFirm.id) + 1
     setCurrentRank(rank)
 
-    // Przydzielenie punktów zwiększa składnik "Wydano na prom." 1:1 (poza mnożnikiem),
-    // więc nowy wynik = obecny wynik + przydzielone punkty.
-    const newRankingScore = lawFirm.rankingScore + points
+    // Przydzielenie punktów zwiększa składnik "Wydano na prom." 1:1 (poza mnożnikiem
+    // promocji), a całość jest jeszcze mnożona przez bonus za pakiet abonamentowy.
+    const newRankingScore = projectedScore(lawFirm.rankingScore, points, lawFirm.packageMultiplier)
     const newAllFirms = [...competitors, { id: lawFirm.id, rankingScore: newRankingScore }]
       .sort((a, b) => b.rankingScore - a.rankingScore)
 
@@ -258,8 +281,8 @@ export default function RankingBoostPage() {
               <div className="h-10 w-10 rounded-full bg-error/10 flex items-center justify-center text-error">
                 <ShieldAlert className="h-5 w-5" />
               </div>
-              <h4 className="text-sm font-semibold text-white">Brak danych eksperta</h4>
-              <p className="text-xs text-zinc-400 font-light">Nie udało się załadować danych o pozycji w rankingu.</p>
+              <h4 className="text-sm font-semibold text-foreground">Brak danych eksperta</h4>
+              <p className="text-xs text-muted-foreground font-light">Nie udało się załadować danych o pozycji w rankingu.</p>
             </div>
           </CardContent>
         </Card>
@@ -268,6 +291,12 @@ export default function RankingBoostPage() {
   }
 
   const hasPoints = (lawFirm.punktySaldo ?? 0) > 0
+  const packageMultiplier = lawFirm.packageMultiplier || 1
+  const packageBonusPercent = lawFirm.packageBonusPercent ?? 0
+  /** Wynik po uwzględnieniu zaplanowanego boostu (z bonusem pakietu). */
+  const boostedScore = projectedScore(lawFirm.rankingScore, points, packageMultiplier)
+  /** Ile punktów rankingu realnie da przeznaczenie `points` punktów. */
+  const boostValue = Math.round(points * packageMultiplier * 10) / 10
 
   return (
     <div className="relative space-y-8">
@@ -310,11 +339,11 @@ export default function RankingBoostPage() {
                   <TrendingUp className="h-3.5 w-3.5" />
                   Zwiększ zasięg profilu
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black font-playfair text-white tracking-tight leading-tight">
+                <h2 className="text-2xl md:text-3xl font-black font-playfair text-foreground tracking-tight leading-tight">
                   Wyprzedź konkurencję i bądź pierwszy!
                 </h2>
-                <p className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
-                  Profil na szczycie rankingu w kategorii <strong className="text-white font-medium">{lawFirm.mainCategoryName}</strong> zyskuje średnio o <strong>300% więcej zapytań</strong> od klientów. Przeznacz wolne punkty na boost pozycji i ciesz się większym zainteresowaniem.
+                <p className="text-muted-foreground text-sm md:text-base font-light leading-relaxed">
+                  Profil na szczycie rankingu w kategorii <strong className="text-foreground font-medium">{lawFirm.mainCategoryName}</strong> zyskuje średnio o <strong>300% więcej zapytań</strong> od klientów. Przeznacz wolne punkty na boost pozycji i ciesz się większym zainteresowaniem.
                 </p>
               </div>
               <div className="flex-1 w-full md:max-w-[40%] flex justify-center">
@@ -326,29 +355,29 @@ export default function RankingBoostPage() {
           {/* Main Boost Console */}
           <Card variant="glass" className="shadow-lg relative overflow-hidden rounded-2xl">
             <CardHeader className="border-b border-border/20 py-5 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
                 <Rocket className="h-5 w-5 text-primary" />
                 Konfigurator Pozycji
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 Ustal liczbę punktów, by natychmiast awansować w rankingu. Poniższy podgląd pokazuje przewidywany rezultat.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
 
               {/* Dynamic Comparison Visualizer */}
-              <div className="relative p-6 rounded-2xl bg-zinc-950/40 border border-border/15 overflow-hidden flex flex-col sm:flex-row items-stretch justify-center gap-6 sm:gap-12">
+              <div className="relative p-6 rounded-2xl bg-background/40 border border-border/15 overflow-hidden flex flex-col sm:flex-row items-stretch justify-center gap-6 sm:gap-12">
                 {points > 0 && (
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent animate-pulse pointer-events-none" />
                 )}
 
                 {/* Current Rank Box */}
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 rounded-xl bg-zinc-900/40 border border-border/5">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-2">Obecna pozycja</span>
-                  <div className="text-4xl sm:text-5xl font-black text-zinc-300 font-playfair tracking-tight">
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 rounded-xl bg-card/40 border border-border/5">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-2">Obecna pozycja</span>
+                  <div className="text-4xl sm:text-5xl font-black text-foreground/80 font-playfair tracking-tight">
                     #{currentRank}
                   </div>
-                  <span className="text-xs text-zinc-500 mt-2 font-mono">{lawFirm.rankingScore.toLocaleString()} pkt</span>
+                  <span className="text-xs text-muted-foreground mt-2 font-mono">{lawFirm.rankingScore.toLocaleString()} pkt</span>
                 </div>
 
                 {/* Transition Arrow / Value */}
@@ -365,7 +394,12 @@ export default function RankingBoostPage() {
                         <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
                           <Rocket className="h-5 w-5 animate-bounce" />
                         </div>
-                        <span className="text-xs font-bold text-primary font-mono">+{points}</span>
+                        <span className="text-xs font-bold text-primary font-mono">+{boostValue.toLocaleString()}</span>
+                        {packageBonusPercent > 0 && (
+                          <span className="text-[10px] text-cyan-400 font-semibold whitespace-nowrap">
+                            {points} pkt +{packageBonusPercent}% (pakiet)
+                          </span>
+                        )}
                         {currentRank - newRank > 0 && (
                           <span className="text-[10px] px-2 py-0.5 rounded bg-success/10 text-success font-bold border border-success/20 whitespace-nowrap">
                             Awans o +{currentRank - newRank}
@@ -374,10 +408,10 @@ export default function RankingBoostPage() {
                       </motion.div>
                     ) : (
                       <div key="inactive-boost" className="flex flex-col items-center gap-1">
-                        <div className="h-10 w-10 rounded-full bg-zinc-800/40 flex items-center justify-center text-zinc-500">
+                        <div className="h-10 w-10 rounded-full bg-muted/40 flex items-center justify-center text-muted-foreground">
                           <ChevronRight className="h-5 w-5 rotate-90 sm:rotate-0" />
                         </div>
-                        <span className="text-[10px] text-zinc-500 font-medium">Brak boostu</span>
+                        <span className="text-[10px] text-muted-foreground font-medium">Brak boostu</span>
                       </div>
                     )}
                   </AnimatePresence>
@@ -388,23 +422,23 @@ export default function RankingBoostPage() {
                   "flex-1 flex flex-col items-center justify-center text-center p-4 rounded-xl transition-all duration-300 border",
                   points > 0
                     ? "bg-primary/5 border-primary/30 shadow-sm"
-                    : "bg-zinc-900/20 border-zinc-800/40"
+                    : "bg-card/20 border-border/40"
                 )}>
                   <span className={cn(
                     "text-[10px] uppercase font-bold tracking-widest mb-2 transition-colors",
-                    points > 0 ? "text-primary" : "text-zinc-500"
+                    points > 0 ? "text-primary" : "text-muted-foreground"
                   )}>Potencjalna pozycja</span>
                   <div className={cn(
                     "text-4xl sm:text-5xl font-black font-playfair tracking-tight transition-colors duration-300",
-                    points > 0 ? "text-white" : "text-zinc-400"
+                    points > 0 ? "text-foreground" : "text-muted-foreground"
                   )}>
                     #{newRank}
                   </div>
                   <span className={cn(
                     "text-xs mt-2 font-mono transition-colors",
-                    points > 0 ? "text-primary font-semibold" : "text-zinc-500"
+                    points > 0 ? "text-primary font-semibold" : "text-muted-foreground"
                   )}>
-                    {(lawFirm.rankingScore + points).toLocaleString()} pkt
+                    {boostedScore.toLocaleString()} pkt
                   </span>
                 </div>
               </div>
@@ -413,14 +447,14 @@ export default function RankingBoostPage() {
               <div className="space-y-6">
 
                 {/* Inputs Wrapper */}
-                <div className="p-5 bg-zinc-950/20 border border-border/10 rounded-2xl space-y-4">
+                <div className="p-5 bg-background/20 border border-border/10 rounded-2xl space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <Coins className="h-4 w-4 text-secondary" />
                       Przeznacz punkty
                     </label>
-                    <div className="text-xs text-zinc-500">
-                      Dostępne saldo: <strong className="text-white font-mono">{(lawFirm.punktySaldo ?? 0).toLocaleString()} pkt</strong>
+                    <div className="text-xs text-muted-foreground">
+                      Dostępne saldo: <strong className="text-foreground font-mono">{(lawFirm.punktySaldo ?? 0).toLocaleString()} pkt</strong>
                     </div>
                   </div>
 
@@ -447,9 +481,9 @@ export default function RankingBoostPage() {
                         max={lawFirm.punktySaldo ?? 0}
                         min={0}
                         disabled={!hasPoints}
-                        className="w-28 h-11 bg-background/50 border-border/40 rounded-xl pr-7 text-center text-white text-sm font-semibold focus-visible:ring-primary/40 focus-visible:border-primary transition-all font-mono"
+                        className="w-28 h-11 bg-background/50 border-border/40 rounded-xl pr-7 text-center text-foreground text-sm font-semibold focus-visible:ring-primary/40 focus-visible:border-primary transition-all font-mono"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-500 font-bold font-mono">pkt</span>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold font-mono">pkt</span>
                     </div>
                   </div>
 
@@ -463,7 +497,7 @@ export default function RankingBoostPage() {
                         size="sm"
                         disabled={!hasPoints || (lawFirm.punktySaldo ?? 0) < preset}
                         onClick={() => handleAddPoints(preset)}
-                        className="h-8 rounded-lg text-xs font-semibold bg-zinc-900/40 border-border/20 hover:border-primary/40 hover:bg-primary/5 hover:text-white transition-all gap-1 text-zinc-300"
+                        className="h-8 rounded-lg text-xs font-semibold bg-card/40 border-border/20 hover:border-primary/40 hover:bg-primary/5 hover:text-white transition-all gap-1 text-foreground/80"
                       >
                         <Zap className="h-3 w-3 text-secondary" />
                         +{preset}
@@ -480,7 +514,7 @@ export default function RankingBoostPage() {
                         size="sm"
                         disabled={points === 0}
                         onClick={() => setPoints(0)}
-                        className="h-8 rounded-lg text-xs font-semibold border-border/20 bg-zinc-900/40 text-zinc-400 hover:text-white hover:bg-error/10 hover:border-error/20 transition-all gap-1.5"
+                        className="h-8 rounded-lg text-xs font-semibold border-border/20 bg-card/40 text-muted-foreground hover:text-error hover:bg-error/10 hover:border-error/20 transition-all gap-1.5"
                       >
                         <RotateCcw className="h-3.5 w-3.5" />
                         Reset
@@ -507,37 +541,40 @@ export default function RankingBoostPage() {
                       variant="primary"
                       size="lg"
                       disabled={points <= 0 || isSubmitting}
-                      className="w-full h-12 text-white font-bold rounded-xl shadow-lg group gap-2.5 transition-all flex items-center justify-center text-md relative overflow-hidden"
+                      className="w-full h-12 text-foreground font-bold rounded-xl shadow-lg group gap-2.5 transition-all flex items-center justify-center text-md relative overflow-hidden"
                     >
                       {isSubmitting ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-white" />
+                        <Loader2 className="h-5 w-5 animate-spin text-foreground" />
                       ) : (
                         <>
-                          <Rocket className="h-5 w-5 text-white transition-transform duration-300 group-hover:translate-y-[-2px] group-hover:translate-x-[2px]" />
+                          <Rocket className="h-5 w-5 text-foreground transition-transform duration-300 group-hover:translate-y-[-2px] group-hover:translate-x-[2px]" />
                           Zatwierdź Ranking Boost (+{points} pkt)
                         </>
                       )}
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-zinc-900 border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
+                  <AlertDialogContent className="bg-card border border-border/40 max-w-md rounded-2xl p-6 shadow-2xl overflow-hidden">
                     <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-primary/5 blur-[50px] rounded-full pointer-events-none" />
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-xl font-bold font-playfair text-white flex items-center gap-2">
+                      <AlertDialogTitle className="text-xl font-bold font-playfair text-foreground flex items-center gap-2">
                         <ShieldAlert className="h-5 w-5 text-secondary" />
                         Potwierdzenie operacji
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
                         Przeznaczasz <strong className="text-white font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
-                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{(lawFirm.rankingScore + points).toLocaleString()} pkt</strong>. Operacji tej nie można cofnąć.
+                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{boostedScore.toLocaleString()} pkt</strong>
+                        {packageBonusPercent > 0 && (
+                          <> (w tym <strong className="text-cyan-400 font-semibold">+{packageBonusPercent}%</strong> bonusu za pakiet {lawFirm.pakietSubskrypcji})</>
+                        )}. Operacji tej nie można cofnąć.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:gap-0 pt-4 flex flex-col-reverse sm:flex-row">
-                      <AlertDialogCancel className="border-border/50 hover:bg-muted text-white rounded-xl h-10 w-full sm:w-auto">
+                      <AlertDialogCancel className="border-border/50 hover:bg-muted text-foreground rounded-xl h-10 w-full sm:w-auto">
                         Anuluj
                       </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleBoost}
-                        className="bg-primary hover:bg-primary-hover text-white rounded-xl border-t border-white/10 h-10 w-full sm:w-auto font-semibold"
+                        className="bg-primary hover:bg-primary-hover text-white rounded-xl border-t border-border h-10 w-full sm:w-auto font-semibold"
                       >
                         Potwierdzam
                       </AlertDialogAction>
@@ -556,11 +593,11 @@ export default function RankingBoostPage() {
           {/* Competitor Leaderboard */}
           <Card variant="glass" className="rounded-2xl shadow-lg relative overflow-hidden flex flex-col h-full max-h-[500px]">
             <CardHeader className="border-b border-border/20 py-4 px-5">
-              <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-base font-playfair text-foreground flex items-center gap-2">
                 <Crown className="h-5 w-5 text-secondary" />
                 Leaderboard Kategorii
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-[11px]">
+              <CardDescription className="text-muted-foreground text-[11px]">
                 Pozycje ekspertów z uwzględnieniem Twojego zaplanowanego boostu.
               </CardDescription>
             </CardHeader>
@@ -568,7 +605,7 @@ export default function RankingBoostPage() {
               <div className="divide-y divide-border/10">
                 {[
                   ...competitors.map(c => ({ id: c.id, nazwa: c.nazwa, rankingScore: c.rankingScore })),
-                  { id: lawFirm.id, nazwa: lawFirm.nazwa, rankingScore: lawFirm.rankingScore + points },
+                  { id: lawFirm.id, nazwa: lawFirm.nazwa, rankingScore: boostedScore },
                 ]
                   .sort((a, b) => b.rankingScore - a.rankingScore)
                   .map((firm, index) => {
@@ -577,12 +614,12 @@ export default function RankingBoostPage() {
                     const isTop3 = index < 3
                     const podiumColors = [
                       "text-amber-400", // Gold
-                      "text-slate-300",  // Silver
+                      "text-foreground/80",  // Silver
                       "text-amber-600", // Bronze
                     ]
 
                     const score = firm.rankingScore
-                    const maxScore = Math.max(...competitors.map(c => c.rankingScore), lawFirm.rankingScore + points, 1)
+                    const maxScore = Math.max(...competitors.map(c => c.rankingScore), boostedScore, 1)
                     const percent = Math.max(5, Math.min(100, (score / maxScore) * 100))
 
                     return (
@@ -592,7 +629,7 @@ export default function RankingBoostPage() {
                           "p-4 flex flex-col gap-2 transition-all relative",
                           isMe
                             ? "bg-primary/10 border-l-4 border-l-primary text-white"
-                            : "hover:bg-white/[0.01] text-zinc-300"
+                            : "hover:bg-white/[0.01] text-foreground/80"
                         )}
                       >
                         {isMe && (
@@ -604,14 +641,14 @@ export default function RankingBoostPage() {
                             {isTop3 ? (
                               <Award className={cn("h-5 w-5 shrink-0", podiumColors[index])} />
                             ) : (
-                              <span className="text-xs font-mono font-semibold text-zinc-500 w-5 text-center shrink-0">
+                              <span className="text-xs font-mono font-semibold text-muted-foreground w-5 text-center shrink-0">
                                 #{index + 1}
                               </span>
                             )}
 
                             <span className={cn(
                               "truncate text-xs font-medium",
-                              isMe ? "text-white font-bold" : "text-zinc-300"
+                              isMe ? "text-foreground font-bold" : "text-foreground/80"
                             )}>
                               {firm.nazwa}
                             </span>
@@ -624,16 +661,16 @@ export default function RankingBoostPage() {
                           </div>
 
                           <div className="text-right shrink-0">
-                            <span className="text-xs font-mono font-bold text-white">{score.toLocaleString()}</span>
-                            <span className="text-[10px] text-zinc-500 font-light block leading-none">pkt</span>
+                            <span className="text-xs font-mono font-bold text-foreground">{score.toLocaleString()}</span>
+                            <span className="text-[10px] text-muted-foreground font-light block leading-none">pkt</span>
                           </div>
                         </div>
 
-                        <div className="w-full bg-zinc-950/40 rounded-full h-1.5 overflow-hidden border border-border/5">
+                        <div className="w-full bg-background/40 rounded-full h-1.5 overflow-hidden border border-border/5">
                           <div
                             className={cn(
                               "h-full rounded-full transition-all duration-500 ease-out",
-                              isMe ? "bg-primary" : "bg-zinc-800"
+                              isMe ? "bg-primary" : "bg-muted"
                             )}
                             style={{ width: `${percent}%` }}
                           />
@@ -647,21 +684,43 @@ export default function RankingBoostPage() {
 
           {/* Quick FAQ / Guide */}
           <Card variant="glass" className="p-5 space-y-4 rounded-2xl">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-secondary" />
               Jak działa pozycjonowanie?
             </h3>
-            <div className="space-y-3 text-xs text-zinc-400 font-light leading-relaxed">
+            <div className="space-y-3 text-xs text-muted-foreground font-light leading-relaxed">
               <div className="space-y-1">
-                <h4 className="font-semibold text-zinc-300">1. Alokacja punktów</h4>
+                <h4 className="font-semibold text-foreground/80">1. Alokacja punktów</h4>
                 <p>Punkty przydzielasz w czasie rzeczywistym. Możesz je dodać do rankingu w dowolnej chwili.</p>
               </div>
               <div className="space-y-1">
-                <h4 className="font-semibold text-zinc-300">2. Czas trwania boostu</h4>
+                <h4 className="font-semibold text-foreground/80">2. Czas trwania boostu</h4>
                 <p>Dodane punkty podnoszą pozycję na stałe, chyba że inny ekspert zdobędzie więcej punktów i wyprzedzi Twój wynik.</p>
               </div>
               <div className="space-y-1">
-                <h4 className="font-semibold text-zinc-300">3. Pozyskiwanie punktów</h4>
+                <h4 className="font-semibold text-zinc-300">3. Bonus za pakiet abonamentowy</h4>
+                <p>
+                  Cały Twój wynik rankingowy jest powiększany procentowo w zależności od pakietu:{" "}
+                  {RANKING_PACKAGE_ORDER.map((pkg, i) => (
+                    <span key={pkg}>
+                      {i > 0 && ", "}
+                      <span className={cn("font-medium", pkg === lawFirm.pakietSubskrypcji ? "text-cyan-400" : "text-zinc-300")}>
+                        {pkg} +{RANKING_PACKAGE_BONUS_PERCENT[pkg]}%
+                      </span>
+                    </span>
+                  ))}
+                  .{" "}
+                  {packageBonusPercent > 0 ? (
+                    <>Twój pakiet <strong className="text-white font-medium">{lawFirm.pakietSubskrypcji}</strong> daje{" "}
+                      <strong className="text-cyan-400 font-medium">+{packageBonusPercent}%</strong> do wyniku
+                      (obecnie {lawFirm.packageBonusScore?.toLocaleString() ?? 0} pkt).</>
+                  ) : (
+                    <>Nie masz aktywnego pakietu, więc nie otrzymujesz tego bonusu.</>
+                  )}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-semibold text-zinc-300">4. Pozyskiwanie punktów</h4>
                 <p>Dodatkowe punkty zakupisz w zakładce <a href="/panel-eksperta/punkty" className="text-primary hover:underline font-medium">Punkty</a> lub otrzymasz w pakiecie abonamentowym.</p>
               </div>
             </div>

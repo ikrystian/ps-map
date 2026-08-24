@@ -51,9 +51,9 @@ export function ConfirmPromotionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#20201d] border-[#3e3e38] text-white rounded-2xl sm:max-w-[480px]">
-        <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-          <DialogTitle className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+      <DialogContent className="bg-background border-border text-foreground rounded-2xl sm:max-w-[480px]">
+        <DialogHeader className="pb-3 border-b border-border/60">
+          <DialogTitle className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
             <Coins className="h-5 w-5 text-secondary" />
             Potwierdź Aktywację
           </DialogTitle>
@@ -64,16 +64,16 @@ export function ConfirmPromotionDialog({
 
         <div className="space-y-4 py-4">
           {/* Confirmation details receipt card */}
-          <div className="bg-[#363431]/30 border border-[#3e3e38] rounded-xl p-4 space-y-3 text-xs leading-relaxed">
+          <div className="bg-card/30 border border-border rounded-xl p-4 space-y-3 text-xs leading-relaxed">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Format kampanii:</span>
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-foreground">
                 {getPromotionTypeLabel(selectedType, promotionTypes)}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Okres ważności:</span>
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-foreground">
                 {selectedType === "POLECANI_PRAWNICY" ||
                   selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                   ? "1 miesiąc kalendarzowy"
@@ -82,7 +82,7 @@ export function ConfirmPromotionDialog({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Rozpoczęcie:</span>
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-foreground">
                 {selectedType === "POLECANI_PRAWNICY" ||
                   selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                   ? startDate
@@ -100,7 +100,7 @@ export function ConfirmPromotionDialog({
             {selectedCategory && selectedCategory !== "all" && (
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Kategoria:</span>
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-foreground">
                   {selectedType === "POLECANI_PRAWNICY"
                     ? selectedCategory
                     : categories.find((c) => c.id === selectedCategory)?.nazwa ||
@@ -111,7 +111,7 @@ export function ConfirmPromotionDialog({
             {selectedVoivodeship && selectedVoivodeship !== "all" && (
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Województwo:</span>
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-foreground">
                   {voivodeships.find((v) => v.id === selectedVoivodeship)?.nazwa ||
                     selectedVoivodeship}
                 </span>
@@ -121,7 +121,7 @@ export function ConfirmPromotionDialog({
               selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Auto-przedłużenie:</span>
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-foreground">
                     {autoRenewal ? "Aktywne" : "Nieaktywne"}
                   </span>
                 </div>
@@ -129,14 +129,14 @@ export function ConfirmPromotionDialog({
           </div>
 
           {/* Price block */}
-          <div className="bg-[#20201d]/60 border border-[#3e3e38] p-4 rounded-xl space-y-2">
+          <div className="bg-background/60 border border-border p-4 rounded-xl space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs text-muted-foreground">Pobierane punkty:</span>
               <span className="font-extrabold text-lg text-primary">{cost} pkt</span>
             </div>
-            <div className="flex justify-between items-center text-sm text-muted-foreground pt-1 border-t border-[#3e3e38]/40">
+            <div className="flex justify-between items-center text-sm text-muted-foreground pt-1 border-t border-border/40">
               <span>Twoje saldo po transakcji:</span>
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-foreground">
                 {lawFirm ? lawFirm.punktySaldo - cost : 0} pkt
               </span>
             </div>
@@ -152,12 +152,12 @@ export function ConfirmPromotionDialog({
           </div>
         </div>
 
-        <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
+        <DialogFooter className="border-t border-border/60 pt-4 flex gap-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={submitting}
-            className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl"
+            className="border-border bg-card/20 hover:bg-card text-foreground rounded-xl"
           >
             Cofnij
           </Button>

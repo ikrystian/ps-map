@@ -266,7 +266,7 @@ export default function AdminKlubPartnerskiPage() {
           <div className="flex gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Szukaj po nazwie eksperta lub email..."
                   value={searchQuery}
@@ -324,7 +324,7 @@ export default function AdminKlubPartnerskiPage() {
             <TableBody>
               {filteredPrograms.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     Brak programów partnerskich
                   </TableCell>
                 </TableRow>
@@ -334,8 +334,8 @@ export default function AdminKlubPartnerskiPage() {
                     <TableCell>
                       <div>
                         <div className="font-medium">{program.lawFirmName}</div>
-                        <div className="text-sm text-gray-500">{program.lawFirmEmail}</div>
-                        <div className="text-xs text-gray-400 mt-1">
+                        <div className="text-sm text-muted-foreground">{program.lawFirmEmail}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
                           <Badge variant="secondary" className="text-xs">
                             {program.subscriptionPackage}
                           </Badge>
@@ -355,7 +355,7 @@ export default function AdminKlubPartnerskiPage() {
                             : program.websiteUrl}
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-sm">Brak</span>
+                        <span className="text-muted-foreground text-sm">Brak</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -406,7 +406,7 @@ export default function AdminKlubPartnerskiPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-gray-400 text-sm">Brak historii</span>
+                        <span className="text-muted-foreground text-sm">Brak historii</span>
                       )}
                     </TableCell>
                     <TableCell>

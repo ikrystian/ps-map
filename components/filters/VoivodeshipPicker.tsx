@@ -74,7 +74,7 @@ export function VoivodeshipPicker({
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn("w-[240px] p-1 bg-card border-neutral-800 text-white", contentClassName)}
+        className={cn("w-[240px] p-1 bg-card border-border text-foreground", contentClassName)}
         align={align}
       >
         <div className="max-h-64 overflow-y-auto space-y-0.5">
@@ -84,8 +84,8 @@ export function VoivodeshipPicker({
             className={cn(
               "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
               value === "all"
-                ? "bg-neutral-800 text-white"
-                : "text-neutral-300 hover:bg-primary hover:text-white bg-transparent"
+                ? "bg-muted text-foreground"
+                : "text-foreground/80 hover:bg-primary hover:text-white bg-transparent"
             )}
           >
             <span>Wszystkie</span>
@@ -99,8 +99,8 @@ export function VoivodeshipPicker({
               className={cn(
                 "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
                 value === v.slug
-                  ? "bg-neutral-800 text-white"
-                  : "text-neutral-300 hover:bg-neutral-800/50 hover:text-white bg-transparent"
+                  ? "bg-muted text-foreground"
+                  : "text-foreground/80 hover:bg-muted/50 hover:text-foreground bg-transparent"
               )}
             >
               <span>{v.nazwa}</span>

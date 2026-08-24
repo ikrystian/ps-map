@@ -125,7 +125,7 @@ interface LawFirm {
 
 // Style kart pakietów — przypisywane cyklicznie wg kolejności z ustawień admina
 const PACKAGE_STYLES = [
-  { icon: Zap, color: "from-slate-500/20 to-slate-600/10", iconColor: "text-slate-400" },
+  { icon: Zap, color: "from-slate-500/20 to-slate-600/10", iconColor: "text-muted-foreground" },
   { icon: Sparkles, color: "from-blue-500/20 to-blue-600/10", iconColor: "text-blue-400" },
   { icon: Star, color: "from-primary/25 to-primary/10", iconColor: "text-primary" },
   { icon: TrendingDown, color: "from-purple-500/20 to-purple-600/10", iconColor: "text-purple-400" },
@@ -296,7 +296,7 @@ export default function LawFirmPointsPage() {
         )
       case "ZWROT":
         return (
-          <Badge variant="outline" className="gap-1 bg-zinc-500/15 text-zinc-400 border border-zinc-500/30 hover:bg-zinc-500/20">
+          <Badge variant="outline" className="gap-1 bg-zinc-500/15 text-muted-foreground border border-zinc-500/30 hover:bg-zinc-500/20">
             <RefreshCw className="h-3 w-3" />
             Zwrot
           </Badge>
@@ -550,19 +550,19 @@ export default function LawFirmPointsPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-b border-border/20 hover:bg-transparent">
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">ID Transakcji</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Pakiet</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Punkty</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Kwota</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Płatność</TableHead>
-                    <TableHead className="text-zinc-400 font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">ID Transakcji</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Pakiet</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Punkty</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Kwota</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Płatność</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {orders.map((order) => (
-                    <TableRow key={order.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-zinc-300 transition-colors">
-                      <TableCell className="py-4 px-6 text-sm text-zinc-400 whitespace-nowrap">
+                    <TableRow key={order.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-foreground/80 transition-colors">
+                      <TableCell className="py-4 px-6 text-sm text-muted-foreground whitespace-nowrap">
                         {formatDate(order.createdAt)}
                       </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
@@ -613,7 +613,7 @@ export default function LawFirmPointsPage() {
                       <TableCell className="py-4 px-6 text-right font-semibold text-sm">
                         {formatCurrency(order.kwota)}
                       </TableCell>
-                      <TableCell className="py-4 px-6 text-sm text-zinc-400">
+                      <TableCell className="py-4 px-6 text-sm text-muted-foreground">
                         {getPaymentMethodLabel(order.metodaPlatnosci)}
                       </TableCell>
                       <TableCell className="py-4 px-6">

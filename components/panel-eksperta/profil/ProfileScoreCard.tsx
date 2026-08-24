@@ -378,8 +378,8 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
             <Gauge className="h-5 w-5" />
           </div>
           <div>
-            <CardTitle className="text-xl text-white font-playfair">Ocena profilu</CardTitle>
-            <CardDescription className="text-zinc-400 text-sm">
+            <CardTitle className="text-xl text-foreground font-playfair">Ocena profilu</CardTitle>
+            <CardDescription className="text-muted-foreground text-sm">
               Kompletność profilu liczona na podstawie danych uzupełnionych we wszystkich zakładkach
             </CardDescription>
           </div>
@@ -392,7 +392,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
             <span className={cn("text-5xl font-bold tabular-nums transition-colors duration-500", tier.text)}>
               {displayScore}
             </span>
-            <span className="text-xl text-zinc-500 font-light">%</span>
+            <span className="text-xl text-muted-foreground font-light">%</span>
           </div>
           <div className="flex-1 space-y-2 w-full">
             <div className="flex items-center justify-between gap-3">
@@ -404,13 +404,13 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
               >
                 {tier.label}
               </span>
-              <span className="text-xs text-zinc-400 font-light">
+              <span className="text-xs text-muted-foreground font-light">
                 Uzupełniono{" "}
-                <span className="font-semibold text-white">{completedCount}</span> z{" "}
-                <span className="font-semibold text-white">{allFields.length}</span> elementów
+                <span className="font-semibold text-foreground">{completedCount}</span> z{" "}
+                <span className="font-semibold text-foreground">{allFields.length}</span> elementów
               </span>
             </div>
-            <div className="h-2.5 w-full rounded-full bg-zinc-800/60 overflow-hidden">
+            <div className="h-2.5 w-full rounded-full bg-muted/60 overflow-hidden">
               <div
                 className={cn("h-full rounded-full transition-all duration-700", tier.bar)}
                 style={{ width: `${score}%` }}
@@ -432,18 +432,18 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
               <AccordionItem
                 key={group.tab}
                 value={group.tab}
-                className="border border-border/20 rounded-xl bg-zinc-950/10 px-4 overflow-hidden"
+                className="border border-border/20 rounded-xl bg-background/10 px-4 overflow-hidden"
               >
                 <AccordionTrigger className="hover:no-underline py-3.5">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div className="bg-primary/10 p-1.5 rounded-lg text-primary shrink-0">
                       <GroupIcon className="h-4 w-4" />
                     </div>
-                    <span className="text-sm font-semibold text-white truncate">{group.title}</span>
+                    <span className="text-sm font-semibold text-foreground truncate">{group.title}</span>
                     <span
                       className={cn(
                         "ml-auto mr-3 text-xs font-semibold tabular-nums shrink-0",
-                        groupDone === group.fields.length ? "text-emerald-400" : "text-zinc-400"
+                        groupDone === group.fields.length ? "text-emerald-400" : "text-muted-foreground"
                       )}
                     >
                       {groupDone}/{group.fields.length}
@@ -469,8 +469,8 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
                         className={cn(
                           "w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 group",
                           field.done
-                            ? "border-border/15 bg-zinc-950/20"
-                            : "border-border/20 bg-zinc-950/10 hover:bg-zinc-800/20 hover:border-primary/30"
+                            ? "border-border/15 bg-background/20"
+                            : "border-border/20 bg-background/10 hover:bg-muted/20 hover:border-primary/30"
                         )}
                       >
                         <span className="shrink-0 mt-0.5">
@@ -485,7 +485,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
                             <span
                               className={cn(
                                 "text-sm font-medium",
-                                field.done ? "text-zinc-200" : "text-white"
+                                field.done ? "text-foreground" : "text-foreground"
                               )}
                             >
                               {field.label}
@@ -499,7 +499,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-zinc-400 font-light leading-relaxed mt-1">
+                          <p className="text-xs text-muted-foreground font-light leading-relaxed mt-1">
                             {field.description}
                           </p>
                         </div>

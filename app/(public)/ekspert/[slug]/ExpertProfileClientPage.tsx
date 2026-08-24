@@ -543,10 +543,10 @@ export default function LawFirmProfilePage() {
 
         {/* Floating Profile Info Card */}
         <div className={cn(
-          "profile-card bg-[#282825]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl md:rounded-3xl p-6 md:p-8 transition-all duration-500 relative overflow-hidden",
-          lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-500/40 shadow-[0_0_40px_-5px_rgba(245,158,11,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-amber-950/10",
-          lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-500/40 shadow-[0_0_40px_-5px_rgba(168,85,247,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-purple-950/10",
-          lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-500/40 shadow-[0_0_40px_-5px_rgba(59,130,246,0.2)] bg-gradient-to-br from-[#282825]/95 via-[#282825]/90 to-blue-950/10"
+          "profile-card bg-card/90 backdrop-blur-xl border border-border shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl md:rounded-3xl p-6 md:p-8 transition-all duration-500 relative overflow-hidden",
+          lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-500/40 shadow-[0_0_40px_-5px_rgba(245,158,11,0.2)] bg-gradient-to-br from-card/95 via-card/90 to-amber-950/10",
+          lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-500/40 shadow-[0_0_40px_-5px_rgba(168,85,247,0.2)] bg-gradient-to-br from-card/95 via-card/90 to-purple-950/10",
+          lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-500/40 shadow-[0_0_40px_-5px_rgba(59,130,246,0.2)] bg-gradient-to-br from-card/95 via-card/90 to-blue-950/10"
         )}>
           {/* Decorative background glows */}
           <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-primary/20 blur-3xl pointer-events-none opacity-60 dark:opacity-40" />
@@ -559,11 +559,11 @@ export default function LawFirmProfilePage() {
               {/* Logo */}
               <div className="relative group flex-shrink-0 self-center md:self-start">
                 <div className={cn(
-                  "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-[#20201d]/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
+                  "relative h-28 w-28 md:h-32 md:w-32 rounded-2xl overflow-hidden bg-background/90 backdrop-blur-sm flex-shrink-0 border shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl",
                   lawFirm.pakietSubskrypcji === "BIZNES" && "border-amber-400 shadow-amber-500/20",
                   lawFirm.pakietSubskrypcji === "PREMIUM" && "border-purple-400 shadow-purple-500/20",
                   lawFirm.pakietSubskrypcji === "STANDARD" && "border-blue-400 shadow-blue-500/20",
-                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-white/10"
+                  (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "border-border"
                 )}>
                   {lawFirm.pakietSubskrypcji === "BIZNES" && (
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 bg-[length:200%_100%] animate-gradient opacity-60" />
@@ -571,7 +571,7 @@ export default function LawFirmProfilePage() {
                   {lawFirm.pakietSubskrypcji === "PREMIUM" && (
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-[length:200%_100%] animate-gradient opacity-60" />
                   )}
-                  <div className="relative h-full w-full rounded-[14px] bg-[#282825] overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
+                  <div className="relative h-full w-full rounded-[14px] bg-card overflow-hidden z-10 m-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)]">
                     <Image
                       src={expertAvatar(lawFirm.logo)}
                       alt={lawFirm.nazwa}
@@ -605,7 +605,7 @@ export default function LawFirmProfilePage() {
                         <PackageBadge
                           packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
                           size="md"
-                          className="shadow-sm border-white/10"
+                          className="shadow-sm border-border"
                         />
                       )}
                     </div>
@@ -636,7 +636,7 @@ export default function LawFirmProfilePage() {
                       </span>
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground font-medium bg-white/5 border border-white/10 px-3 py-1.5 rounded-full italic">
+                    <span className="text-xs text-muted-foreground font-medium bg-foreground/5 border border-border px-3 py-1.5 rounded-full italic">
                       Brak opinii
                     </span>
                   )}
@@ -708,7 +708,7 @@ export default function LawFirmProfilePage() {
                       <Badge
                         key={index}
                         variant="outline"
-                        className="text-xs bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 transition-colors px-2.5 py-0.5 rounded-md text-muted-foreground hover:text-foreground font-medium"
+                        className="text-xs bg-foreground/5 border-border hover:bg-foreground/10 hover:border-border transition-colors px-2.5 py-0.5 rounded-md text-muted-foreground hover:text-foreground font-medium"
                       >
                         #{keyword}
                       </Badge>
@@ -719,33 +719,33 @@ export default function LawFirmProfilePage() {
             </div>
 
             {/* Actions Section */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-center lg:justify-end self-stretch lg:self-end border-t lg:border-t-0 pt-6 lg:pt-0 mt-2 lg:mt-0 border-white/10">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch lg:items-center justify-center lg:justify-end self-stretch lg:self-end border-t lg:border-t-0 pt-6 lg:pt-0 mt-2 lg:mt-0 border-border">
               <div className="flex items-center gap-2 justify-center lg:justify-end flex-wrap">
 
                 {/* Social Media Icons */}
                 {lawFirm.linkLinkedIn && (
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="LinkedIn" asChild>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="LinkedIn" asChild>
                     <a href={lawFirm.linkLinkedIn} target="_blank" rel="noopener noreferrer">
                       <Linkedin className="h-5 w-5" />
                     </a>
                   </Button>
                 )}
                 {lawFirm.linkFacebook && (
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Facebook" asChild>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Facebook" asChild>
                     <a href={lawFirm.linkFacebook} target="_blank" rel="noopener noreferrer">
                       <Facebook className="h-5 w-5" />
                     </a>
                   </Button>
                 )}
                 {lawFirm.linkInstagram && (
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:text-white hover:border-transparent text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Instagram" asChild>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:text-white hover:border-transparent text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Instagram" asChild>
                     <a href={lawFirm.linkInstagram} target="_blank" rel="noopener noreferrer">
                       <Instagram className="h-5 w-5" />
                     </a>
                   </Button>
                 )}
                 {lawFirm.linkTwitter && (
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Twitter / X" asChild>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-black hover:text-white hover:border-black dark:hover:bg-white dark:hover:text-black text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm" title="Twitter / X" asChild>
                     <a href={lawFirm.linkTwitter} target="_blank" rel="noopener noreferrer">
                       <Twitter className="h-5 w-5" />
                     </a>
@@ -755,7 +755,7 @@ export default function LawFirmProfilePage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="ml-4 h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:text-red-400 text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
+                  className="ml-4 h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-foreground/10 hover:border-border hover:text-red-400 text-muted-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
                   title={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
                   onClick={handleToggleFavorite}
                   disabled={isFavoriteLoading}
@@ -765,7 +765,7 @@ export default function LawFirmProfilePage() {
 
                 <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 shadow-sm">
+                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-foreground/5 border-border hover:bg-foreground/10 hover:border-border text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 shadow-sm">
                       <Share2 className="h-5 w-5" />
                     </Button>
                   </DialogTrigger>
@@ -1068,10 +1068,10 @@ export default function LawFirmProfilePage() {
             {lawFirm.pakietSubskrypcji && (() => {
               const pkg = lawFirm.pakietSubskrypcji;
               const cardClass =
-                pkg === "BIZNES" ? "border-2 border-amber-500/80 bg-gradient-to-br from-[#1c1917] via-card to-amber-950/20 shadow-lg shadow-amber-500/10" :
+                pkg === "BIZNES" ? "border-2 border-amber-500/80 bg-gradient-to-br from-card via-card to-amber-950/20 shadow-lg shadow-amber-500/10" :
                   pkg === "PREMIUM" ? "border-2 border-purple-500/80 bg-gradient-to-br from-[#1e1b4b] via-card to-purple-950/20 shadow-lg shadow-purple-500/10" :
                     pkg === "STANDARD" ? "border-2 border-blue-500/70 bg-gradient-to-br from-[#172554] via-card to-blue-950/20 shadow-lg shadow-blue-500/5" :
-                      "border border-neutral-850 bg-card";
+                      "border border-border bg-card";
 
               return (
                 <Card className={cn("transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.01] hover:shadow-md", cardClass)}>
@@ -1083,7 +1083,7 @@ export default function LawFirmProfilePage() {
                       <PackageBadge
                         packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
                         size="lg"
-                        className="shadow-md border-white/10"
+                        className="shadow-md border-border"
                       />
                     </div>
                     {pkg === "BIZNES" && (
@@ -1330,15 +1330,15 @@ export default function LawFirmProfilePage() {
                             />
                             <CommandList className="max-h-60 overflow-y-auto">
                               {isLoadingCities && (
-                                <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                                <div className="text-muted-foreground py-3 text-center text-xs">Wyszukiwanie...</div>
                               )}
                               {!isLoadingCities && locationSearch.trim().length < 2 && (
-                                <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                <div className="text-muted-foreground py-3 text-center text-xs px-3">
                                   Wpisz co najmniej 2 znaki...
                                 </div>
                               )}
                               {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                                <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono miasta.</div>
+                                <div className="text-muted-foreground py-3 text-center text-xs">Nie znaleziono miasta.</div>
                               )}
                               <CommandGroup>
                                 {cities.map((city) => {

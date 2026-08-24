@@ -32,10 +32,14 @@ export function buildLawFirmCaseWhereInput(
     ],
   }
 
+  // Warunki wynikające z zadeklarowanego zakresu usług – zbierane osobno, bo sprawa
+  // z własnego polecenia omija je w całości (patrz `ownReferralCondition` niżej).
+  const declaredScopeConditions: Prisma.CaseWhereInput[] = []
+
   if (isCalaPolska) {
     // Cała Polska – tylko filtr kategorii (jeśli zadeklarowane)
     if (lawFirmCategoryIds.length > 0) {
-      scopeConditions.push(categoryScopeCondition)
+      declaredScopeConditions.push(categoryScopeCondition)
     }
   } else {
     // Filtr lokalizacji: voivodeship OR city (jeśli zadeklarowane)
@@ -47,13 +51,25 @@ export function buildLawFirmCaseWhereInput(
       locationOr.push({ cityId: { in: lawFirmCityIds } })
     }
     if (locationOr.length > 0) {
-      scopeConditions.push(locationOr.length === 1 ? locationOr[0] : { OR: locationOr })
+      declaredScopeConditions.push(locationOr.length === 1 ? locationOr[0] : { OR: locationOr })
     }
 
     // Filtr kategorii (jeśli zadeklarowane)
     if (lawFirmCategoryIds.length > 0) {
-      scopeConditions.push(categoryScopeCondition)
+      declaredScopeConditions.push(categoryScopeCondition)
     }
+  }
+
+  // Sprawa powstała z polecenia tego eksperta jest dla niego widoczna zawsze —
+  // nawet gdyby wypadła poza zadeklarowanymi kategoriami czy obszarem działania.
+  const ownReferralCondition: Prisma.CaseWhereInput = {
+    referral: { is: { lawFirmId: lawFirm.id } },
+  }
+
+  if (declaredScopeConditions.length > 0) {
+    scopeConditions.push({
+      OR: [{ AND: declaredScopeConditions }, ownReferralCondition],
+    })
   }
 
   // Wyklucz sprawy, w których zaakceptowano ofertę INNEGO eksperta

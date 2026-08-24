@@ -34,18 +34,18 @@ export function ResponsiveBreadcrumbs({ items }: ResponsiveBreadcrumbsProps) {
   if (items.length <= 3) {
     return (
       <Breadcrumb>
-        <BreadcrumbList className="text-neutral-400">
+        <BreadcrumbList className="text-muted-foreground">
           {items.map((item, index) => {
             const isLast = index === items.length - 1
             return (
               <React.Fragment key={index}>
                 <BreadcrumbItem>
                   {isLast || !item.href ? (
-                    <BreadcrumbPage className="text-white font-medium">
+                    <BreadcrumbPage className="text-foreground font-medium">
                       {item.label}
                     </BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink asChild className="hover:text-white transition-colors">
+                    <BreadcrumbLink asChild className="hover:text-foreground transition-colors">
                       <Link href={item.href}>{item.label}</Link>
                     </BreadcrumbLink>
                   )}
@@ -67,18 +67,18 @@ export function ResponsiveBreadcrumbs({ items }: ResponsiveBreadcrumbsProps) {
   return (
     <Breadcrumb>
       {/* Desktop View: Show all items */}
-      <BreadcrumbList className="hidden md:flex text-neutral-400">
+      <BreadcrumbList className="hidden md:flex text-muted-foreground">
         {items.map((item, index) => {
           const isLast = index === items.length - 1
           return (
             <React.Fragment key={index}>
               <BreadcrumbItem>
                 {isLast || !item.href ? (
-                  <BreadcrumbPage className="text-white font-medium">
+                  <BreadcrumbPage className="text-foreground font-medium">
                     {item.label}
                   </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink asChild className="hover:text-white transition-colors">
+                  <BreadcrumbLink asChild className="hover:text-foreground transition-colors">
                     <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
                 )}
@@ -90,15 +90,15 @@ export function ResponsiveBreadcrumbs({ items }: ResponsiveBreadcrumbsProps) {
       </BreadcrumbList>
 
       {/* Mobile View: Collapsed middle items */}
-      <BreadcrumbList className="flex md:hidden text-neutral-400">
+      <BreadcrumbList className="flex md:hidden text-muted-foreground">
         {/* First Item */}
         <BreadcrumbItem>
           {firstItem.href ? (
-            <BreadcrumbLink asChild className="hover:text-white transition-colors">
+            <BreadcrumbLink asChild className="hover:text-foreground transition-colors">
               <Link href={firstItem.href}>{firstItem.label}</Link>
             </BreadcrumbLink>
           ) : (
-            <BreadcrumbPage className="text-white font-medium">{firstItem.label}</BreadcrumbPage>
+            <BreadcrumbPage className="text-foreground font-medium">{firstItem.label}</BreadcrumbPage>
           )}
         </BreadcrumbItem>
 
@@ -107,13 +107,13 @@ export function ResponsiveBreadcrumbs({ items }: ResponsiveBreadcrumbsProps) {
         {/* Collapsed Dropdown for Middle Items */}
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 hover:text-white transition-colors focus:outline-none">
+            <DropdownMenuTrigger className="flex items-center gap-1 hover:text-foreground transition-colors focus:outline-none">
               <BreadcrumbEllipsis className="h-4 w-4" />
               <span className="sr-only">Rozwiń menu</span>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-[#121211] border border-neutral-800 text-neutral-400">
+            <DropdownMenuContent align="start" className="bg-background border border-border text-muted-foreground">
               {middleItems.map((item, index) => (
-                <DropdownMenuItem key={index} className="focus:bg-neutral-800 focus:text-white">
+                <DropdownMenuItem key={index} className="focus:bg-muted focus:text-foreground">
                   {item.href ? (
                     <Link href={item.href} className="w-full">
                       {item.label}
@@ -131,7 +131,7 @@ export function ResponsiveBreadcrumbs({ items }: ResponsiveBreadcrumbsProps) {
 
         {/* Last Item (Active Page) */}
         <BreadcrumbItem>
-          <BreadcrumbPage className="text-white font-medium max-w-[150px] truncate">
+          <BreadcrumbPage className="text-foreground font-medium max-w-[150px] truncate">
             {lastItem.label}
           </BreadcrumbPage>
         </BreadcrumbItem>

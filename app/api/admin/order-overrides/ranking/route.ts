@@ -116,13 +116,18 @@ export async function GET(request: NextRequest) {
       // Calculate total points spent on promotions (tx amounts are negative, so sum absolute values)
       const totalSpentPoints = sumPromotionSpentPoints(firm.pointTransactions)
 
-      // Score components (shared formula: "Wydano na prom." added outside the multiplier)
+      // Score components (shared formula: "Wydano na prom." added outside the promotion
+      // multiplier, subscription package adds a percentage bonus on top of everything)
       const {
         baseScore,
         viewScore,
         ratingScore,
         scoreBeforeBoost,
         promoSpentScore,
+        scoreBeforePackage,
+        packageBonusPercent,
+        packageMultiplier,
+        packageBonusScore,
         finalScore,
       } = computeRankingScore({
         zweryfikowana: firm.zweryfikowana,
@@ -130,6 +135,7 @@ export async function GET(request: NextRequest) {
         avgRating,
         boostMultiplier: maxMultiplier,
         totalSpentPoints,
+        pakietSubskrypcji: firm.pakietSubskrypcji,
       })
 
       // Extract active promotion details
@@ -183,6 +189,10 @@ export async function GET(request: NextRequest) {
         scoreBeforeBoost: parseFloat(scoreBeforeBoost.toFixed(1)),
         boostMultiplier: maxMultiplier,
         promoSpentScore: parseFloat(promoSpentScore.toFixed(1)),
+        scoreBeforePackage: parseFloat(scoreBeforePackage.toFixed(1)),
+        packageBonusPercent,
+        packageMultiplier,
+        packageBonusScore: parseFloat(packageBonusScore.toFixed(1)),
         finalScore: parseFloat(finalScore.toFixed(1)),
         avgRating: parseFloat(avgRating.toFixed(1)),
         reviewCount,

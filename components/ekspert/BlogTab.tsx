@@ -80,7 +80,7 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
   // Jeśli brak dostępu do modułu bloga w pakiecie eksperta:
   if (!hasBlogAccess) {
     return (
-      <Card className="border border-white/10 bg-[#1d1d1b]/50 backdrop-blur-md rounded-2xl overflow-hidden relative shadow-lg">
+      <Card className="border border-border bg-card/50 backdrop-blur-md rounded-2xl overflow-hidden relative shadow-lg">
         {/* Glow ambient background */}
         <div className="absolute top-0 right-1/4 w-72 h-72 bg-amber-500/5 blur-3xl rounded-full pointer-events-none" />
 
@@ -123,7 +123,7 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
             </div>
           ) : (
             <div className="pt-2">
-              <Button variant="outline" asChild className="rounded-xl text-xs border-white/10">
+              <Button variant="outline" asChild className="rounded-xl text-xs border-border">
                 <Link href={`/kancelaria/${lawFirm.slug}`}>
                   Zobacz pozostałe informacje o ekspercie
                 </Link>
@@ -147,7 +147,7 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
                   gradientTo={gradientTo}
                   gradientColor={gradientColor}
                   className={cn(
-                    "flex flex-col h-full overflow-hidden border border-white/5 rounded-2xl bg-[#1d1d1b]/40 backdrop-blur-md transition-all duration-500",
+                    "flex flex-col h-full overflow-hidden border border-border rounded-2xl bg-card/40 backdrop-blur-md transition-all duration-500",
                     hoverBorder
                   )}
                 >
@@ -161,10 +161,10 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
                         sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover filter brightness-[0.85] contrast-[1.05] group-hover:scale-105 group-hover:brightness-100 transition-all duration-700 ease-out"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1b]/90 via-[#1d1d1b]/20 to-transparent opacity-85 z-10" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/20 to-transparent opacity-85 z-10" />
                     </div>
                   ) : (
-                    <div className="aspect-[16/10] w-[calc(100%-2px)] ml-[1px] mt-[1px] relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900 flex items-center justify-center border-b border-white/5">
+                    <div className="aspect-[16/10] w-[calc(100%-2px)] ml-[1px] mt-[1px] relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-card via-background to-card flex items-center justify-center border-b border-border">
                       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
                       <BookOpen className={cn("h-10 w-10 transition-transform duration-500 group-hover:scale-110", isBusiness ? "text-amber-500/30" : isPremium ? "text-purple-500/30" : isStandard ? "text-blue-500/30" : "text-[#0da192]/30")} />
                     </div>
@@ -175,13 +175,13 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
                     {/* Meta info badges */}
                     <div className="flex flex-wrap items-center gap-3 mb-4 text-xs font-semibold text-muted-foreground">
                       {post.dataPublikacji && (
-                        <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
+                        <div className="flex items-center gap-1.5 bg-foreground/5 px-2.5 py-1 rounded-md border border-border">
                           <Calendar className="h-3.5 w-3.5 text-muted-foreground/85" />
                           <span>{formatDate(post.dataPublikacji)}</span>
                         </div>
                       )}
                       {post.wyswietlenia !== undefined && post.wyswietlenia !== null && (
-                        <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
+                        <div className="flex items-center gap-1.5 bg-foreground/5 px-2.5 py-1 rounded-md border border-border">
                           <Eye className="h-3.5 w-3.5 text-muted-foreground/85" />
                           <span>{formatViews(post.wyswietlenia)}</span>
                         </div>
@@ -202,7 +202,7 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
                     </p>
 
                     {/* Read more footer element */}
-                    <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-sm font-semibold">
+                    <div className="mt-auto pt-4 border-t border-border flex items-center justify-between text-sm font-semibold">
                       <span className={cn(
                         "transition-colors duration-300 text-muted-foreground",
                         isBusiness ? "group-hover:text-amber-400" : isPremium ? "group-hover:text-purple-400" : isStandard ? "group-hover:text-blue-400" : "group-hover:text-[#0da192]"
@@ -226,9 +226,9 @@ export function BlogTab({ lawFirm, formatDate, isOwnProfile: propIsOwnProfile }:
           </div>
         </div>
       ) : (
-        <Card className="border border-white/5 bg-[#1d1d1b]/40 backdrop-blur-md rounded-2xl">
+        <Card className="border border-border bg-card/40 backdrop-blur-md rounded-2xl">
           <CardContent className="py-14 text-center space-y-4 text-muted-foreground">
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-muted-foreground">
+            <div className="w-12 h-12 rounded-xl bg-foreground/5 border border-border flex items-center justify-center mx-auto text-muted-foreground">
               <BookOpen className="h-6 w-6" />
             </div>
             <div>

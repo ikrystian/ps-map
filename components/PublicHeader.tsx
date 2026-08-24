@@ -1,6 +1,7 @@
 "use client"
 
 import { AddCaseButton } from "@/components/AddCaseButton"
+import { SiteLogo } from "@/components/site-logo"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import { NotificationBell } from "@/components/NotificationBell"
 import { cn } from "@/lib/utils"
@@ -365,15 +367,17 @@ export default function PublicHeader({
     window.location.href = `/szukaj-prawnika?${params.toString()}`
   }
 
+  // W jasnym motywie pasek musi być prawie kryjący: leży nad stale ciemnymi
+  // sekcjami (hero na zdjęciu, landing /dla-prawnika), a przy 40% ciemne tło
+  // przebijało i ciemny tekst nawigacji stawał się nieczytelny.
   return (
-    <header className="fixed left-0 top-0 right-0 z-50 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/70 top-bar-public bg-[#141414]/40">
+    <header className="fixed left-0 top-0 right-0 z-50 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/10 dark:shadow-black/70 top-bar-public bg-background/90 dark:bg-background/40">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <Image className="block min-w-[150px] sm:hidden lg:block min-w-[150px]" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="hidden sm:block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
-            <span className="hidden sm:block self-end ml-1.5 lg:ml-0 lg:absolute lg:-right-3 lg:-bottom-3 text-primary font-bold text-sm lg:text-base" id="env">{process.env.ENV}</span>
+            <SiteLogo className="block min-w-[150px] sm:hidden lg:block min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="hidden sm:block lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "200", height: "32px" }} />
           </Link>
 
           {/* Navigation Menu */}
@@ -392,10 +396,10 @@ export default function PublicHeader({
                       onClick={() => setSearchFormOpen(true)}
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "flex items-center justify-center gap-2 bg-transparent hover:bg-[#121212] transition-colors lg:w-[108px]"
+                        "flex items-center justify-center gap-2 bg-transparent hover:bg-background transition-colors lg:w-[108px]"
                       )}
                     >
-                      <Search className="h-4 w-4 text-neutral-400" />
+                      <Search className="h-4 w-4 text-muted-foreground" />
                       <span className="hidden min-[1200px]:block">Szukaj</span>
                     </motion.button>
                   ) : (
@@ -406,14 +410,14 @@ export default function PublicHeader({
                       exit={{ opacity: 0, scale: 0.92 }}
                       transition={{ duration: 0.15, ease: "easeInOut" }}
                       onClick={() => setSearchFormOpen(false)}
-                      className="flex w-[108px] h-9 items-center justify-center rounded-md  bg-[#141414] text-neutral-200 px-3 py-2 text-sm font-medium hover:bg-black focus:outline-none transition-colors gap-2 shadow-lg shadow-black/30"
+                      className="flex w-[108px] h-9 items-center justify-center rounded-md  bg-background text-foreground px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none transition-colors gap-2 shadow-lg shadow-black/10 dark:shadow-black/30"
                     >
                       <motion.div
                         initial={{ rotate: -90, opacity: 0 }}
                         animate={{ rotate: 0, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 220, damping: 15 }}
                       >
-                        <X className="h-4 w-4 text-neutral-300" />
+                        <X className="h-4 w-4 text-foreground/80" />
                       </motion.div>
                       <span className="text-neutral-700 select-none font-light">|</span>
                       <span>Zamknij</span>
@@ -428,14 +432,14 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-[#121212]",
+                    "bg-transparent hover:bg-background",
                     isFirmoweActive && "text-primary font-semibold"
                   )}
                 >
                   Sprawy firmowe
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-4">
                       {splitIntoColumns(firmoweCat, 4).map((column, columnIndex) => (
                         <div
@@ -451,13 +455,13 @@ export default function PublicHeader({
                                 <Link
                                   href={`/kategorie/${category.slug}`}
                                   className={cn(
-                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
+                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
                                     pathname === `/kategorie/${category.slug}` && "text-primary"
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
                                   {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
+                                    <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
                                       {category._count.lawFirms}
                                     </span>
                                   )}
@@ -465,7 +469,7 @@ export default function PublicHeader({
                                 </Link>
                               </NavigationMenuLink>
                               {category.children && category.children.length > 0 && (
-                                <div className="border-l border-neutral-200/60 dark:border-neutral-800/60 pl-3.5 space-y-1.5 ml-0.5">
+                                <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
                                   {category.children.slice(0, 5).map((child) => (
                                     <NavigationMenuLink key={child.id} asChild>
                                       <Link
@@ -493,7 +497,7 @@ export default function PublicHeader({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between">
+                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Potrzebujesz pomocy prawnej? Dodaj swoją sprawę na portalu.</span>
                       <NavigationMenuLink asChild>
                         <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
@@ -509,14 +513,14 @@ export default function PublicHeader({
               <NavigationMenuItem>
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-[#121212]",
+                    "bg-transparent hover:bg-background",
                     isPrywatneActive && "text-primary font-semibold"
                   )}
                 >
                   Sprawy prywatne
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-[#212121] max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-4">
                       {splitIntoColumns(prywatneCat, 4).map((column, columnIndex) => (
                         <div
@@ -532,13 +536,13 @@ export default function PublicHeader({
                                 <Link
                                   href={`/kategorie/${category.slug}`}
                                   className={cn(
-                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-neutral-100",
+                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
                                     pathname === `/kategorie/${category.slug}` && "text-primary"
                                   )}
                                 >
                                   <span>{category.nazwa}</span>
                                   {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-neutral-700/30">
+                                    <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
                                       {category._count.lawFirms}
                                     </span>
                                   )}
@@ -546,7 +550,7 @@ export default function PublicHeader({
                                 </Link>
                               </NavigationMenuLink>
                               {category.children && category.children.length > 0 && (
-                                <div className="border-l border-neutral-200/60 dark:border-neutral-800/60 pl-3.5 space-y-1.5 ml-0.5">
+                                <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
                                   {category.children.slice(0, 5).map((child) => (
                                     <NavigationMenuLink key={child.id} asChild>
                                       <Link
@@ -574,7 +578,7 @@ export default function PublicHeader({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between">
+                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Chcesz rozwiązać problem osobisty? Dodaj sprawę i otrzymaj oferty.</span>
                       <NavigationMenuLink asChild>
                         <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
@@ -591,19 +595,19 @@ export default function PublicHeader({
               <NavigationMenuItem >
                 <NavigationMenuTrigger
                   className={cn(
-                    "bg-transparent hover:bg-[#121212] hidden lg:flex",
+                    "bg-transparent hover:bg-background hidden lg:flex",
                     isBlogActive && "text-primary font-semibold"
                   )}
                 >
                   Blog
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-[700px] xl:w-[1000px] p-6 bg-[#212121] text-white max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                  <div className="w-[700px] xl:w-[1000px] p-6 bg-card text-foreground max-h-[calc(100vh-5.5rem)] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                       {/* Left Column: Categories and Topics */}
                       <div className="md:col-span-7 xl:col-span-5 flex flex-col justify-between">
                         <div>
-                          <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">
+                          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">
                             Poradniki i kategorie
                           </h4>
 
@@ -616,12 +620,12 @@ export default function PublicHeader({
                                     href={`/blog?category=${category.slug}`}
                                     className="group/blog-cat flex flex-col gap-0.5"
                                   >
-                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                    <span className="text-sm font-semibold text-foreground group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
                                       {category.nazwa}
                                       <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
                                     </span>
                                     {category.opis && (
-                                      <span className="text-[11px] text-neutral-400 line-clamp-1 font-light leading-snug">
+                                      <span className="text-[11px] text-muted-foreground line-clamp-1 font-light leading-snug">
                                         {category.opis}
                                       </span>
                                     )}
@@ -632,7 +636,7 @@ export default function PublicHeader({
                               <>
                                 <NavigationMenuLink asChild>
                                   <Link href="/blog" className="group/blog-cat flex flex-col gap-0.5">
-                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                    <span className="text-sm font-semibold text-foreground group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
                                       Porady Prawne
                                       <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
                                     </span>
@@ -643,7 +647,7 @@ export default function PublicHeader({
                                 </NavigationMenuLink>
                                 <NavigationMenuLink asChild>
                                   <Link href="/blog" className="group/blog-cat flex flex-col gap-0.5">
-                                    <span className="text-sm font-semibold text-neutral-100 group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
+                                    <span className="text-sm font-semibold text-foreground group-hover/blog-cat:text-primary transition-colors flex items-center gap-1">
                                       Prawo w Biznesie
                                       <ChevronRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover/blog-cat:opacity-100 group-hover/blog-cat:translate-x-0 transition-all text-primary" />
                                     </span>
@@ -655,8 +659,8 @@ export default function PublicHeader({
                               </>
                             )}
 
-                            <div className="col-span-2 my-2 border-t border-neutral-800/80 pt-3">
-                              <h5 className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2.5">
+                            <div className="col-span-2 my-2 border-t border-border/80 pt-3">
+                              <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
                                 Popularne zagadnienia
                               </h5>
                               <div className="grid grid-cols-2 gap-x-6 gap-y-2">
@@ -669,7 +673,7 @@ export default function PublicHeader({
                                   <NavigationMenuLink key={i} asChild>
                                     <Link
                                       href={`/blog?search=${encodeURIComponent(topic.search)}`}
-                                      className="group/topic-item flex items-center gap-1 text-[13px] text-neutral-300 hover:text-primary transition-colors font-medium"
+                                      className="group/topic-item flex items-center gap-1 text-[13px] text-foreground/80 hover:text-primary transition-colors font-medium"
                                     >
                                       <span className="w-1 h-1 rounded-full bg-neutral-600 group-hover/topic-item:bg-primary transition-colors" />
                                       <span>{topic.label}</span>
@@ -681,7 +685,7 @@ export default function PublicHeader({
                           </div>
                         </div>
 
-                        <div className="mt-4 pt-3 border-t border-neutral-800/60">
+                        <div className="mt-4 pt-3 border-t border-border/60">
                           <NavigationMenuLink asChild>
                             <Link href="/blog" className="group/all-blog text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
                               Wszystkie artykuły i porady <span className="translate-x-0 transition-transform group-hover/all-blog:translate-x-1">→</span>
@@ -692,7 +696,7 @@ export default function PublicHeader({
 
                       {/* Middle Column: Recent Articles */}
                       <div className="hidden xl:flex xl:col-span-3 flex-col">
-                        <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">
                           Najnowsze artykuły
                         </h4>
                         {recentPosts.length > 0 ? (
@@ -701,12 +705,12 @@ export default function PublicHeader({
                               <NavigationMenuLink key={post.id} asChild>
                                 <Link
                                   href={`/blog/${post.slug}`}
-                                  className="group/recent-post flex flex-col gap-1 border-b border-neutral-800/60 pb-3.5 last:border-b-0"
+                                  className="group/recent-post flex flex-col gap-1 border-b border-border/60 pb-3.5 last:border-b-0"
                                 >
-                                  <span className="text-[13px] font-medium text-neutral-100 group-hover/recent-post:text-primary transition-colors leading-snug line-clamp-2">
+                                  <span className="text-[13px] font-medium text-foreground group-hover/recent-post:text-primary transition-colors leading-snug line-clamp-2">
                                     {post.tytul}
                                   </span>
-                                  <span className="text-[11px] text-neutral-500 font-light flex items-center gap-1.5">
+                                  <span className="text-[11px] text-muted-foreground font-light flex items-center gap-1.5">
                                     {post.category?.nazwa && (
                                       <span className="text-primary/80 font-medium">{post.category.nazwa}</span>
                                     )}
@@ -721,7 +725,7 @@ export default function PublicHeader({
                             ))}
                           </div>
                         ) : (
-                          <p className="text-[12px] text-neutral-500 font-light leading-relaxed">
+                          <p className="text-[12px] text-muted-foreground font-light leading-relaxed">
                             Wkrótce pojawią się tu nowe artykuły i porady naszych ekspertów.
                           </p>
                         )}
@@ -731,7 +735,7 @@ export default function PublicHeader({
                       <div className="md:col-span-5 xl:col-span-4">
                         {latestPost ? (
                           <Link href={`/blog/${latestPost.slug}`} className="group/featured-card block h-full">
-                            <div className="relative h-full min-h-[200px] overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-xl transition-all duration-300 group-hover/featured-card:border-primary/30 flex flex-col justify-end p-4">
+                            <div className="relative h-full min-h-[200px] overflow-hidden rounded-xl border border-border bg-card shadow-xl transition-all duration-300 group-hover/featured-card:border-primary/30 flex flex-col justify-end p-4">
                               {latestPost.obrazekWyrozniajacy ? (
                                 <img
                                   src={latestPost.obrazekWyrozniajacy}
@@ -739,17 +743,17 @@ export default function PublicHeader({
                                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover/featured-card:scale-105"
                                 />
                               ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#0da192]/20 via-neutral-950 to-neutral-900" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-card" />
                               )}
 
                               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 transition-opacity duration-300" />
 
-                              <div className="relative z-10 text-white flex flex-col h-full justify-between">
-                                <span className="text-[10px] px-2 py-0.5 rounded bg-[#0da192] text-white font-semibold tracking-wider uppercase w-fit mb-4">
+                              <div className="relative z-10 text-foreground flex flex-col h-full justify-between">
+                                <span className="text-[10px] px-2 py-0.5 rounded bg-primary text-white font-semibold tracking-wider uppercase w-fit mb-4">
                                   Najnowszy wpis
                                 </span>
                                 <div>
-                                  <h4 className="font-semibold text-sm leading-tight text-white mb-2 line-clamp-2 group-hover/featured-card:text-primary transition-colors">
+                                  <h4 className="font-semibold text-sm leading-tight text-foreground mb-2 line-clamp-2 group-hover/featured-card:text-primary transition-colors">
                                     {latestPost.tytul}
                                   </h4>
                                   <span className="text-[11px] text-primary group-hover/featured-card:translate-x-1 transition-transform flex items-center gap-1 font-semibold">
@@ -761,23 +765,23 @@ export default function PublicHeader({
                           </Link>
                         ) : (
                           <Link href="/blog" className="group/fallback-card block h-full">
-                            <div className="relative h-full min-h-[220px] overflow-hidden rounded-xl border border-neutral-800 bg-gradient-to-br from-[#0da192]/20 via-neutral-950 to-neutral-900 shadow-xl transition-all duration-300 group-hover/fallback-card:border-primary/30 flex flex-col justify-between p-5">
-                              <div className="absolute -top-12 -right-12 w-28 h-28 bg-[#0da192]/10 rounded-full blur-2xl group-hover/fallback-card:bg-[#0da192]/20 transition-all duration-500" />
+                            <div className="relative h-full min-h-[220px] overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/20 via-background to-card shadow-xl transition-all duration-300 group-hover/fallback-card:border-primary/30 flex flex-col justify-between p-5">
+                              <div className="absolute -top-12 -right-12 w-28 h-28 bg-primary/10 rounded-full blur-2xl group-hover/fallback-card:bg-primary/20 transition-all duration-500" />
 
                               <div className="relative z-10 flex flex-col gap-1.5">
                                 <span className="text-[10px] text-primary font-bold uppercase tracking-widest">
                                   Baza Wiedzy
                                 </span>
-                                <h4 className="font-playfair font-semibold text-base text-neutral-100 group-hover/fallback-card:text-white transition-colors leading-snug">
+                                <h4 className="font-playfair font-semibold text-base text-foreground group-hover/fallback-card:text-foreground transition-colors leading-snug">
                                   Ekspercka wiedza w zasięgu ręki
                                 </h4>
-                                <p className="text-[11px] text-neutral-400 font-light leading-relaxed">
+                                <p className="text-[11px] text-muted-foreground font-light leading-relaxed">
                                   Dowiedz się więcej o swoich prawach i obowiązkach z artykułów pisanych przez profesjonalistów.
                                 </p>
                               </div>
 
                               <div className="relative z-10">
-                                <span className="text-xs font-semibold text-white group-hover/fallback-card:text-primary transition-colors flex items-center gap-1">
+                                <span className="text-xs font-semibold text-foreground group-hover/fallback-card:text-primary transition-colors flex items-center gap-1">
                                   Przejdź do bloga
                                   <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/fallback-card:translate-x-1" />
                                 </span>
@@ -799,7 +803,7 @@ export default function PublicHeader({
                     href="/dla-prawnika"
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-[#121212]",
+                      "bg-transparent hover:bg-background",
                       isDlaPrawnikaActive && "text-primary font-semibold"
                     )}
                   >
@@ -812,7 +816,7 @@ export default function PublicHeader({
                 <NavigationMenuLink asChild>
                   <Link href="/z-nami-wygrywasz" className={cn(
                     navigationMenuTriggerStyle(),
-                    "bg-transparent hover:bg-[#121212]",
+                    "bg-transparent hover:bg-background",
                     isZNamiWygrywaszActive && "text-primary font-semibold"
                   )}>
                     Z nami wygrywasz
@@ -830,18 +834,26 @@ export default function PublicHeader({
             {isAuthenticated && userRole ? (
               <div className="flex items-center gap-2 min-[400px]:gap-3">
                 {userRole === "CLIENT" && (
-                  <AddCaseButton
-                    href="/panel-klienta/sprawy/dodaj"
-                    className="flex"
-                    labelClassName="hidden min-[390px]:block"
-                    iconClassName="min-[390px]:hidden"
-                  />
+                  <>
+                    <AddCaseButton
+                      href="/panel-klienta/sprawy/dodaj"
+                      className="flex"
+                      labelClassName="hidden min-[390px]:block"
+                      iconClassName="min-[390px]:hidden"
+                    />
+                    <AddCaseButton
+                      href="/panel-klienta/konsultacje/zapytaj"
+                      label="Konsultacja online"
+                      className="hidden lg:flex"
+                    />
+                  </>
                 )}
                 {(userRole === "CLIENT" || userRole === "LAW_FIRM") && (
                   <>
                     <NotificationBell />
                   </>
                 )}
+                <ThemeToggle className="hidden sm:inline-flex" />
                 <UserMenu
                   userRole={userRole}
                   userName={userName}
@@ -854,6 +866,12 @@ export default function PublicHeader({
             ) : (
               <div className="flex items-center gap-4">
                 <AddCaseButton href="/panel-klienta/sprawy/dodaj" className="flex" />
+                <AddCaseButton
+                  href="/panel-klienta/konsultacje/zapytaj"
+                  label="Konsultacja online"
+                  className="hidden lg:flex"
+                />
+                <ThemeToggle className="hidden sm:inline-flex" />
                 <Link href="/logowanie" className="hidden xl:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>
@@ -867,7 +885,7 @@ export default function PublicHeader({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-10 w-10 text-neutral-300 hover:text-white hover:bg-neutral-800/50 cursor-pointer"
+                    className="h-10 w-10 text-foreground/80 hover:text-foreground hover:bg-muted/50 cursor-pointer"
                   >
                     <Menu className="h-6 w-6" />
                   </Button>
@@ -875,12 +893,13 @@ export default function PublicHeader({
                 <SheetContent
                   onOpenAutoFocus={(e) => e.preventDefault()}
                   side="right"
-                  className="w-[300px] sm:w-[360px] bg-[#141414] border-neutral-850 p-0 text-white flex flex-col justify-between overflow-hidden"
+                  className="w-[300px] sm:w-[360px] bg-background border-border p-0 text-foreground flex flex-col justify-between overflow-hidden"
                 >
-                  <div className="flex h-16 items-center px-6 border-b border-neutral-800 justify-between">
+                  <div className="flex h-16 items-center px-6 border-b border-border justify-between">
                     <Link href="/" className="flex items-center relative" onClick={() => setMobileMenuOpen(false)}>
-                      <Image src="/logo.svg" alt="Logo" width={130} height={32} style={{ width: "auto", height: "32px" }} />
+                      <SiteLogo width={130} height={32} className="h-8 w-auto" />
                     </Link>
+                    <ThemeToggle className="-mr-1" />
                   </div>
 
                   {/* Scrollable Content */}
@@ -894,8 +913,16 @@ export default function PublicHeader({
                           innerClassName="w-full h-11 justify-center text-base"
                           onClick={() => setMobileMenuOpen(false)}
                         />
+                        <AddCaseButton
+                          href="/panel-klienta/konsultacje/zapytaj"
+                          label="Konsultacja online"
+                          shortLabel="Konsultacja online"
+                          className="w-full"
+                          innerClassName="w-full h-11 justify-center text-base"
+                          onClick={() => setMobileMenuOpen(false)}
+                        />
                         <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                          <Button className="w-full cursor-pointer bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 border-0" size="lg">
+                          <Button className="w-full cursor-pointer bg-primary hover:bg-primary-hover text-primary-foreground font-semibold h-11 border-0" size="lg">
                             Zaloguj się
                           </Button>
                         </Link>
@@ -908,9 +935,9 @@ export default function PublicHeader({
 
                       <Accordion type="single" collapsible className="w-full">
                         {/* Sprawy Firmowe Accordion */}
-                        <AccordionItem value="firmowe" className="border-neutral-800">
+                        <AccordionItem value="firmowe" className="border-border">
                           <AccordionTrigger className={cn(
-                            "py-2 text-base font-medium hover:no-underline text-neutral-200 hover:text-primary transition-colors [&>svg]:text-neutral-400 [&>svg]:h-4 [&>svg]:w-4",
+                            "py-2 text-base font-medium hover:no-underline text-foreground hover:text-primary transition-colors [&>svg]:text-muted-foreground [&>svg]:h-4 [&>svg]:w-4",
                             isFirmoweActive && "text-primary"
                           )}>
                             Sprawy firmowe
@@ -928,13 +955,13 @@ export default function PublicHeader({
                                 >
                                   <span>{category.nazwa}</span>
                                   {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-450 font-semibold border border-neutral-700">
+                                    <span className="text-sm px-1.5 py-0.5 rounded bg-muted text-neutral-450 font-semibold border border-border">
                                       {category._count.lawFirms}
                                     </span>
                                   )}
                                 </Link>
                                 {category.children && category.children.length > 0 && (
-                                  <div className="border-l border-neutral-800 pl-3.5 space-y-2 ml-1">
+                                  <div className="border-l border-border pl-3.5 space-y-2 ml-1">
                                     {category.children.slice(0, 4).map((child) => (
                                       <Link
                                         key={child.id}
@@ -942,12 +969,12 @@ export default function PublicHeader({
                                         onClick={() => setMobileMenuOpen(false)}
                                         className={cn(
                                           "flex items-center justify-between text-xs hover:text-primary transition-colors",
-                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-neutral-400"
+                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-muted-foreground"
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
                                         {showCategoryCounts && child._count?.lawFirms !== undefined && (
-                                          <span className="text-sm text-neutral-500 font-medium">
+                                          <span className="text-sm text-muted-foreground font-medium">
                                             ({child._count.lawFirms})
                                           </span>
                                         )}
@@ -968,9 +995,9 @@ export default function PublicHeader({
                         </AccordionItem>
 
                         {/* Sprawy Prywatne Accordion */}
-                        <AccordionItem value="prywatne" className="border-neutral-800">
+                        <AccordionItem value="prywatne" className="border-border">
                           <AccordionTrigger className={cn(
-                            "py-2 text-base font-medium hover:no-underline text-neutral-200 hover:text-primary transition-colors [&>svg]:text-neutral-400 [&>svg]:h-4 [&>svg]:w-4",
+                            "py-2 text-base font-medium hover:no-underline text-foreground hover:text-primary transition-colors [&>svg]:text-muted-foreground [&>svg]:h-4 [&>svg]:w-4",
                             isPrywatneActive && "text-primary"
                           )}>
                             Sprawy prywatne
@@ -988,13 +1015,13 @@ export default function PublicHeader({
                                 >
                                   <span>{category.nazwa}</span>
                                   {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-semibold border border-neutral-700">
+                                    <span className="text-sm px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-semibold border border-border">
                                       {category._count.lawFirms}
                                     </span>
                                   )}
                                 </Link>
                                 {category.children && category.children.length > 0 && (
-                                  <div className="border-l border-neutral-800 pl-3.5 space-y-2 ml-1">
+                                  <div className="border-l border-border pl-3.5 space-y-2 ml-1">
                                     {category.children.slice(0, 4).map((child) => (
                                       <Link
                                         key={child.id}
@@ -1002,12 +1029,12 @@ export default function PublicHeader({
                                         onClick={() => setMobileMenuOpen(false)}
                                         className={cn(
                                           "flex items-center justify-between text-xs hover:text-primary transition-colors",
-                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-neutral-400"
+                                          pathname === `/kategorie/${category.slug}/${child.slug}` ? "text-primary font-medium" : "text-muted-foreground"
                                         )}
                                       >
                                         <span>{child.nazwa}</span>
                                         {showCategoryCounts && child._count?.lawFirms !== undefined && (
-                                          <span className="text-sm text-neutral-500 font-medium">
+                                          <span className="text-sm text-muted-foreground font-medium">
                                             ({child._count.lawFirms})
                                           </span>
                                         )}
@@ -1035,7 +1062,7 @@ export default function PublicHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isBlogActive ? "text-primary font-semibold" : "text-neutral-200"
+                          isBlogActive ? "text-primary font-semibold" : "text-foreground"
                         )}
                       >
                         Aktualności
@@ -1046,7 +1073,7 @@ export default function PublicHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isDlaPrawnikaActive ? "text-primary font-semibold" : "text-neutral-200"
+                          isDlaPrawnikaActive ? "text-primary font-semibold" : "text-foreground"
                         )}
                       >
                         Dla prawnika
@@ -1057,7 +1084,7 @@ export default function PublicHeader({
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          isONasActive ? "text-primary font-semibold" : "text-neutral-200"
+                          isONasActive ? "text-primary font-semibold" : "text-foreground"
                         )}
                       >
                         O nas
@@ -1068,7 +1095,7 @@ export default function PublicHeader({
                           onClick={() => setMobileMenuOpen(false)}
                           className={cn(
                             "block py-2 text-base font-medium transition-colors hover:text-primary",
-                            isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-neutral-200"
+                            isZNamiWygrywaszActive ? "text-primary font-semibold" : "text-foreground"
                           )}
                         >
                           Z nami wygrywasz
@@ -1077,20 +1104,20 @@ export default function PublicHeader({
                   </div>
 
                   {/* Search inside Mobile Menu Footer */}
-                  <div className="p-6 border-t border-neutral-800 bg-[#101010]">
+                  <div className="p-6 border-t border-border bg-background">
                     <form onSubmit={(e) => {
                       e.preventDefault()
                       handleSearchSubmit(e)
                       setMobileMenuOpen(false)
                     }} className="space-y-3">
-                      <div className="flex items-center gap-2.5 px-4 bg-[#20201d] rounded-lg h-11 border border-neutral-800 focus-within:border-neutral-700 transition-colors">
-                        <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                      <div className="flex items-center gap-2.5 px-4 bg-background rounded-lg h-11 border border-border focus-within:border-border transition-colors">
+                        <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <input
                           type="text"
                           placeholder="Szukaj..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-white focus:ring-0"
+                          className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-muted-foreground text-foreground focus:ring-0"
                         />
                       </div>
                       <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold h-11 rounded-lg transition-colors cursor-pointer text-sm border-0">
@@ -1110,24 +1137,24 @@ export default function PublicHeader({
             }`}
         >
           <div className="border-t border-neutral-200/10 mt-1 pt-4">
-            <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-white overflow-hidden">
+            <div className="relative flex flex-col md:flex-row items-center justify-between gap-4 p-0 text-foreground overflow-hidden">
 
               <form onSubmit={handleSearchSubmit} className="w-max m-auto flex flex-col md:flex-row gap-3 items-stretch z-3">
                 {/* Field 0: Fraza wyszukiwania */}
-                <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 focus-within:border-neutral-700 transition-colors w-full md:w-64">
-                  <Search className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                <div className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-border focus-within:border-border transition-colors w-full md:w-64">
+                  <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                   <input
                     type="text"
                     placeholder="Wpisz frazę..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-neutral-500 text-neutral-300 focus:ring-0"
+                    className="bg-transparent border-0 outline-none w-full text-sm placeholder:text-muted-foreground text-foreground/80 focus:ring-0"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       onClick={() => setSearchQuery("")}
-                      className="hover:text-red-400 text-neutral-400 p-0.5"
+                      className="hover:text-red-400 text-muted-foreground p-0.5"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -1139,10 +1166,10 @@ export default function PublicHeader({
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer w-full md:w-64"
+                      className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-border hover:bg-card transition-colors text-left outline-none cursor-pointer w-full md:w-64"
                     >
-                      <IdCard className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                      <span className="text-sm truncate flex-grow text-neutral-300">
+                      <IdCard className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      <span className="text-sm truncate flex-grow text-foreground/80">
                         {selectedExpertiseCategoryName || "Kogo szukasz?"}
                       </span>
                       {selectedExpertiseCategoryName && (
@@ -1152,17 +1179,17 @@ export default function PublicHeader({
                             setSelectedExpertiseCategoryName("")
                             setSelectedExpertiseCategoryId("")
                           }}
-                          className="hover:text-red-400 text-neutral-400 p-0.5"
+                          className="hover:text-red-400 text-muted-foreground p-0.5"
                         >
                           <X className="h-4 w-4" />
                         </span>
                       )}
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-72 sm:w-80 p-0 bg-[#20201d] border-neutral-800 text-white z-50 shadow-xl shadow-black/80" align="start">
+                  <PopoverContent className="w-72 sm:w-80 p-0 bg-background border-border text-foreground z-50 shadow-xl shadow-black/10 dark:shadow-black/80" align="start">
                     <div className="flex flex-col">
                       {/* Header with back button */}
-                      <div className="flex items-center justify-between px-3 py-2.5 border-b border-neutral-800 bg-[#161614]">
+                      <div className="flex items-center justify-between px-3 py-2.5 border-b border-border bg-card">
                         {menuPath.length > 0 ? (
                           <button
                             type="button"
@@ -1173,11 +1200,11 @@ export default function PublicHeader({
                             Powrót
                           </button>
                         ) : (
-                          <span className="text-xs text-neutral-400 font-semibold">
+                          <span className="text-xs text-muted-foreground font-semibold">
                             Wybierz kategorię
                           </span>
                         )}
-                        <span className="text-xs font-medium text-neutral-300 truncate max-w-[150px]">
+                        <span className="text-xs font-medium text-foreground/80 truncate max-w-[150px]">
                           {getMenuTitle()}
                         </span>
                       </div>
@@ -1223,12 +1250,12 @@ export default function PublicHeader({
                               }}
                               className={cn(
                                 "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0 bg-transparent text-white hover:bg-primary",
-                                isSelected && "bg-neutral-800 text-teal-400 font-semibold"
+                                isSelected && "bg-muted text-teal-400 font-semibold"
                               )}
                             >
                               <span className="truncate">{cat.nazwa}</span>
                               {hasChildren ? (
-                                <ChevronRight className="h-4 w-4 text-neutral-500" />
+                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
                               ) : (
                                 isSelected && <Check className="h-4 w-4 text-teal-400" />
                               )}
@@ -1246,10 +1273,10 @@ export default function PublicHeader({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-border hover:bg-card transition-colors text-left outline-none cursor-pointer"
                       >
-                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                        <span className="text-sm truncate flex-grow text-neutral-300">
+                        <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-foreground/80">
                           {selectedVoivodeshipName || "Województwo"}
                         </span>
                         {selectedVoivodeshipName && (
@@ -1259,14 +1286,14 @@ export default function PublicHeader({
                               setSelectedVoivodeshipName("")
                               setSelectedVoivodeship("")
                             }}
-                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                            className="hover:text-red-400 text-muted-foreground p-0.5"
                           >
                             <X className="h-4 w-4" />
                           </span>
                         )}
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-64 p-1 bg-[#20201d] border-neutral-800 text-white" align="start">
+                    <PopoverContent className="w-64 p-1 bg-background border-border text-foreground" align="start">
                       <div className="max-h-64 overflow-y-auto space-y-0.5">
                         {voivodeshipsList.map((v) => (
                           <button
@@ -1280,8 +1307,8 @@ export default function PublicHeader({
                             className={cn(
                               "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
                               selectedVoivodeship === v.slug
-                                ? "bg-neutral-800 text-white hover:bg-primary"
-                                : "text-neutral-300 hover:bg-primary hover:text-white bg-transparent"
+                                ? "bg-muted text-white hover:bg-primary"
+                                : "text-foreground/80 hover:bg-primary hover:text-white bg-transparent"
                             )}
                           >
                             <span>{v.nazwa}</span>
@@ -1296,10 +1323,10 @@ export default function PublicHeader({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-border hover:bg-card transition-colors text-left outline-none cursor-pointer"
                       >
-                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                        <span className="text-sm truncate flex-grow text-neutral-300">
+                        <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-foreground/80">
                           {selectedCounty || "Powiat"}
                         </span>
                         {selectedCounty && (
@@ -1308,16 +1335,16 @@ export default function PublicHeader({
                               e.stopPropagation()
                               setSelectedCounty("")
                             }}
-                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                            className="hover:text-red-400 text-muted-foreground p-0.5"
                           >
                             <X className="h-4 w-4" />
                           </span>
                         )}
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-64 p-3 bg-[#20201d] border-neutral-800 text-white" align="start">
+                    <PopoverContent className="w-64 p-3 bg-background border-border text-foreground" align="start">
                       <div className="space-y-2">
-                        <p className="text-xs text-neutral-400">Wpisz nazwę powiatu</p>
+                        <p className="text-xs text-muted-foreground">Wpisz nazwę powiatu</p>
                         <input
                           type="text"
                           autoFocus
@@ -1331,7 +1358,7 @@ export default function PublicHeader({
                             }
                           }}
                           placeholder="np. powiat warszawski"
-                          className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                          className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-teal-500"
                         />
                         <button
                           type="button"
@@ -1354,10 +1381,10 @@ export default function PublicHeader({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                        className="flex flex-1 items-center gap-2.5 px-4 bg-card rounded-lg h-12 border border-border hover:bg-card transition-colors text-left outline-none cursor-pointer"
                       >
-                        <MapPin className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                        <span className="text-sm truncate flex-grow text-neutral-300">
+                        <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm truncate flex-grow text-foreground/80">
                           {selectedCity || "Lokalizacja"}
                         </span>
                         {selectedCity && (
@@ -1367,20 +1394,20 @@ export default function PublicHeader({
                               setSelectedCity("")
                               setSelectedVoivodeship("")
                             }}
-                            className="hover:text-red-400 text-neutral-400 p-0.5"
+                            className="hover:text-red-400 text-muted-foreground p-0.5"
                           >
                             <X className="h-4 w-4" />
                           </span>
                         )}
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-64 p-0 bg-card border-neutral-800 text-white" align="start">
-                      <Command className="bg-[#20201d] text-white" shouldFilter={false}>
+                    <PopoverContent className="w-64 p-0 bg-card border-border text-foreground" align="start">
+                      <Command className="bg-background text-foreground" shouldFilter={false}>
                         <CommandInput
                           placeholder="Wyszukaj miasto..."
                           value={locationSearch}
                           onValueChange={setLocationSearch}
-                          className="text-white bg-transparent border-neutral-800"
+                          className="text-foreground bg-transparent border-border"
                         />
                         <CommandList className="max-h-60 overflow-y-auto">
                           {isLoadingCities && (
@@ -1417,7 +1444,7 @@ export default function PublicHeader({
                                     }
                                     setLocationOpen(false)
                                   }}
-                                  className="text-white hover:bg-neutral-800 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                  className="text-foreground hover:bg-muted cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-muted"
                                 >
                                   <div className="flex items-center gap-2">
                                     <Check
@@ -1428,7 +1455,7 @@ export default function PublicHeader({
                                     />
                                     <span>{displayValue}</span>
                                   </div>
-                                  <span className="text-xs text-neutral-400 ml-2 text-right">
+                                  <span className="text-xs text-muted-foreground ml-2 text-right">
                                     {city.voivodeship?.nazwa}
                                   </span>
                                 </CommandItem>
@@ -1446,11 +1473,11 @@ export default function PublicHeader({
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="flex flex-1 items-center justify-between gap-2.5 px-4 bg-card rounded-lg h-12 border border-neutral-800 hover:bg-[#282825] transition-colors text-left outline-none cursor-pointer"
+                      className="flex flex-1 items-center justify-between gap-2.5 px-4 bg-card rounded-lg h-12 border border-border hover:bg-card transition-colors text-left outline-none cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5 truncate">
-                        <List className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                        <span className="text-sm truncate text-neutral-300">
+                        <List className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm truncate text-foreground/80">
                           {selectedType === "OSOBA_PRYWATNA"
                             ? "sprawa prywatna"
                             : selectedType === "FIRMA"
@@ -1458,10 +1485,10 @@ export default function PublicHeader({
                               : "Typ sprawy"}
                         </span>
                       </div>
-                      <ChevronDown className="h-4 w-4 text-neutral-500 flex-shrink-0" />
+                      <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-56 p-1 bg-[#20201d] border-neutral-800 text-white" align="start">
+                  <PopoverContent className="w-56 p-1 bg-background border-border text-foreground" align="start">
                     <div className="space-y-0.5">
                       {[
                         { value: "all", label: "Wszystkie typy" },
@@ -1478,8 +1505,8 @@ export default function PublicHeader({
                           className={cn(
                             "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0",
                             selectedType === opt.value
-                              ? "bg-neutral-800 text-white"
-                              : "text-neutral-300 hover:bg-primary hover:text-white bg-transparent"
+                              ? "bg-muted text-foreground"
+                              : "text-foreground/80 hover:bg-primary hover:text-white bg-transparent"
                           )}
                         >
                           <span>{opt.label}</span>

@@ -39,6 +39,11 @@ import {
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { expertAvatar } from "@/lib/expert-avatar"
+import {
+  RANKING_PACKAGE_BONUS_PERCENT,
+  RANKING_PACKAGE_ORDER,
+  RANKING_VERIFIED_SCORE,
+} from "@/lib/ranking-score"
 
 interface ActivePromotion {
   id: string
@@ -77,6 +82,10 @@ interface LawFirmRankingData {
   scoreBeforeBoost: number
   boostMultiplier: number
   promoSpentScore: number
+  scoreBeforePackage: number
+  packageBonusPercent: number
+  packageMultiplier: number
+  packageBonusScore: number
   finalScore: number
   avgRating: number
   reviewCount: number
@@ -285,7 +294,7 @@ export default function AdminPozycjonowaniePage() {
       case "STANDARD":
         return "bg-blue-500/15 border-blue-500/35 text-blue-400"
       default:
-        return "bg-zinc-800 border-zinc-700 text-zinc-400"
+        return "bg-muted border-border text-muted-foreground"
     }
   }
 
@@ -304,7 +313,7 @@ export default function AdminPozycjonowaniePage() {
       case "NAJCZESCIEJ_KONSULTOWANE":
         return "bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-400"
       default:
-        return "bg-zinc-800 text-zinc-400"
+        return "bg-muted text-muted-foreground"
     }
   }
 
@@ -363,7 +372,7 @@ export default function AdminPozycjonowaniePage() {
             onClick={() => setContext(c.value)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${context === c.value
               ? "bg-primary text-primary-foreground shadow"
-              : "text-muted-foreground hover:text-foreground hover:bg-zinc-800/40"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
               }`}
           >
             {c.label}
@@ -373,7 +382,7 @@ export default function AdminPozycjonowaniePage() {
           onClick={() => setContext("OVERVIEW")}
           className={`px-4 py-2 text-sm font-bold rounded-md transition-all duration-200 flex items-center gap-1.5 ${context === "OVERVIEW"
             ? "bg-amber-600 text-white shadow"
-            : "text-amber-500 hover:text-amber-400 hover:bg-zinc-800/40"
+            : "text-amber-500 hover:text-amber-400 hover:bg-muted/40"
             }`}
         >
           <Layers className="h-4 w-4" />
@@ -395,9 +404,9 @@ export default function AdminPozycjonowaniePage() {
               </p>
               <div className="flex flex-wrap gap-3 mt-3">
                 {conflicts.map((conf) => (
-                  <div key={conf.position} className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs">
+                  <div key={conf.position} className="bg-card border border-border px-3 py-1.5 rounded-lg text-xs">
                     <span className="font-bold text-amber-500 font-mono">Pozycja #{conf.position}:</span>{" "}
-                    <span className="text-zinc-300 font-medium">{conf.firms.join(" oraz ")}</span>
+                    <span className="text-foreground/80 font-medium">{conf.firms.join(" oraz ")}</span>
                   </div>
                 ))}
               </div>
@@ -426,16 +435,17 @@ export default function AdminPozycjonowaniePage() {
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
                     <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-2">
-                      <span className="text-primary font-bold">Score</span> = (
-                      <span className="text-green-400">Weryfikacja [1000 pkt]</span> +
+                      <span className="text-primary font-bold">Score</span> = ((
+                      <span className="text-green-400">Weryfikacja [{RANKING_VERIFIED_SCORE} pkt]</span> +
                       <span className="text-blue-400"> Wyświetlenia * 0.1</span> +
                       <span className="text-amber-400"> Śr. Ocena * 50</span>) *
                       <span className="text-purple-400 font-bold"> Mnożnik Promocji</span> +
-                      <span className="text-rose-400 font-bold"> Wydano na prom.</span>
+                      <span className="text-rose-400 font-bold"> Wydano na prom.</span>) *
+                      <span className="text-cyan-400 font-bold"> Mnożnik Pakietu</span>
                     </div>
                     <p>
                       Składnik <span className="text-rose-400 font-semibold">Wydano na prom.</span> (suma punktów wydanych
-                      na promocje) jest doliczany **poza mnożnikiem** — w stosunku 1:1, bez wzmacniania przez mnożnik promocji.
+                      na promocje) jest doliczany **poza mnożnikiem promocji** — w stosunku 1:1, bez wzmacniania przez mnożnik promocji.
                       Gdzie **Mnożnik Promocji** to najwyższy mnożnik z aktywnych wykupionych promocji:
                     </p>
                     <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">
@@ -443,6 +453,20 @@ export default function AdminPozycjonowaniePage() {
                       <li>Wyróżnienie profilu: <span className="text-primary">2.0x</span></li>
                       <li>Top Lista: <span className="text-primary">3.0x</span></li>
                       <li>Strona Główna Premium: <span className="text-primary">5.0x</span></li>
+                    </ul>
+                    <p className="pt-2">
+                      Na końcu cały wynik jest mnożony przez <span className="text-cyan-400 font-semibold">Mnożnik Pakietu</span> —
+                      im wyższy pakiet abonamentowy eksperta, tym większy **procentowy** dodatek do wszystkich punktów
+                      (dotyczy również punktów wydanych na promocje). Brak aktywnego pakietu = 0% (mnożnik 1.0x):
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">
+                      {RANKING_PACKAGE_ORDER.map((pkg) => (
+                        <li key={pkg}>
+                          {pkg}: <span className="text-cyan-400">
+                            +{RANKING_PACKAGE_BONUS_PERCENT[pkg]}% ({(1 + RANKING_PACKAGE_BONUS_PERCENT[pkg] / 100).toFixed(2)}x)
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 ) : context === "HOMEPAGE_FEATURED" || context === "HOMEPAGE_TOP" ? (
@@ -501,7 +525,7 @@ export default function AdminPozycjonowaniePage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
-                    <tr className="bg-zinc-800/40 text-muted-foreground border-b border-border/80 text-xs uppercase font-mono">
+                    <tr className="bg-muted/40 text-muted-foreground border-b border-border/80 text-xs uppercase font-mono">
                       <th className="px-6 py-4">Ekspert</th>
                       <th className="px-6 py-4">Kontekst Widoku</th>
                       <th className="px-6 py-4 text-center">Narzucana Pozycja</th>
@@ -512,10 +536,10 @@ export default function AdminPozycjonowaniePage() {
                   </thead>
                   <tbody className="divide-y divide-border/60">
                     {globalOverrides.map((ov) => (
-                      <tr key={ov.id} className="hover:bg-zinc-800/20 transition-colors">
+                      <tr key={ov.id} className="hover:bg-muted/20 transition-colors">
                         <td className="px-6 py-4 font-medium text-foreground">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded bg-muted border border-border/60 overflow-hidden flex items-center justify-center flex-shrink-0">
                               <img src={expertAvatar(ov.lawFirm.logo)} alt={ov.lawFirm.nazwa} className="w-full h-full object-cover" />
                             </div>
                             <div>
@@ -525,14 +549,14 @@ export default function AdminPozycjonowaniePage() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <Badge variant="outline" className="text-xs font-semibold bg-zinc-800 text-zinc-300">
+                          <Badge variant="outline" className="text-xs font-semibold bg-muted text-foreground/80">
                             {getContextLabel(ov.context)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-center font-bold text-base text-amber-500 font-mono">
                           #{ov.position}
                         </td>
-                        <td className="px-6 py-4 text-zinc-400 italic">
+                        <td className="px-6 py-4 text-muted-foreground italic">
                           {ov.notes || <span className="text-zinc-600">— brak notatki —</span>}
                         </td>
                         <td className="px-6 py-4 text-xs text-muted-foreground">
@@ -682,7 +706,7 @@ export default function AdminPozycjonowaniePage() {
             <CardHeader className="border-b border-border py-4">
               <CardTitle className="text-lg flex justify-between items-center">
                 <span>Rzeczywista symulacja rankingu na żywo</span>
-                <Badge variant="outline" className="text-xs uppercase bg-zinc-800 text-zinc-300">
+                <Badge variant="outline" className="text-xs uppercase bg-muted text-foreground/80">
                   Tryb: {getContextLabel(context)}
                 </Badge>
               </CardTitle>
@@ -716,7 +740,7 @@ export default function AdminPozycjonowaniePage() {
                           transition={{ type: "spring", stiffness: 350, damping: 30 }}
                           className={`p-6 flex flex-col xl:flex-row gap-6 items-start xl:items-center justify-between transition-colors ${hasOverride
                             ? "bg-amber-600/5 hover:bg-amber-600/10 border-l-[4px] border-amber-500"
-                            : "hover:bg-zinc-800/20"
+                            : "hover:bg-muted/20"
                             }`}
                         >
                           {/* Left: Position Indicator & Avatar */}
@@ -732,7 +756,7 @@ export default function AdminPozycjonowaniePage() {
                                   className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-amber-600 flex items-center justify-center border border-background shadow"
                                   title={`Pozycja algorytmiczna: #${firm.originalPosition}`}
                                 >
-                                  <span className="text-sm font-bold text-white font-mono">
+                                  <span className="text-sm font-bold text-foreground font-mono">
                                     {firm.originalPosition}
                                   </span>
                                 </div>
@@ -740,7 +764,7 @@ export default function AdminPozycjonowaniePage() {
                             </div>
 
                             {/* Logo avatar */}
-                            <div className="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center relative flex-shrink-0">
+                            <div className="w-12 h-12 rounded-lg bg-muted border border-border/60 overflow-hidden flex items-center justify-center relative flex-shrink-0">
                               <img src={expertAvatar(firm.logo)} alt={firm.nazwa} className="w-full h-full object-cover" />
                             </div>
 
@@ -762,7 +786,7 @@ export default function AdminPozycjonowaniePage() {
                               </p>
                               <div className="flex flex-wrap gap-1 pt-1">
                                 {firm.categories.slice(0, 3).map((c) => (
-                                  <span key={c} className="text-sm px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 font-mono">
+                                  <span key={c} className="text-sm px-1.5 py-0.5 rounded bg-muted/80 text-foreground/80 font-mono">
                                     {c}
                                   </span>
                                 ))}
@@ -777,7 +801,7 @@ export default function AdminPozycjonowaniePage() {
                           <div className="flex flex-wrap items-center gap-4 xl:gap-8 flex-1 w-full xl:w-auto xl:justify-center">
                             {/* Score breakdown breakdown grid */}
                             {context === "SEARCH" && (
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1.5 border-r border-border/40 pr-6 w-full sm:w-auto">
+                              <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-6 gap-y-1.5 border-r border-border/40 pr-6 w-full sm:w-auto">
                                 <div className="flex flex-col">
                                   <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
                                     <Award className="h-3 w-3 text-emerald-500" /> Weryfikacja
@@ -805,6 +829,17 @@ export default function AdminPozycjonowaniePage() {
                                     <Sparkles className="h-3 w-3 text-purple-500" /> Mnożnik
                                   </span>
                                   <span className="text-sm font-mono text-purple-400 font-bold">x{firm.boostMultiplier}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-sm text-muted-foreground uppercase flex items-center gap-0.5">
+                                    <Layers className="h-3 w-3 text-cyan-500" /> Pakiet
+                                  </span>
+                                  <span className="text-sm font-mono text-cyan-400 font-bold">
+                                    x{(firm.packageMultiplier ?? 1).toFixed(2)}{" "}
+                                    <span className="text-sm font-normal text-muted-foreground/60">
+                                      (+{firm.packageBonusPercent ?? 0}%)
+                                    </span>
+                                  </span>
                                 </div>
                               </div>
                             )}
@@ -950,7 +985,7 @@ export default function AdminPozycjonowaniePage() {
                     })}
                   </AnimatePresence>
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-zinc-900/20">
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-card/20">
                       <span className="text-sm text-muted-foreground">
                         Strona <span className="font-semibold text-foreground">{currentPage}</span> z{" "}
                         <span className="font-semibold text-foreground">{totalPages}</span>

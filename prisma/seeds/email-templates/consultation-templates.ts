@@ -350,4 +350,225 @@ Zespół Prosta Sprawa`,
     },
     triggery: ['consultation_meet_link_ready'],
   },
+  {
+    typ: EmailType.NOWE_ZAPYTANIE_KONSULTACJI,
+    nazwa: 'Nowe zapytanie o konsultację (dla eksperta)',
+    temat: 'Nowe zapytanie o konsultację: {temat}',
+    tresc: `Witaj {ekspert},
+
+Klient {klient} szuka eksperta na płatną konsultację online.
+
+Temat: {temat}
+Dziedzina: {kategoria}
+Forma: {forma}
+Budżet: {budzet}
+
+Zgłoś zainteresowanie, proponując termin i cenę. Klient porówna zgłoszenia i wybierze jedno.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Nowe zapytanie o konsultację</h2>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
+<p style="margin: 0 0 20px 0;">Klient <strong>{klient}</strong> szuka eksperta na płatną konsultację online. Zgłoś zainteresowanie, proponując termin i cenę.</p>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Szczegóły zapytania:</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="35%">Temat:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600;" width="65%">{temat}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Dziedzina:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{kategoria}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Forma:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{forma}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Budżet klienta:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #00b49e; font-weight: 600; border-top: 1px solid #222222;">{budzet}</td>
+    </tr>
+  </table>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zgłoś zainteresowanie</a>
+</div>`,
+    zmienne: ['{ekspert}', '{klient}', '{temat}', '{kategoria}', '{forma}', '{budzet}', '{linkDoPanelu}'],
+    opisZmiennych: {
+      '{ekspert}': 'Nazwa kancelarii / eksperta',
+      '{klient}': 'Imię i nazwisko klienta',
+      '{temat}': 'Temat konsultacji',
+      '{kategoria}': 'Dziedzina prawa',
+      '{forma}': 'Forma konsultacji (wideo / telefon)',
+      '{budzet}': 'Budżet wskazany przez klienta',
+      '{linkDoPanelu}': 'Link do zapytania w panelu eksperta',
+    },
+    triggery: ['consultation_request_created'],
+  },
+  {
+    typ: EmailType.NOWE_ZAINTERESOWANIE_KONSULTACJA,
+    nazwa: 'Ekspert zgłosił się do konsultacji (dla klienta)',
+    temat: '{ekspert} zgłosił się do Twojej konsultacji',
+    tresc: `Witaj {klient},
+
+Ekspert {ekspert} zgłosił zainteresowanie przeprowadzeniem Twojej konsultacji.
+
+Temat: {temat}
+Proponowany termin: {termin}
+Czas trwania: {czas}
+Cena: {cena}
+Forma: {forma}
+
+Porównaj zgłoszenia w panelu i wybierz eksperta, z którym chcesz się spotkać.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Nowe zgłoszenie do Twojej konsultacji</h2>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{klient}</strong>,</p>
+<p style="margin: 0 0 20px 0;">Ekspert <strong>{ekspert}</strong> zgłosił zainteresowanie przeprowadzeniem Twojej konsultacji.</p>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Propozycja eksperta:</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="35%">Temat:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600;" width="65%">{temat}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Proponowany termin:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #00b49e; font-weight: 600; border-top: 1px solid #222222;">{termin}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Czas trwania:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{czas}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Cena:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #00b49e; font-weight: 600; border-top: 1px solid #222222;">{cena}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Forma:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{forma}</td>
+    </tr>
+  </table>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Porównaj zgłoszenia</a>
+</div>`,
+    zmienne: ['{klient}', '{ekspert}', '{temat}', '{termin}', '{czas}', '{cena}', '{forma}', '{linkDoPanelu}'],
+    opisZmiennych: {
+      '{klient}': 'Imię i nazwisko klienta',
+      '{ekspert}': 'Nazwa kancelarii / eksperta',
+      '{temat}': 'Temat konsultacji',
+      '{termin}': 'Proponowany termin spotkania',
+      '{czas}': 'Czas trwania (np. 30 min)',
+      '{cena}': 'Proponowana cena konsultacji',
+      '{forma}': 'Forma konsultacji (wideo / telefon)',
+      '{linkDoPanelu}': 'Link do zapytania w panelu klienta',
+    },
+    triggery: ['consultation_interest_created'],
+  },
+  {
+    typ: EmailType.ZAINTERESOWANIE_ZAAKCEPTOWANE,
+    nazwa: 'Klient wybrał Twoje zgłoszenie (dla eksperta)',
+    temat: 'Konsultacja umówiona: {temat}',
+    tresc: `Gratulacje {ekspert}!
+
+Klient {klient} wybrał Twoje zgłoszenie. Konsultacja została umówiona.
+
+Temat: {temat}
+Termin: {termin}
+Czas trwania: {czas}
+Cena: {cena}
+Forma: {forma}
+Telefon do klienta: {telefon}
+
+Szczegóły oraz link do spotkania znajdziesz w panelu eksperta.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Konsultacja umówiona</h2>
+<p style="margin: 0 0 16px 0;">Gratulacje <strong>{ekspert}</strong>!</p>
+<p style="margin: 0 0 20px 0;">Klient <strong>{klient}</strong> wybrał Twoje zgłoszenie spośród nadesłanych propozycji.</p>
+
+<div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
+  <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Szczegóły konsultacji:</h3>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="35%">Temat:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600;" width="65%">{temat}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Termin:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #00b49e; font-weight: 600; border-top: 1px solid #222222;">{termin}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Czas trwania:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{czas}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Cena:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #00b49e; font-weight: 600; border-top: 1px solid #222222;">{cena}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Forma:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{forma}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;">Telefon do klienta:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #e5e5e5; font-weight: 600; border-top: 1px solid #222222;">{telefon}</td>
+    </tr>
+  </table>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Przejdź do konsultacji</a>
+</div>`,
+    zmienne: ['{ekspert}', '{klient}', '{temat}', '{termin}', '{czas}', '{cena}', '{forma}', '{telefon}', '{linkDoPanelu}'],
+    opisZmiennych: {
+      '{ekspert}': 'Nazwa kancelarii / eksperta',
+      '{klient}': 'Imię i nazwisko klienta',
+      '{temat}': 'Temat konsultacji',
+      '{termin}': 'Termin spotkania',
+      '{czas}': 'Czas trwania (np. 30 min)',
+      '{cena}': 'Cena konsultacji',
+      '{forma}': 'Forma konsultacji (wideo / telefon)',
+      '{telefon}': 'Numer telefonu klienta',
+      '{linkDoPanelu}': 'Link do panelu konsultacji eksperta',
+    },
+    triggery: ['consultation_interest_accepted'],
+  },
+  {
+    typ: EmailType.ZAINTERESOWANIE_ODRZUCONE,
+    nazwa: 'Zgłoszenie do konsultacji odrzucone (dla eksperta)',
+    temat: 'Zgłoszenie do konsultacji nie zostało wybrane',
+    tresc: `Witaj {ekspert},
+
+Klient {klient} nie wybrał Twojego zgłoszenia do konsultacji "{temat}".
+
+Nie zniechęcaj się – w panelu czekają kolejne zapytania od klientów szukających konsultacji online.
+
+Pozdrawiamy,
+Zespół Prosta Sprawa`,
+    trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Zgłoszenie nie zostało wybrane</h2>
+<p style="margin: 0 0 16px 0;">Witaj <strong>{ekspert}</strong>,</p>
+<p style="margin: 0 0 20px 0;">Klient <strong>{klient}</strong> nie wybrał Twojego zgłoszenia do konsultacji <strong>{temat}</strong>.</p>
+<p style="margin: 0 0 20px 0;">Nie zniechęcaj się – w panelu czekają kolejne zapytania od klientów szukających konsultacji online.</p>
+
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{linkDoPanelu}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Zobacz otwarte zapytania</a>
+</div>`,
+    zmienne: ['{ekspert}', '{klient}', '{temat}', '{linkDoPanelu}'],
+    opisZmiennych: {
+      '{ekspert}': 'Nazwa kancelarii / eksperta',
+      '{klient}': 'Imię i nazwisko klienta',
+      '{temat}': 'Temat konsultacji',
+      '{linkDoPanelu}': 'Link do listy zapytań w panelu eksperta',
+    },
+    triggery: ['consultation_interest_rejected'],
+  },
 ]

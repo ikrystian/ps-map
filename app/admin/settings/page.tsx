@@ -1458,7 +1458,7 @@ export default function AdminSettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
                 <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
                   <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Favicon Podgląd</Label>
-                  <div className="w-16 h-16 rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden p-1 shadow-sm">
+                  <div className="w-16 h-16 rounded border border-border/80 bg-card flex items-center justify-center overflow-hidden p-1 shadow-sm">
                     {favicon ? (
                       <img src={favicon} alt="Favicon preview" className="max-w-full max-h-full object-contain" />
                     ) : (
@@ -1549,7 +1549,7 @@ export default function AdminSettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
                 <div className="md:col-span-1 flex flex-col items-center justify-center border border-border rounded-lg p-4 bg-background">
                   <Label className="mb-2 text-center text-xs font-semibold text-muted-foreground uppercase">Obraz OG Podgląd</Label>
-                  <div className="w-full aspect-[1.91/1] rounded border border-border/80 bg-neutral-900 flex items-center justify-center overflow-hidden shadow-sm">
+                  <div className="w-full aspect-[1.91/1] rounded border border-border/80 bg-card flex items-center justify-center overflow-hidden shadow-sm">
                     {ogImage ? (
                       <img src={ogImage} alt="OG Image preview" className="w-full h-full object-cover" />
                     ) : (

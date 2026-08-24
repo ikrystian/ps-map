@@ -1,6 +1,6 @@
 "use client"
 
-import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 import * as React from "react"
 
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
@@ -16,10 +16,31 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   }
 }
 
+/**
+ * vanilla-cookieconsent nie czyta klasy `.dark` — ma własny przełącznik
+ * `.cc--darkmode` na <html>. Trzymamy go w zgodzie z motywem aplikacji.
+ */
+function CookieConsentThemeSync() {
+  const { resolvedTheme } = useTheme()
+
+  React.useEffect(() => {
+    document.documentElement.classList.toggle(
+      "cc--darkmode",
+      resolvedTheme === "dark"
+    )
+  }, [resolvedTheme])
+
+  return null
+}
+
 export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+  return (
+    <NextThemesProvider {...props}>
+      <CookieConsentThemeSync />
+      {children}
+    </NextThemesProvider>
+  )
 }
-

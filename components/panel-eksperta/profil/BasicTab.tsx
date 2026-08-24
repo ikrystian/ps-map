@@ -21,7 +21,7 @@ const RichTextEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-40 w-full flex items-center justify-center bg-zinc-950/40 border border-border/30 rounded-xl text-sm text-zinc-400">
+      <div className="h-40 w-full flex items-center justify-center bg-background/40 border border-border/30 rounded-xl text-sm text-muted-foreground">
         Ładowanie edytora...
       </div>
     )
@@ -152,8 +152,8 @@ export function BasicTab({
                 <User className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-xl text-white font-playfair">Dane podstawowe</CardTitle>
-                <CardDescription className="text-zinc-400 text-sm">Podstawowe informacje o profilu eksperta</CardDescription>
+                <CardTitle className="text-xl text-foreground font-playfair">Dane podstawowe</CardTitle>
+                <CardDescription className="text-muted-foreground text-sm">Podstawowe informacje o profilu eksperta</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -161,9 +161,9 @@ export function BasicTab({
             <div className="grid gap-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="grid gap-2" data-score-target="nazwa">
-                  <Label htmlFor="nazwa" className="text-zinc-300 font-medium">Nazwa wyświetlana *</Label>
+                  <Label htmlFor="nazwa" className="text-foreground/80 font-medium">Nazwa wyświetlana *</Label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                       <Lock className="h-4 w-4" />
                     </div>
                     <Input
@@ -171,10 +171,10 @@ export function BasicTab({
                       value={formData.nazwa}
                       readOnly
                       aria-readonly="true"
-                      className="pl-10 bg-zinc-950/50 border-border/30 text-zinc-400 cursor-not-allowed rounded-xl focus-visible:ring-0"
+                      className="pl-10 bg-background/50 border-border/30 text-muted-foreground cursor-not-allowed rounded-xl focus-visible:ring-0"
                     />
                   </div>
-                  <p className="text-xs text-zinc-500 font-light leading-relaxed">
+                  <p className="text-xs text-muted-foreground font-light leading-relaxed">
                     Aby zmienić wyświetlaną nazwę, skontaktuj się z administracją prostasprawa.
                   </p>
                 </div>
@@ -184,8 +184,8 @@ export function BasicTab({
               {/* Branża i specjalizacja */}
               <div className="border-t border-border/10 pt-6 space-y-4">
                 <div>
-                  <h4 className="text-sm font-semibold text-white">Branża i specjalizacja rejestracyjna</h4>
-                  <p className="text-xs text-zinc-400 font-light mt-1">
+                  <h4 className="text-sm font-semibold text-foreground">Branża i specjalizacja rejestracyjna</h4>
+                  <p className="text-xs text-muted-foreground font-light mt-1">
                     Określ swoją główną specjalizację zawodową podaną podczas rejestracji.
                   </p>
                 </div>
@@ -200,7 +200,7 @@ export function BasicTab({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Kategoria */}
                   <div className="grid gap-2">
-                    <Label htmlFor="category-select" className="text-zinc-300 font-medium">Kategoria główna *</Label>
+                    <Label htmlFor="category-select" className="text-foreground/80 font-medium">Kategoria główna *</Label>
                     <Select
                       value={selectedCatId}
                       onValueChange={(val) => {
@@ -210,7 +210,7 @@ export function BasicTab({
                         handleInputChange("expertiseCategoryId", "")
                       }}
                     >
-                      <SelectTrigger id="category-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                      <SelectTrigger id="category-select" className="h-11 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary">
                         <SelectValue placeholder="Wybierz kategorię..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -226,7 +226,7 @@ export function BasicTab({
                   {/* Podkategoria (warunkowo) */}
                   {selectedCat && hasSubcategories && (
                     <div className="grid gap-2 animate-in fade-in-50 duration-200">
-                      <Label htmlFor="subcategory-select" className="text-zinc-300 font-medium">Podkategoria *</Label>
+                      <Label htmlFor="subcategory-select" className="text-foreground/80 font-medium">Podkategoria *</Label>
                       <Select
                         value={selectedSubcatId}
                         onValueChange={(val) => {
@@ -235,7 +235,7 @@ export function BasicTab({
                           handleInputChange("expertiseCategoryId", "")
                         }}
                       >
-                        <SelectTrigger id="subcategory-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                        <SelectTrigger id="subcategory-select" className="h-11 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary">
                           <SelectValue placeholder="Wybierz podkategorię..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -252,7 +252,7 @@ export function BasicTab({
                   {/* Specjalizacja / Typ działalności */}
                   {selectedCat && (!hasSubcategories || selectedSubcatId) && specializationsList.length > 0 && (
                     <div className="grid gap-2 animate-in fade-in-50 duration-200">
-                      <Label htmlFor="specialization-select" className="text-zinc-300 font-medium">Specjalizacja *</Label>
+                      <Label htmlFor="specialization-select" className="text-foreground/80 font-medium">Specjalizacja *</Label>
                       <Select
                         value={formData.expertiseCategoryId || ""}
                         onValueChange={(val) => {
@@ -260,7 +260,7 @@ export function BasicTab({
                           handleInputChange("expertiseCategoryId", val)
                         }}
                       >
-                        <SelectTrigger id="specialization-select" className="h-11 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary">
+                        <SelectTrigger id="specialization-select" className="h-11 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary">
                           <SelectValue placeholder="Wybierz specjalizację..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -278,7 +278,7 @@ export function BasicTab({
 
               <div className="grid gap-2" data-score-target="opis">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <Label htmlFor="opis" className="text-zinc-300 font-medium">Opis profilu</Label>
+                  <Label htmlFor="opis" className="text-foreground/80 font-medium">Opis profilu</Label>
                   <button
                     type="button"
                     onClick={() => setShowDescTips((prev) => !prev)}
@@ -290,7 +290,7 @@ export function BasicTab({
                     <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${showDescTips ? "rotate-180" : ""}`} />
                   </button>
                 </div>
-                <div className="rounded-xl overflow-hidden border border-border/30 bg-zinc-950/20">
+                <div className="rounded-xl overflow-hidden border border-border/30 bg-background/20">
                   <RichTextEditor
                     value={formData.opis}
                     onChange={(value) => handleInputChange("opis", value)}
@@ -307,35 +307,35 @@ export function BasicTab({
                       <div className="bg-primary/10 p-1.5 rounded-lg text-primary">
                         <Lightbulb className="h-4 w-4" />
                       </div>
-                      <h4 className="text-sm font-semibold text-white">Jak napisać dobry opis profilu</h4>
+                      <h4 className="text-sm font-semibold text-foreground">Jak napisać dobry opis profilu</h4>
                     </div>
 
-                    <ul className="space-y-2 text-xs text-zinc-300 font-light leading-relaxed">
+                    <ul className="space-y-2 text-xs text-foreground/80 font-light leading-relaxed">
                       <li className="flex gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <span><strong className="font-medium text-zinc-100">Zacznij od najważniejszego</strong> — w pierwszych zdaniach napisz, w czym się specjalizujesz i komu pomagasz.</span>
+                        <span><strong className="font-medium text-foreground">Zacznij od najważniejszego</strong> — w pierwszych zdaniach napisz, w czym się specjalizujesz i komu pomagasz.</span>
                       </li>
                       <li className="flex gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <span><strong className="font-medium text-zinc-100">Używaj słów kluczowych</strong>, których szukają klienci (np. „rozwód", „odszkodowanie", „prawo pracy") — poprawiają widoczność w wyszukiwarce (SEO).</span>
+                        <span><strong className="font-medium text-foreground">Używaj słów kluczowych</strong>, których szukają klienci (np. „rozwód", „odszkodowanie", „prawo pracy") — poprawiają widoczność w wyszukiwarce (SEO).</span>
                       </li>
                       <li className="flex gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <span><strong className="font-medium text-zinc-100">Pokaż doświadczenie konkretami</strong> — lata praktyki, liczba prowadzonych spraw, obszary specjalizacji.</span>
+                        <span><strong className="font-medium text-foreground">Pokaż doświadczenie konkretami</strong> — lata praktyki, liczba prowadzonych spraw, obszary specjalizacji.</span>
                       </li>
                       <li className="flex gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <span><strong className="font-medium text-zinc-100">Pisz prostym językiem</strong>, bez nadmiaru żargonu prawniczego — klient ma zrozumieć, jak mu pomożesz.</span>
+                        <span><strong className="font-medium text-foreground">Pisz prostym językiem</strong>, bez nadmiaru żargonu prawniczego — klient ma zrozumieć, jak mu pomożesz.</span>
                       </li>
                       <li className="flex gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                        <span><strong className="font-medium text-zinc-100">Zadbaj o długość min. 40 znaków</strong> — zbyt krótkie opisy obniżają ocenę kompletności profilu.</span>
+                        <span><strong className="font-medium text-foreground">Zadbaj o długość min. 40 znaków</strong> — zbyt krótkie opisy obniżają ocenę kompletności profilu.</span>
                       </li>
                     </ul>
 
-                    <div className="rounded-lg border border-border/20 bg-zinc-950/30 p-3">
-                      <p className="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Przykład</p>
-                      <p className="text-xs text-zinc-300 font-light italic leading-relaxed">
+                    <div className="rounded-lg border border-border/20 bg-background/30 p-3">
+                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">Przykład</p>
+                      <p className="text-xs text-foreground/80 font-light italic leading-relaxed">
                         „Specjalizuję się w prawie rodzinnym — rozwody, podział majątku oraz sprawy alimentacyjne. Od ponad 10 lat reprezentuję klientów w Warszawie i okolicach, prowadząc każdą sprawę z pełnym zaangażowaniem. Oferuję jasne zasady współpracy i bezpłatną wstępną konsultację telefoniczną."
                       </p>
                     </div>
@@ -358,8 +358,8 @@ export function BasicTab({
                 <ImageIcon className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-xl text-white font-playfair">Wizerunek i zdjęcia bannerów</CardTitle>
-                <CardDescription className="text-zinc-400 text-sm">
+                <CardTitle className="text-xl text-foreground font-playfair">Wizerunek i zdjęcia bannerów</CardTitle>
+                <CardDescription className="text-muted-foreground text-sm">
                   Dodaj zdjęcie profilowe oraz zdjęcie główne (banner)
                 </CardDescription>
               </div>
@@ -371,15 +371,15 @@ export function BasicTab({
               {/* Logo Upload (Avatar) */}
               <div className="space-y-4" data-score-target="logo">
                 <div>
-                  <Label className="text-white font-semibold text-base">Zdjęcie profilowe (Avatar)</Label>
-                  <p className="text-xs text-zinc-400 font-light mt-1">
+                  <Label className="text-foreground font-semibold text-base">Zdjęcie profilowe (Avatar)</Label>
+                  <p className="text-xs text-muted-foreground font-light mt-1">
                     Zdjęcie widoczne w wynikach wyszukiwania. Zalecany rozmiar: 400x400px (kwadratowe).
                   </p>
                 </div>
 
                 {formData.logo ? (
-                  <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
-                    <div className="relative h-36 w-36 rounded-xl overflow-hidden border border-border/30 bg-zinc-900 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-border/20 rounded-xl bg-background/10">
+                    <div className="relative h-36 w-36 rounded-xl overflow-hidden border border-border/30 bg-card shrink-0">
                       <Image
                         src={formData.logo}
                         alt="Logo"
@@ -390,7 +390,7 @@ export function BasicTab({
                     <div className="flex flex-row items-center gap-2 w-full">
                       <label
                         htmlFor="logo-upload"
-                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                        className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-muted hover:bg-muted text-foreground h-10 px-4 py-2 cursor-pointer shadow-sm"
                       >
                         {isUploading ? (
                           <>
@@ -428,21 +428,21 @@ export function BasicTab({
                   <div>
                     <label
                       htmlFor="logo-upload"
-                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
+                      className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-muted/10 hover:border-primary/40 transition-colors"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                         {isUploading ? (
                           <>
                             <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
-                            <p className="text-sm text-zinc-400">Przesyłanie...</p>
+                            <p className="text-sm text-muted-foreground">Przesyłanie...</p>
                           </>
                         ) : (
                           <>
-                            <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
-                            <p className="mb-1 text-sm text-zinc-300">
+                            <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                            <p className="mb-1 text-sm text-foreground/80">
                               <span className="font-semibold text-primary">Kliknij aby przesłać</span>
                             </p>
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-muted-foreground">
                               PNG, JPG, WEBP (max 5MB)
                             </p>
                           </>
@@ -464,20 +464,20 @@ export function BasicTab({
               {/* Zdjęcie główne Upload (Banner) */}
               <div className="space-y-4" data-score-target="zdjecieGlowne">
                 <div>
-                  <Label className="text-white font-semibold text-base">Zdjęcie główne (Banner)</Label>
-                  <p className="text-xs text-zinc-400 font-light mt-1">
+                  <Label className="text-foreground font-semibold text-base">Zdjęcie główne (Banner)</Label>
+                  <p className="text-xs text-muted-foreground font-light mt-1">
                     Zdjęcie panoramiczne jako nagłówek profilu. Zalecany rozmiar: 1920x600px.
                   </p>
                 </div>
 
                 <div className="relative">
                   {!canUploadCover && (
-                    <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] rounded-xl z-20 flex flex-col items-center justify-center p-4 text-center border border-dashed border-border/30">
-                      <div className="rounded-full bg-zinc-900 border border-zinc-800 p-2.5 mb-2.5">
+                    <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] rounded-xl z-20 flex flex-col items-center justify-center p-4 text-center border border-dashed border-border/30">
+                      <div className="rounded-full bg-card border border-border p-2.5 mb-2.5">
                         <Lock className="h-5 w-5 text-amber-500" />
                       </div>
-                      <p className="text-sm font-semibold text-white">Funkcja Premium</p>
-                      <p className="text-xs text-zinc-400 max-w-[280px] mt-1 mb-3">
+                      <p className="text-sm font-semibold text-foreground">Funkcja Premium</p>
+                      <p className="text-xs text-muted-foreground max-w-[280px] mt-1 mb-3">
                         Dodawanie własnego baneru w nagłówku profilu jest dostępne w wyższych pakietach.
                       </p>
                       <Button asChild size="sm" className="bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg h-8 px-3">
@@ -489,7 +489,7 @@ export function BasicTab({
                   )}
 
                   {formData.zdjecieGlowne ? (
-                    <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-zinc-950/10">
+                    <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-background/10">
                       <div className="relative w-full min-h-32 rounded-xl overflow-hidden border border-border/30">
                         <Image
                           src={formData.zdjecieGlowne}
@@ -501,7 +501,7 @@ export function BasicTab({
                       <div className="flex gap-2">
                         <label
                           htmlFor="main-image-upload"
-                          className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-zinc-700 hover:bg-zinc-800 text-white h-10 px-4 py-2 cursor-pointer shadow-sm"
+                          className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-muted hover:bg-muted text-foreground h-10 px-4 py-2 cursor-pointer shadow-sm"
                         >
                           {isUploading ? (
                             <>
@@ -539,21 +539,21 @@ export function BasicTab({
                     <div>
                       <label
                         htmlFor="main-image-upload"
-                        className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-zinc-800/10 hover:border-primary/40 transition-colors"
+                        className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-muted/10 hover:border-primary/40 transition-colors"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                           {isUploading ? (
                             <>
                               <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
-                              <p className="text-sm text-zinc-400">Przesyłanie...</p>
+                              <p className="text-sm text-muted-foreground">Przesyłanie...</p>
                             </>
                           ) : (
                             <>
-                              <ImageIcon className="h-10 w-10 mb-3 text-zinc-500" />
-                              <p className="mb-1 text-sm text-zinc-300">
+                              <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                              <p className="mb-1 text-sm text-foreground/80">
                                 <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
                               </p>
-                              <p className="text-xs text-zinc-500">
+                              <p className="text-xs text-muted-foreground">
                                 PNG, JPG, WEBP (max 5MB)
                               </p>
                             </>
@@ -586,15 +586,15 @@ export function BasicTab({
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-xl text-white font-playfair">Wpisy do rejestrów zawodowych</CardTitle>
-                <CardDescription className="text-zinc-400 text-sm">Dodaj informacje o przynależności do izb zawodowych</CardDescription>
+                <CardTitle className="text-xl text-foreground font-playfair">Wpisy do rejestrów zawodowych</CardTitle>
+                <CardDescription className="text-muted-foreground text-sm">Dodaj informacje o przynależności do izb zawodowych</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
               {/* OIRP */}
-              <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-zinc-950/10 flex flex-col justify-between">
+              <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-background/10 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Switch
@@ -602,19 +602,19 @@ export function BasicTab({
                       checked={formData.oirpStatus}
                       onCheckedChange={(checked) => handleInputChange("oirpStatus", checked)}
                     />
-                    <Label htmlFor="oirpStatus" className="text-white cursor-pointer font-semibold text-sm">
+                    <Label htmlFor="oirpStatus" className="text-foreground cursor-pointer font-semibold text-sm">
                       Radca Prawny (OIRP)
                     </Label>
                   </div>
-                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oirpStatus ? "bg-primary shadow-[0_0_8px_var(--primary)]" : "bg-zinc-800"}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oirpStatus ? "bg-primary shadow-[0_0_8px_var(--primary)]" : "bg-muted"}`} />
                 </div>
 
                 {formData.oirpStatus ? (
                   <div className="grid gap-3 pt-3 border-t border-border/15 animate-in slide-in-from-top-1 duration-200">
                     <div className="grid gap-1.5">
-                      <Label htmlFor="oirpMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">OIRP Miasto</Label>
+                      <Label htmlFor="oirpMiasto" className="text-xs text-muted-foreground uppercase tracking-wider">OIRP Miasto</Label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                           <MapPin className="h-3.5 w-3.5" />
                         </div>
                         <Input
@@ -622,14 +622,14 @@ export function BasicTab({
                           placeholder="np. Warszawa"
                           value={formData.oirpMiasto}
                           onChange={(e) => handleInputChange("oirpMiasto", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                          className="pl-9 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
                         />
                       </div>
                     </div>
                     <div className="grid gap-1.5">
-                      <Label htmlFor="oirpWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
+                      <Label htmlFor="oirpWpis" className="text-xs text-muted-foreground uppercase tracking-wider">Numer wpisu</Label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                           <FileText className="h-3.5 w-3.5" />
                         </div>
                         <Input
@@ -637,18 +637,18 @@ export function BasicTab({
                           placeholder="np. WA-12345"
                           value={formData.oirpWpis}
                           onChange={(e) => handleInputChange("oirpWpis", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-primary"
+                          className="pl-9 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
                         />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-zinc-500 italic pt-2">Zaznacz przełącznik, aby dodać wpis radcowski.</p>
+                  <p className="text-xs text-muted-foreground italic pt-2">Zaznacz przełącznik, aby dodać wpis radcowski.</p>
                 )}
               </div>
 
               {/* ORA */}
-              <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-zinc-950/10 flex flex-col justify-between">
+              <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-background/10 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Switch
@@ -656,19 +656,19 @@ export function BasicTab({
                       checked={formData.oraStatus}
                       onCheckedChange={(checked) => handleInputChange("oraStatus", checked)}
                     />
-                    <Label htmlFor="oraStatus" className="text-white cursor-pointer font-semibold text-sm">
+                    <Label htmlFor="oraStatus" className="text-foreground cursor-pointer font-semibold text-sm">
                       Adwokat (ORA)
                     </Label>
                   </div>
-                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oraStatus ? "bg-secondary shadow-[0_0_8px_var(--secondary)]" : "bg-zinc-800"}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.oraStatus ? "bg-secondary shadow-[0_0_8px_var(--secondary)]" : "bg-muted"}`} />
                 </div>
 
                 {formData.oraStatus ? (
                   <div className="grid gap-3 pt-3 border-t border-border/15 animate-in slide-in-from-top-1 duration-200">
                     <div className="grid gap-1.5">
-                      <Label htmlFor="oraMiasto" className="text-xs text-zinc-400 uppercase tracking-wider">ORA Miasto</Label>
+                      <Label htmlFor="oraMiasto" className="text-xs text-muted-foreground uppercase tracking-wider">ORA Miasto</Label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                           <MapPin className="h-3.5 w-3.5" />
                         </div>
                         <Input
@@ -676,14 +676,14 @@ export function BasicTab({
                           placeholder="np. Kraków"
                           value={formData.oraMiasto}
                           onChange={(e) => handleInputChange("oraMiasto", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-secondary"
+                          className="pl-9 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-secondary"
                         />
                       </div>
                     </div>
                     <div className="grid gap-1.5">
-                      <Label htmlFor="oraWpis" className="text-xs text-zinc-400 uppercase tracking-wider">Numer wpisu</Label>
+                      <Label htmlFor="oraWpis" className="text-xs text-muted-foreground uppercase tracking-wider">Numer wpisu</Label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                           <FileText className="h-3.5 w-3.5" />
                         </div>
                         <Input
@@ -691,13 +691,13 @@ export function BasicTab({
                           placeholder="np. KRA/Adw/1234"
                           value={formData.oraWpis}
                           onChange={(e) => handleInputChange("oraWpis", e.target.value)}
-                          className="pl-9 bg-zinc-950/20 border-border/30 text-white rounded-xl focus:border-secondary"
+                          className="pl-9 bg-background/20 border-border/30 text-foreground rounded-xl focus:border-secondary"
                         />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-zinc-500 italic pt-2">Zaznacz przełącznik, aby dodać wpis adwokacki.</p>
+                  <p className="text-xs text-muted-foreground italic pt-2">Zaznacz przełącznik, aby dodać wpis adwokacki.</p>
                 )}
               </div>
             </div>

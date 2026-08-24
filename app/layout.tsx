@@ -187,10 +187,12 @@ export default async function RootLayout({
     console.error("Error reading settings in RootLayout:", error);
   }
 
+  // Klasa motywu jest ustawiana przez next-themes (ThemeProvider w Providers).
+  // Nie hardkodujemy tu „dark", bo blokowałoby to przełącznik motywu.
   return (
-    <html lang="pl" suppressHydrationWarning className="dark cc--darkmode">
+    <html lang="pl" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-primary-foreground antialiased font-poppins`}
+        className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-foreground antialiased font-poppins`}
         suppressHydrationWarning
       >
         <GoogleAnalytics gaId={gaId} enabled={gaEnabled} />

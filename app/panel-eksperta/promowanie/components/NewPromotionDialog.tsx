@@ -95,9 +95,9 @@ export function NewPromotionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[620px] bg-[#20201d] border-[#3e3e38] text-white rounded-2xl overflow-y-auto max-h-[90vh]">
-        <DialogHeader className="pb-3 border-b border-[#3e3e38]/60">
-          <DialogTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+      <DialogContent className="sm:max-w-[620px] bg-background border-border text-foreground rounded-2xl overflow-y-auto max-h-[90vh]">
+        <DialogHeader className="pb-3 border-b border-border/60">
+          <DialogTitle className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Plus className="h-5 w-5 text-primary" />
             Konfiguracja Promowania
           </DialogTitle>
@@ -109,7 +109,7 @@ export function NewPromotionDialog({
         <div className="space-y-5 py-4">
           {/* Wybrany format info card */}
           {selectedType && (
-            <div className="relative overflow-hidden rounded-xl border border-[#3e3e38] bg-[#363431]/30 p-4">
+            <div className="relative overflow-hidden rounded-xl border border-border bg-card/30 p-4">
               {(() => {
                 const promo = promotionTypes.find((p) => p.type === selectedType)
                 if (!promo) return null
@@ -126,7 +126,7 @@ export function NewPromotionDialog({
                       <Icon className="h-5 w-5" style={{ color: promo.color || "#3b82f6" }} />
                     </div>
                     <div className="space-y-0.5">
-                      <div className="text-sm font-bold text-white">{promo.label}</div>
+                      <div className="text-sm font-bold text-foreground">{promo.label}</div>
                       <div className="text-xs text-muted-foreground leading-relaxed line-clamp-1">
                         {promo.description}
                       </div>
@@ -144,7 +144,7 @@ export function NewPromotionDialog({
               <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Czas trwania
               </Label>
-              <div className="p-3 bg-[#363431]/20 border border-[#3e3e38] rounded-xl text-xs font-medium text-secondary flex items-center gap-2">
+              <div className="p-3 bg-card/20 border border-border rounded-xl text-xs font-medium text-secondary flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 Gwarantowane 1 pełny miesiąc kalendarzowy (automatycznie od 1. do końca miesiąca)
               </div>
@@ -202,16 +202,16 @@ export function NewPromotionDialog({
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger
                   id="category-monthly-rec"
-                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                  className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                 >
                   <SelectValue placeholder="Wybierz kategorię zawodową" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                <SelectContent className="bg-popover border-border text-foreground">
                   {recommendedCategories.map((cat) => (
                     <SelectItem
                       key={cat}
                       value={cat}
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       {cat}
                     </SelectItem>
@@ -238,16 +238,16 @@ export function NewPromotionDialog({
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger
                   id="category-monthly-cons"
-                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                  className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                 >
                   <SelectValue placeholder="Wybierz kategorię spraw" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                <SelectContent className="bg-popover border-border text-foreground">
                   {consultedCategories.map((cat) => (
                     <SelectItem
                       key={cat.id}
                       value={cat.id}
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       {cat.nazwa}
                     </SelectItem>
@@ -276,16 +276,16 @@ export function NewPromotionDialog({
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger
                   id="category-listing"
-                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                  className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                 >
                   <SelectValue placeholder="Wybierz kategorię z listy" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                <SelectContent className="bg-popover border-border text-foreground">
                   {categories.map((category) => (
                     <SelectItem
                       key={category.id}
                       value={category.id}
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       {category.nazwa}
                     </SelectItem>
@@ -314,14 +314,14 @@ export function NewPromotionDialog({
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger
                     id="category"
-                    className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                    className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                   >
                     <SelectValue placeholder="Wszystkie kategorie" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                  <SelectContent className="bg-popover border-border text-foreground">
                     <SelectItem
                       value="all"
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       Wszystkie kategorie
                     </SelectItem>
@@ -329,7 +329,7 @@ export function NewPromotionDialog({
                       <SelectItem
                         key={category.id}
                         value={category.id}
-                        className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                        className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                       >
                         {category.nazwa}
                       </SelectItem>
@@ -354,14 +354,14 @@ export function NewPromotionDialog({
                 <Select value={selectedVoivodeship} onValueChange={setSelectedVoivodeship}>
                   <SelectTrigger
                     id="voivodeship"
-                    className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                    className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                   >
                     <SelectValue placeholder="Wszystkie województwa" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                  <SelectContent className="bg-popover border-border text-foreground">
                     <SelectItem
                       value="all"
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       Wszystkie województwa
                     </SelectItem>
@@ -369,7 +369,7 @@ export function NewPromotionDialog({
                       <SelectItem
                         key={voivodeship.id}
                         value={voivodeship.id}
-                        className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                        className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                       >
                         {voivodeship.nazwa}
                       </SelectItem>
@@ -392,16 +392,16 @@ export function NewPromotionDialog({
               <Select value={startDate} onValueChange={setStartDate}>
                 <SelectTrigger
                   id="target-month"
-                  className="bg-[#363431]/30 border-[#3e3e38] rounded-xl h-10 text-xs text-white focus:ring-primary"
+                  className="bg-card/30 border-border rounded-xl h-10 text-xs text-foreground focus:ring-primary"
                 >
                   <SelectValue placeholder="Wybierz miesiąc kalendarzowy" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#30302e] border-[#3e3e38] text-white">
+                <SelectContent className="bg-popover border-border text-foreground">
                   {getFutureMonths(allowImmediateConsulted).map((m) => (
                     <SelectItem
                       key={m.value}
                       value={m.value}
-                      className="focus:bg-[#3e3e38] focus:text-white cursor-pointer text-xs"
+                      className="focus:bg-muted focus:text-foreground cursor-pointer text-xs"
                     >
                       {m.label}
                     </SelectItem>
@@ -427,7 +427,7 @@ export function NewPromotionDialog({
                 id="start-date"
                 value={startDate}
                 onChange={setStartDate}
-                className="bg-[#363431]/30 border-[#3e3e38] rounded-xl text-xs h-10 text-white focus:ring-primary"
+                className="bg-card/30 border-border rounded-xl text-xs h-10 text-foreground focus:ring-primary"
               />
             </div>
           )}
@@ -436,12 +436,12 @@ export function NewPromotionDialog({
           {selectedType &&
             selectedType !== "POLECANI_PRAWNICY" &&
             selectedType !== "NAJCZESCIEJ_KONSULTOWANE" && (
-              <div className="p-3.5 bg-[#363431]/20 border border-[#3e3e38] rounded-xl flex items-start space-x-3.5">
+              <div className="p-3.5 bg-card/20 border border-border rounded-xl flex items-start space-x-3.5">
                 <Checkbox
                   id="auto-renewal"
                   checked={autoRenewal}
                   onCheckedChange={(checked) => setAutoRenewal(checked as boolean)}
-                  className="mt-0.5 border-[#3e3e38] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  className="mt-0.5 border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
                 <div
                   className="space-y-0.5 cursor-pointer"
@@ -449,7 +449,7 @@ export function NewPromotionDialog({
                 >
                   <Label
                     htmlFor="auto-renewal"
-                    className="text-xs font-bold text-white cursor-pointer"
+                    className="text-xs font-bold text-foreground cursor-pointer"
                   >
                     Automatyczne odnowienie po zakończeniu
                   </Label>
@@ -468,7 +468,7 @@ export function NewPromotionDialog({
             startDate &&
             selectedCategory &&
             selectedCategory !== "all" && (
-              <div className="bg-[#20201d]/60 border border-[#3e3e38] p-4 rounded-xl space-y-2">
+              <div className="bg-background/60 border border-border p-4 rounded-xl space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#b7b5a9] flex items-center gap-1.5 font-medium">
                     <Info className="h-4 w-4 text-primary" />
@@ -490,7 +490,7 @@ export function NewPromotionDialog({
                   )}
                 </div>
                 {availability && (
-                  <div className="w-full bg-[#3e3e38] h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-500",
@@ -520,13 +520,13 @@ export function NewPromotionDialog({
             </div>
           )}
 
-          <Separator className="bg-[#3e3e38]/50" />
+          <Separator className="bg-muted/50" />
 
           {/* Podsumowanie kosztów (Invoice summary) */}
-          <div className="bg-[#363431]/20 border border-[#3e3e38] rounded-xl p-4 space-y-3">
+          <div className="bg-card/20 border border-border rounded-xl p-4 space-y-3">
             <div className="flex justify-between items-center text-xs text-[#b7b5a9]">
               <span>Czas trwania promowania</span>
-              <span className="text-white font-medium">
+              <span className="text-foreground font-medium">
                 {selectedType &&
                   (selectedType === "POLECANI_PRAWNICY" ||
                     selectedType === "NAJCZESCIEJ_KONSULTOWANE")
@@ -536,13 +536,13 @@ export function NewPromotionDialog({
             </div>
             <div className="flex justify-between items-center text-xs text-[#b7b5a9]">
               <span>Format kampanii</span>
-              <span className="text-white font-medium">
+              <span className="text-foreground font-medium">
                 {selectedType ? getPromotionTypeLabel(selectedType, promotionTypes) : "-"}
               </span>
             </div>
 
-            <div className="border-t border-[#3e3e38]/60 pt-3 flex justify-between items-center">
-              <span className="text-sm font-semibold text-white">Koszt całkowity</span>
+            <div className="border-t border-border/60 pt-3 flex justify-between items-center">
+              <span className="text-sm font-semibold text-foreground">Koszt całkowity</span>
               <span className="text-xl font-bold text-primary">{cost} pkt</span>
             </div>
 
@@ -575,12 +575,12 @@ export function NewPromotionDialog({
           )}
         </div>
 
-        <DialogFooter className="border-t border-[#3e3e38]/60 pt-4 flex gap-2">
+        <DialogFooter className="border-t border-border/60 pt-4 flex gap-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={submitting}
-            className="border-[#3e3e38] bg-[#363431]/20 hover:bg-[#363431] text-white rounded-xl"
+            className="border-border bg-card/20 hover:bg-card text-foreground rounded-xl"
           >
             Anuluj
           </Button>

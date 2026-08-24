@@ -241,7 +241,7 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
                           {ad.htmlContent ? (
                             <Badge variant="outline" className="font-mono bg-blue-500/5 text-blue-500 border-blue-500/25 text-xs">HTML</Badge>
                           ) : ad.imageUrl ? (
-                            <div className="relative w-20 h-9 border rounded overflow-hidden bg-neutral-950">
+                            <div className="relative w-20 h-9 border rounded overflow-hidden bg-background">
                               <img src={ad.imageUrl} alt={ad.name} className="w-full h-full object-contain" />
                             </div>
                           ) : (
@@ -484,7 +484,7 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
 
                     {/* Podgląd banera */}
                     {formData.imageUrl ? (
-                      <div className="relative border border-border/80 rounded-lg p-3 bg-neutral-950/90 flex flex-col items-center justify-center min-h-[110px] overflow-hidden group">
+                      <div className="relative border border-border/80 rounded-lg p-3 bg-background/90 flex flex-col items-center justify-center min-h-[110px] overflow-hidden group">
                         <img
                           src={formData.imageUrl}
                           alt="Podgląd kreacji"
@@ -526,7 +526,7 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
                       value={formData.htmlContent}
                       onChange={e => setFormData(p => ({ ...p, htmlContent: e.target.value }))}
                       placeholder="<a href='...'><img src='...' /></a> lub kod skryptu Google AdSense..."
-                      className="font-mono text-xs h-[110px] bg-neutral-950 text-neutral-100 border-neutral-800 focus:border-primary resize-none"
+                      className="font-mono text-xs h-[110px] bg-background text-foreground border-border focus:border-primary resize-none"
                       required={creativeType === "html"}
                     />
                   </div>

@@ -265,18 +265,18 @@ export default function LawFirmSettingsPage() {
           {/* Dane osobowe */}
           <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
                 <User className="h-5 w-5 text-primary" />
                 Dane administratora konta
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">Uaktualnij podstawowe informacje o swojej tożsamości.</CardDescription>
+              <CardDescription className="text-muted-foreground text-xs">Uaktualnij podstawowe informacje o swojej tożsamości.</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">
                 {/* Nazwa (Zablokowana edycja) */}
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="name" className="text-xs font-semibold text-zinc-300">Nazwa</Label>
+                    <Label htmlFor="name" className="text-xs font-semibold text-foreground/80">Nazwa</Label>
                     <span className="text-[10px] text-amber-400/80 flex items-center gap-1 font-medium bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
                       <Lock className="h-3 w-3" /> Tylko do odczytu
                     </span>
@@ -285,9 +285,9 @@ export default function LawFirmSettingsPage() {
                     id="name"
                     value={userData.name || ""}
                     readOnly
-                    className="h-11 bg-background/20 border-border/30 rounded-xl cursor-not-allowed text-zinc-400 text-sm select-none"
+                    className="h-11 bg-background/20 border-border/30 rounded-xl cursor-not-allowed text-muted-foreground text-sm select-none"
                   />
-                  <p className="text-xs text-zinc-500 font-light mt-0.5 leading-relaxed">
+                  <p className="text-xs text-muted-foreground font-light mt-0.5 leading-relaxed">
                     Aby zmienić nazwę administratora konta, skontaktuj się z administratorem strony.
                   </p>
                 </div>
@@ -296,11 +296,11 @@ export default function LawFirmSettingsPage() {
                 <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
                   <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <span className="text-sm text-zinc-400 uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
-                    <span className="text-sm font-semibold text-white truncate block">{userData.email}</span>
+                    <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
+                    <span className="text-sm font-semibold text-foreground truncate block">{userData.email}</span>
                   </div>
                   <div title="Edycja adresu e-mail jest zablokowana" className="ml-auto shrink-0 flex items-center justify-center">
-                    <Lock className="h-4 w-4 text-zinc-500" />
+                    <Lock className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
               </div>
@@ -310,33 +310,33 @@ export default function LawFirmSettingsPage() {
           {/* Zarządzanie kontem */}
           <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 Zarządzanie kontem
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">Informacje o bezpieczeństwie i akcje systemowe.</CardDescription>
+              <CardDescription className="text-muted-foreground text-xs">Informacje o bezpieczeństwie i akcje systemowe.</CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               {/* Informacje o koncie */}
               {accountInfo && (
                 <div className="space-y-3">
-                  <Label className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
+                  <Label className="flex items-center gap-2 text-xs font-semibold text-foreground/80">
                     <Calendar className="h-4 w-4 text-primary" />
                     Bezpieczeństwo logowania
                   </Label>
                   <div className="space-y-2 text-xs">
                     <div className="flex items-center justify-between py-2.5 px-3.5 bg-background/25 border border-border/30 rounded-xl">
-                      <span className="text-zinc-400">Data założenia konta:</span>
-                      <span className="font-semibold text-white">{formatDateTime(accountInfo.createdAt)}</span>
+                      <span className="text-muted-foreground">Data założenia konta:</span>
+                      <span className="font-semibold text-foreground">{formatDateTime(accountInfo.createdAt)}</span>
                     </div>
 
                     {accountInfo.lastLogin && (
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2.5 px-3.5 bg-background/25 border border-border/30 rounded-xl">
-                        <span className="text-zinc-400">Ostatnie logowanie:</span>
-                        <span className="font-semibold text-white text-right">
+                        <span className="text-muted-foreground">Ostatnie logowanie:</span>
+                        <span className="font-semibold text-foreground text-right">
                           {formatDateTime(accountInfo.lastLogin.date)}
                           {accountInfo.lastLogin.ipAddress && (
-                            <span className="text-zinc-500 font-light block sm:inline sm:ml-2">
+                            <span className="text-muted-foreground font-light block sm:inline sm:ml-2">
                               (IP: {accountInfo.lastLogin.ipAddress})
                             </span>
                           )}
@@ -365,7 +365,7 @@ export default function LawFirmSettingsPage() {
 
               {/* Status konta */}
               <div className="space-y-2.5">
-                <Label className="text-xs font-semibold text-zinc-300">Status konta</Label>
+                <Label className="text-xs font-semibold text-foreground/80">Status konta</Label>
                 <div className="flex items-center gap-2.5">
                   <Badge className="bg-success/10 text-success border border-success/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
                     <CheckCircle2 className="h-3 w-3" />
@@ -381,13 +381,13 @@ export default function LawFirmSettingsPage() {
 
               {/* Akcje konta */}
               <div className="space-y-4">
-                <Label className="text-xs font-semibold text-zinc-300">Akcje systemowe</Label>
+                <Label className="text-xs font-semibold text-foreground/80">Akcje systemowe</Label>
 
                 <div className="space-y-3">
                   {/* Wyloguj */}
                   <div className="flex items-center justify-between p-4 rounded-xl border border-border/30 bg-background/20 group hover:border-primary/30 transition-all duration-200">
                     <div className="min-w-0">
-                      <h4 className="font-semibold text-white text-sm">Wyloguj się</h4>
+                      <h4 className="font-semibold text-foreground text-sm">Wyloguj się</h4>
                       <p className="text-xs text-muted-foreground font-light mt-0.5">
                         Zakończ bieżącą sesję administratora.
                       </p>
@@ -395,9 +395,9 @@ export default function LawFirmSettingsPage() {
                     <Button
                       variant="outline"
                       onClick={handleLogout}
-                      className="shrink-0 h-10 px-5 rounded-xl border-border/50 hover:bg-muted text-white gap-2 transition-all"
+                      className="shrink-0 h-10 px-5 rounded-xl border-border/50 hover:bg-muted text-foreground gap-2 transition-all"
                     >
-                      <LogOut className="h-4 w-4 text-zinc-400" />
+                      <LogOut className="h-4 w-4 text-muted-foreground" />
                       Wyloguj
                     </Button>
                   </div>
@@ -420,11 +420,11 @@ export default function LawFirmSettingsPage() {
           {/* Login history wrapped in glass card */}
           <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 Historia logowania
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">Historia sesji oraz prób autoryzacji na tym koncie.</CardDescription>
+              <CardDescription className="text-muted-foreground text-xs">Historia sesji oraz prób autoryzacji na tym koncie.</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <LoginHistory noCard />
@@ -437,26 +437,26 @@ export default function LawFirmSettingsPage() {
           {/* Ustawienia powiadomień */}
           <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white">Preferencje powiadomień</CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">Dostosuj formy powiadomień e-mail, SMS oraz dźwiękowych.</CardDescription>
+              <CardTitle className="text-lg font-playfair text-foreground">Preferencje powiadomień</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs">Dostosuj formy powiadomień e-mail, SMS oraz dźwiękowych.</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <form onSubmit={handleSaveSettings} className="space-y-6">
                 {/* Powiadomienia e-mail */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Powiadomienia e-mail</h3>
+                  <h3 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Powiadomienia e-mail</h3>
                   <div className="space-y-3">
                     {/* Kontakt z klientami - obowiązkowe */}
                     <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/25">
                       <div className="flex-1">
                         <Label
                           htmlFor="kontaktKlienci"
-                          className="font-semibold text-zinc-300 text-xs"
+                          className="font-semibold text-foreground/80 text-xs"
                         >
                           Kontakt z klientami
                           <span className="text-rose-500 ml-1">*</span>
                         </Label>
-                        <p className="text-sm text-zinc-500 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Ta opcja jest obowiązkowa i niezbędna do obsługi Twoich klientów i ich zgłoszeń.
                         </p>
                       </div>
@@ -475,12 +475,12 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="kluczowe"
-                          className="font-semibold text-zinc-300 text-xs"
+                          className="font-semibold text-foreground/80 text-xs"
                         >
                           Kluczowe informacje
                           <span className="text-rose-500 ml-1">*</span>
                         </Label>
-                        <p className="text-sm text-zinc-500 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Powiadomienia o Twoich ofertach, ważnych zmianach w cenniku oraz regulaminach.
                         </p>
                       </div>
@@ -497,11 +497,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="wskazowkiPorady"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Wskazówki, porady
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Artykuły i porady jak podnieść jakość ofert oraz zwiększyć zasięgi.
                         </p>
                       </div>
@@ -519,11 +519,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="ofertPromocje"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Ciekawe oferty i promocje
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Oferty promocyjne i pakiety punktów stworzone dla Twojego profilu.
                         </p>
                       </div>
@@ -541,11 +541,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="przypomnienieWiadomosci"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Przypomnienie o nowych wiadomościach
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Powiadomienia na skrzynkę e-mail, kiedy klient wyśle nową wiadomość.
                         </p>
                       </div>
@@ -563,11 +563,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="noweFunkcje"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Powiadomienie o nowych funkcjach
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Aktualizacje systemu, nowo wdrożone moduły i integracje.
                         </p>
                       </div>
@@ -585,11 +585,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="zmianyCenniki"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Powiadomienia o zmianach cenników
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Informacje o zmianach w cennikach lub taryfach punktów.
                         </p>
                       </div>
@@ -607,11 +607,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="zmianyRegulamin"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Powiadomienia o zmianach regulaminu
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Zmiany w regulaminie i polityce prywatności serwisu.
                         </p>
                       </div>
@@ -630,17 +630,17 @@ export default function LawFirmSettingsPage() {
 
                 {/* Kontakt telefoniczny */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Kontakt telefoniczny</h3>
+                  <h3 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Kontakt telefoniczny</h3>
                   <div className="space-y-3">
                     <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                       <div className="flex-1">
                         <Label
                           htmlFor="kontaktDoradca"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Kontakt z doradcą
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Ważne alerty i spersonalizowane oferty wsparcia telefonicznego dla Twojego profilu.
                         </p>
                       </div>
@@ -659,18 +659,18 @@ export default function LawFirmSettingsPage() {
 
                 {/* Dodatkowe */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ustawienia dodatkowe</h3>
+                  <h3 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Ustawienia dodatkowe</h3>
                   <div className="space-y-3">
                     {/* Awatar */}
                     <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                       <div className="flex-1">
                         <Label
                           htmlFor="wyswietlanieAwatara"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Wyświetlanie awatara w katalogu
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Zgoda na pokazywanie zdjęcia profilowego/loga eksperta w katalogu.
                         </p>
                       </div>
@@ -688,11 +688,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="autoProsbOpinie"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Automatyczne prośby o opinie
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Wysyła zapytanie o opinię do klienta po zakończeniu realizacji sprawy.
                         </p>
                       </div>
@@ -710,11 +710,11 @@ export default function LawFirmSettingsPage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="powiadomienieDzwiekowe"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Dźwięk powiadomień na czacie
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Odtwórz dźwięk ostrzegawczy po otrzymaniu nowej wiadomości.
                         </p>
                       </div>
@@ -734,7 +734,7 @@ export default function LawFirmSettingsPage() {
                     type="submit"
                     disabled={isSavingSettings}
                     variant="primary"
-                    className="h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-white/10 gap-2 shrink-0 w-full sm:w-auto"
+                    className="h-11 px-6 text-white font-semibold rounded-xl shadow-md border-t border-border gap-2 shrink-0 w-full sm:w-auto"
                   >
                     {isSavingSettings ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -751,8 +751,8 @@ export default function LawFirmSettingsPage() {
           {/* Box ustawienia ogłoszenia */}
           <Card variant="glass" className="rounded-2xl shadow-lg">
             <CardHeader className="border-b border-border/20 py-4 px-6">
-              <CardTitle className="text-lg font-playfair text-white">Ustawienia ogłoszeń & URLOP</CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">Skonfiguruj statusy wyświetlania ofert i powiadomień SMS.</CardDescription>
+              <CardTitle className="text-lg font-playfair text-foreground">Ustawienia ogłoszeń & URLOP</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs">Skonfiguruj statusy wyświetlania ofert i powiadomień SMS.</CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-3">
@@ -761,11 +761,11 @@ export default function LawFirmSettingsPage() {
                   <div className="flex-1">
                     <Label
                       htmlFor="ustawieniaOgloszenia"
-                      className="cursor-pointer font-semibold text-white text-xs"
+                      className="cursor-pointer font-semibold text-foreground text-xs"
                     >
                       Ustawienia widoczności
                     </Label>
-                    <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                    <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                       Zezwalaj na składanie ofert bezpośrednich na profilu eksperta.
                     </p>
                   </div>
@@ -782,16 +782,16 @@ export default function LawFirmSettingsPage() {
 
                 {/* Powiadomienia SMS */}
                 <div className="space-y-4">
-                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Powiadomienia SMS</h4>
+                  <h4 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Powiadomienia SMS</h4>
                   <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="powiadomieniaSmNowa"
-                        className="cursor-pointer font-semibold text-white text-xs"
+                        className="cursor-pointer font-semibold text-foreground text-xs"
                       >
                         Powiadomienia o nowych wiadomościach (SMS)
                       </Label>
-                      <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                         Wyślij SMS na numer komórkowy po otrzymaniu nowej wiadomości.
                       </p>
                     </div>
@@ -809,16 +809,16 @@ export default function LawFirmSettingsPage() {
 
                 {/* Wiadomości zbiorcze */}
                 <div className="space-y-4">
-                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Wiadomości zbiorcze</h4>
+                  <h4 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Wiadomości zbiorcze</h4>
                   <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-border/30 bg-background/10 hover:bg-background/20 transition-all duration-200">
                     <div className="flex-1">
                       <Label
                         htmlFor="wiadomosciZbiorcze"
-                        className="cursor-pointer font-semibold text-white text-xs"
+                        className="cursor-pointer font-semibold text-foreground text-xs"
                       >
                         Otrzymywanie raportów zbiorczych
                       </Label>
-                      <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                      <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                         Grupuj e-maile z powiadomieniami w jeden dobowy raport.
                       </p>
                     </div>
@@ -836,7 +836,7 @@ export default function LawFirmSettingsPage() {
 
                 {/* Tryb urlopowy */}
                 <div className="space-y-4">
-                  <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Tryb urlopowy</h4>
+                  <h4 className="text-xs font-semibold text-foreground/80 uppercase tracking-wider block">Tryb urlopowy</h4>
                   <div className="flex items-start justify-between space-x-4 p-3.5 rounded-xl border border-secondary/30 bg-secondary/5 hover:bg-secondary/10 transition-all duration-200">
                     <div className="flex-1">
                       <Label

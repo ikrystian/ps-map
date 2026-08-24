@@ -363,7 +363,7 @@ export default function AdminPartnerLogosPage() {
 
                       {/* Logo preview */}
                       <TableCell>
-                        <div className="flex h-12 w-24 items-center justify-center rounded-md border bg-zinc-900/80 p-1.5">
+                        <div className="flex h-12 w-24 items-center justify-center rounded-md border bg-card/80 p-1.5">
                           {logo.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -478,7 +478,7 @@ export default function AdminPartnerLogosPage() {
             <div className="space-y-2">
               <Label htmlFor="logo-file">Logotyp</Label>
               <div className="flex items-center gap-3">
-                <div className="flex h-14 w-28 flex-shrink-0 items-center justify-center rounded-md border bg-zinc-900/80 p-1.5">
+                <div className="flex h-14 w-28 flex-shrink-0 items-center justify-center rounded-md border bg-card/80 p-1.5">
                   {imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img

@@ -1,6 +1,7 @@
 "use client"
 
-import { cn, clearAppCacheAndStorage } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage, resolveActiveNavHref } from "@/lib/utils"
+import { SiteLogo } from "@/components/site-logo"
 import { AnimatePresence, motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
@@ -22,6 +23,7 @@ import { ExpiredPackageModal } from "@/components/permissions"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
@@ -31,6 +33,7 @@ import {
   BarChart3,
   BookOpen,
   Briefcase,
+  CalendarClock,
   ChevronLeft,
   ChevronRight,
   Coins,
@@ -44,6 +47,7 @@ import {
   MessageSquare,
   Package,
   Settings,
+  Share2,
   Star,
   TrendingUp,
   Trophy,
@@ -64,8 +68,10 @@ const navigationGroups = [
     label: "Obsługa spraw",
     items: [
       { name: "Sprawy", href: "/panel-eksperta/sprawy", icon: Briefcase },
+      { name: "Polecenia spraw", href: "/panel-eksperta/polecenia", icon: Share2 },
       { name: "Oferty", href: "/panel-eksperta/oferty", icon: FileText },
       { name: "Konsultacje", href: "/panel-eksperta/konsultacje", icon: BookOpen },
+      { name: "Zapytania o konsultacje", href: "/panel-eksperta/konsultacje/zapytania", icon: CalendarClock },
       { name: "Wiadomości", href: "/panel-eksperta/wiadomosci", icon: MessageSquare },
     ],
   },
@@ -244,6 +250,13 @@ export default function LawFirmPanelLayout({
     return name[0].toUpperCase()
   }
 
+  // Podświetlamy tylko najbardziej szczegółową pasującą pozycję menu
+  const activeHref = resolveActiveNavHref(
+    navigation.map((item) => item.href.replace("[slug]", lawFirmSlug || "")),
+    pathname,
+    "/panel-eksperta"
+  )
+
   // Navigation Items Component (reusable for desktop sidebar and mobile sheet)
   const NavigationItems = ({ inSheet = false }: { inSheet?: boolean }) => (
     <nav
@@ -287,8 +300,7 @@ export default function LawFirmPanelLayout({
           {group.items.map((item) => {
             const index = navigation.indexOf(item)
             const href = item.href.replace("[slug]", lawFirmSlug || "")
-            const isActive = pathname === href ||
-              (href !== "/panel-eksperta" && pathname.startsWith(href))
+            const isActive = href === activeHref
             const isMessagesItem = href === "/panel-eksperta/wiadomosci"
             const showBadge = isMessagesItem && unreadCount > 0
 
@@ -318,7 +330,7 @@ export default function LawFirmPanelLayout({
 
 
                 <div className="flex items-center justify-center flex-shrink-0">
-                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-white")} />
+                  <item.icon className={cn("h-5 w-5 transition-colors duration-200", isActive ? "" : "text-primary group-hover:text-foreground")} />
                 </div>
 
                 {/* Text label with elegant fade-slide */}
@@ -374,7 +386,7 @@ export default function LawFirmPanelLayout({
         onClick={handleLogout}
         onMouseEnter={() => setHoveredIndex(navigation.length + 1)}
         className={cn(
-          "group w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-white hover:bg-transparent",
+          "group w-full h-auto relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-200 outline-none justify-start text-muted-foreground hover:text-foreground hover:bg-transparent",
           !inSheet && isCollapsed && "justify-center"
         )}
         variant="ghost"
@@ -453,7 +465,7 @@ export default function LawFirmPanelLayout({
               {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
             {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
-              <Image className="hidden sm:block" src="/logo.svg" alt="Logo" title="Przystąp do sprawy" width={200} height={50} />
+              <SiteLogo className="hidden sm:block" title="Przystąp do sprawy" width={200} height={50} />
               <span className="sm:hidden text-lg font-semibold">PS</span>
               <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>}
@@ -497,6 +509,7 @@ export default function LawFirmPanelLayout({
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <NotificationBell />
             <UserMenu
               userRole="LAW_FIRM"

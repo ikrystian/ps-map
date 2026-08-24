@@ -41,10 +41,10 @@ export function FeatureLockedCard({
   return (
     <Card className={`relative overflow-hidden ${className}`}>
       {/* Overlay z ikoną blokady */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 to-transparent dark:from-gray-900/50 pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 to-transparent dark:from-card/50 pointer-events-none z-0" />
       <div className="absolute top-4 right-4 z-10">
-        <div className="rounded-full bg-gray-200 dark:bg-gray-800 p-3">
-          <Lock className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+        <div className="rounded-full bg-gray-200 dark:bg-muted p-3">
+          <Lock className="h-6 w-6 text-muted-foreground dark:text-muted-foreground" />
         </div>
       </div>
 

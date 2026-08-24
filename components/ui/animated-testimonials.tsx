@@ -92,7 +92,7 @@ export const AnimatedTestimonials = ({
                     width={500}
                     height={500}
                     draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center shadow-xl border border-zinc-800/30"
+                    className="h-full w-full rounded-3xl object-cover object-center shadow-xl border border-border/30"
                   />
                 </motion.div>
               ))}
@@ -119,13 +119,13 @@ export const AnimatedTestimonials = ({
               ease: "easeInOut",
             }}
           >
-            <h3 className=" text-2xl font-light text-zinc-100">
+            <h3 className=" text-2xl font-light text-foreground">
               {testimonials[active].name}
             </h3>
             <p className="text-[11px] font-semibold text-[#cda567] tracking-[0.12em] uppercase mt-1.5">
               {testimonials[active].designation}
             </p>
-            <motion.p className="text-lg text-zinc-200 mt-8 italic leading-relaxed font-light">
+            <motion.p className="text-lg text-foreground mt-8 italic leading-relaxed font-light">
               {testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -155,17 +155,17 @@ export const AnimatedTestimonials = ({
             <div className="flex gap-2 pt-12 md:pt-0">
               <button
                 onClick={handlePrev}
-                className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] text-white flex items-center justify-center group/button transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+                className="w-10 h-10 rounded-lg bg-primary hover:bg-primary-dark text-white flex items-center justify-center group/button transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                 aria-label="Poprzednia opinia"
               >
-                <IconArrowLeft className="h-5 w-5 text-white group-hover/button:rotate-12 transition-transform duration-300" />
+                <IconArrowLeft className="h-5 w-5 text-foreground group-hover/button:rotate-12 transition-transform duration-300" />
               </button>
               <button
                 onClick={handleNext}
-                className="w-10 h-10 rounded-lg bg-[#0da192] hover:bg-[#0b8b7e] text-white flex items-center justify-center group/button transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+                className="w-10 h-10 rounded-lg bg-primary hover:bg-primary-dark text-white flex items-center justify-center group/button transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                 aria-label="Następna opinia"
               >
-                <IconArrowRight className="h-5 w-5 text-white group-hover/button:-rotate-12 transition-transform duration-300" />
+                <IconArrowRight className="h-5 w-5 text-foreground group-hover/button:-rotate-12 transition-transform duration-300" />
               </button>
             </div>
           )}

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
 const headingVariants = cva(
-  "font-playfair tracking-tight text-white transition-colors",
+  "font-playfair tracking-tight text-foreground transition-colors",
   {
     variants: {
       size: {

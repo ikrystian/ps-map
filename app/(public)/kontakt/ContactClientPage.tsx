@@ -89,7 +89,7 @@ export default function ContactClientPage() {
     <>
       {/* Breadcrumbs banner */}
       <div
-        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 on-dark"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -100,7 +100,7 @@ export default function ContactClientPage() {
         </div>
       </div>
 
-      <div className="bg-[#121212]">
+      <div className="bg-background">
         {/* Hero */}
         <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-16 md:pt-24 pb-10">
           <div
@@ -117,10 +117,10 @@ export default function ContactClientPage() {
             >
               Jesteśmy do Twojej dyspozycji
             </p>
-            <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl text-white font-light tracking-tight leading-tight mb-6">
+            <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl text-foreground font-light tracking-tight leading-tight mb-6">
               Skontaktuj się <span className="font-bold">z nami</span>
             </h1>
-            <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
               Masz pytanie dotyczące platformy, znalezienia specjalisty albo współpracy?
               Wypełnij formularz lub skorzystaj z danych kontaktowych poniżej — nasze Biuro
               Obsługi Klienta chętnie pomoże w każdej sprawie.
@@ -142,52 +142,52 @@ export default function ContactClientPage() {
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="group flex items-start gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition-all hover:border-[#d7b56d]/50 hover:bg-neutral-900/60"
+                  className="group flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-secondary/50 hover:bg-card/60"
                 >
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-[#d7b56d]/10 text-[#d7b56d] transition-colors group-hover:bg-[#d7b56d]/20">
+                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20">
                     <Icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
                       {label}
                     </p>
-                    <p className="text-white font-medium break-words transition-colors group-hover:text-[#d7b56d]">
+                    <p className="text-foreground font-medium break-words transition-colors group-hover:text-secondary">
                       {value}
                     </p>
-                    <p className="text-xs text-neutral-500 mt-1">{hint}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{hint}</p>
                   </div>
                 </a>
               ))}
 
               {/* Opening hours */}
-              <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-[#d7b56d]/10 text-[#d7b56d]">
+                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
                     <Clock className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-neutral-500">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
                       Godziny pracy
                     </p>
-                    <p className="text-white font-medium">Biuro Obsługi Klienta</p>
+                    <p className="text-foreground font-medium">Biuro Obsługi Klienta</p>
                   </div>
                 </div>
                 <ul className="space-y-2">
                   {openingHours.map(({ day, hours }) => (
                     <li
                       key={day}
-                      className="flex items-center justify-between text-sm border-b border-neutral-800/60 pb-2 last:border-0 last:pb-0"
+                      className="flex items-center justify-between text-sm border-b border-border/60 pb-2 last:border-0 last:pb-0"
                     >
-                      <span className="text-neutral-400">{day}</span>
-                      <span className="text-white font-medium">{hours}</span>
+                      <span className="text-muted-foreground">{day}</span>
+                      <span className="text-foreground font-medium">{hours}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* Social */}
-              <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-5">
-                <p className="text-xs uppercase tracking-wide text-neutral-500 mb-3">
+              <div className="rounded-xl border border-border bg-card p-5">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-3">
                   Znajdź nas w sieci
                 </p>
                 <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export default function ContactClientPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label}
-                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-800 text-neutral-400 transition-all hover:border-[#d7b56d]/50 hover:text-[#d7b56d]"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted-foreground transition-all hover:border-secondary/50 hover:text-secondary"
                     >
                       <Icon className="h-4 w-4" />
                     </a>
@@ -228,10 +228,10 @@ export default function ContactClientPage() {
         <section className="px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
           <div className="max-w-7xl mx-auto">
             <motion.div {...fadeUp} className="text-center mb-10">
-              <h2 className="font-playfair text-3xl sm:text-4xl text-white font-light">
+              <h2 className="font-playfair text-3xl sm:text-4xl text-foreground font-light">
                 Zanim napiszesz — <span className="font-bold">może to pomoże</span>
               </h2>
-              <p className="text-neutral-400 text-sm mt-3">
+              <p className="text-muted-foreground text-sm mt-3">
                 Część odpowiedzi znajdziesz szybciej w naszych materiałach pomocy.
               </p>
             </motion.div>
@@ -243,15 +243,15 @@ export default function ContactClientPage() {
                 <Link
                   key={title}
                   href={href}
-                  className="group rounded-xl border border-neutral-800 bg-neutral-900 p-6 transition-all hover:border-[#d7b56d]/50 hover:-translate-y-1"
+                  className="group rounded-xl border border-border bg-card p-6 transition-all hover:border-secondary/50 hover:-translate-y-1"
                 >
-                  <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#d7b56d]/10 text-[#d7b56d] transition-colors group-hover:bg-[#d7b56d]/20">
+                  <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10 text-secondary transition-colors group-hover:bg-secondary/20">
                     <Icon className="h-6 w-6" />
                   </span>
-                  <h3 className="text-white font-semibold text-lg mb-2 transition-colors group-hover:text-[#d7b56d]">
+                  <h3 className="text-foreground font-semibold text-lg mb-2 transition-colors group-hover:text-secondary">
                     {title}
                   </h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">{desc}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
                 </Link>
               ))}
             </motion.div>

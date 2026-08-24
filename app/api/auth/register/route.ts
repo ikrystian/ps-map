@@ -1,3 +1,4 @@
+import { isReferralUsable } from "@/lib/case-referrals"
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/lib/phone-verification"
 import { prisma } from "@/lib/prisma"
@@ -48,6 +49,32 @@ export async function POST(request: NextRequest) {
         { error: "Email i hasło są wymagane" },
         { status: 400 }
       )
+    }
+
+    // Rejestracja z linku polecającego eksperta — sprawdzamy token ZANIM zużyjemy
+    // jednorazowy kod SMS, żeby niezgodny adres nie kosztował użytkownika weryfikacji telefonu.
+    const referralToken = typeof body.referralToken === "string" ? body.referralToken.trim() : ""
+    let referralId: string | null = null
+
+    if (referralToken) {
+      const referral = await prisma.caseReferral.findUnique({
+        where: { token: referralToken },
+        select: { id: true, email: true, status: true, expiresAt: true, caseId: true },
+      })
+
+      const usability = isReferralUsable(referral)
+      if (!usability.ok) {
+        return NextResponse.json({ error: usability.message }, { status: 400 })
+      }
+
+      if (referral!.email !== normalizedEmail) {
+        return NextResponse.json(
+          { error: "Ten link polecający został wysłany na inny adres e-mail." },
+          { status: 400 }
+        )
+      }
+
+      referralId = referral!.id
     }
 
     // Weryfikacja numeru telefonu kodem SMS — MUSI przejść zanim powstanie konto
@@ -178,7 +205,7 @@ export async function POST(request: NextRequest) {
     if (user.role === "CLIENT" && clientData) {
       const clientType = clientData.clientType || "INDIVIDUAL"
 
-      await prisma.client.create({
+      const createdClient = await prisma.client.create({
         data: {
           userId: user.id,
           clientType,
@@ -235,6 +262,23 @@ export async function POST(request: NextRequest) {
         })
       } catch (emailError) {
         console.error('Failed to send client welcome email:', emailError)
+      }
+
+      // Powiąż polecenie z nowym kontem (token zwalidowany wyżej, przed weryfikacją SMS).
+      // Konto już istnieje, więc błąd tutaj może tylko trafić do logów.
+      if (referralId) {
+        try {
+          await prisma.caseReferral.update({
+            where: { id: referralId },
+            data: {
+              clientId: createdClient.id,
+              status: "ZAREJESTROWANO",
+              zarejestrowanoAt: new Date(),
+            },
+          })
+        } catch (referralError) {
+          console.error('Failed to link case referral on registration:', referralError)
+        }
       }
     }
 

@@ -89,7 +89,7 @@ export function SurveySection({ isExpert }: { isExpert: boolean }) {
   }
 
   return (
-    <section className="py-16 bg-card border-t border-zinc-900/60">
+    <section className="py-16 bg-card border-t border-border/60">
       <div className="container mx-auto px-4 max-w-3xl">
         <div className="flex items-center gap-3 mb-2">
           <ClipboardList className="h-6 w-6 text-primary" />

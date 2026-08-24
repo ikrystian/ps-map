@@ -184,11 +184,11 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
   }
 
   return (
-    <div className="bg-[#121212] min-h-[calc(100vh-65px)] text-white pb-20 relative font-sans selection:bg-teal-500/20 selection:text-teal-200">
+    <div className="bg-background min-h-[calc(100vh-65px)] text-white pb-20 relative font-sans selection:bg-teal-500/20 selection:text-teal-200">
       
       {/* Scroll Progress Bar (Only visible in full view) */}
       {activeTab === "full" && (
-        <div className="fixed top-[65px] left-0 right-0 h-1 bg-neutral-900 z-50 print:hidden">
+        <div className="fixed top-[65px] left-0 right-0 h-1 bg-card z-50 print:hidden">
           <div 
             className="h-full bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-100" 
             style={{ width: `${scrollProgress}%` }}
@@ -198,7 +198,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
       {/* Hero Banner Header */}
       <div 
-        className="relative w-full h-[180px] md:h-[240px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60 print:bg-white print:border-b print:text-black print:h-auto print:py-6"
+        className="relative w-full h-[180px] md:h-[240px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 print:bg-white print:border-b print:text-black print:h-auto print:py-6 on-dark"
         style={{ backgroundImage: "url('/images/security-lock.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/45 print:hidden" />
@@ -212,10 +212,10 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               ]}
             />
           </div>
-          <h1 className="font-playfair text-3xl sm:text-4xl lg:text-[44px] leading-tight text-white font-bold tracking-tight mt-3 print:text-black print:text-2xl">
+          <h1 className="font-playfair text-3xl sm:text-4xl lg:text-[44px] leading-tight text-foreground font-bold tracking-tight mt-3 print:text-black print:text-2xl">
             {content.heroTitle}
           </h1>
-          <p className="text-neutral-400 text-sm sm:text-base font-light mt-1 print:text-neutral-600">
+          <p className="text-muted-foreground text-sm sm:text-base font-light mt-1 print:text-neutral-600">
             {content.heroSubtitle}
           </p>
         </div>
@@ -224,21 +224,21 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
       {/* Decorative Blur Spheres */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 print:hidden">
         <div className="absolute top-1/4 left-1/10 w-[400px] h-[400px] bg-teal-950/15 rounded-full blur-[160px]" />
-        <div className="absolute bottom-1/4 right-1/10 w-[500px] h-[500px] bg-neutral-900/40 rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 right-1/10 w-[500px] h-[500px] bg-card/40 rounded-full blur-[180px]" />
       </div>
 
       {/* Interactive Controls & View Selection */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10 print:mt-2">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-[#1a1917]/90 border border-neutral-800/80 rounded-2xl p-4 backdrop-blur-md mb-8 print:hidden">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-card/90 border border-border/80 rounded-2xl p-4 backdrop-blur-md mb-8 print:hidden">
           
           {/* Tab Selector */}
-          <div className="flex bg-[#121211] p-1.5 rounded-xl border border-neutral-800 w-full md:w-auto">
+          <div className="flex bg-background p-1.5 rounded-xl border border-border w-full md:w-auto">
             <button
               onClick={() => setActiveTab("tldr")}
               className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
                 activeTab === "tldr"
                   ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
-                  : "text-neutral-400 hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Sparkles className="w-4 h-4" />
@@ -249,7 +249,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
                 activeTab === "full"
                   ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
-                  : "text-neutral-400 hover:text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <FileText className="w-4 h-4" />
@@ -261,7 +261,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
           <div className="flex items-center gap-3 w-full md:w-auto justify-end">
             <button
               onClick={() => window.print()}
-              className="flex items-center justify-center gap-2 bg-[#242320] border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2.5 rounded-xl text-sm transition-all duration-300 cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-card border border-border hover:border-border text-foreground/80 hover:text-foreground px-4 py-2.5 rounded-xl text-sm transition-all duration-300 cursor-pointer"
               title="Drukuj politykę prywatności"
             >
               <Printer className="w-4 h-4" />
@@ -270,7 +270,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             <a
               href="/Polityka%20prywatno%C5%9Bci%20serwisu%20prostasprawa.pl.docx.pdf"
               download
-              className="flex items-center justify-center gap-2 bg-[#242320] border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white px-4 py-2.5 rounded-xl text-sm transition-all duration-300 cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-card border border-border hover:border-border text-foreground/80 hover:text-foreground px-4 py-2.5 rounded-xl text-sm transition-all duration-300 cursor-pointer"
               title="Pobierz plik PDF"
             >
               <Download className="w-4 h-4" />
@@ -291,7 +291,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             {/* Header info */}
             <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
               <h2 className="font-playfair text-2xl sm:text-3xl font-bold">Twoja prywatność w skrócie</h2>
-              <p className="text-neutral-400 text-sm sm:text-base font-light">
+              <p className="text-muted-foreground text-sm sm:text-base font-light">
                 Twoje zaufanie jest dla nas kluczowe. Przygotowaliśmy to interaktywne streszczenie, aby ułatwić Ci zapoznanie się z najważniejszymi kwestiami dotyczącymi Twoich danych osobowych.
               </p>
             </div>
@@ -300,15 +300,15 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* Card 1: Administrator */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Kto zarządza danymi?</h3>
-                  <div className="space-y-2 text-xs text-neutral-400 leading-relaxed">
+                  <h3 className="font-semibold text-lg text-foreground">Kto zarządza danymi?</h3>
+                  <div className="space-y-2 text-xs text-muted-foreground leading-relaxed">
                     <p>Właścicielem serwisu oraz Administratorem Twoich danych osobowych jest:</p>
-                    <p className="bg-[#121211] p-2.5 rounded border border-neutral-850 text-white font-mono text-[11px]">
+                    <p className="bg-background p-2.5 rounded border border-border text-foreground font-mono text-[11px]">
                       POLSKA GRUPA IDENTYFIKACJI FIRM SP. Z O.O.<br />
                       ul. Gen. M. Langiewicza 16 lok. 3<br />
                       25-381 Kielce<br />
@@ -326,18 +326,18 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Card 2: Cel Przetwarzania */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <Target className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Po co zbieramy Twoje dane?</h3>
-                  <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
-                    <li><strong className="text-white">Obsługa konta</strong> – logowanie, weryfikacja i personalizacja serwisu.</li>
-                    <li><strong className="text-white">Realizacja usług</strong> – kojarzenie Klientów z Wykonawcami.</li>
-                    <li><strong className="text-white">Komunikacja</strong> – obsługa formularzy kontaktowych oraz e-maili.</li>
-                    <li><strong className="text-white">Newsletter</strong> – wysyłka wiadomości o nowościach (za Twoją zgodą).</li>
-                    <li><strong className="text-white">Analizy</strong> – optymalizacja działania serwisu.</li>
+                  <h3 className="font-semibold text-lg text-foreground">Po co zbieramy Twoje dane?</h3>
+                  <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+                    <li><strong className="text-foreground">Obsługa konta</strong> – logowanie, weryfikacja i personalizacja serwisu.</li>
+                    <li><strong className="text-foreground">Realizacja usług</strong> – kojarzenie Klientów z Wykonawcami.</li>
+                    <li><strong className="text-foreground">Komunikacja</strong> – obsługa formularzy kontaktowych oraz e-maili.</li>
+                    <li><strong className="text-foreground">Newsletter</strong> – wysyłka wiadomości o nowościach (za Twoją zgodą).</li>
+                    <li><strong className="text-foreground">Analizy</strong> – optymalizacja działania serwisu.</li>
                   </ul>
                 </div>
                 <button 
@@ -350,18 +350,18 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Card 3: Prawa RODO */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <Scale className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Jakie prawa Ci przysługują?</h3>
-                  <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
-                    <li><strong className="text-white">Dostęp i edycja</strong> – masz pełny wgląd do swoich danych i ich poprawiania.</li>
-                    <li><strong className="text-white">Prawo do usunięcia</strong> – tzw. „prawo do bycia zapomnianym”.</li>
-                    <li><strong className="text-white">Przenoszenie danych</strong> – możliwość otrzymania paczki swoich danych.</li>
-                    <li><strong className="text-white">Wycofanie zgody</strong> – bez negatywnych konsekwencji w każdej chwili.</li>
-                    <li><strong className="text-white">Zgłoszenie sprzeciwu</strong> – wobec określonego przetwarzania.</li>
+                  <h3 className="font-semibold text-lg text-foreground">Jakie prawa Ci przysługują?</h3>
+                  <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+                    <li><strong className="text-foreground">Dostęp i edycja</strong> – masz pełny wgląd do swoich danych i ich poprawiania.</li>
+                    <li><strong className="text-foreground">Prawo do usunięcia</strong> – tzw. „prawo do bycia zapomnianym”.</li>
+                    <li><strong className="text-foreground">Przenoszenie danych</strong> – możliwość otrzymania paczki swoich danych.</li>
+                    <li><strong className="text-foreground">Wycofanie zgody</strong> – bez negatywnych konsekwencji w każdej chwili.</li>
+                    <li><strong className="text-foreground">Zgłoszenie sprzeciwu</strong> – wobec określonego przetwarzania.</li>
                   </ul>
                 </div>
                 <button 
@@ -374,16 +374,16 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Card 4: Czas i przekazywanie */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <Clock className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Okres i udostępnianie</h3>
-                  <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
-                    <li><strong className="text-white">Okres przechowywania</strong> – zależy od celu (do momentu wygaśnięcia roszczeń lub odwołania zgody). Przedawnienie roszczeń: 6 lat (gospodarcze: 3 lata).</li>
-                    <li><strong className="text-white">Odbiorcy danych</strong> – wyłącznie zaufani podwykonawcy (np. dostawcy hostingu i IT).</li>
-                    <li><strong className="text-white">Brak transferów poza EOG</strong> – Twoje dane pozostają na terenie Unii Europejskiej.</li>
+                  <h3 className="font-semibold text-lg text-foreground">Okres i udostępnianie</h3>
+                  <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+                    <li><strong className="text-foreground">Okres przechowywania</strong> – zależy od celu (do momentu wygaśnięcia roszczeń lub odwołania zgody). Przedawnienie roszczeń: 6 lat (gospodarcze: 3 lata).</li>
+                    <li><strong className="text-foreground">Odbiorcy danych</strong> – wyłącznie zaufani podwykonawcy (np. dostawcy hostingu i IT).</li>
+                    <li><strong className="text-foreground">Brak transferów poza EOG</strong> – Twoje dane pozostają na terenie Unii Europejskiej.</li>
                   </ul>
                 </div>
                 <button 
@@ -396,16 +396,16 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Card 5: Pliki Cookies */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <Cookie className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Pliki Cookies (Ciasteczka)</h3>
-                  <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
-                    <li><strong className="text-white">Rodzaje</strong> – pliki sesyjne (tymczasowe) oraz stałe.</li>
-                    <li><strong className="text-white">Partnerzy zewnętrzni</strong> – Google Analytics (statystyki), Facebook Pixels (analiza) oraz HotJar.</li>
-                    <li><strong className="text-white">Kontrola</strong> – możesz samodzielnie zmienić ustawienia plików cookies w swojej przeglądarce w dowolnym momencie.</li>
+                  <h3 className="font-semibold text-lg text-foreground">Pliki Cookies (Ciasteczka)</h3>
+                  <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+                    <li><strong className="text-foreground">Rodzaje</strong> – pliki sesyjne (tymczasowe) oraz stałe.</li>
+                    <li><strong className="text-foreground">Partnerzy zewnętrzni</strong> – Google Analytics (statystyki), Facebook Pixels (analiza) oraz HotJar.</li>
+                    <li><strong className="text-foreground">Kontrola</strong> – możesz samodzielnie zmienić ustawienia plików cookies w swojej przeglądarce w dowolnym momencie.</li>
                   </ul>
                 </div>
                 <button 
@@ -418,15 +418,15 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Card 6: Profilowanie */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 bg-teal-950/20 border border-teal-900/40 text-teal-400 rounded-xl flex items-center justify-center">
                     <Cpu className="w-6 h-6" />
                   </div>
-                  <h3 className="font-semibold text-lg text-white">Profilowanie i decyzje</h3>
-                  <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc list-inside">
-                    <li><strong className="text-white">Brak automatycznych decyzji</strong> – żadne decyzje wywołujące skutki prawne nie są podejmowane automatycznie.</li>
-                    <li><strong className="text-white">Profilowanie ofert</strong> – dopasowanie ofert serwisu następuje wyłącznie po wyrażeniu przez Ciebie dobrowolnej zgody.</li>
+                  <h3 className="font-semibold text-lg text-foreground">Profilowanie i decyzje</h3>
+                  <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+                    <li><strong className="text-foreground">Brak automatycznych decyzji</strong> – żadne decyzje wywołujące skutki prawne nie są podejmowane automatycznie.</li>
+                    <li><strong className="text-foreground">Profilowanie ofert</strong> – dopasowanie ofert serwisu następuje wyłącznie po wyrażeniu przez Ciebie dobrowolnej zgody.</li>
                   </ul>
                 </div>
                 <button 
@@ -442,8 +442,8 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
             {/* Glossary/Definitions Accordion */}
             {content.definitions.length > 0 && (
-            <div className="bg-[#1a1917]/50 border border-neutral-800/80 rounded-2xl p-6 sm:p-8 mt-12">
-              <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-card/50 border border-border/80 rounded-2xl p-6 sm:p-8 mt-12">
+              <h3 className="font-playfair text-xl sm:text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                 <Info className="w-5 h-5 text-teal-500" />
                 Słownik podstawowych pojęć prawnych
               </h3>
@@ -454,14 +454,14 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                   return (
                     <div 
                       key={def.term}
-                      className="bg-[#242320]/45 border border-neutral-800/70 rounded-xl overflow-hidden transition-all duration-300"
+                      className="bg-card/45 border border-border/70 rounded-xl overflow-hidden transition-all duration-300"
                     >
                       <button
                         onClick={() => setOpenGlossaryIndex(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm sm:text-base text-white hover:text-teal-400 transition-colors cursor-pointer"
+                        className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm sm:text-base text-foreground hover:text-teal-400 transition-colors cursor-pointer"
                       >
                         <span>{def.term}</span>
-                        <ChevronRight className={`w-4 h-4 text-neutral-500 transition-transform duration-300 ${isOpen ? "rotate-90 text-teal-400" : ""}`} />
+                        <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90 text-teal-400" : ""}`} />
                       </button>
                       
                       <AnimatePresence initial={false}>
@@ -472,7 +472,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.25 }}
                           >
-                            <div className="px-4 pb-4 pt-1 border-t border-neutral-800/40 text-xs sm:text-sm text-neutral-450 leading-relaxed">
+                            <div className="px-4 pb-4 pt-1 border-t border-border/40 text-xs sm:text-sm text-neutral-450 leading-relaxed">
                               {def.desc}
                             </div>
                           </motion.div>
@@ -486,14 +486,14 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             )}
 
             {/* DPO / IOD Spotlight Banner */}
-            <div className="bg-[#1d1c1a]/95 border border-neutral-800/80 rounded-2xl p-6 sm:p-8 mt-12 flex flex-col lg:flex-row gap-8 items-center justify-between relative overflow-hidden">
+            <div className="bg-card/95 border border-border/80 rounded-2xl p-6 sm:p-8 mt-12 flex flex-col lg:flex-row gap-8 items-center justify-between relative overflow-hidden">
               <div className="absolute -right-20 -bottom-20 w-60 h-60 bg-teal-950/20 rounded-full blur-[80px] pointer-events-none" />
               <div className="space-y-3 max-w-2xl relative z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-950/40 border border-teal-900/60 text-[11px] font-semibold text-teal-400 tracking-wide uppercase">
                   Inspektor Ochrony Danych (IOD)
                 </div>
-                <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white">Masz pytania dotyczące swoich danych?</h3>
-                <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                <h3 className="font-playfair text-xl sm:text-2xl font-bold text-foreground">Masz pytania dotyczące swoich danych?</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                   Administrator wyznaczył Inspektora Ochrony Danych, z którym możesz skontaktować się we wszystkich sprawach związanych z przetwarzaniem danych osobowych oraz realizacją przysługujących Ci praw na mocy RODO.
                 </p>
               </div>
@@ -516,7 +516,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                 </button>
                 <a
                   href="mailto:iod@prostasprawa.pl"
-                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-[#242320] hover:bg-[#2e2d29] border border-neutral-800 text-neutral-200 px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-card hover:bg-muted border border-border text-foreground px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300"
                 >
                   <Mail className="w-4 h-4" />
                   Napisz wiadomość
@@ -533,8 +533,8 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             
             {/* Sidebar Navigation (TOC) */}
             <aside className="lg:col-span-4 sticky top-[100px] h-[calc(100vh-140px)] overflow-y-auto pr-4 hidden lg:flex flex-col space-y-4 print:hidden custom-scrollbar">
-              <div className="bg-[#1a1917]/80 border border-neutral-800/80 rounded-2xl p-5 backdrop-blur-md">
-                <h3 className="font-playfair text-lg font-bold text-white pb-3 border-b border-neutral-800/60 mb-4">
+              <div className="bg-card/80 border border-border/80 rounded-2xl p-5 backdrop-blur-md">
+                <h3 className="font-playfair text-lg font-bold text-foreground pb-3 border-b border-border/60 mb-4">
                   Spis treści
                 </h3>
                 <nav className="flex flex-col space-y-1">
@@ -545,13 +545,13 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                       className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${
                         activeSection === section.id
                           ? "bg-teal-600 text-white font-semibold shadow-md shadow-teal-900/10"
-                          : "text-neutral-400 hover:text-neutral-200 hover:bg-[#242320]/50"
+                          : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                       }`}
                     >
                       <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${
                         activeSection === section.id
                           ? "bg-white/20 text-white"
-                          : "bg-neutral-800/60 text-neutral-400 group-hover:bg-neutral-700/60 group-hover:text-neutral-200"
+                          : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
                       }`}>
                         {section.number}
                       </span>
@@ -562,18 +562,18 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Download Banner Card */}
-              <div className="bg-gradient-to-br from-teal-950/20 to-neutral-900 border border-teal-900/30 rounded-2xl p-5 space-y-3">
+              <div className="bg-gradient-to-br from-teal-950/20 to-card border border-teal-900/30 rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 text-teal-400 font-semibold text-sm">
                   <ExternalLink className="w-4 h-4" />
                   Oficjalny dokument
                 </div>
-                <p className="text-xs text-neutral-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Pobierz oryginalny plik PDF z Polityką Prywatności serwisu, aby móc w każdej chwili odczytać go offline.
                 </p>
                 <a
                   href="/Polityka%20prywatno%C5%9Bci%20serwisu%20prostasprawa.pl.docx.pdf"
                   download
-                  className="w-full flex items-center justify-center gap-2 bg-[#0da192] hover:bg-[#0a8276] text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition-colors cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Pobierz plik PDF
@@ -585,20 +585,20 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             <main className="lg:col-span-8 space-y-8 print:col-span-12">
               
               {/* Live Search */}
-              <div className="bg-[#1a1917]/70 border border-neutral-800/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md print:hidden space-y-4">
+              <div className="bg-card/70 border border-border/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md print:hidden space-y-4">
                 <div className="relative">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Wyszukaj w polityce prywatności... (np. RODO, cookies, EOG)"
-                    className="w-full pl-10 pr-4 py-2.5 bg-[#121211] border border-neutral-850 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-teal-500/80 transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-xl text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-teal-500/80 transition-colors"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-neutral-500 hover:text-white"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
                     >
                       Wyczyść
                     </button>
@@ -607,9 +607,9 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                 
                 {/* Search Match Stats Banner */}
                 {searchQuery.trim() && (
-                  <div className="flex items-center justify-between text-xs text-neutral-400 bg-neutral-900/60 p-2.5 rounded-lg border border-neutral-850">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground bg-card/60 p-2.5 rounded-lg border border-border">
                     <span>
-                      Słowo kluczowe: <strong className="text-white">„{searchQuery}”</strong>
+                      Słowo kluczowe: <strong className="text-foreground">„{searchQuery}”</strong>
                     </span>
                     <span>
                       Znaleziono: <strong className="text-teal-400 font-bold">{matchCount}</strong> dopasowań
@@ -632,25 +632,25 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-[#1a1917]/40 border border-neutral-800/60 rounded-2xl p-6 sm:p-8 backdrop-blur-sm scroll-mt-28 hover:border-neutral-850/90 transition-colors duration-300 print:bg-white print:border-none print:shadow-none print:p-0 print:text-black"
+                        className="bg-card/40 border border-border/60 rounded-2xl p-6 sm:p-8 backdrop-blur-sm scroll-mt-28 hover:border-border/90 transition-colors duration-300 print:bg-white print:border-none print:shadow-none print:p-0 print:text-black"
                       >
                         {/* Section Header */}
-                        <div className="flex items-center gap-4 pb-4 border-b border-neutral-800/40 mb-6 print:border-neutral-300 print:mb-4">
+                        <div className="flex items-center gap-4 pb-4 border-b border-border/40 mb-6 print:border-neutral-300 print:mb-4">
                           <div className="w-10 h-10 rounded-xl bg-teal-950/30 border border-teal-900/50 text-teal-400 flex items-center justify-center flex-shrink-0 print:hidden">
                             {section.icon}
                           </div>
                           <div>
-                            <span className="text-[11px] font-semibold text-teal-400 tracking-wider uppercase font-mono print:text-neutral-500">
+                            <span className="text-[11px] font-semibold text-teal-400 tracking-wider uppercase font-mono print:text-muted-foreground">
                               Rozdział {section.number}
                             </span>
-                            <h2 className="font-playfair text-xl sm:text-2xl font-bold text-white print:text-black">
+                            <h2 className="font-playfair text-xl sm:text-2xl font-bold text-foreground print:text-black">
                               {section.title}
                             </h2>
                           </div>
                         </div>
 
                         {/* Section Paragraphs */}
-                        <div className="space-y-4 text-sm sm:text-base text-neutral-300 font-light leading-relaxed print:text-black">
+                        <div className="space-y-4 text-sm sm:text-base text-foreground/80 font-light leading-relaxed print:text-black">
                           {section.paragraphs.map((para, pIdx) => {
                             // Check if it is a list bullet element
                             const isBullet = para.trim().startsWith("•")
@@ -672,16 +672,16 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="bg-[#1a1917]/35 border border-neutral-800/40 rounded-2xl p-12 text-center text-neutral-400"
+                      className="bg-card/35 border border-border/40 rounded-2xl p-12 text-center text-muted-foreground"
                     >
                       <ShieldAlert className="w-12 h-12 mx-auto text-neutral-600 mb-4" />
-                      <h3 className="font-semibold text-lg text-white mb-2">Brak wyników wyszukiwania</h3>
+                      <h3 className="font-semibold text-lg text-foreground mb-2">Brak wyników wyszukiwania</h3>
                       <p className="text-sm max-w-md mx-auto">
-                        Nie znaleźliśmy fragmentów odpowiadających frazie <strong className="text-white">„{searchQuery}”</strong>. Spróbuj użyć innych słów kluczowych lub wyczyść wyszukiwarkę.
+                        Nie znaleźliśmy fragmentów odpowiadających frazie <strong className="text-foreground">„{searchQuery}”</strong>. Spróbuj użyć innych słów kluczowych lub wyczyść wyszukiwarkę.
                       </p>
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="mt-6 inline-flex items-center gap-2 bg-[#242320] border border-neutral-850 hover:bg-[#2c2b27] text-white px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
+                        className="mt-6 inline-flex items-center gap-2 bg-card border border-border hover:bg-card text-white px-5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer"
                       >
                         Wyczyść filtry
                       </button>
@@ -691,7 +691,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
               </div>
 
               {/* Final Legal Footer info */}
-              <div className="text-center text-xs text-neutral-500 pt-6 border-t border-neutral-900/60 print:text-neutral-500">
+              <div className="text-center text-xs text-muted-foreground pt-6 border-t border-border/60 print:text-muted-foreground">
                 {content.lastUpdated && (
                   <>Ostatnia aktualizacja dokumentu: {content.lastUpdated}<br /></>
                 )}

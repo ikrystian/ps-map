@@ -7,6 +7,10 @@ import Link from "next/link"
 
 interface AddCaseButtonProps {
   href: string
+  /** Etykieta na desktopie; domyślnie "Dodaj sprawę" */
+  label?: string
+  /** Skrócona etykieta na mobile; domyślnie "+" */
+  shortLabel?: string
   className?: string
   innerClassName?: string
   labelClassName?: string
@@ -14,7 +18,16 @@ interface AddCaseButtonProps {
   onClick?: () => void
 }
 
-export function AddCaseButton({ href, className, innerClassName, labelClassName, iconClassName, onClick }: AddCaseButtonProps) {
+export function AddCaseButton({
+  href,
+  label = "Dodaj sprawę",
+  shortLabel = "+",
+  className,
+  innerClassName,
+  labelClassName,
+  iconClassName,
+  onClick,
+}: AddCaseButtonProps) {
   return (
     <Link href={href} className={className} onClick={onClick}>
       <motion.div
@@ -22,14 +35,16 @@ export function AddCaseButton({ href, className, innerClassName, labelClassName,
         whileTap={{ scale: 0.97 }}
         transition={{ duration: 0.15 }}
         className={cn(
-          "relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 border border-amber-500/25 hover:border-amber-400/40 cursor-pointer select-none transition-colors",
+          // `secondary` to złoto marki — w jasnym motywie pogłębione, żeby
+          // etykieta nie znikała na jasnym pasku nagłówka.
+          "relative overflow-hidden flex items-center gap-1.5 px-3 h-9 rounded-lg text-sm font-medium text-secondary bg-secondary/10 border border-secondary/25 hover:border-secondary/40 cursor-pointer select-none transition-colors",
           innerClassName
         )}
       >
         {iconClassName && <Plus className={cn("h-4 w-4 shrink-0", iconClassName)} aria-hidden="true" />}
-        <span className={cn("whitespace-nowrap sm:hidden", labelClassName)}>+</span>
+        <span className={cn("whitespace-nowrap sm:hidden", labelClassName)}>{shortLabel}</span>
 
-        <span className={cn("whitespace-nowrap hidden sm:inline", labelClassName)}>Dodaj sprawę</span>
+        <span className={cn("whitespace-nowrap hidden sm:inline", labelClassName)}>{label}</span>
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"
           animate={{ x: ["-130%", "130%"] }}

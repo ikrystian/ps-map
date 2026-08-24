@@ -58,17 +58,17 @@ export default async function MailDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <Link
           href="/mails"
-          className="mb-6 inline-flex items-center gap-1 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
+          className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           ← Wróć do listy maili
         </Link>
 
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900">
-          <div className="border-b border-neutral-800 p-5">
+        <div className="rounded-lg border border-border bg-card">
+          <div className="border-b border-border p-5">
             <div className="mb-3 flex items-center gap-2">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${log.status === EmailLogStatus.SUCCESS
@@ -76,7 +76,7 @@ export default async function MailDetailPage({
                     : "bg-red-500"
                   }`}
               />
-              <span className="text-xs uppercase tracking-wide text-neutral-400">
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">
                 {log.status}
               </span>
             </div>
@@ -84,16 +84,16 @@ export default async function MailDetailPage({
               {log.subject || "(bez tematu)"}
             </h1>
             <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-              <dt className="text-neutral-500">Do:</dt>
-              <dd className="text-neutral-200">{log.to}</dd>
-              <dt className="text-neutral-500">Wysłano:</dt>
-              <dd className="font-mono text-neutral-300">
+              <dt className="text-muted-foreground">Do:</dt>
+              <dd className="text-foreground">{log.to}</dd>
+              <dt className="text-muted-foreground">Wysłano:</dt>
+              <dd className="font-mono text-foreground/80">
                 {formatDate(log.sentAt)}
               </dd>
               {log.templateType ? (
                 <>
-                  <dt className="text-neutral-500">Szablon:</dt>
-                  <dd className="font-mono text-neutral-300">
+                  <dt className="text-muted-foreground">Szablon:</dt>
+                  <dd className="font-mono text-foreground/80">
                     {log.templateType}
                   </dd>
                 </>
@@ -102,7 +102,7 @@ export default async function MailDetailPage({
           </div>
 
           {log.errorMessage ? (
-            <div className="border-b border-neutral-800 bg-red-950/40 p-5">
+            <div className="border-b border-border bg-red-950/40 p-5">
               <p className="text-sm font-medium text-red-300">Błąd:</p>
               <p className="mt-1 font-mono text-sm text-red-200">
                 {log.errorMessage}
@@ -111,7 +111,7 @@ export default async function MailDetailPage({
           ) : null}
 
           <div className="p-5">
-            <p className="mb-3 text-sm font-medium text-neutral-400">
+            <p className="mb-3 text-sm font-medium text-muted-foreground">
               Podgląd HTML
             </p>
             {log.html ? (
@@ -119,43 +119,43 @@ export default async function MailDetailPage({
                 title="Podgląd maila"
                 srcDoc={log.html}
                 sandbox=""
-                className="h-[600px] w-full rounded-md border border-neutral-800 bg-white"
+                className="h-[600px] w-full rounded-md border border-border bg-white"
               />
             ) : (
-              <pre className="overflow-auto whitespace-pre-wrap rounded-md border border-neutral-800 bg-neutral-950 p-4 text-sm text-neutral-200">
+              <pre className="overflow-auto whitespace-pre-wrap rounded-md border border-border bg-background p-4 text-sm text-foreground">
                 {log.content || "(brak treści)"}
               </pre>
             )}
           </div>
 
           {log.content ? (
-            <details className="border-t border-neutral-800 p-5">
-              <summary className="cursor-pointer text-sm font-medium text-neutral-400">
+            <details className="border-t border-border p-5">
+              <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
                 Wersja tekstowa
               </summary>
-              <pre className="mt-3 overflow-auto whitespace-pre-wrap rounded-md border border-neutral-800 bg-neutral-950 p-4 text-sm text-neutral-200">
+              <pre className="mt-3 overflow-auto whitespace-pre-wrap rounded-md border border-border bg-background p-4 text-sm text-foreground">
                 {log.content}
               </pre>
             </details>
           ) : null}
 
           {variables ? (
-            <details className="border-t border-neutral-800 p-5">
-              <summary className="cursor-pointer text-sm font-medium text-neutral-400">
+            <details className="border-t border-border p-5">
+              <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
                 Zmienne szablonu
               </summary>
-              <pre className="mt-3 overflow-auto rounded-md border border-neutral-800 bg-neutral-950 p-4 text-sm text-neutral-200">
+              <pre className="mt-3 overflow-auto rounded-md border border-border bg-background p-4 text-sm text-foreground">
                 {JSON.stringify(variables, null, 2)}
               </pre>
             </details>
           ) : null}
 
           {log.smtpLog ? (
-            <details className="border-t border-neutral-800 p-5">
-              <summary className="cursor-pointer text-sm font-medium text-neutral-400">
+            <details className="border-t border-border p-5">
+              <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
                 Log SMTP
               </summary>
-              <pre className="mt-3 overflow-auto whitespace-pre-wrap rounded-md border border-neutral-800 bg-neutral-950 p-4 text-xs text-neutral-300">
+              <pre className="mt-3 overflow-auto whitespace-pre-wrap rounded-md border border-border bg-background p-4 text-xs text-foreground/80">
                 {log.smtpLog}
               </pre>
             </details>

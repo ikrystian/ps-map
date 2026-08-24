@@ -41,8 +41,8 @@ export default function CheckoutFailurePage() {
               <XCircle className="h-12 w-12" />
             </div>
             <div>
-              <h2 className="text-2xl font-extrabold font-playfair tracking-tight mb-2 text-white">Płatność nieudana</h2>
-              <p className="text-zinc-400 text-sm md:text-base font-light max-w-md mx-auto">
+              <h2 className="text-2xl font-extrabold font-playfair tracking-tight mb-2 text-foreground">Płatność nieudana</h2>
+              <p className="text-muted-foreground text-sm md:text-base font-light max-w-md mx-auto">
                 {errorMsg || "Transakcja została anulowana lub wystąpił błąd podczas przetwarzania płatności."}
               </p>
             </div>
@@ -55,8 +55,8 @@ export default function CheckoutFailurePage() {
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
               <div className="space-y-2 text-sm">
-                <p className="font-semibold text-white">Co dalej?</p>
-                <ul className="list-disc list-inside space-y-1 text-zinc-400 font-light">
+                <p className="font-semibold text-foreground">Co dalej?</p>
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground font-light">
                   <li>Możesz spróbować ponownie dokonać zakupu</li>
                   <li>Upewnij się, że masz wystarczające środki na koncie</li>
                   <li>Sprawdź czy dane karty są poprawne</li>
@@ -88,7 +88,7 @@ export default function CheckoutFailurePage() {
         </div>
 
         {orderId && (
-          <p className="text-xs text-center text-zinc-500 font-light">
+          <p className="text-xs text-center text-muted-foreground font-light">
             Numer zamówienia: <span className="font-mono">{orderId}</span>
           </p>
         )}

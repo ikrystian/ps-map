@@ -116,12 +116,12 @@ export function ExpertiseCategoryPicker({
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn("w-[280px] p-0 bg-card border-neutral-800 text-white", contentClassName)}
+        className={cn("w-[280px] p-0 bg-card border-border text-foreground", contentClassName)}
         align={align}
       >
         <div className="flex flex-col">
           {/* Header with back button */}
-          <div className="flex items-center justify-between px-3 py-2.5 border-b border-neutral-800 bg-[#161614]">
+          <div className="flex items-center justify-between px-3 py-2.5 border-b border-border bg-card">
             {menuPath.length > 0 ? (
               <button
                 type="button"
@@ -132,9 +132,9 @@ export function ExpertiseCategoryPicker({
                 Powrót
               </button>
             ) : (
-              <span className="text-xs text-neutral-400 font-semibold">Wybierz kategorię</span>
+              <span className="text-xs text-muted-foreground font-semibold">Wybierz kategorię</span>
             )}
-            <span className="text-xs font-medium text-neutral-300 truncate max-w-[150px]">
+            <span className="text-xs font-medium text-foreground/80 truncate max-w-[150px]">
               {getMenuTitle()}
             </span>
           </div>
@@ -174,12 +174,12 @@ export function ExpertiseCategoryPicker({
                   }}
                   className={cn(
                     "w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between cursor-pointer border-0 bg-transparent text-white hover:bg-primary",
-                    isSelected && "bg-neutral-800 text-teal-400 font-semibold"
+                    isSelected && "bg-muted text-teal-400 font-semibold"
                   )}
                 >
                   <span className="truncate">{cat.nazwa}</span>
                   {hasChildren ? (
-                    <ChevronRight className="h-4 w-4 text-neutral-500" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   ) : (
                     isSelected && <Check className="h-4 w-4 text-teal-400" />
                   )}
@@ -188,7 +188,7 @@ export function ExpertiseCategoryPicker({
             })}
 
             {getVisibleCategories().length === 0 && (
-              <div className="text-neutral-400 py-3 text-center text-xs">Brak kategorii.</div>
+              <div className="text-muted-foreground py-3 text-center text-xs">Brak kategorii.</div>
             )}
           </div>
         </div>

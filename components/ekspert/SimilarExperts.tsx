@@ -29,10 +29,10 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
   if (!filtered.length) return null
 
   return (
-    <section className="py-12 lg:py-20 bg-darker border-t border-zinc-900/60">
+    <section className="py-12 lg:py-20 bg-darker border-t border-border/60">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center gap-6 mb-10 px-1">
-          <h2 className="font-playfair text-2xl md:text-3xl font-normal text-white tracking-wide whitespace-nowrap">
+          <h2 className="font-playfair text-2xl md:text-3xl font-normal text-foreground tracking-wide whitespace-nowrap">
             Podobni eksperci
             {expertiseCategoryName && (
               <>
@@ -43,7 +43,7 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
               </>
             )}
           </h2>
-          <div className="hidden md:block flex-grow border-t border-zinc-800/80" />
+          <div className="hidden md:block flex-grow border-t border-border/80" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -60,10 +60,10 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
               <Link
                 key={expert.id}
                 href={`/ekspert/${expert.slug}`}
-                className="group flex gap-4 items-center bg-[#1d1d1f] hover:bg-[#242422] border border-zinc-800/60 hover:border-zinc-700/80 rounded-2xl p-4 transition-all duration-300 shadow-sm hover:shadow-lg"
+                className="group flex gap-4 items-center bg-card hover:bg-card border border-border/60 hover:border-border/80 rounded-2xl p-4 transition-all duration-300 shadow-sm hover:shadow-lg"
               >
                 {/* Avatar */}
-                <div className="relative flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden bg-zinc-900 border border-zinc-700/50">
+                <div className="relative flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden bg-card border border-border/50">
                   <Image
                     src={hasImage ? expert.logo! : EXPERT_AVATAR_FALLBACK}
                     alt={expert.nazwa || expert.nazwa}
@@ -76,14 +76,14 @@ export function SimilarExperts({ experts, currentExpertId, expertiseCategoryName
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-[11px] font-bold text-zinc-500 tracking-[0.12em] uppercase truncate mb-0.5">
+                      <p className="text-[11px] font-bold text-muted-foreground tracking-[0.12em] uppercase truncate mb-0.5">
                         {profession}
                       </p>
-                      <h3 className="text-sm font-semibold text-white group-hover:text-[#0da192] transition-colors truncate leading-tight">
+                      <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate leading-tight">
                         {expert.nazwa || expert.nazwa}
                       </h3>
                     </div>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-[#0da192] transition-colors flex-shrink-0 mt-0.5" />
+                    <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
                   </div>
 
                   <div className="flex items-center gap-2 mt-2 flex-wrap">

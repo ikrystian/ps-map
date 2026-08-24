@@ -10,7 +10,7 @@ export function DynamicPageContent({ modulesHtml }: DynamicPageContentProps) {
   if (modulesHtml.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <p className="text-neutral-400">Ta strona nie ma jeszcze żadnej zawartości.</p>
+        <p className="text-muted-foreground">Ta strona nie ma jeszcze żadnej zawartości.</p>
       </div>
     )
   }

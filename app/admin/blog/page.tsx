@@ -755,7 +755,7 @@ export default function AdminBlogPage() {
               )}
 
               {/* SEO preview */}
-              <div className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-900/50 space-y-2">
+              <div className="p-4 border rounded-lg bg-slate-50 dark:bg-card/50 space-y-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                   <Globe className="h-3 w-3" /> SEO (Wyszukiwarka Google)
                 </h4>

@@ -140,7 +140,7 @@ export default function AdminSubscriptionPlansPage() {
                     <CardTitle className="text-xl md:text-2xl flex items-center gap-2">
                       {plan.kolor && (
                         <span
-                          className="inline-block h-3.5 w-3.5 rounded-full border border-white/20 shrink-0"
+                          className="inline-block h-3.5 w-3.5 rounded-full border border-border shrink-0"
                           style={{ backgroundColor: plan.kolor }}
                         />
                       )}

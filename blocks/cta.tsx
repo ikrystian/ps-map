@@ -1,7 +1,7 @@
 /**
  * CTA Block - Sekcja Call-to-Action z wezwaniem do działania
  */
-export const ctaBlockHtml = `<section class="py-16 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
+export const ctaBlockHtml = `<section class="on-dark py-16 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
   <div class="max-w-4xl mx-auto text-center text-white">
     <h2 class="text-4xl font-bold mb-4">
       Potrzebujesz pomocy prawnej?

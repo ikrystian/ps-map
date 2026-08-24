@@ -303,7 +303,7 @@ export default function CheckoutSuccessPage() {
                   transition={{ type: "spring", delay: 0.15, stiffness: 200, damping: 10 }}
                   className="relative mb-6"
                 >
-                  <div className="p-5 bg-gradient-to-tr from-amber-500 to-yellow-400 rounded-full shadow-lg shadow-amber-500/20 text-white relative z-10 border border-white/20">
+                  <div className="p-5 bg-gradient-to-tr from-amber-500 to-yellow-400 rounded-full shadow-lg shadow-amber-500/20 text-white relative z-10 border border-border">
                     {isPackage ? (
                       <Crown className="h-14 w-14 animate-pulse" />
                     ) : (

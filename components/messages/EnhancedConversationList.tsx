@@ -157,7 +157,7 @@ export function EnhancedConversationList({
               src={conversation.otherUser.image}
               alt={conversation.otherUser.name}
             />
-            <AvatarFallback className="bg-zinc-800 text-white text-xs font-semibold">
+            <AvatarFallback className="bg-muted text-foreground text-xs font-semibold">
               {conversation.otherUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -166,11 +166,11 @@ export function EnhancedConversationList({
         {/* Informacje o konwersacji */}
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center justify-between mb-1">
-            <p className="font-semibold text-sm truncate text-white">
+            <p className="font-semibold text-sm truncate text-foreground">
               {conversation.otherUser.name}
             </p>
             {conversation.lastMessage && (
-              <span className="text-sm text-zinc-500 font-light flex-shrink-0 ml-2">
+              <span className="text-sm text-muted-foreground font-light flex-shrink-0 ml-2">
                 {formatTime(conversation.lastMessage.createdAt)}
               </span>
             )}
@@ -181,14 +181,14 @@ export function EnhancedConversationList({
               className={cn(
                 "text-xs truncate max-w-[80%]",
                 conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe
-                  ? "font-semibold text-white font-medium"
-                  : "text-zinc-400 font-light"
+                  ? "font-semibold text-foreground font-medium"
+                  : "text-muted-foreground font-light"
               )}
             >
               {conversation.lastMessage ? (
                 <>
                   {conversation.lastMessage.isFromMe && (
-                    <span className="text-zinc-500 font-normal">Ty: </span>
+                    <span className="text-muted-foreground font-normal">Ty: </span>
                   )}
                   {truncateMessage(conversation.lastMessage.content)}
                 </>
@@ -199,7 +199,7 @@ export function EnhancedConversationList({
             {conversation.unreadCount > 0 && !conversation.lastMessage?.isFromMe && (
               <Badge
                 className={cn(
-                  "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-sm font-bold text-white shadow-md border-t border-white/10 animate-pulse shrink-0",
+                  "ml-auto h-5 min-w-5 rounded-full flex items-center justify-center px-1.5 text-sm font-bold text-foreground shadow-md border-t border-border animate-pulse shrink-0",
                   isClient ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground"
                 )}
               >
@@ -211,13 +211,13 @@ export function EnhancedConversationList({
       </button>
 
       {/* Action buttons */}
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 flex gap-1 bg-zinc-950/80 backdrop-blur-sm p-1 rounded-lg border border-border/40 shadow-lg z-10">
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 flex gap-1 bg-background/80 backdrop-blur-sm p-1 rounded-lg border border-border/40 shadow-lg z-10">
         {showActions === "archive" && (
           <>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
               onClick={(e) => {
                 e.stopPropagation()
                 handleArchive(conversation.id)
@@ -229,7 +229,7 @@ export function EnhancedConversationList({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-md"
+              className="h-7 w-7 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 rounded-md"
               onClick={(e) => {
                 e.stopPropagation()
                 handleDelete(conversation.id)
@@ -244,7 +244,7 @@ export function EnhancedConversationList({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("h-7 w-7 text-zinc-400 rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
+            className={cn("h-7 w-7 text-muted-foreground rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, true)
@@ -258,7 +258,7 @@ export function EnhancedConversationList({
           <Button
             variant="ghost"
             size="icon"
-            className={cn("h-7 w-7 text-zinc-400 rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
+            className={cn("h-7 w-7 text-muted-foreground rounded-md", isClient ? "hover:text-secondary hover:bg-secondary/10" : "hover:text-primary hover:bg-primary/10")}
             onClick={(e) => {
               e.stopPropagation()
               handleRestore(conversation.id, false)
@@ -281,11 +281,11 @@ export function EnhancedConversationList({
 
     if (filtered.length === 0) {
       return (
-        <div className="p-8 text-center text-zinc-500">
+        <div className="p-8 text-center text-muted-foreground">
           <MessageCircle className="h-10 w-10 mx-auto mb-3 opacity-30 text-zinc-600" />
-          <p className="text-xs font-semibold text-zinc-400">{emptyMessage}</p>
+          <p className="text-xs font-semibold text-muted-foreground">{emptyMessage}</p>
           {searchQuery && (
-            <p className="text-[11px] mt-1 font-light text-zinc-500">Spróbuj wpisać inną frazę.</p>
+            <p className="text-[11px] mt-1 font-light text-muted-foreground">Spróbuj wpisać inną frazę.</p>
           )}
         </div>
       )
@@ -303,17 +303,17 @@ export function EnhancedConversationList({
   }
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950/10">
+    <div className="flex flex-col h-full bg-background/10">
       {/* Nagłówek z wyszukiwaniem */}
-      <div className="p-4 border-b border-border/20 space-y-3 bg-zinc-950/20">
+      <div className="p-4 border-b border-border/20 space-y-3 bg-background/20">
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-500" />
+          <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Szukaj konwersacji..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={cn(
-              "pl-10 h-10 bg-background/40 border-border/30 rounded-xl text-white placeholder-zinc-500 text-xs transition-all",
+              "pl-10 h-10 bg-background/40 border-border/30 rounded-xl text-foreground placeholder-muted-foreground text-xs transition-all",
               isClient ? "focus-visible:ring-secondary/40 focus-visible:border-secondary" : "focus-visible:ring-primary/40 focus-visible:border-primary"
             )}
           />
@@ -326,17 +326,17 @@ export function EnhancedConversationList({
         onValueChange={(value) => setActiveTab(value as typeof activeTab)}
         className="flex-1 flex flex-col"
       >
-        <TabsList className="grid w-full grid-cols-3 rounded-none border-b border-border/20 bg-zinc-950/30 p-0 h-11">
+        <TabsList className="grid w-full grid-cols-3 rounded-none border-b border-border/20 bg-background/30 p-0 h-11">
           <TabsTrigger
             value="active"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-muted-foreground hover:text-foreground transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-foreground h-full",
               activeTab === "active" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Czaty
             {conversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-foreground px-1 flex items-center justify-center rounded-full shrink-0 border border-border", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {conversations.length}
               </Badge>
             )}
@@ -344,13 +344,13 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="archived"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-muted-foreground hover:text-foreground transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-foreground h-full",
               activeTab === "archived" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Archiwum
             {archivedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-foreground px-1 flex items-center justify-center rounded-full shrink-0 border border-border", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {archivedConversations.length}
               </Badge>
             )}
@@ -358,13 +358,13 @@ export function EnhancedConversationList({
           <TabsTrigger
             value="deleted"
             className={cn(
-              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-zinc-400 hover:text-white transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-white h-full",
+              "relative rounded-none border-b-2 border-transparent py-3 text-xs tracking-wider uppercase font-semibold text-muted-foreground hover:text-foreground transition-all data-[state=active]:bg-white/[0.02] data-[state=active]:text-foreground h-full",
               activeTab === "deleted" && (isClient ? "border-b-secondary !text-secondary" : "border-b-primary !text-primary")
             )}
           >
             Kosz
             {deletedConversations.length > 0 && (
-              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-white px-1 flex items-center justify-center rounded-full shrink-0 border border-white/5", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
+              <Badge className={cn("ml-1.5 h-4.5 min-w-4.5 text-sm font-bold text-foreground px-1 flex items-center justify-center rounded-full shrink-0 border border-border", isClient ? "bg-secondary/20 text-secondary border-secondary/30" : "bg-primary/20 text-primary border-primary/30")}>
                 {deletedConversations.length}
               </Badge>
             )}

@@ -417,7 +417,7 @@ export default function CategoryClientPage() {
 
   if (!category && !isLoading) {
     return (
-      <div className="min-h-screen  bg-[#0f0f0e]">
+      <div className="min-h-screen  bg-background">
         <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="pt-6">
@@ -436,10 +436,10 @@ export default function CategoryClientPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f0e]">
+    <div className="min-h-screen bg-background">
       {/* Breadcrumbs Banner */}
       <div
-        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-neutral-900/60"
+        className="relative w-full h-28 md:h-[140px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 on-dark"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 to-black/40" />
@@ -555,9 +555,9 @@ export default function CategoryClientPage() {
                           </div>
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[240px] p-3 bg-card border-neutral-800 text-white" align="start">
+                      <PopoverContent className="w-[240px] p-3 bg-card border-border text-foreground" align="start">
                         <div className="space-y-2">
-                          <p className="text-xs text-neutral-400">Wpisz nazwę powiatu</p>
+                          <p className="text-xs text-muted-foreground">Wpisz nazwę powiatu</p>
                           <input
                             autoFocus
                             type="text"
@@ -572,7 +572,7 @@ export default function CategoryClientPage() {
                               }
                             }}
                             placeholder="np. powiat warszawski"
-                            className="w-full bg-neutral-900 border border-neutral-700 rounded-md px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                            className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-teal-500"
                           />
                           <button
                             type="button"
@@ -625,25 +625,25 @@ export default function CategoryClientPage() {
                               </div>
                             </button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[240px] p-0 bg-card border-neutral-800 text-white" align="start">
-                            <Command shouldFilter={false} className="bg-[#20201d] text-white">
+                          <PopoverContent className="w-[240px] p-0 bg-card border-border text-foreground" align="start">
+                            <Command shouldFilter={false} className="bg-background text-foreground">
                               <CommandInput
                                 placeholder="Szukaj miasta..."
                                 value={locationSearch}
                                 onValueChange={setLocationSearch}
-                                className="text-white bg-transparent border-neutral-800"
+                                className="text-foreground bg-transparent border-border"
                               />
                               <CommandList className="max-h-60 overflow-y-auto">
                                 {isLoadingCities && (
-                                  <div className="text-neutral-400 py-3 text-center text-xs">Wyszukiwanie...</div>
+                                  <div className="text-muted-foreground py-3 text-center text-xs">Wyszukiwanie...</div>
                                 )}
                                 {!isLoadingCities && locationSearch.trim().length < 2 && (
-                                  <div className="text-neutral-400 py-3 text-center text-xs px-3">
+                                  <div className="text-muted-foreground py-3 text-center text-xs px-3">
                                     Wpisz co najmniej 2 znaki...
                                   </div>
                                 )}
                                 {!isLoadingCities && locationSearch.trim().length >= 2 && cities.length === 0 && (
-                                  <div className="text-neutral-400 py-3 text-center text-xs">Nie znaleziono.</div>
+                                  <div className="text-muted-foreground py-3 text-center text-xs">Nie znaleziono.</div>
                                 )}
                                 <CommandGroup>
                                   {cities.map((city) => {
@@ -665,7 +665,7 @@ export default function CategoryClientPage() {
                                           }
                                           setLocationOpen(false)
                                         }}
-                                        className="text-white hover:bg-neutral-850 cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-neutral-800"
+                                        className="text-foreground hover:bg-card cursor-pointer flex items-center justify-between gap-2 py-2 px-3 text-sm rounded-md data-[selected=true]:bg-muted"
                                       >
                                         <div className="flex items-center gap-2">
                                           <Check
@@ -755,7 +755,7 @@ export default function CategoryClientPage() {
           <div className="lg:col-span-3">
             <AdBanner location="category_top" className="mb-6" />
             {/* Sort and Results Count */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-900/60" id="sort-and-count">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border/60" id="sort-and-count">
               <p className="text-sm text-muted-foreground">
                 Znaleziono <span className="font-semibold text-foreground text-primary">{total}</span>{" "}
                 {total === 1 ? "eksperta" : "eksperci"}
@@ -774,7 +774,7 @@ export default function CategoryClientPage() {
                 </Button>
 
                 {/* View Toggle */}
-                <div className="flex items-center gap-1 border rounded-md p-1 bg-neutral-950/40 border-neutral-800 h-9">
+                <div className="flex items-center gap-1 border rounded-md p-1 bg-background/40 border-border h-9">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
@@ -796,7 +796,7 @@ export default function CategoryClientPage() {
                 {/* Sort */}
                 <div className="flex items-center gap-2 flex-1 sm:flex-initial min-w-[140px]">
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger id="sort" className="w-full sm:w-[160px] h-9 bg-neutral-950/40 border-neutral-800">
+                    <SelectTrigger id="sort" className="w-full sm:w-[160px] h-9 bg-background/40 border-border">
                       <SelectValue placeholder="Sortuj według" />
                     </SelectTrigger>
                     <SelectContent>
@@ -995,19 +995,19 @@ export default function CategoryClientPage() {
 
         {/* Sekcja opisu kategorii (nad stopką) */}
         {category && (category.opis || category.opisDodatkowy) && (
-          <div className="mt-20 pt-12 border-t border-neutral-900/60 container text-left" id="category-desc-footer">
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#121211] via-[#0c0c0b]/90 to-[#0e0e0d] border border-neutral-800/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
+          <div className="mt-20 pt-12 border-t border-border/60 container text-left" id="category-desc-footer">
+            <div className="relative overflow-hidden bg-gradient-to-br from-background via-background/90 to-background border border-border/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
               {/* Decorative Background Glows */}
               <div className="absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
               <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-teal-500/5 blur-[100px] pointer-events-none" />
 
               {/* Section Header */}
-              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-neutral-800/40 relative z-10">
+              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border/40 relative z-10">
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-teal-500/10 flex items-center justify-center border border-primary/20 shadow-inner">
                   <Scale className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="font-playfair text-xl md:text-2xl font-bold text-white tracking-tight">
+                  <h2 className="font-playfair text-xl md:text-2xl font-bold text-foreground tracking-tight">
                     O kategorii: {category.nazwa}
                   </h2>
                   <p className="text-xs text-muted-foreground mt-0.5">
@@ -1027,13 +1027,13 @@ export default function CategoryClientPage() {
                   <div className="space-y-6 prose prose-sm md:prose-base dark:prose-invert max-w-none whitespace-pre-line text-left">
                     {category.opis && (
                       <div
-                        className="text-white text-base md:text-lg leading-relaxed font-medium prose-p:text-white prose-headings:text-white"
+                        className="text-foreground text-base md:text-lg leading-relaxed font-medium prose-p:text-foreground prose-headings:text-foreground"
                         dangerouslySetInnerHTML={{ __html: category.opis }}
                       />
                     )}
                     {category.opisDodatkowy && (
                       <div
-                        className="text-neutral-300 text-sm md:text-base leading-relaxed prose-p:text-neutral-300 prose-headings:text-neutral-200"
+                        className="text-foreground/80 text-sm md:text-base leading-relaxed prose-p:text-foreground/80 prose-headings:text-foreground"
                         dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
                       />
                     )}
@@ -1041,18 +1041,18 @@ export default function CategoryClientPage() {
 
                   {/* Gradient Fade Overlay for collapsed state */}
                   {hasLongDescription && !isDescExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#0c0c0b] via-[#0c0c0b]/80 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
                   )}
                 </div>
 
                 {/* Show More / Show Less Button */}
                 {hasLongDescription && (
-                  <div className="mt-8 flex justify-center border-t border-neutral-800/30 pt-6">
+                  <div className="mt-8 flex justify-center border-t border-border/30 pt-6">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setIsDescExpanded(!isDescExpanded)}
-                      className="border-neutral-800 bg-[#0f0f0e]/60 hover:bg-neutral-800 text-neutral-350 hover:text-white rounded-xl px-6 py-5 transition-all text-sm font-medium gap-2 shadow-md hover:shadow-primary/5"
+                      className="border-border bg-background/60 hover:bg-muted text-neutral-350 hover:text-foreground rounded-xl px-6 py-5 transition-all text-sm font-medium gap-2 shadow-md hover:shadow-primary/5"
                     >
                       {isDescExpanded ? (
                         <>

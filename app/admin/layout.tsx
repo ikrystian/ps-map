@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { SiteLogo } from "@/components/site-logo"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -9,6 +10,7 @@ import AdminNotificationBell from "@/components/AdminNotificationBell"
 import AdminPageTitle from "@/components/admin/AdminPageTitle"
 import { AdminTitleProvider } from "@/components/admin/AdminTitleContext"
 import ImpersonateUserDialog from "@/components/admin/ImpersonateUserDialog"
+import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import { cn } from "@/lib/utils"
 import {
@@ -246,7 +248,7 @@ function CollapsibleNavGroup({
             tooltip={group.title}
             isActive={isGroupActive}
             className={cn(
-              "group/btn font-semibold text-primary transition-colors duration-200 hover:text-white",
+              "group/btn font-semibold text-primary transition-colors duration-200 hover:text-foreground",
               isGroupActive
                 ? "data-[active=true]:bg-tranparent data-[active=true]:text-primary"
                 : ""
@@ -254,13 +256,13 @@ function CollapsibleNavGroup({
           >
             {GroupIcon && (
               <GroupIcon className={cn(
-                "h-5 w-5 shrink-0 transition-colors duration-200 text-primary group-hover/btn:text-white",
-                isGroupActive && "text-white"
+                "h-5 w-5 shrink-0 transition-colors duration-200 text-primary group-hover/btn:text-foreground",
+                isGroupActive && "text-foreground"
               )} />
             )}
             <span className={cn(
-              "transition-colors duration-200 text-primary group-hover/btn:text-white",
-              isGroupActive && "text-white"
+              "transition-colors duration-200 text-primary group-hover/btn:text-foreground",
+              isGroupActive && "text-foreground"
             )}>
               {group.title}
             </span>
@@ -270,8 +272,8 @@ function CollapsibleNavGroup({
               className="ml-auto flex items-center"
             >
               <ChevronRight className={cn(
-                "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/btn:text-white",
-                isGroupActive && "text-white"
+                "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/btn:text-foreground",
+                isGroupActive && "text-foreground"
               )} />
             </motion.div>
           </SidebarMenuButton>
@@ -297,13 +299,13 @@ function CollapsibleNavGroup({
                             onClick={() => setImpersonateOpen(true)}
                             isActive={isActive}
                             className={cn(
-                              "group/subbtn transition-colors duration-200 cursor-pointer text-muted-foreground hover:text-white",
+                              "group/subbtn transition-colors duration-200 cursor-pointer text-muted-foreground hover:text-foreground",
                               isActive && "data-[active=true]:bg-primary data-[active=true]:text-white font-semibold"
                             )}
                           >
                             <item.icon className={cn(
-                              "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/subbtn:text-white",
-                              isActive && "text-white"
+                              "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/subbtn:text-foreground",
+                              isActive && "text-foreground"
                             )} />
                             <span>{item.name}</span>
                           </SidebarMenuSubButton>
@@ -317,14 +319,14 @@ function CollapsibleNavGroup({
                           asChild
                           isActive={isActive}
                           className={cn(
-                            "group/subbtn transition-colors duration-200 text-muted-foreground hover:text-white",
+                            "group/subbtn transition-colors duration-200 text-muted-foreground hover:text-foreground",
                             isActive && "data-[active=true]:bg-primary data-[active=true]:text-white font-semibold"
                           )}
                         >
                           <Link href={item.href}>
                             <item.icon className={cn(
-                              "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/subbtn:text-white",
-                              isActive && "text-white"
+                              "h-4 w-4 shrink-0 transition-colors duration-200 text-primary group-hover/subbtn:text-foreground",
+                              isActive && "text-foreground"
                             )} />
                             <span>{item.name}</span>
                             {isActive && (
@@ -390,7 +392,7 @@ export default function AdminLayout({
           <SidebarHeader className="border-b border-sidebar-border/50 px-3 py-3">
             <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
               <Link href="/" className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
-                <Image src="/logo.svg" alt="Logo" width={160} height={40} className="h-7 w-auto" />
+                <SiteLogo width={160} height={40} className="h-7 w-auto" />
                 <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">DEV</span>
               </Link>
               <SidebarTrigger />
@@ -424,6 +426,7 @@ export default function AdminLayout({
             </div>
 
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <AdminNotificationBell />
               <UserMenu userRole="ADMIN" />
             </div>

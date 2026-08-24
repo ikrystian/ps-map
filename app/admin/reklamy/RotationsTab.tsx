@@ -67,7 +67,7 @@ export function RotationsTab({ ads }: RotationsTabProps) {
                             {ad.htmlContent ? (
                               <div className="w-14 h-8 rounded bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[9px] font-mono text-blue-500">HTML</div>
                             ) : ad.imageUrl ? (
-                              <div className="w-14 h-8 border rounded overflow-hidden bg-neutral-950">
+                              <div className="w-14 h-8 border rounded overflow-hidden bg-background">
                                 <img src={ad.imageUrl} alt={ad.name} className="w-full h-full object-contain" />
                               </div>
                             ) : (

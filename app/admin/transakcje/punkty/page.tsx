@@ -54,7 +54,7 @@ const pointTransactionTypeLabels: Record<string, { label: string; variant: "defa
   PROMOTION_PURCHASE: { label: "Promocja", variant: "secondary", customClass: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200" },
   OFFER_HIGHLIGHT: { label: "Wyróżnienie oferty", variant: "outline", customClass: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200" },
   PARTNER_BONUS: { label: "Bonus partnerski", variant: "default", customClass: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200" },
-  ADMIN_ADJUSTMENT: { label: "Korekta admina", variant: "secondary", customClass: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400 border-slate-200" },
+  ADMIN_ADJUSTMENT: { label: "Korekta admina", variant: "secondary", customClass: "bg-slate-100 text-slate-800 dark:bg-card/30 dark:text-muted-foreground border-slate-200" },
   REFUND: { label: "Zwrot punktów", variant: "outline", customClass: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200" },
   SUBSCRIPTION_BONUS: { label: "Bonus za pakiet", variant: "default", customClass: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200" },
   REVIEW_DELETE: { label: "Usunięcie opinii", variant: "destructive", customClass: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200" },

@@ -85,7 +85,7 @@ function highlightHTML(code: string) {
     .replace(/>/g, "&gt;")
 
   // Highlight HTML Comments: <!-- ... -->
-  escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="text-slate-500 font-normal">$1</span>')
+  escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="text-muted-foreground font-normal">$1</span>')
 
   // Highlight fields: \{...\}
   escaped = escaped.replace(/(\{[^{}]*?\})/g, '<span class="text-pink-400 font-bold bg-pink-950/40 px-1 rounded border border-pink-800/30">$1</span>')

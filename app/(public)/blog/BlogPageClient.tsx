@@ -961,33 +961,33 @@ export default function BlogPageClient() {
                         Wyróżniony artykuł
                       </span>
                       {featuredPost.category && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-black/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
                           {getCategoryTheme(featuredPost.category.nazwa).icon}
                           {featuredPost.category.nazwa}
                         </span>
                       )}
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-white/80">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-foreground/80">
                         <Clock className="h-3 w-3" />
                         {getReadingTime(featuredPost.tresc)} min czytania
                       </span>
                     </div>
 
-                    <h2 className="font-playfair text-2xl leading-[1.12] tracking-tight text-white transition-colors group-hover:text-primary-foreground sm:text-4xl lg:text-5xl font-bold">
+                    <h2 className="font-playfair text-2xl leading-[1.12] tracking-tight text-foreground transition-colors group-hover:text-primary-foreground sm:text-4xl lg:text-5xl font-bold">
                       {featuredPost.tytul}
                     </h2>
 
-                    <p className="mt-3.5 line-clamp-2 max-w-3xl text-sm font-normal leading-relaxed text-white/80 sm:text-base">
+                    <p className="mt-3.5 line-clamp-2 max-w-3xl text-sm font-normal leading-relaxed text-foreground/80 sm:text-base">
                       {getExcerpt(featuredPost.tresc, 240)}
                     </p>
 
-                    <div className="mt-8 flex flex-wrap items-center justify-between gap-5 border-t border-white/15 pt-5">
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-5 border-t border-border pt-5">
                       <div className="flex items-center gap-3">
                         <AuthorAvatar post={featuredPost} size="md" />
                         <div>
-                          <span className="block text-sm font-semibold leading-tight text-white">
+                          <span className="block text-sm font-semibold leading-tight text-foreground">
                             {featuredPost.lawFirm?.nazwa ?? "Administracja"}
                           </span>
-                          <span className="mt-1 flex items-center gap-3 text-xs text-white/70">
+                          <span className="mt-1 flex items-center gap-3 text-xs text-foreground/70">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {formatDate(featuredPost.dataPublikacji)}
@@ -1038,7 +1038,7 @@ export default function BlogPageClient() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-90" />
 
                           {post.category && (
-                            <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+                            <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-black/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
                               {theme.icon}
                               <span className="max-w-[9rem] truncate">
                                 {post.category.nazwa}

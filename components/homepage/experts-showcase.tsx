@@ -108,7 +108,7 @@ export function ExpertsShowcase() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-darker border-t border-zinc-900/60"
+      className="relative bg-darker border-t border-border/60"
       aria-label="Poznaj naszych ekspertów"
     >
       <div className="md:sticky md:top-0 md:h-screen md:overflow-hidden flex flex-col justify-center py-14 md:py-0">
@@ -117,8 +117,8 @@ export function ExpertsShowcase() {
           <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
             Poznaj naszych ekspertów
           </h2>
-          <div className="hidden md:block relative flex-grow max-w-[280px] h-px bg-zinc-800 mb-2.5">
-            <div ref={barRef} className="absolute -inset-y-px left-0 w-0 bg-[#008073]" />
+          <div className="hidden md:block relative flex-grow max-w-[280px] h-px bg-muted mb-2.5">
+            <div ref={barRef} className="absolute -inset-y-px left-0 w-0 bg-primary-dark" />
           </div>
         </div>
 
@@ -137,31 +137,31 @@ export function ExpertsShowcase() {
                 key={firm.id}
                 href={`/ekspert/${firm.slug}`}
                 className={cn(
-                  "group shrink-0 snap-center flex flex-col bg-[#1d1d1f] rounded-2xl overflow-hidden border border-zinc-800/60 shadow-xl hover:shadow-2xl hover:border-zinc-700 transition-all duration-300",
+                  "group shrink-0 snap-center flex flex-col bg-card rounded-2xl overflow-hidden border border-border/60 shadow-xl hover:shadow-2xl hover:border-border transition-all duration-300",
                   // Naprzemienne szerokości kart dla rytmu, jak w galerii prac
                   index % 2 === 0 ? "w-[260px] md:w-[320px]" : "w-[230px] md:w-[270px]"
                 )}
               >
-                <div className="relative w-full aspect-[4/5] overflow-hidden bg-zinc-950">
+                <div className="relative w-full aspect-[4/5] overflow-hidden bg-background">
                   <img
                     src={getFirmImage(firm) || EXPERT_AVATAR_FALLBACK}
                     alt={firm.nazwa}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f] via-transparent to-transparent" />
-                  <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-[#008073] flex items-center justify-center text-white opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                  <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-primary-dark flex items-center justify-center text-white opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
                     <ArrowUpRight className="w-4 h-4" />
                   </div>
                 </div>
 
                 <div className="px-4 py-4 text-center">
                   {profession && (
-                    <span className="text-[10px] font-bold text-zinc-400 tracking-[0.18em] uppercase block mb-1">
+                    <span className="text-[10px] font-bold text-muted-foreground tracking-[0.18em] uppercase block mb-1">
                       {profession}
                     </span>
                   )}
-                  <h3 className="font-medium text-[16px] leading-tight text-white line-clamp-2 group-hover:text-[#008073] transition-colors duration-200">
+                  <h3 className="font-medium text-[16px] leading-tight text-foreground line-clamp-2 group-hover:text-primary-dark transition-colors duration-200">
                     {firm.nazwa}
                   </h3>
                   {firm.miasto && (

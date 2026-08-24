@@ -56,7 +56,7 @@ const CategoryCard = memo(
         onMouseLeave={() => setHovered(null)}
         data-area={dataArea}
         className={cn(
-          "relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
+          "on-dark relative overflow-hidden rounded-lg group transition-all duration-300 ease-out",
           hovered !== null && hovered !== index && "md:blur-sm md:scale-[0.98]",
         )}
       >
@@ -78,10 +78,10 @@ const CategoryCard = memo(
             ikona={category.ikona}
             ikonaUrl={category.ikonaUrl}
             animate={hovered === index}
-            className="h-12 w-12 text-white hidden md:block"
+            className="h-12 w-12 text-foreground hidden md:block"
             imageClassName="brightness-0 invert"
           />
-          <h3 className="text-white font-playfair md:text-xl font-light text-center">{category.nazwa}</h3>
+          <h3 className="text-foreground font-playfair md:text-xl font-light text-center">{category.nazwa}</h3>
         </div>
       </MotionLink>
     );
@@ -112,7 +112,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
   ];
 
   return (
-    <section className="py-8 lg:py-16 lg:py-20 xl:py-24 bg-[#121212]">
+    <section className="py-8 lg:py-16 lg:py-20 xl:py-24 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -124,36 +124,36 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
           <div className="mb-16 flex flex-col-reverse lg:flex-row lg:items-stretch lg:justify-between gap-8 lg:gap-12">
             {/* Left side: Paragraph */}
             <div className="flex-1 flex items-center lg:pr-8">
-              <p className="text-zinc-400 text-sm sm:text-base md:text-lg leading-relaxed  max-w-xl">
+              <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed  max-w-xl">
                 Prosta Sprawa to nie tylko portal – to Twój partner w
                 rozwiązywaniu problemów prawnych. Dołącz do grona zadowolonych
                 klientów, którzy z nami wygrywają. Spróbuj, a przekonasz się,
                 jak łatwo i skutecznie możemy rozwiązać{" "}
-                <strong className="text-zinc-100 font-semibold">
+                <strong className="text-foreground font-semibold">
                   Twoją sprawę!
                 </strong>
               </p>
             </div>
 
             {/* Vertical separator */}
-            <div className="hidden lg:block w-[1px] bg-zinc-800/80 self-stretch my-2" />
+            <div className="hidden lg:block w-[1px] bg-muted/80 self-stretch my-2" />
 
             {/* Right side: Label & Title */}
             <div className="flex-1 flex flex-col justify-center gap-2 lg:pl-8">
               <span className="text-xs font-semibold tracking-[0.25em] text-[#eab308] uppercase">
                 O NAS
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-playfair font-light text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-playfair font-light text-foreground leading-tight">
                 Znajdź prawnika, rozwiąż problem: Prosta Sprawa
               </h2>
             </div>
           </div>
           <div className="mb-12">
             <div className="flex items-center gap-6 mb-12">
-              <h2 className="text-2xl md:text-3xl  font-light text-zinc-100 sm:whitespace-nowrap font-playfair" id="categories-private">
+              <h2 className="text-2xl md:text-3xl  font-light text-foreground sm:whitespace-nowrap font-playfair" id="categories-private">
                 Popularne sprawy prywatne
               </h2>
-              <div className="flex-grow border-t border-zinc-800/80" />
+              <div className="flex-grow border-t border-border/80" />
             </div>
           </div>
           {/* Unified responsive grid — layout handled via CSS (.categories-grid in globals.css) */}

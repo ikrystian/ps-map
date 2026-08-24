@@ -391,7 +391,7 @@ export default function CheckoutPage() {
             variant="outline"
             size="icon"
             onClick={() => router.push(orderData.type === "PACKAGE" ? "/panel-eksperta/ustawienia" : "/panel-eksperta/punkty")}
-            className="bg-zinc-800/60 border-border/60 text-white hover:bg-zinc-700/50 hover:text-white rounded-xl transition-all"
+            className="bg-muted/60 border-border/60 text-foreground hover:bg-muted/50 hover:text-foreground rounded-xl transition-all"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -413,8 +413,8 @@ export default function CheckoutPage() {
             <CardContent className="flex items-start gap-3 pt-6 text-rose-400">
               <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
               <div className="space-y-1">
-                <p className="font-semibold text-white">Wystąpił błąd</p>
-                <p className="text-xs text-zinc-400 font-light">{error}</p>
+                <p className="font-semibold text-foreground">Wystąpił błąd</p>
+                <p className="text-xs text-muted-foreground font-light">{error}</p>
               </div>
             </CardContent>
           </Card>
@@ -432,11 +432,11 @@ export default function CheckoutPage() {
           {/* Metoda płatności */}
           <Card variant="glass" className="rounded-2xl">
             <CardHeader className="border-b border-border/20 py-5 px-6">
-              <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-primary" />
                 Metoda płatności
               </CardTitle>
-              <CardDescription className="text-zinc-400 text-xs font-light">
+              <CardDescription className="text-muted-foreground text-xs font-light">
                 Wybierz sposób płatności {orderData.type === "PACKAGE" ? "za pakiet" : "za punkty"}
               </CardDescription>
             </CardHeader>
@@ -448,17 +448,17 @@ export default function CheckoutPage() {
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "TEST"
                           ? "border-primary bg-primary/10"
-                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                          : "border-border/30 bg-background/20 hover:bg-card/30"
                       }`}>
-                        <RadioGroupItem value="TEST" id="test" className="border-zinc-700 text-primary focus:ring-primary" />
+                        <RadioGroupItem value="TEST" id="test" className="border-border text-primary focus:ring-primary" />
                         <Label htmlFor="test" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white flex items-center gap-2 text-sm">
+                          <div className="font-semibold text-foreground flex items-center gap-2 text-sm">
                             Płatność Testowa
                             <span className="text-[10px] bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded-full font-mono font-medium uppercase tracking-wider">
                               Auto-akceptacja
                             </span>
                           </div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
+                          <div className="text-xs text-muted-foreground font-light mt-0.5">
                             Natychmiastowe opłacenie i aktywacja zamówienia (symulacja płatności)
                           </div>
                         </Label>
@@ -469,12 +469,12 @@ export default function CheckoutPage() {
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PRZELEWY24"
                           ? "border-primary bg-primary/10"
-                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                          : "border-border/30 bg-background/20 hover:bg-card/30"
                       }`}>
-                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-zinc-700 text-primary focus:ring-primary" />
+                        <RadioGroupItem value="PRZELEWY24" id="przelewy24" className="border-border text-primary focus:ring-primary" />
                         <Label htmlFor="przelewy24" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white text-sm">Przelewy24</div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
+                          <div className="font-semibold text-foreground text-sm">Przelewy24</div>
+                          <div className="text-xs text-muted-foreground font-light mt-0.5">
                             Szybka płatność online (przelew, BLIK, karty)
                           </div>
                         </Label>
@@ -485,12 +485,12 @@ export default function CheckoutPage() {
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "TPAY"
                           ? "border-primary bg-primary/10"
-                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                          : "border-border/30 bg-background/20 hover:bg-card/30"
                       }`}>
-                        <RadioGroupItem value="TPAY" id="tpay" className="border-zinc-700 text-primary focus:ring-primary" />
+                        <RadioGroupItem value="TPAY" id="tpay" className="border-border text-primary focus:ring-primary" />
                         <Label htmlFor="tpay" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white text-sm">Tpay</div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
+                          <div className="font-semibold text-foreground text-sm">Tpay</div>
+                          <div className="text-xs text-muted-foreground font-light mt-0.5">
                             Szybka płatność online przez Tpay
                           </div>
                         </Label>
@@ -501,12 +501,12 @@ export default function CheckoutPage() {
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PAYU"
                           ? "border-primary bg-primary/10"
-                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                          : "border-border/30 bg-background/20 hover:bg-card/30"
                       }`}>
-                        <RadioGroupItem value="PAYU" id="payu" className="border-zinc-700 text-primary focus:ring-primary" />
+                        <RadioGroupItem value="PAYU" id="payu" className="border-border text-primary focus:ring-primary" />
                         <Label htmlFor="payu" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white text-sm">PayU</div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
+                          <div className="font-semibold text-foreground text-sm">PayU</div>
+                          <div className="text-xs text-muted-foreground font-light mt-0.5">
                             Płatność online przez PayU
                           </div>
                         </Label>
@@ -517,12 +517,12 @@ export default function CheckoutPage() {
                       <div className={`flex items-center space-x-3 border rounded-xl p-4 cursor-pointer transition-all duration-300 ${
                         paymentMethod === "PRZELEW"
                           ? "border-primary bg-primary/10"
-                          : "border-border/30 bg-zinc-950/20 hover:bg-zinc-900/30"
+                          : "border-border/30 bg-background/20 hover:bg-card/30"
                       }`}>
-                        <RadioGroupItem value="PRZELEW" id="przelew" className="border-zinc-700 text-primary focus:ring-primary" />
+                        <RadioGroupItem value="PRZELEW" id="przelew" className="border-border text-primary focus:ring-primary" />
                         <Label htmlFor="przelew" className="flex-1 cursor-pointer">
-                          <div className="font-semibold text-white text-sm">Przelew tradycyjny</div>
-                          <div className="text-xs text-zinc-400 font-light mt-0.5">
+                          <div className="font-semibold text-foreground text-sm">Przelew tradycyjny</div>
+                          <div className="text-xs text-muted-foreground font-light mt-0.5">
                             Punkty zostaną przyznane po zaksięgowaniu przelewu
                           </div>
                         </Label>
@@ -534,8 +534,8 @@ export default function CheckoutPage() {
                 <div className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 text-rose-400">
                   <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />
                   <div className="space-y-1">
-                    <p className="font-semibold text-white">Brak dostępnych metod płatności</p>
-                    <p className="text-xs text-zinc-400 font-light">
+                    <p className="font-semibold text-foreground">Brak dostępnych metod płatności</p>
+                    <p className="text-xs text-muted-foreground font-light">
                       Wszystkie metody płatności są obecnie wyłączone w systemie. Skontaktuj się ze wsparciem technicznym w celu sfinalizowania zamówienia.
                     </p>
                   </div>
@@ -551,11 +551,11 @@ export default function CheckoutPage() {
           {lawFirm && (
             <Card variant="glass" className="rounded-2xl">
               <CardHeader className="pb-3 pt-5 px-6">
-                <CardTitle className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Aktualny stan</CardTitle>
+                <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Aktualny stan</CardTitle>
               </CardHeader>
               <CardContent className="px-6 pb-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400 font-light">Twój bilans:</span>
+                  <span className="text-sm text-muted-foreground font-light">Twój bilans:</span>
                   <span className="font-bold text-primary">{lawFirm.punktySaldo} pkt</span>
                 </div>
               </CardContent>
@@ -565,7 +565,7 @@ export default function CheckoutPage() {
           {/* Podsumowanie płatności */}
           <Card variant="glass" className="rounded-2xl">
             <CardHeader className="pb-3 pt-5 px-6 border-b border-border/20">
-              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4 text-primary" />
                 Podsumowanie
               </CardTitle>
@@ -575,12 +575,12 @@ export default function CheckoutPage() {
                 <>
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-400 font-light">Pakiet:</span>
-                      <span className="font-semibold text-white">{orderData.planName}</span>
+                      <span className="text-muted-foreground font-light">Pakiet:</span>
+                      <span className="font-semibold text-foreground">{orderData.planName}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-400 font-light">Okres:</span>
-                      <span className="font-medium text-zinc-300">{orderData.periodLabel}</span>
+                      <span className="text-muted-foreground font-light">Okres:</span>
+                      <span className="font-medium text-foreground/80">{orderData.periodLabel}</span>
                     </div>
                     {orderData.punktyGratis && orderData.punktyGratis > 0 ? (
                       <div className="flex items-center justify-between text-sm text-emerald-400 font-medium">
@@ -593,7 +593,7 @@ export default function CheckoutPage() {
                   <Separator className="bg-border/20" />
 
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-white">Do zapłaty:</span>
+                    <span className="font-semibold text-foreground">Do zapłaty:</span>
                     <span className="text-2xl font-bold text-primary font-playfair">
                       {formatCurrency(orderData.price || 0)}
                     </span>
@@ -603,12 +603,12 @@ export default function CheckoutPage() {
                 <>
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-400 font-light">Pakiet:</span>
-                      <span className="font-medium text-white">{orderData.pakietLabel}</span>
+                      <span className="text-muted-foreground font-light">Pakiet:</span>
+                      <span className="font-medium text-foreground">{orderData.pakietLabel}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-400 font-light">Punkty:</span>
-                      <span className="font-medium text-white">+{orderData.liczbaPunktow} pkt</span>
+                      <span className="text-muted-foreground font-light">Punkty:</span>
+                      <span className="font-medium text-foreground">+{orderData.liczbaPunktow} pkt</span>
                     </div>
                     {orderData.punktyGratis && orderData.punktyGratis > 0 ? (
                       <div className="flex items-center justify-between text-sm text-emerald-400 font-medium">
@@ -618,7 +618,7 @@ export default function CheckoutPage() {
                     ) : null}
                     {lawFirm && orderData.liczbaPunktow && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-zinc-400 font-light">Stan po zakupie:</span>
+                        <span className="text-muted-foreground font-light">Stan po zakupie:</span>
                         <span className="font-semibold text-emerald-400">
                           {(lawFirm.punktySaldo || 0) + orderData.liczbaPunktow} pkt
                         </span>
@@ -629,7 +629,7 @@ export default function CheckoutPage() {
                   <Separator className="bg-border/20" />
 
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-white">Do zapłaty:</span>
+                    <span className="font-semibold text-foreground">Do zapłaty:</span>
                     <span className="text-2xl font-bold text-primary font-playfair">
                       {formatCurrency(orderData.kwota || 0)}
                     </span>
@@ -643,9 +643,9 @@ export default function CheckoutPage() {
                     id="terms"
                     checked={termsAccepted}
                     onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-                    className="border-zinc-700 text-primary focus:ring-primary"
+                    className="border-border text-primary focus:ring-primary"
                   />
-                  <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight text-zinc-400 font-light">
+                  <Label htmlFor="terms" className="text-xs cursor-pointer leading-tight text-muted-foreground font-light">
                     Akceptuję{" "}
                     <a href="/regulamin" target="_blank" className="underline text-primary hover:text-primary-hover transition-colors">
                       regulamin
@@ -660,7 +660,7 @@ export default function CheckoutPage() {
 
                 <Button
                   variant="primary"
-                  className="w-full font-medium h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200 border-t border-white/10"
+                  className="w-full font-medium h-11 rounded-xl shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all duration-200 border-t border-border"
                   size="lg"
                   onClick={handleSubmitOrder}
                   disabled={submitting || !termsAccepted || !anyPaymentMethodEnabled}

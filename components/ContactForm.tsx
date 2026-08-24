@@ -76,14 +76,14 @@ export function ContactForm() {
   }
 
   return (
-    <Card className="border-neutral-800 bg-neutral-900 shadow-md">
+    <Card className="border-border bg-card shadow-md">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-white">Formularz kontaktowy</CardTitle>
+        <CardTitle className="text-xl font-bold text-foreground">Formularz kontaktowy</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="imieNazwisko" className="text-neutral-300">Imię i nazwisko *</Label>
+            <Label htmlFor="imieNazwisko" className="text-foreground/80">Imię i nazwisko *</Label>
             <Input
               id="imieNazwisko"
               name="imieNazwisko"
@@ -91,13 +91,13 @@ export function ContactForm() {
               value={formData.imieNazwisko}
               onChange={handleChange}
               placeholder="Jan Kowalski"
-              className="bg-neutral-950 border-neutral-800 text-white placeholder-neutral-500 focus:border-[#E2B13C] focus:ring-[#E2B13C]"
+              className="bg-background border-border text-foreground placeholder-muted-foreground focus:border-[#E2B13C] focus:ring-[#E2B13C]"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-neutral-300">Email *</Label>
+              <Label htmlFor="email" className="text-foreground/80">Email *</Label>
               <Input
                 id="email"
                 name="email"
@@ -106,12 +106,12 @@ export function ContactForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="jan.kowalski@example.com"
-                className="bg-neutral-950 border-neutral-800 text-white placeholder-neutral-500 focus:border-[#E2B13C] focus:ring-[#E2B13C]"
+                className="bg-background border-border text-foreground placeholder-muted-foreground focus:border-[#E2B13C] focus:ring-[#E2B13C]"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="telefon" className="text-neutral-300">Telefon</Label>
+              <Label htmlFor="telefon" className="text-foreground/80">Telefon</Label>
               <Input
                 id="telefon"
                 name="telefon"
@@ -119,21 +119,21 @@ export function ContactForm() {
                 value={formData.telefon}
                 onChange={handleChange}
                 placeholder="+48 123 456 789"
-                className="bg-neutral-950 border-neutral-800 text-white placeholder-neutral-500 focus:border-[#E2B13C] focus:ring-[#E2B13C]"
+                className="bg-background border-border text-foreground placeholder-muted-foreground focus:border-[#E2B13C] focus:ring-[#E2B13C]"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="temat" className="text-neutral-300">Temat zapytania *</Label>
+            <Label htmlFor="temat" className="text-foreground/80">Temat zapytania *</Label>
             <Select
               value={formData.temat}
               onValueChange={(value) => setFormData((prev) => ({ ...prev, temat: value }))}
             >
-              <SelectTrigger className="bg-neutral-950 border-neutral-800 text-white focus:border-[#E2B13C] focus:ring-[#E2B13C]">
+              <SelectTrigger className="bg-background border-border text-foreground focus:border-[#E2B13C] focus:ring-[#E2B13C]">
                 <SelectValue placeholder="Wybierz temat" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-950 border-neutral-800 text-white">
+              <SelectContent className="bg-background border-border text-foreground">
                 <SelectItem value="INFORMACJA">Zapytanie ogólne</SelectItem>
                 <SelectItem value="WSPARCIE">Wsparcie techniczne</SelectItem>
                 <SelectItem value="WSPOLPRACA">Współpraca</SelectItem>
@@ -144,7 +144,7 @@ export function ContactForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tresc" className="text-neutral-300">Wiadomość *</Label>
+            <Label htmlFor="tresc" className="text-foreground/80">Wiadomość *</Label>
             <Textarea
               id="tresc"
               name="tresc"
@@ -153,7 +153,7 @@ export function ContactForm() {
               onChange={handleChange}
               placeholder="Opisz swoją sprawę..."
               rows={5}
-              className="bg-neutral-950 border-neutral-800 text-white placeholder-neutral-500 focus:border-[#E2B13C] focus:ring-[#E2B13C]"
+              className="bg-background border-border text-foreground placeholder-muted-foreground focus:border-[#E2B13C] focus:ring-[#E2B13C]"
             />
           </div>
 
@@ -164,12 +164,12 @@ export function ContactForm() {
               onCheckedChange={(checked) =>
                 setFormData((prev) => ({ ...prev, politykaPrivacy: !!checked }))
               }
-              className="border-neutral-700 data-[state=checked]:bg-[#E2B13C] mt-1"
+              className="border-border data-[state=checked]:bg-[#E2B13C] mt-1"
             />
             <div className="grid gap-1.5 leading-none">
               <Label
                 htmlFor="politykaPrivacy"
-                className="text-xs text-neutral-400 font-normal cursor-pointer select-none"
+                className="text-xs text-muted-foreground font-normal cursor-pointer select-none"
               >
                 Akceptuję {" "}
                 <a href="/polityka-prywatnosci" target="_blank" className="text-[#E2B13C] hover:underline">

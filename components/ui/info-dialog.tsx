@@ -31,7 +31,7 @@ export function InfoDialog({
 }: InfoDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-[400px] border border-zinc-800/80 bg-zinc-950/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/50 text-white">
+      <AlertDialogContent className="max-w-[400px] border border-border/80 bg-background/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/10 dark:shadow-black/50 text-foreground">
         <AlertDialogHeader className="space-y-4">
           <div className="flex justify-center">
             <div className={`p-3.5 rounded-full ${variant === "success"
@@ -47,11 +47,11 @@ export function InfoDialog({
           </div>
 
           <div className="space-y-2 text-center">
-            <AlertDialogTitle className="font-playfair text-xl font-semibold text-white tracking-tight leading-6">
+            <AlertDialogTitle className="font-playfair text-xl font-semibold text-foreground tracking-tight leading-6">
               {title}
             </AlertDialogTitle>
             {description && (
-              <AlertDialogDescription className="text-zinc-400 text-sm md:text-base font-light leading-relaxed">
+              <AlertDialogDescription className="text-muted-foreground text-sm md:text-base font-light leading-relaxed">
                 {description}
               </AlertDialogDescription>
             )}

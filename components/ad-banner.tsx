@@ -105,7 +105,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
     return (
       <div
         className={cn(
-          "w-full bg-neutral-900/20 border border-neutral-800/40 rounded-lg animate-pulse",
+          "w-full bg-card/20 border border-border/40 rounded-lg animate-pulse",
           location === "category_sidebar" ? "h-[250px]" : "h-[90px]",
           className
         )}
@@ -149,7 +149,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
     return (
       <div
         className={cn(
-          "relative overflow-hidden w-full rounded-xl border border-neutral-800/40 bg-gradient-to-br from-[#121211] to-[#0d0d0c] hover:border-primary/20 transition-all duration-300 group flex",
+          "relative overflow-hidden w-full rounded-xl border border-border/40 bg-gradient-to-br from-background to-background hover:border-primary/20 transition-all duration-300 group flex",
           placeholderConfig.containerClass,
           className
         )}
@@ -161,23 +161,23 @@ export function AdBanner({ location, className }: AdBannerProps) {
         <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-all duration-300" />
 
         <div className="flex items-center gap-4 relative z-10">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-colors duration-300">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-card border border-border text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-colors duration-300">
             <Megaphone className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-sm text-neutral-200">{placeholderConfig.title}</h4>
-              <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-neutral-800/80 text-neutral-400 border border-neutral-700/50">
+              <h4 className="font-semibold text-sm text-foreground">{placeholderConfig.title}</h4>
+              <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground border border-border/50">
                 {placeholderConfig.dimensions}
               </span>
             </div>
-            <p className="text-xs text-neutral-400 mt-0.5">{placeholderConfig.description}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{placeholderConfig.description}</p>
           </div>
         </div>
 
         <Link
           href="/reklama"
-          className="relative z-10 mt-3 sm:mt-0 flex items-center justify-center gap-2 rounded-lg bg-neutral-900 border border-neutral-800 px-4 py-2 text-xs font-medium text-neutral-300 hover:text-white hover:bg-neutral-850 hover:border-neutral-700 transition-all duration-200"
+          className="relative z-10 mt-3 sm:mt-0 flex items-center justify-center gap-2 rounded-lg bg-card border border-border px-4 py-2 text-xs font-medium text-foreground/80 hover:text-foreground hover:bg-card hover:border-border transition-all duration-200"
         >
           <span>Zareklamuj się</span>
           <ExternalLink className="h-3.5 w-3.5" />
@@ -191,7 +191,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
     <div
       ref={bannerRef}
       className={cn(
-        "relative overflow-hidden w-full rounded-xl border border-neutral-800 bg-[#0d0d0c] flex items-center justify-center",
+        "relative overflow-hidden w-full rounded-xl border border-border bg-background flex items-center justify-center",
         location === "category_sidebar" ? "h-auto min-h-[250px]" : "h-auto min-h-[90px]",
         className
       )}
@@ -218,7 +218,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
             alt={ad.name}
             className="w-full h-full object-cover max-h-[400px] rounded-xl"
           />
-          <span className="absolute bottom-2 right-2 z-20 text-sm bg-black/60 backdrop-blur-xs text-neutral-400 px-1.5 py-0.5 rounded font-medium border border-neutral-800">
+          <span className="absolute bottom-2 right-2 z-20 text-sm bg-black/60 backdrop-blur-xs text-muted-foreground px-1.5 py-0.5 rounded font-medium border border-border">
             Reklama
           </span>
         </a>

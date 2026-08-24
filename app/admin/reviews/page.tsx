@@ -174,7 +174,7 @@ export default function AdminReviewsPage() {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`h-3 w-3 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+            className={`h-3 w-3 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-foreground/80"
               }`}
           />
         ))}
@@ -396,7 +396,7 @@ export default function AdminReviewsPage() {
                           title={review.zweryfikowana ? "Oznacz jako niezweryfikowaną" : "Zweryfikuj"}
                         >
                           <CheckCircle
-                            className={`h-4 w-4 ${review.zweryfikowana ? "text-green-600" : "text-gray-400"}`}
+                            className={`h-4 w-4 ${review.zweryfikowana ? "text-green-600" : "text-muted-foreground"}`}
                           />
                         </Button>
 
@@ -409,7 +409,7 @@ export default function AdminReviewsPage() {
                           {review.aktywna ? (
                             <XCircle className="h-4 w-4 text-orange-600" />
                           ) : (
-                            <CheckCircle className="h-4 w-4 text-gray-400" />
+                            <CheckCircle className="h-4 w-4 text-muted-foreground" />
                           )}
                         </Button>
 

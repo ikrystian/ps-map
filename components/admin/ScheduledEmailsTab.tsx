@@ -203,7 +203,7 @@ export default function ScheduledEmailsTab() {
         )
       case "CANCELLED":
         return (
-          <Badge className="bg-slate-500/10 text-slate-600 dark:text-slate-400 hover:bg-slate-500/15 border border-slate-500/20 flex items-center w-fit gap-1 font-medium shadow-sm">
+          <Badge className="bg-slate-500/10 text-slate-600 dark:text-muted-foreground hover:bg-slate-500/15 border border-slate-500/20 flex items-center w-fit gap-1 font-medium shadow-sm">
             <XOctagon className="h-3 w-3" />
             Anulowano
           </Badge>
@@ -555,7 +555,7 @@ export default function ScheduledEmailsTab() {
                 </TabsContent>
 
                 <TabsContent value="html" className="mt-4">
-                  <div className="p-4 border border-border rounded-lg bg-slate-950 text-slate-200 font-mono text-xs overflow-auto max-h-[350px] shadow-inner">
+                  <div className="p-4 border border-border rounded-lg bg-background text-foreground font-mono text-xs overflow-auto max-h-[350px] shadow-inner">
                     <pre className="whitespace-pre-wrap">
                       {selectedEmail.html || "Brak treści HTML"}
                     </pre>
@@ -571,7 +571,7 @@ export default function ScheduledEmailsTab() {
                 </TabsContent>
 
                 <TabsContent value="variables" className="mt-4">
-                  <div className="p-4 border border-border rounded-lg bg-slate-900 text-slate-200 font-mono text-xs overflow-auto max-h-[350px] shadow-inner">
+                  <div className="p-4 border border-border rounded-lg bg-card text-foreground font-mono text-xs overflow-auto max-h-[350px] shadow-inner">
                     {selectedEmail.variables ? (
                       <pre className="whitespace-pre">
                         {JSON.stringify(JSON.parse(selectedEmail.variables), null, 2)}

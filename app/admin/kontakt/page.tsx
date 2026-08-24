@@ -93,9 +93,9 @@ type MessageTab = "ogolne" | "eksperci"
 const subjectLabels: Record<string, { label: string; className: string }> = {
   INFORMACJA: { label: "Informacja", className: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
   WSPARCIE: { label: "Wsparcie techniczne", className: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
-  WSPOLPRACA: { label: "Współpraca", className: "bg-[#d7b56d]/10 text-[#d7b56d] border-[#d7b56d]/30" },
+  WSPOLPRACA: { label: "Współpraca", className: "bg-secondary/10 text-secondary border-secondary/30" },
   REKLAMACJA: { label: "Reklamacja", className: "bg-red-500/10 text-red-400 border-red-500/20" },
-  INNE: { label: "Inne", className: "bg-neutral-500/10 text-neutral-400 border-neutral-500/20" },
+  INNE: { label: "Inne", className: "bg-neutral-500/10 text-muted-foreground border-neutral-500/20" },
 }
 
 export default function AdminContactMessagesPage() {
@@ -797,7 +797,7 @@ export default function AdminContactMessagesPage() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Button variant="default" size="sm" className="bg-[#d7b56d] hover:bg-[#cfa130] text-black font-medium">
+                    <Button variant="default" size="sm" className="bg-secondary hover:bg-[#cfa130] text-black font-medium">
                       <Mail className="w-4 h-4 mr-2" />
                       Wyślij e-mail
                     </Button>

@@ -163,13 +163,13 @@ export function SearchHelpSection() {
   ];
 
   return (
-    <section className="relative text-white py-8 lg:py-20 px-4 select-none overflow-hidden border-t border-b border-neutral-900/10 serch-help-section">
+    <section className="relative text-foreground py-8 lg:py-20 px-4 select-none overflow-hidden border-t border-b border-border/10 serch-help-section">
       {/* Container */}
       <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
-        <h2 className="text-3xl md:text-4xl font-light text-white tracking-tight text-center leading-tight mb-5 font-playfair">
+        <h2 className="text-3xl md:text-4xl font-light text-foreground tracking-tight text-center leading-tight mb-5 font-playfair">
           Powiedz nam{" "}
-          <span className="font-bold italic text-white normal-case">
+          <span className="font-bold italic text-foreground normal-case">
             jakiej pomocy
           </span>{" "}
           szukasz
@@ -241,7 +241,7 @@ export function SearchHelpSection() {
               </motion.span>
 
               {/* Card Shape */}
-              <div className="w-36 h-36 rounded-xl bg-background border border-[#333230] flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-all duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/40 group-hover:shadow-[0_12px_40px_-5px_rgba(13,161,146,0.15)]">
+              <div className="w-36 h-36 rounded-xl bg-background border border-border flex items-center justify-center shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)] mb-8 transition-all duration-300 ease-out group-hover:scale-105 group-hover:border-[#0da192]/40 group-hover:shadow-[0_12px_40px_-5px_rgba(13,161,146,0.15)]">
                 <motion.div
                   custom={index}
                   variants={floatVariants}
@@ -253,7 +253,7 @@ export function SearchHelpSection() {
 
               {/* Title */}
               <motion.h3
-                className="text-white text-[22px] font-playfair tracking-wide leading-tight mb-4 max-w-[280px]"
+                className="text-foreground text-[22px] font-playfair tracking-wide leading-tight mb-4 max-w-[280px]"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

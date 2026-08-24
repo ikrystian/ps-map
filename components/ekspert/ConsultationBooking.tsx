@@ -154,12 +154,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             exit={{ opacity: 0, y: -15 }}
             className="flex flex-col items-center justify-center p-12 text-center border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-[#0da192]/5 blur-[80px] rounded-full pointer-events-none" />
-            <div className="h-16 w-16 bg-zinc-800/40 rounded-2xl flex items-center justify-center border border-border/50 mb-4">
+            <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-primary/5 blur-[80px] rounded-full pointer-events-none" />
+            <div className="h-16 w-16 bg-muted/40 rounded-2xl flex items-center justify-center border border-border/50 mb-4">
               <Info className="h-8 w-8 text-[#0da192] opacity-80" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2 font-playfair">Konsultacje niedostępne</h3>
-            <p className="text-sm text-zinc-400 max-w-sm">
+            <h3 className="text-xl font-bold text-foreground mb-2 font-playfair">Konsultacje niedostępne</h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
               Ekspert nie oferuje obecnie konsultacji online przez naszą platformę. Skontaktuj się bezpośrednio z ekspertem.
             </p>
           </motion.div>
@@ -174,14 +174,14 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             className="space-y-8"
           >
             <div className="text-center max-w-xl mx-auto space-y-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide uppercase">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase">
                 <Sparkles className="h-3 w-3 animate-pulse" />
                 Konsultacje Online
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold font-playfair text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold font-playfair text-foreground tracking-tight">
                 Umów się na spotkanie z ekspertem
               </h2>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-muted-foreground">
                 Wybierz dogodny czas trwania konsultacji wideo, aby rozpocząć proces rezerwacji terminu.
               </p>
             </div>
@@ -193,21 +193,21 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 onClick={() => setDuration(15)}
                 className="relative overflow-hidden group cursor-pointer rounded-2xl border border-border/30 bg-card/25 backdrop-blur-md p-6 flex flex-col justify-between hover:border-[#0da192]/40 hover:bg-card/35 transition-all duration-300 shadow-lg shadow-black/10"
               >
-                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-[#0da192]/5 blur-2xl rounded-full group-hover:bg-[#0da192]/10 transition-colors pointer-events-none" />
+                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 blur-2xl rounded-full group-hover:bg-primary/10 transition-colors pointer-events-none" />
                 <div>
                   <div className="flex justify-between items-start mb-6">
-                    <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20 group-hover:border-[#0da192]/30 transition-colors">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:border-primary/30 transition-colors">
                       <Clock className="h-6 w-6 text-[#0da192]" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#0da192]/10 border border-[#0da192]/20 text-[#0da192] text-xs font-semibold tracking-wide">
+                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide">
                       15 MINUT
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2 font-playfair group-hover:text-[#0da192] transition-colors">
+                  <h3 className="text-xl font-bold text-foreground mb-2 font-playfair group-hover:text-primary transition-colors">
                     Szybka Konsultacja
                   </h3>
-                  <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
+                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
                     Idealna do wstępnego omówienia problemu prawnego, szybkiej porady lub analizy kolejnych kroków działania.
                   </p>
 
@@ -217,7 +217,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                       "Określenie szans powodzenia",
                       "Porada dotycząca dokumentacji",
                     ].map((item) => (
-                      <li key={item} className="flex items-center gap-2 text-xs text-zinc-300">
+                      <li key={item} className="flex items-center gap-2 text-xs text-foreground/80">
                         <CheckCircle2 className="h-4 w-4 text-[#0da192] flex-shrink-0" />
                         <span>{item}</span>
                       </li>
@@ -228,12 +228,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
                     <span className="text-sm text-zinc-450 uppercase tracking-wider">CENA BRUTTO</span>
-                    <span className="text-2xl font-bold font-playfair text-white">
+                    <span className="text-2xl font-bold font-playfair text-foreground">
                       {price15} <span className="text-sm font-medium">PLN</span>
                     </span>
                   </div>
-                  <div className="h-9 w-9 rounded-xl bg-zinc-800 flex items-center justify-center border border-border group-hover:bg-[#0da192] group-hover:border-transparent transition-all duration-300">
-                    <ArrowRight className="h-4 w-4 text-white transition-transform group-hover:translate-x-0.5" />
+                  <div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center border border-border group-hover:bg-primary group-hover:border-transparent transition-all duration-300">
+                    <ArrowRight className="h-4 w-4 text-foreground transition-transform group-hover:translate-x-0.5" />
                   </div>
                 </div>
               </motion.div>
@@ -244,21 +244,21 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 onClick={() => setDuration(30)}
                 className="relative overflow-hidden group cursor-pointer rounded-2xl border border-border/30 bg-card/25 backdrop-blur-md p-6 flex flex-col justify-between hover:border-[#0da192]/40 hover:bg-card/35 transition-all duration-300 shadow-lg shadow-black/10"
               >
-                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-[#0da192]/5 blur-2xl rounded-full group-hover:bg-[#0da192]/10 transition-colors pointer-events-none" />
+                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 blur-2xl rounded-full group-hover:bg-primary/10 transition-colors pointer-events-none" />
                 <div>
                   <div className="flex justify-between items-start mb-6">
-                    <div className="h-12 w-12 rounded-xl bg-[#0da192]/10 flex items-center justify-center border border-[#0da192]/20 group-hover:border-[#0da192]/30 transition-colors">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:border-primary/30 transition-colors">
                       <Video className="h-6 w-6 text-[#0da192]" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#0da192]/20 border border-[#0da192]/40 text-[#0da192] text-xs font-semibold tracking-wide">
+                    <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/40 text-primary text-xs font-semibold tracking-wide">
                       30 MINUT
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2 font-playfair group-hover:text-[#0da192] transition-colors">
+                  <h3 className="text-xl font-bold text-foreground mb-2 font-playfair group-hover:text-primary transition-colors">
                     Pełna Konsultacja
                   </h3>
-                  <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
+                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
                     Szczegółowe omówienie Twojej sprawy z ekspertem. Czas na głęboką analizę dokumentów i opracowanie strategii.
                   </p>
 
@@ -269,7 +269,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                       "Analiza nadesłanych pism",
                       "Rekomendacje dalszych kroków",
                     ].map((item) => (
-                      <li key={item} className="flex items-center gap-2 text-xs text-zinc-300">
+                      <li key={item} className="flex items-center gap-2 text-xs text-foreground/80">
                         <CheckCircle2 className="h-4 w-4 text-[#0da192] flex-shrink-0" />
                         <span>{item}</span>
                       </li>
@@ -280,12 +280,12 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                 <div className="border-t border-border/20 pt-4 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
                     <span className="text-sm text-zinc-450 uppercase tracking-wider">CENA BRUTTO</span>
-                    <span className="text-2xl font-bold font-playfair text-white">
+                    <span className="text-2xl font-bold font-playfair text-foreground">
                       {price30} <span className="text-sm font-medium">PLN</span>
                     </span>
                   </div>
-                  <div className="h-9 w-9 rounded-xl bg-zinc-800 flex items-center justify-center border border-border group-hover:bg-[#0da192] group-hover:border-transparent transition-all duration-300">
-                    <ArrowRight className="h-4 w-4 text-white transition-transform group-hover:translate-x-0.5" />
+                  <div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center border border-border group-hover:bg-primary group-hover:border-transparent transition-all duration-300">
+                    <ArrowRight className="h-4 w-4 text-foreground transition-transform group-hover:translate-x-0.5" />
                   </div>
                 </div>
               </motion.div>
@@ -306,25 +306,25 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
                   variant="ghost"
                   size="icon"
                   onClick={() => setDuration(null)}
-                  className="h-9 w-9 rounded-xl border border-border hover:bg-muted text-white"
+                  className="h-9 w-9 rounded-xl border border-border hover:bg-muted text-foreground"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                  <h3 className="text-sm font-semibold text-white font-playfair leading-tight">
+                  <h3 className="text-sm font-semibold text-foreground font-playfair leading-tight">
                     Wybór terminu konsultacji
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] text-[#0da192] bg-[#0da192]/10 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-[11px] text-primary bg-primary/10 px-2 py-0.5 rounded-full font-medium">
                       {duration} min
                     </span>
-                    <span className="text-[11px] text-zinc-300 bg-zinc-800 border border-border/10 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-[11px] text-foreground/80 bg-muted border border-border/10 px-2 py-0.5 rounded-full font-medium">
                       {price} PLN
                     </span>
                   </div>
                 </div>
               </div>
-              <span className="text-xs text-zinc-400 sm:text-right">
+              <span className="text-xs text-muted-foreground sm:text-right">
                 Prawidłowy czas zostanie automatycznie przeliczony na Twoją strefę czasową.
               </span>
             </div>
@@ -350,33 +350,33 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
         setIsDialogOpen(open)
         if (!open) setSelectedSlot(null)
       }}>
-        <DialogContent className="bg-card border border-border/40 max-w-lg rounded-2xl text-white">
+        <DialogContent className="bg-card border border-border/40 max-w-lg rounded-2xl text-foreground">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold font-playfair">Zgłoszenie rezerwacji</DialogTitle>
-            <DialogDescription className="text-zinc-400 text-xs pt-1">
+            <DialogDescription className="text-muted-foreground text-xs pt-1">
               Podaj szczegóły swojej sprawy, aby ekspert mógł odpowiednio przygotować się do rozmowy.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-5 py-4">
             {/* Appointment Summary Box */}
-            <div className="grid grid-cols-2 gap-3.5 bg-zinc-850 border border-border/40 p-4 rounded-xl text-xs">
+            <div className="grid grid-cols-2 gap-3.5 bg-card border border-border/40 p-4 rounded-xl text-xs">
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">DATA KONSULTACJI</span>
-                <span className="font-semibold text-white flex items-center gap-1.5">
+                <span className="text-muted-foreground block uppercase tracking-wider text-[10px]">DATA KONSULTACJI</span>
+                <span className="font-semibold text-foreground flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-[#0da192]" />
                   {selectedDate ? format(selectedDate, "PPP", { locale: pl }) : ""}
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">GODZINA I TRWANIE</span>
-                <span className="font-semibold text-white flex items-center gap-1.5">
+                <span className="text-muted-foreground block uppercase tracking-wider text-[10px]">GODZINA I TRWANIE</span>
+                <span className="font-semibold text-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-[#0da192]" />
                   {selectedSlot} ({duration} min)
                 </span>
               </div>
-              <div className="space-y-1 col-span-2 pt-2 border-t border-zinc-800">
-                <span className="text-zinc-400 block uppercase tracking-wider text-[10px]">SZACUNKOWY KOSZT</span>
+              <div className="space-y-1 col-span-2 pt-2 border-t border-border">
+                <span className="text-muted-foreground block uppercase tracking-wider text-[10px]">SZACUNKOWY KOSZT</span>
                 <span className="text-sm font-bold text-[#0da192]">
                   {price} PLN
                 </span>
@@ -386,7 +386,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
             {/* Form Fields */}
             <div className="space-y-4">
               <div className="grid gap-1.5">
-                <Label htmlFor="topic" className="text-xs text-zinc-300 font-medium">Temat rozmowy i opis sprawy</Label>
+                <Label htmlFor="topic" className="text-xs text-foreground/80 font-medium">Temat rozmowy i opis sprawy</Label>
                 <Textarea
                   id="topic"
                   value={topic}
@@ -397,7 +397,7 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="contact" className="text-xs text-zinc-300 font-medium">Twoje dane kontaktowe</Label>
+                <Label htmlFor="contact" className="text-xs text-foreground/80 font-medium">Twoje dane kontaktowe</Label>
                 <Input
                   id="contact"
                   value={contact}
@@ -414,14 +414,14 @@ export function ConsultationBooking({ lawFirm }: { lawFirm: any }) {
               variant="outline"
               disabled={isBooking}
               onClick={() => setIsDialogOpen(false)}
-              className="border-border/50 hover:bg-muted text-white rounded-xl"
+              className="border-border/50 hover:bg-muted text-foreground rounded-xl"
             >
               Anuluj
             </Button>
             <Button
               onClick={handleBooking}
               disabled={isBooking || !topic.trim() || !contact.trim()}
-              className="bg-gradient-to-r from-[#0da192] to-[#0a8276] hover:from-[#0fbaa8] hover:to-[#0da192] text-white font-medium rounded-xl border-t border-white/10 px-5 gap-2"
+              className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white font-medium rounded-xl border-t border-border px-5 gap-2"
             >
               {isBooking ? (
                 <>

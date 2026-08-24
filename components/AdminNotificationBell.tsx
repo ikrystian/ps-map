@@ -39,7 +39,7 @@ const statusLabels: Record<string, { label: string; className: string; icon: any
   OCZEKUJE: { label: "Oczekuje", className: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-500", icon: Clock },
   ZAPLACONE: { label: "Zapłacone", className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-500", icon: CheckCircle },
   ANULOWANE: { label: "Anulowane", className: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-500", icon: AlertTriangle },
-  ZWROT: { label: "Zwrot", className: "bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-slate-500", icon: RefreshCw },
+  ZWROT: { label: "Zwrot", className: "bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-muted-foreground", icon: RefreshCw },
 }
 
 export default function AdminNotificationBell() {

@@ -225,10 +225,10 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
         {/* Search Bar */}
         <motion.div variants={itemVariants}>
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-500 group-focus-within:text-primary transition-colors h-5 w-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors h-5 w-5" />
             <Input
               placeholder="Czego potrzebujesz? Wpisz słowo kluczowe..."
-              className="pl-12 h-14 bg-zinc-950/40 border-border/30 rounded-md text-white placeholder:text-zinc-500 focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-zinc-950/60 transition-all text-base shadow-lg shadow-black/10"
+              className="pl-12 h-14 bg-background/40 border-border/30 rounded-md text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background/60 transition-all text-base shadow-lg shadow-black/10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -248,7 +248,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                   "h-9 px-4 rounded-full font-medium text-xs transition-all duration-300 border",
                   isActive
                     ? "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-hover hover:to-primary text-white border-transparent shadow-md"
-                    : "bg-zinc-900/40 border-border/30 text-zinc-400 hover:text-white hover:bg-white/5"
+                    : "bg-card/40 border-border/30 text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                 )}
               >
                 {category.nazwa}
@@ -262,8 +262,8 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
           <Card variant="glass" className="rounded-lg shadow-lg relative overflow-hidden">
             <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={8} borderWidth={1} />
             <CardHeader className="border-b border-border/20 py-5 px-6">
-              <CardTitle className="text-lg font-playfair text-white">Najczęstsze pytania i odpowiedzi</CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">
+              <CardTitle className="text-lg font-playfair text-foreground">Najczęstsze pytania i odpowiedzi</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs">
                 {selectedCategory === "all"
                   ? "Przeglądaj wszystkie tematy pomocy"
                   : `Pytania z kategorii: ${categories.find(c => c.id === selectedCategory)?.nazwa}`
@@ -273,12 +273,12 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
             <CardContent className="p-6">
               {filteredQuestions.length === 0 ? (
                 <div className="text-center py-16 flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
-                  <div className="h-14 w-14 rounded-full bg-zinc-800/40 border border-border/40 flex items-center justify-center">
-                    <HelpCircle className="h-6 w-6 text-zinc-500 animate-pulse" />
+                  <div className="h-14 w-14 rounded-full bg-muted/40 border border-border/40 flex items-center justify-center">
+                    <HelpCircle className="h-6 w-6 text-muted-foreground animate-pulse" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-white">Brak wyników</h4>
-                    <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed font-light">
+                    <h4 className="text-sm font-semibold text-foreground">Brak wyników</h4>
+                    <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed font-light">
                       {searchQuery
                         ? "Nie znaleźliśmy pytań spełniających Twoje kryteria wyszukiwania. Spróbuj użyć innych słów kluczowych."
                         : "W wybranej kategorii nie ma obecnie żadnych opublikowanych pytań."}
@@ -292,9 +292,9 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                       key={question.id}
                       value={question.id}
                       id={question.slug}
-                      className="border border-border/10 bg-zinc-950/15 rounded-md px-4 overflow-hidden transition-all hover:border-primary/20"
+                      className="border border-border/10 bg-background/15 rounded-md px-4 overflow-hidden transition-all hover:border-primary/20"
                     >
-                      <AccordionTrigger className="hover:no-underline py-4 text-sm font-medium text-zinc-200 hover:text-white transition-colors">
+                      <AccordionTrigger className="hover:no-underline py-4 text-sm font-medium text-foreground hover:text-foreground transition-colors">
                         <div className="flex items-start gap-3.5 text-left">
                           <HelpCircle className="h-5 w-5 text-secondary shrink-0 mt-0.5 transition-transform duration-300" />
                           <div className="min-w-0">
@@ -310,7 +310,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                       <AccordionContent className="border-t border-border/5 pt-4 pb-4">
                         <div className="pl-8 space-y-4">
                           <div
-                            className="text-zinc-300 text-sm leading-relaxed font-light prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-a:text-primary prose-strong:text-white prose-strong:font-semibold"
+                            className="text-foreground/80 text-sm leading-relaxed font-light prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-a:text-primary prose-strong:text-foreground prose-strong:font-semibold"
                             dangerouslySetInnerHTML={{ __html: question.odpowiedz }}
                           />
                           <div className="flex items-center gap-2 pt-3 border-t border-border/5">
@@ -318,7 +318,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleCopyLink(question.id, question.slug)}
-                              className="h-8 px-3 rounded-md border border-border/50 text-zinc-400 hover:text-white hover:bg-white/5 hover:border-border/80 transition-all text-xs gap-1.5"
+                              className="h-8 px-3 rounded-md border border-border/50 text-muted-foreground hover:text-foreground hover:bg-foreground/5 hover:border-border/80 transition-all text-xs gap-1.5"
                             >
                               {copiedId === question.id ? (
                                 <>
@@ -347,8 +347,8 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
         <motion.div variants={itemVariants}>
           <Card variant="glass" className="rounded-lg shadow-lg relative overflow-hidden">
             <CardHeader className="py-5 px-6 border-b border-border/20">
-              <CardTitle className="text-lg font-playfair text-white">Nadal potrzebujesz pomocy?</CardTitle>
-              <CardDescription className="text-zinc-400 text-xs">
+              <CardTitle className="text-lg font-playfair text-foreground">Nadal potrzebujesz pomocy?</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs">
                 {odbiorca === "CLIENT"
                   ? "Skontaktuj się z naszym zespołem wsparcia. Pomagamy klientom w rozwiązywaniu spraw."
                   : "Skontaktuj się z nami bezpośrednio. Nasz zespół pomocy odpowie najszybciej jak to możliwe."
@@ -359,13 +359,13 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Wiadomość */}
                 <Link href={messagesPath} className="group">
-                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-zinc-950/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300 h-full justify-between">
+                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-background/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all mb-4">
                       <MessageSquare className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-white text-sm group-hover:text-primary transition-colors">Wewnętrzny czat</h4>
-                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                      <h4 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">Wewnętrzny czat</h4>
+                      <p className="text-muted-foreground text-xs leading-relaxed font-light">
                         Napisz do nas bezpośrednio z panelu klienta/eksperta.
                       </p>
                     </div>
@@ -377,13 +377,13 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
 
                 {/* Email */}
                 <a href="mailto:kontakt@prostasprawa.pl" className="group">
-                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-zinc-950/20 hover:bg-secondary/5 hover:border-secondary/40 transition-all duration-300 h-full justify-between">
+                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-background/20 hover:bg-secondary/5 hover:border-secondary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 group-hover:bg-secondary/20 transition-all mb-4">
                       <Mail className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-white text-sm group-hover:text-secondary transition-colors">Wyślij e-mail</h4>
-                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                      <h4 className="font-semibold text-foreground text-sm group-hover:text-secondary transition-colors">Wyślij e-mail</h4>
+                      <p className="text-muted-foreground text-xs leading-relaxed font-light">
                         Napisz wiadomość e-mail. Pomożemy w ciągu kilku godzin.
                       </p>
                     </div>
@@ -395,13 +395,13 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
 
                 {/* Telefon */}
                 <a href="tel:+48123456789" className="group">
-                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-zinc-950/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300 h-full justify-between">
+                  <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-background/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all mb-4">
                       <Phone className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-white text-sm group-hover:text-primary transition-colors">Zadzwoń do nas</h4>
-                      <p className="text-zinc-500 text-xs leading-relaxed font-light">
+                      <h4 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">Zadzwoń do nas</h4>
+                      <p className="text-muted-foreground text-xs leading-relaxed font-light">
                         Infolinia czynna od poniedziałku do piątku w godz. 9:00 - 17:00.
                       </p>
                     </div>

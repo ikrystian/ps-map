@@ -276,7 +276,7 @@ export default function LawFirmStatsPage() {
           <PageHeader
             title="Statystyki i analizy"
             subtitle="Zaawansowane statystyki i analityka wydajności dla Twojego profilu."
-            titleClassName="text-white"
+            titleClassName="text-foreground"
           />
 
         </motion.div>
@@ -326,8 +326,8 @@ export default function LawFirmStatsPage() {
               <div className="h-10 w-10 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400">
                 <AlertCircle className="h-5 w-5" />
               </div>
-              <h4 className="text-sm font-semibold text-white">Błąd wczytywania danych</h4>
-              <p className="text-xs text-zinc-400 font-light">{error || "Nie udało się załadować danych"}</p>
+              <h4 className="text-sm font-semibold text-foreground">Błąd wczytywania danych</h4>
+              <p className="text-xs text-muted-foreground font-light">{error || "Nie udało się załadować danych"}</p>
             </div>
           </CardContent>
         </Card>
@@ -371,8 +371,8 @@ export default function LawFirmStatsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Wyświetlenia profilu</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.wyswietleniaProfilu}</h3>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Wyświetlenia profilu</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{lawFirm.wyswietleniaProfilu}</h3>
                 <p className="text-sm text-emerald-400 font-medium">+{stats.viewsThisMonth} w tym miesiącu</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
@@ -387,9 +387,9 @@ export default function LawFirmStatsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Złożone oferty</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.zlozoneOferty}</h3>
-                <p className="text-sm text-zinc-500 font-light">+{stats.offersThisMonth} w tym miesiącu</p>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Złożone oferty</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{lawFirm.zlozoneOferty}</h3>
+                <p className="text-sm text-muted-foreground font-light">+{stats.offersThisMonth} w tym miesiącu</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform duration-300">
                 <FileText className="h-6 w-6" />
@@ -403,9 +403,9 @@ export default function LawFirmStatsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Skuteczność (Konwersja)</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">{lawFirm.konwersja.toFixed(1)}%</h3>
-                <p className="text-sm text-zinc-500 font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Skuteczność (Konwersja)</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{lawFirm.konwersja.toFixed(1)}%</h3>
+                <p className="text-sm text-muted-foreground font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-6 w-6" />
@@ -419,13 +419,13 @@ export default function LawFirmStatsPage() {
           <Card className="border border-border/30 bg-card/25 backdrop-blur-md hover:border-border/50 hover:bg-card/30 transition-all duration-300 relative overflow-hidden group">
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs text-zinc-400 font-light tracking-wide">Średnia ocena</p>
-                <h3 className="text-3xl font-playfair font-semibold text-white tracking-tight">
+                <p className="text-xs text-muted-foreground font-light tracking-wide">Średnia ocena</p>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">
                   {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "0.0"}
                 </h3>
                 <div className="flex items-center gap-1 mt-1">
                   {renderStars(Math.round(stats.averageRating))}
-                  <span className="text-sm text-zinc-500 ml-1">({stats.reviewsCount} opinii)</span>
+                  <span className="text-sm text-muted-foreground ml-1">({stats.reviewsCount} opinii)</span>
                 </div>
               </div>
               <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform duration-300">
@@ -444,7 +444,7 @@ export default function LawFirmStatsPage() {
         className="relative z-10"
       >
         <Tabs id="tour-stats-tabs" defaultValue="views" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 border border-border/30 bg-zinc-950/20 rounded-xl p-1 h-12">
+          <TabsList className="grid w-full grid-cols-3 border border-border/30 bg-background/20 rounded-xl p-1 h-12">
             <TabsTrigger value="views" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Wyświetlenia</TabsTrigger>
             <TabsTrigger value="offers" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Oferty</TabsTrigger>
             <TabsTrigger value="categories" className="rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border border-transparent data-[state=active]:border-primary/30 transition-all font-semibold text-xs tracking-wider uppercase">Kategorie</TabsTrigger>
@@ -455,8 +455,8 @@ export default function LawFirmStatsPage() {
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
-                <CardTitle className="text-lg font-playfair text-white">Wyświetlenia profilu w czasie</CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardTitle className="text-lg font-playfair text-foreground">Wyświetlenia profilu w czasie</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">
                   Miesięczne statystyki wyświetleń Twojego profilu w wynikach wyszukiwania.
                 </CardDescription>
               </CardHeader>
@@ -504,29 +504,29 @@ export default function LawFirmStatsPage() {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20 grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
                     <div className="text-2xl font-bold text-primary">
                       {monthlyViews.reduce((sum, m) => sum + m.views, 0)}
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Suma wyświetleń
                     </div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
                     <div className="text-2xl font-bold text-primary">
                       {monthlyViews.length > 0
                         ? Math.round(monthlyViews.reduce((sum, m) => sum + m.views, 0) / monthlyViews.length)
                         : 0}
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Średnia miesięczna
                     </div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
                     <div className="text-2xl font-bold text-primary">
                       {maxViews}
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Najlepszy miesiąc
                     </div>
                   </div>
@@ -537,8 +537,8 @@ export default function LawFirmStatsPage() {
             {/* Weekday breakdown chart */}
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <CardHeader className="border-b border-border/20 py-5 px-6">
-                <CardTitle className="text-lg font-playfair text-white">Wyświetlenia wg dni tygodnia</CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardTitle className="text-lg font-playfair text-foreground">Wyświetlenia wg dni tygodnia</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">
                   Rozkład wyświetleń Twojego profilu w poszczególnych dniach tygodnia.
                 </CardDescription>
               </CardHeader>
@@ -570,7 +570,7 @@ export default function LawFirmStatsPage() {
                   </ChartContainer>
                 </div>
                 {weekdayViews.every(d => d.views === 0) && (
-                  <div className="mt-4 text-center text-xs text-zinc-500 font-light">
+                  <div className="mt-4 text-center text-xs text-muted-foreground font-light">
                     Brak danych — wyświetlenia będą rejestrowane od teraz
                   </div>
                 )}
@@ -583,8 +583,8 @@ export default function LawFirmStatsPage() {
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
-                <CardTitle className="text-lg font-playfair text-white">Statystyki ofert</CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardTitle className="text-lg font-playfair text-foreground">Statystyki ofert</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">
                   Miesięczne zestawienie złożonych ofert oraz Twojej skuteczności w ich wygrywaniu.
                 </CardDescription>
               </CardHeader>
@@ -622,31 +622,31 @@ export default function LawFirmStatsPage() {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20 grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
                     <div className="text-2xl font-bold text-blue-400">
                       {monthlyOffers.reduce((sum, m) => sum + m.total, 0)}
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Złożone oferty
                     </div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
                     <div className="text-2xl font-bold text-emerald-400">
                       {monthlyOffers.reduce((sum, m) => sum + m.accepted, 0)}
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Wygrane oferty
                     </div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-900/30 border border-border/20 rounded-xl">
-                    <div className="text-2xl font-bold text-white">
+                  <div className="text-center p-3 bg-card/30 border border-border/20 rounded-xl">
+                    <div className="text-2xl font-bold text-foreground">
                       {(() => {
                         const totalOffers = monthlyOffers.reduce((sum, m) => sum + m.total, 0)
                         const acceptedOffers = monthlyOffers.reduce((sum, m) => sum + m.accepted, 0)
                         return totalOffers > 0 ? ((acceptedOffers / totalOffers) * 100).toFixed(1) : '0.0'
                       })()}%
                     </div>
-                    <div className="text-sm text-zinc-500 uppercase tracking-wider font-semibold mt-1">
+                    <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
                       Skuteczność
                     </div>
                   </div>
@@ -660,8 +660,8 @@ export default function LawFirmStatsPage() {
             <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden">
               <BorderBeam lightColor="var(--primary)" lightWidth={400} duration={7} borderWidth={1} />
               <CardHeader className="border-b border-border/20 py-5 px-6">
-                <CardTitle className="text-lg font-playfair text-white">Statystyki według kategorii</CardTitle>
-                <CardDescription className="text-zinc-400 text-xs">
+                <CardTitle className="text-lg font-playfair text-foreground">Statystyki według kategorii</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">
                   Analiza skuteczności i zaangażowania Twojego profilu w podziale na dziedziny prawa.
                 </CardDescription>
               </CardHeader>
@@ -699,7 +699,7 @@ export default function LawFirmStatsPage() {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/20">
-                  <div className="text-xs text-zinc-400 uppercase tracking-wider font-semibold mb-4 flex items-center gap-1.5">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-4 flex items-center gap-1.5">
                     <Trophy className="h-4 w-4 text-amber-400" />
                     Najwyższa skuteczność ofertowa
                   </div>
@@ -717,9 +717,9 @@ export default function LawFirmStatsPage() {
                           <div
                             key={item.category}
                             className={cn(
-                              "flex items-center gap-3 p-3 bg-zinc-900/30 border rounded-xl relative overflow-hidden",
+                              "flex items-center gap-3 p-3 bg-card/30 border rounded-xl relative overflow-hidden",
                               index === 0 ? "border-amber-500/20 bg-amber-500/5 text-amber-400" :
-                                index === 1 ? "border-zinc-500/20 bg-zinc-500/5 text-zinc-300" :
+                                index === 1 ? "border-zinc-500/20 bg-zinc-500/5 text-foreground/80" :
                                   "border-orange-500/20 bg-orange-500/5 text-orange-400"
                             )}
                           >
@@ -727,14 +727,14 @@ export default function LawFirmStatsPage() {
                               #{index + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-xs text-white truncate">{item.category}</div>
-                              <div className="text-sm text-zinc-500 font-light mt-0.5">
+                              <div className="font-semibold text-xs text-foreground truncate">{item.category}</div>
+                              <div className="text-sm text-muted-foreground font-light mt-0.5">
                                 {rate.toFixed(0)}% skuteczności
                               </div>
                             </div>
                             <Trophy className={cn("h-5 w-5 shrink-0 opacity-80",
                               index === 0 ? "text-amber-400" :
-                                index === 1 ? "text-zinc-400" :
+                                index === 1 ? "text-muted-foreground" :
                                   "text-orange-400"
                             )} />
                           </div>
@@ -758,7 +758,7 @@ export default function LawFirmStatsPage() {
         {/* Card 5: Pozycja w rankingu */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-base font-playfair text-foreground flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
               Pozycja w rankingu
             </CardTitle>
@@ -767,7 +767,7 @@ export default function LawFirmStatsPage() {
             <div className="text-6xl font-black bg-gradient-to-r from-secondary to-secondary/80 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(215,181,109,0.15)] font-playfair">
               {lawFirm.pozycjaRanking ? `#${lawFirm.pozycjaRanking}` : "Brak"}
             </div>
-            <div className="text-xs text-zinc-400 font-light text-center">
+            <div className="text-xs text-muted-foreground font-light text-center">
               Pozycja Twojego profilu w ogólnopolskim rankingu ekspertów na platformie
             </div>
           </CardContent>
@@ -776,7 +776,7 @@ export default function LawFirmStatsPage() {
         {/* Card 6: Rozkład ocen */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group lg:col-span-1">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-base font-playfair text-foreground flex items-center gap-2">
               <Star className="h-5 w-5 text-amber-400" />
               Rozkład ocen
             </CardTitle>
@@ -810,7 +810,7 @@ export default function LawFirmStatsPage() {
                 </ChartContainer>
               </div>
             ) : (
-              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light">
+              <div className="h-[180px] flex items-center justify-center text-muted-foreground text-xs font-light">
                 Brak opinii do przeanalizowania
               </div>
             )}
@@ -820,7 +820,7 @@ export default function LawFirmStatsPage() {
         {/* Card 7: Typy Klientów */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-base font-playfair text-foreground flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
               Typy klientów
             </CardTitle>
@@ -851,7 +851,7 @@ export default function LawFirmStatsPage() {
                 </ChartContainer>
               </div>
             ) : (
-              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light text-center px-4">
+              <div className="h-[180px] flex items-center justify-center text-muted-foreground text-xs font-light text-center px-4">
                 Zdobądź pierwsze zlecenia, aby zobaczyć statystyki klientów
               </div>
             )}
@@ -861,7 +861,7 @@ export default function LawFirmStatsPage() {
         {/* Card 8: Pilność spraw */}
         <Card className="border border-border/30 bg-card/25 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden group">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-base font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-base font-playfair text-foreground flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-indigo-400" />
               Pilność spraw
             </CardTitle>
@@ -892,7 +892,7 @@ export default function LawFirmStatsPage() {
                 </ChartContainer>
               </div>
             ) : (
-              <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs font-light text-center px-4">
+              <div className="h-[180px] flex items-center justify-center text-muted-foreground text-xs font-light text-center px-4">
                 Złóż pierwsze oferty, aby sprawdzić pilność spraw
               </div>
             )}

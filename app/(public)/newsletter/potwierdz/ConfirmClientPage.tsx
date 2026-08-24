@@ -63,7 +63,7 @@ function NewsletterConfirmContent() {
   }
 
   return (
-    <Card className="max-w-md w-full border-neutral-800 bg-[#141414] text-white shadow-2xl relative overflow-hidden">
+    <Card className="max-w-md w-full border-border bg-background text-foreground shadow-2xl relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
       
       <CardHeader className="text-center relative z-10 pt-8">
@@ -71,7 +71,7 @@ function NewsletterConfirmContent() {
           {renderIcon()}
         </div>
         <CardTitle className="text-2xl font-playfair tracking-wide">{renderTitle()}</CardTitle>
-        <CardDescription className="text-sm text-neutral-400 mt-2">
+        <CardDescription className="text-sm text-muted-foreground mt-2">
           {message}
         </CardDescription>
       </CardHeader>
@@ -82,8 +82,8 @@ function NewsletterConfirmContent() {
             <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
               <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium text-white text-sm">Dziękujemy za zaufanie</p>
-                <p className="text-xs text-neutral-400 mt-1">
+                <p className="font-medium text-foreground text-sm">Dziękujemy za zaufanie</p>
+                <p className="text-xs text-muted-foreground mt-1">
                   Od teraz będziesz regularnie otrzymywać od nas porady prawne, analizy rynku oraz najważniejsze aktualności.
                 </p>
               </div>
@@ -101,13 +101,13 @@ function NewsletterConfirmContent() {
             <div className="bg-red-950/20 border border-red-900/30 rounded-lg p-4 flex items-start gap-3">
               <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium text-white text-sm">Nie udało się aktywować subskrypcji</p>
-                <p className="text-xs text-neutral-400 mt-1">
+                <p className="font-medium text-foreground text-sm">Nie udało się aktywować subskrypcji</p>
+                <p className="text-xs text-muted-foreground mt-1">
                   Upewnij się, że link z e-maila jest poprawny lub spróbuj zapisać się ponownie na stronie głównej.
                 </p>
               </div>
             </div>
-            <Button asChild className="w-full bg-transparent hover:bg-neutral-900 text-white border border-neutral-800 transition-colors" size="lg" id="btn-back-home-error">
+            <Button asChild className="w-full bg-transparent hover:bg-card text-foreground border border-border transition-colors" size="lg" id="btn-back-home-error">
               <Link href="/">
                 Spróbuj ponownie na stronie głównej
               </Link>
@@ -118,7 +118,7 @@ function NewsletterConfirmContent() {
         {status === "loading" && (
           <div className="text-center py-6">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#1e5e4e] mx-auto"></div>
-            <p className="mt-4 text-xs text-neutral-400">Trwa weryfikacja tokenu subskrypcji...</p>
+            <p className="mt-4 text-xs text-muted-foreground">Trwa weryfikacja tokenu subskrypcji...</p>
           </div>
         )}
       </CardContent>
@@ -128,15 +128,15 @@ function NewsletterConfirmContent() {
 
 export default function NewsletterConfirmPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       {/* Background aesthetics */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full filter blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#1e5e4e]/5 rounded-full filter blur-[120px] pointer-events-none" />
       
       <Suspense fallback={
-        <Card className="max-w-md w-full border-neutral-800 bg-[#141414] text-white shadow-2xl p-8 text-center">
+        <Card className="max-w-md w-full border-border bg-background text-foreground shadow-2xl p-8 text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#1e5e4e] mx-auto"></div>
-          <p className="mt-4 text-xs text-neutral-400">Ładowanie strony weryfikacji...</p>
+          <p className="mt-4 text-xs text-muted-foreground">Ładowanie strony weryfikacji...</p>
         </Card>
       }>
         <NewsletterConfirmContent />

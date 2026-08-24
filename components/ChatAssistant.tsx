@@ -90,28 +90,28 @@ export function ChatAssistant() {
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             className={cn(
-              "mb-4 flex flex-col rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 shadow-2xl backdrop-blur-md overflow-hidden transition-[width,height] duration-300 ease-in-out",
+              "mb-4 flex flex-col rounded-2xl border border-neutral-200 dark:border-border bg-white/95 dark:bg-background/95 shadow-2xl backdrop-blur-md overflow-hidden transition-[width,height] duration-300 ease-in-out",
               isExpanded
                 ? "h-[calc(100dvh-7rem)] max-h-[760px] w-[calc(100vw-3rem)] sm:w-[600px] md:w-[760px]"
                 : "h-[520px] w-[360px] sm:w-[400px]"
             )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-neutral-200 dark:border-border bg-neutral-50 dark:bg-card/50 px-4 py-3">
               <div className="flex items-center gap-2">
-                <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700">
+                <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 dark:bg-muted text-neutral-800 dark:text-foreground border border-neutral-200 dark:border-border">
                   <Scale className="h-4 w-4 text-amber-500" />
-                  <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-neutral-950 animate-pulse" />
+                  <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-border animate-pulse" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 leading-none">Asystent Prosta Sprawa</h3>
-                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Model DeepSeek V4 Flash</span>
+                  <span className="text-sm text-muted-foreground dark:text-muted-foreground">Model DeepSeek V4 Flash</span>
                 </div>
               </div>
               <div className="flex items-center gap-0.5">
                 <button
                   onClick={() => setIsExpanded((prev) => !prev)}
-                  className="hidden sm:inline-flex rounded-full p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
+                  className="hidden sm:inline-flex rounded-full p-1.5 text-muted-foreground dark:text-muted-foreground hover:bg-neutral-100 dark:hover:bg-card hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
                   aria-label={isExpanded ? "Zmniejsz okno czatu" : "Powiększ okno czatu"}
                   title={isExpanded ? "Zmniejsz okno" : "Powiększ okno"}
                 >
@@ -119,7 +119,7 @@ export function ChatAssistant() {
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground dark:text-muted-foreground hover:bg-neutral-100 dark:hover:bg-card hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
                   aria-label="Zamknij czat"
                 >
                   <X className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function ChatAssistant() {
                     "flex flex-col max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed",
                     msg.role === "user"
                       ? "ml-auto bg-amber-500 dark:bg-amber-600 text-white rounded-br-none"
-                      : "bg-neutral-100 dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 rounded-bl-none border border-neutral-200/50 dark:border-neutral-800/50"
+                      : "bg-neutral-100 dark:bg-card text-neutral-800 dark:text-foreground rounded-bl-none border border-neutral-200/50 dark:border-border/50"
                   )}
                 >
                   <ReactMarkdown
@@ -154,7 +154,7 @@ export function ChatAssistant() {
                           className={cn(
                             "underline transition-colors",
                             msg.role === "user"
-                              ? "text-white hover:text-neutral-100"
+                              ? "text-foreground hover:text-foreground"
                               : "text-amber-500 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-500"
                           )}
                         >
@@ -169,7 +169,7 @@ export function ChatAssistant() {
               ))}
 
               {isLoading && (
-                <div className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-800/50 max-w-[85%] rounded-2xl rounded-bl-none px-3.5 py-2.5 text-sm">
+                <div className="flex items-center gap-1.5 text-muted-foreground dark:text-muted-foreground bg-neutral-100 dark:bg-card border border-neutral-200/50 dark:border-border/50 max-w-[85%] rounded-2xl rounded-bl-none px-3.5 py-2.5 text-sm">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-500" />
                   <span>Asystent pisze...</span>
                 </div>
@@ -178,7 +178,7 @@ export function ChatAssistant() {
             </div>
 
             {/* Input Form */}
-            <form onSubmit={handleSend} className="border-t border-neutral-200 dark:border-neutral-800 p-3 bg-neutral-50 dark:bg-neutral-950">
+            <form onSubmit={handleSend} className="border-t border-neutral-200 dark:border-border p-3 bg-neutral-50 dark:bg-background">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -186,7 +186,7 @@ export function ChatAssistant() {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Zadaj pytanie prawne..."
                   disabled={isLoading}
-                  className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3.5 py-2 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:focus:ring-amber-500/50 focus:border-amber-500 dark:focus:border-amber-500 transition-all disabled:opacity-50"
+                  className="flex-1 bg-white dark:bg-card border border-neutral-300 dark:border-border rounded-xl px-3.5 py-2 text-sm text-neutral-900 dark:text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:focus:ring-amber-500/50 focus:border-amber-500 dark:focus:border-amber-500 transition-all disabled:opacity-50"
                 />
                 <button
                   type="submit"
@@ -196,7 +196,7 @@ export function ChatAssistant() {
                   <Send className="h-4 w-4" />
                 </button>
               </div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 text-center leading-normal">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2 text-center leading-normal">
                 Rozmowa ma charakter wyłącznie informacyjny i nie zastępuje porady prawnej.
               </p>
             </form>

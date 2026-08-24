@@ -158,13 +158,13 @@ export function BlogCategoryPicker({
         </PopoverTrigger>
 
         <PopoverContent
-          className="w-[620px] max-w-[92vw] p-0 bg-zinc-950/95 backdrop-blur-xl border border-border/40 shadow-2xl rounded-2xl overflow-hidden text-white"
+          className="w-[620px] max-w-[92vw] p-0 bg-background/95 backdrop-blur-xl border border-border/40 shadow-2xl rounded-2xl overflow-hidden text-foreground"
           align="start"
         >
           {/* Header & Search */}
           <div className="p-3.5 border-b border-border/30 bg-muted/20 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
+              <span className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
                 Wybór kategorii (Struktura 3-poziomowa)
               </span>
@@ -172,7 +172,7 @@ export function BlogCategoryPicker({
                 <button
                   type="button"
                   onClick={() => onChange("")}
-                  className="text-[11px] text-zinc-400 hover:text-rose-400 transition-colors"
+                  className="text-[11px] text-muted-foreground hover:text-rose-400 transition-colors"
                 >
                   Wyczyść wybór
                 </button>
@@ -180,17 +180,17 @@ export function BlogCategoryPicker({
             </div>
 
             <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Szukaj po nazwie kategorii lub słowie kluczowym..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 pl-9 bg-background/60 border-border/40 text-xs rounded-xl focus-visible:ring-primary/40 text-zinc-100 placeholder:text-zinc-500"
+                className="h-9 pl-9 bg-background/60 border-border/40 text-xs rounded-xl focus-visible:ring-primary/40 text-foreground placeholder:text-muted-foreground"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-200"
+                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -202,7 +202,7 @@ export function BlogCategoryPicker({
           {searchQuery.trim() ? (
             <div className="max-h-[320px] overflow-y-auto p-2 divide-y divide-border/20">
               {flatSearchList.length === 0 ? (
-                <div className="p-8 text-center text-xs text-zinc-500">
+                <div className="p-8 text-center text-xs text-muted-foreground">
                   Brak kategorii pasujących do wpisanej frazy &quot;{searchQuery}&quot;
                 </div>
               ) : (
@@ -224,7 +224,7 @@ export function BlogCategoryPicker({
                             {idx > 0 && <span className="text-zinc-600">/</span>}
                             <span
                               className={cn(
-                                idx === path.length - 1 ? "font-semibold text-white" : "text-zinc-400"
+                                idx === path.length - 1 ? "font-semibold text-foreground" : "text-muted-foreground"
                               )}
                             >
                               {p.nazwa}
@@ -243,7 +243,7 @@ export function BlogCategoryPicker({
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/20 max-h-[360px] min-h-[280px]">
               {/* Level 1: Main Area */}
               <div className="p-2 space-y-1 overflow-y-auto">
-                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-zinc-400 flex items-center gap-1">
+                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-muted-foreground flex items-center gap-1">
                   <Layers className="h-3 w-3 text-primary" /> Poziom 1: Obszar
                 </div>
                 {tree.map((node) => {
@@ -260,13 +260,13 @@ export function BlogCategoryPicker({
                         "w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all border border-transparent",
                         isActive
                           ? "bg-primary/15 border-primary/30 text-white font-medium shadow-sm"
-                          : "text-zinc-300 hover:bg-muted/30"
+                          : "text-foreground/80 hover:bg-muted/30"
                       )}
                     >
                       <span className="truncate">{node.nazwa}</span>
                       <div className="flex items-center gap-1">
                         {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
-                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500" />
+                        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
                       </div>
                     </div>
                   )
@@ -274,8 +274,8 @@ export function BlogCategoryPicker({
               </div>
 
               {/* Level 2: Subcategory */}
-              <div className="p-2 space-y-1 overflow-y-auto bg-zinc-950/40">
-                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+              <div className="p-2 space-y-1 overflow-y-auto bg-background/40">
+                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                   Poziom 2: Kategoria
                 </div>
                 {activeL1Node?.children && activeL1Node.children.length > 0 ? (
@@ -291,8 +291,8 @@ export function BlogCategoryPicker({
                         className={cn(
                           "w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all border border-transparent group",
                           isActive
-                            ? "bg-zinc-800 border-zinc-700 text-white font-medium"
-                            : "text-zinc-300 hover:bg-muted/30"
+                            ? "bg-muted border-border text-foreground font-medium"
+                            : "text-foreground/80 hover:bg-muted/30"
                         )}
                       >
                         <span className="truncate">{node.nazwa}</span>
@@ -306,26 +306,26 @@ export function BlogCategoryPicker({
                             title="Wybierz tę kategorię"
                             className={cn(
                               "p-1 rounded-md hover:bg-primary/30 transition-colors",
-                              isSelected ? "text-primary" : "text-zinc-400 hover:text-white"
+                              isSelected ? "text-primary" : "text-muted-foreground hover:text-foreground"
                             )}
                           >
                             <Check className="h-3.5 w-3.5" />
                           </button>
-                          {hasChildren && <ChevronRight className="h-3.5 w-3.5 text-zinc-500" />}
+                          {hasChildren && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
                         </div>
                       </div>
                     )
                   })
                 ) : (
-                  <div className="p-4 text-center text-xs text-zinc-500">
+                  <div className="p-4 text-center text-xs text-muted-foreground">
                     Brak kategorii
                   </div>
                 )}
               </div>
 
               {/* Level 3: Child Subcategory */}
-              <div className="p-2 space-y-1 overflow-y-auto bg-zinc-900/40">
-                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+              <div className="p-2 space-y-1 overflow-y-auto bg-card/40">
+                <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                   Poziom 3: Podkategoria
                 </div>
                 {activeL2Node?.children && activeL2Node.children.length > 0 ? (
@@ -340,7 +340,7 @@ export function BlogCategoryPicker({
                           "w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-all border border-transparent",
                           isSelected
                             ? "bg-primary/20 border-primary/40 text-primary font-semibold"
-                            : "text-zinc-300 hover:bg-primary/10 hover:text-white"
+                            : "text-foreground/80 hover:bg-primary/10 hover:text-white"
                         )}
                       >
                         <span className="truncate">{node.nazwa}</span>
@@ -349,7 +349,7 @@ export function BlogCategoryPicker({
                     )
                   })
                 ) : (
-                  <div className="p-4 text-center text-xs text-zinc-500">
+                  <div className="p-4 text-center text-xs text-muted-foreground">
                     {activeL2Node ? (
                       <Button
                         type="button"
@@ -370,7 +370,7 @@ export function BlogCategoryPicker({
           )}
 
           {/* Footer note */}
-          <div className="p-2.5 px-3 border-t border-border/30 bg-muted/20 text-[11px] text-zinc-400 flex items-center justify-between">
+          <div className="p-2.5 px-3 border-t border-border/30 bg-muted/20 text-[11px] text-muted-foreground flex items-center justify-between">
             <span>Kliknij nazwę podkategorii lub ikonę ptaszka, aby wybrać.</span>
             {value && (
               <span className="text-primary font-medium">Kategoria wybrana</span>

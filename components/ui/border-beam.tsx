@@ -57,7 +57,7 @@ export function BorderBeam({
         `after:absolute after:inset-[var(--border-width)] after:rounded-[inherit] after:content-['']`,
         "border-[length:var(--border-width)] ![mask-clip:padding-box,border-box]",
         "![mask-composite:intersect] [mask:linear-gradient(transparent,transparent),linear-gradient(red,red)]",
-        `before:absolute before:inset-0 before:z-[-1] before:rounded-[inherit] before:border-[length:var(--border-width)] before:border-black/10 dark:before:border-white/10`,
+        `before:absolute before:inset-0 before:z-[-1] before:rounded-[inherit] before:border-[length:var(--border-width)] before:border-black/10 dark:before:border-border`,
         className
       )}
       {...props}

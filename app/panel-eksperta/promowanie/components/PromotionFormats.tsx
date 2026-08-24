@@ -16,7 +16,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
   return (
     <div id="tour-promo-types" className="space-y-6 relative z-10">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+        <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-secondary" />
           Dostępne Formaty Promowania
         </h2>
@@ -28,7 +28,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
       {promotionTypes.length === 0 ? (
         <Card variant="glass">
           <CardContent className="py-16 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-zinc-800/50 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
               <Info className="h-6 w-6 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground text-sm">
@@ -93,7 +93,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
                         <div className="absolute inset-0 rounded-xl blur-md opacity-20 group-hover:opacity-40 transition-all" style={{ backgroundColor: promo.color || '#3b82f6' }} />
                       </div>
                       <div className="space-y-1 pr-16">
-                        <CardTitle className="text-lg font-bold text-white tracking-tight">{promo.label}</CardTitle>
+                        <CardTitle className="text-lg font-bold text-foreground tracking-tight">{promo.label}</CardTitle>
                         <CardDescription className="text-xs text-muted-foreground leading-relaxed mt-1">{promo.description}</CardDescription>
                       </div>
                     </div>
@@ -116,7 +116,7 @@ export function PromotionFormats({ promotionTypes, handleOpenDialog }: Promotion
                       <div className="flex items-baseline justify-between">
                         <span className="text-xs text-muted-foreground">Koszt promocji</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-extrabold text-white tracking-tight">
+                          <span className="text-2xl font-extrabold text-foreground tracking-tight">
                             {promo.pointsPerMonth
                               ? `${promo.pointsPerMonth}`
                               : promo.pointsPerDay

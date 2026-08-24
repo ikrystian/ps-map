@@ -320,7 +320,7 @@ export function LocalSeoLinks({
 
   return (
     <section
-      className={className ?? "py-16 bg-card/30 border-t border-neutral-900/60"}
+      className={className ?? "py-16 bg-card/30 border-t border-border/60"}
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">

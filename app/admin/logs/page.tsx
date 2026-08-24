@@ -201,7 +201,7 @@ export default function AdminLogsPage() {
                 <p className="text-sm text-muted-foreground">Wszystkie</p>
                 <p className="text-2xl font-bold">{pagination.total}</p>
               </div>
-              <FileText className="h-8 w-8 text-gray-500 opacity-50" />
+              <FileText className="h-8 w-8 text-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>

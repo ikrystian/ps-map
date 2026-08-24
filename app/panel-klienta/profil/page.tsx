@@ -529,7 +529,7 @@ export default function ClientProfilePage() {
               {/* Avatar Section */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-base">Zdjęcie profilowe (Avatar)</CardTitle>
+                  <CardTitle className="font-playfair text-foreground text-base">Zdjęcie profilowe (Avatar)</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs">
                     Avatar będzie wyświetlany w górnym menu i widoczny dla ekspertów.
                   </CardDescription>
@@ -549,7 +549,7 @@ export default function ClientProfilePage() {
                         <label
                           htmlFor="avatar-upload"
                           className={cn(
-                            "inline-flex items-center justify-center rounded-lg text-sm font-semibold h-10 px-4 py-2 w-full transition-all border border-border/30 text-white bg-background-sec/50 hover:bg-background-sec/30 cursor-pointer"
+                            "inline-flex items-center justify-center rounded-lg text-sm font-semibold h-10 px-4 py-2 w-full transition-all border border-border/30 text-foreground bg-background-sec/50 hover:bg-background-sec/30 cursor-pointer"
                           )}
                         >
                           {isUploadingAvatar ? (
@@ -617,7 +617,7 @@ export default function ClientProfilePage() {
               {/* Typ konta selector */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-base">Typ konta</CardTitle>
+                  <CardTitle className="font-playfair text-foreground text-base">Typ konta</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs">
                     Informacja o tym, czy korzystasz z serwisu prywatnie czy firmowo.
                   </CardDescription>
@@ -629,7 +629,7 @@ export default function ClientProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex flex-col gap-3">
-                          <div className="flex items-center justify-between py-2.5 px-4 rounded-lg text-xs font-semibold bg-background-sec/50 border border-border/40 text-white">
+                          <div className="flex items-center justify-between py-2.5 px-4 rounded-lg text-xs font-semibold bg-background-sec/50 border border-border/40 text-foreground">
                             <span className="flex items-center gap-2">
                               {field.value === "BUSINESS" ? (
                                 <Building className="h-4 w-4 text-primary" />
@@ -658,7 +658,7 @@ export default function ClientProfilePage() {
               {/* Połączone konta */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-base">Połączone konta</CardTitle>
+                  <CardTitle className="font-playfair text-foreground text-base">Połączone konta</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs">
                     Połącz konto z Google lub Facebookiem, aby logować się jednym kliknięciem.
                   </CardDescription>
@@ -667,11 +667,11 @@ export default function ClientProfilePage() {
                   {/* Google */}
                   <div className="flex items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10">
-                        <FaGoogle className="h-5 w-5 text-white" />
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground/10">
+                        <FaGoogle className="h-5 w-5 text-foreground" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-white">Google</p>
+                        <p className="text-xs font-semibold text-foreground">Google</p>
                         <p className={cn(
                           "text-sm truncate",
                           isGoogleConnected ? "text-success" : "text-muted-foreground"
@@ -715,7 +715,7 @@ export default function ClientProfilePage() {
                         <FaFacebook className="h-5 w-5 text-[#1877F2]" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-white">Facebook</p>
+                        <p className="text-xs font-semibold text-foreground">Facebook</p>
                         <p className={cn(
                           "text-sm truncate",
                           isFacebookConnected ? "text-success" : "text-muted-foreground"
@@ -766,7 +766,7 @@ export default function ClientProfilePage() {
               {/* Powiadomienia */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-base flex items-center gap-2">
+                  <CardTitle className="font-playfair text-foreground text-base flex items-center gap-2">
                     <Bell className="h-4 w-4 text-primary" />
                     Powiadomienia
                   </CardTitle>
@@ -785,11 +785,11 @@ export default function ClientProfilePage() {
                       <div className="flex-1">
                         <Label
                           htmlFor="powiadomienieDzwiekowe"
-                          className="cursor-pointer font-semibold text-white text-xs"
+                          className="cursor-pointer font-semibold text-foreground text-xs"
                         >
                           Dźwięk powiadomień na czacie
                         </Label>
-                        <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">
+                        <p className="text-sm text-muted-foreground mt-1 font-light leading-relaxed">
                           Odtwórz dźwięk ostrzegawczy po otrzymaniu nowej wiadomości.
                         </p>
                       </div>
@@ -807,7 +807,7 @@ export default function ClientProfilePage() {
               {/* Zgody marketingowe */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-base">Zgody marketingowe</CardTitle>
+                  <CardTitle className="font-playfair text-foreground text-base">Zgody marketingowe</CardTitle>
                   <CardDescription className="text-muted-foreground text-xs">
                     Zarządzaj ustawieniami komunikacji.
                   </CardDescription>
@@ -820,7 +820,7 @@ export default function ClientProfilePage() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-xs text-white">Newsletter</FormLabel>
+                          <FormLabel className="text-xs text-foreground">Newsletter</FormLabel>
                           <FormDescription className="text-sm text-muted-foreground">
                             Porady prawne i nowości.
                           </FormDescription>
@@ -842,7 +842,7 @@ export default function ClientProfilePage() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/30 bg-background-sec/20 p-3 gap-3">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-xs text-white">Komunikacja marketingowa</FormLabel>
+                          <FormLabel className="text-xs text-foreground">Komunikacja marketingowa</FormLabel>
                           <FormDescription className="text-sm text-muted-foreground">
                             Promocje i oferty specjalne.
                           </FormDescription>
@@ -866,7 +866,7 @@ export default function ClientProfilePage() {
               {form.watch("clientType") === "BUSINESS" && (
                 <Card variant="glass" className="animate-in fade-in slide-in-from-top-4 duration-300">
                   <CardHeader>
-                    <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
+                    <CardTitle className="font-playfair text-foreground text-lg flex items-center gap-2">
                       <Building className="h-5 w-5 text-primary" />
                       Dane firmy
                     </CardTitle>
@@ -959,7 +959,7 @@ export default function ClientProfilePage() {
               {/* Dane osobowe / reprezentanta */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
+                  <CardTitle className="font-playfair text-foreground text-lg flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
                     {form.watch("clientType") === "BUSINESS" ? "Dane reprezentanta" : "Dane osobowe"}
                   </CardTitle>
@@ -1031,7 +1031,7 @@ export default function ClientProfilePage() {
                     <Mail className="h-5 w-5 text-primary shrink-0" />
                     <div className="min-w-0 flex-1">
                       <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Adres e-mail konta</span>
-                      <span className="text-sm font-semibold text-white truncate block">{clientData?.user.email}</span>
+                      <span className="text-sm font-semibold text-foreground truncate block">{clientData?.user.email}</span>
                     </div>
                     <div title="Zablokowane edytowanie" className="ml-auto shrink-0 flex items-center justify-center">
                       <Lock className="h-4 w-4 text-muted-foreground/50" />
@@ -1043,7 +1043,7 @@ export default function ClientProfilePage() {
               {/* Adres do korespondencji */}
               <Card variant="glass">
                 <CardHeader>
-                  <CardTitle className="font-playfair text-white text-lg flex items-center gap-2">
+                  <CardTitle className="font-playfair text-foreground text-lg flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-primary" />
                     Adres korespondencyjny
                   </CardTitle>
@@ -1079,7 +1079,7 @@ export default function ClientProfilePage() {
                           <FormControl>
                             <Input
                               placeholder="00-000"
-                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white"
+                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-foreground"
                               {...field}
                             />
                           </FormControl>
@@ -1097,7 +1097,7 @@ export default function ClientProfilePage() {
                           <FormControl>
                             <Input
                               placeholder="Wpisz miasto"
-                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white"
+                              className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-foreground"
                               {...field}
                             />
                           </FormControl>
@@ -1117,7 +1117,7 @@ export default function ClientProfilePage() {
                             value={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-white">
+                              <SelectTrigger className="h-11 bg-background-sec/20 border-border/30 rounded-lg text-foreground">
                                 <SelectValue placeholder="Wybierz" />
                               </SelectTrigger>
                             </FormControl>
@@ -1176,7 +1176,7 @@ export default function ClientProfilePage() {
       <div className="relative z-10 pt-4">
         <Card variant="glass" className="overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-primary" />
               Historia logowania
             </CardTitle>
@@ -1194,7 +1194,7 @@ export default function ClientProfilePage() {
       <div className="relative z-10 pt-4">
         <Card variant="glass" className="overflow-hidden">
           <CardHeader className="border-b border-border/20 py-4 px-6">
-            <CardTitle className="text-lg font-playfair text-white flex items-center gap-2">
+            <CardTitle className="text-lg font-playfair text-foreground flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-primary" />
               Zarządzanie kontem
             </CardTitle>
