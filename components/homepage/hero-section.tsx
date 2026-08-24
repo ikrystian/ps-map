@@ -104,7 +104,7 @@ export function HeroSection() {
               Rozwiązujemy Twoje <TypedPhrases /> w kilku krokach.
             </h2>
             <p className="text-base md:text-xl text-foreground/90 max-w-2xl mx-auto leading-relaxed ">
-              Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników.
+              Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników i ekspertów.
               Szybko, bezpiecznie i na Twoich zasadach.
             </p>
           </motion.div>
@@ -145,8 +145,8 @@ export function HeroSection() {
                 <Users className="h-5 w-5 text-primary" />
               </div>
               <div className="text-left">
-                <p className="text-foreground font-bold text-xl leading-none">1000+</p>
-                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Ekspertów</p>
+                <p className="text-foreground font-bold text-xl leading-none">0zł</p>
+                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Za dodanie sprawy</p>
               </div>
             </div>
 
@@ -155,8 +155,8 @@ export function HeroSection() {
                 <ShieldCheck className="h-5 w-5 text-teal-500" />
               </div>
               <div className="text-left">
-                <p className="text-foreground font-bold text-xl leading-none">100%</p>
-                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Bezpieczeństwa</p>
+                <p className="text-foreground font-bold text-xl leading-none">0%</p>
+                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Prowizji od Twojej sprawy</p>
               </div>
             </div>
 
@@ -165,8 +165,8 @@ export function HeroSection() {
                 <ArrowRight className="h-5 w-5 text-secondary" />
               </div>
               <div className="text-left">
-                <p className="text-foreground font-bold text-xl leading-none">98%</p>
-                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Skuteczności</p>
+                <p className="text-foreground font-bold text-xl leading-none">100%</p>
+                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Zweryfikowanych ekspertów</p>
               </div>
             </div>
           </motion.div>

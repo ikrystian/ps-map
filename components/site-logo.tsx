@@ -34,7 +34,7 @@ export function SiteLogo({
     height,
     title,
     priority,
-    style: { width: "auto", height: "auto" } as const,
+    style: { width: "200", height: "32" } as const,
   }
   return (
     <span className={className}>
