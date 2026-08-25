@@ -88,7 +88,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
           <ul class="list-disc pl-4 space-y-1 text-sm text-neutral-400">
             <li>Publikacja spraw prawnych</li>
             <li>Otrzymywanie ofert od eksperta</li>
-            <li>Przeglądanie profili eksperta</li>
+            <li>Przeglądanie profili ekspertów</li>
             <li>Komunikacja z ekspertami</li>
             <li>System ocen i opinii</li>
           </ul>

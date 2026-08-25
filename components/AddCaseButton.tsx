@@ -42,9 +42,8 @@ export function AddCaseButton({
         )}
       >
         {iconClassName && <Plus className={cn("h-4 w-4 shrink-0", iconClassName)} aria-hidden="true" />}
-        <span className={cn("whitespace-nowrap sm:hidden", labelClassName)}>{shortLabel}</span>
 
-        <span className={cn("whitespace-nowrap hidden sm:inline", labelClassName)}>{label}</span>
+        <span className={cn("whitespace-nowrap inline", labelClassName)}>{label}</span>
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"
           animate={{ x: ["-130%", "130%"] }}
