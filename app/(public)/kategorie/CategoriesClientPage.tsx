@@ -11,7 +11,6 @@ import {
   Briefcase,
   Building2,
   LayoutGrid,
-  Loader2,
   Scale,
   Search,
   User,
@@ -19,38 +18,32 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import { Category } from "@/types/categories"
 
 const DEFAULT_BUSINESS_IMAGE = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
 const DEFAULT_PRIVATE_IMAGE = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
 
-export default function CategoriesPage() {
+interface CategoriesClientPageProps {
+  initialCategories: Category[]
+}
+
+export default function CategoriesPage({ initialCategories }: CategoriesClientPageProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  // Kategorie są renderowane po stronie serwera; komponent kliencki jedynie filtruje/sortuje.
+  const categories = useMemo(
+    () => initialCategories.filter((cat) => cat.aktywna && !cat.parentId),
+    [initialCategories]
+  )
   const [searchQuery, setSearchQuery] = useState("")
 
-  const activeTabFromUrl = searchParams.get("tab") || "all"
-  const [activeTab, setActiveTab] = useState(activeTabFromUrl)
-
-  useEffect(() => {
-    fetchCategories()
-  }, [])
-
-  useEffect(() => {
-    const tab = searchParams.get("tab") || "all"
-    if (tab !== activeTab) {
-      setActiveTab(tab)
-    }
-  }, [searchParams])
+  const activeTab = searchParams.get("tab") || "all"
 
   const handleTabChange = (val: string) => {
-    setActiveTab(val)
     const params = new URLSearchParams(searchParams.toString())
     if (val === "all") {
       params.delete("tab")
@@ -58,21 +51,6 @@ export default function CategoriesPage() {
       params.set("tab", val)
     }
     router.push(`${pathname}?${params.toString()}`, { scroll: false })
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/categories")
-      if (response.ok) {
-        const data = await response.json()
-        // Only keep root categories for the grid
-        setCategories(data.filter((cat: Category) => cat.aktywna && !cat.parentId))
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    } finally {
-      setLoading(false)
-    }
   }
 
   const filteredCategories = useMemo(() => {
@@ -102,17 +80,6 @@ export default function CategoriesPage() {
       business: businessCount
     }
   }, [categories])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="text-muted-foreground animate-pulse font-medium">Przygotowujemy kategorie dla Ciebie...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div

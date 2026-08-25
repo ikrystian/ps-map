@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { buildCategoryTree, pruneEmptyCategoryTree, type BlogCategoryNode } from "@/lib/blog-category-tree"
+import { getPublicBlogCategories } from "@/lib/blog-categories"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextResponse } from "next/server"
@@ -10,6 +10,10 @@ import { NextResponse } from "next/server"
 export async function GET(request: Request) {
   try {
     const publicOnly = new URL(request.url).searchParams.get("public") === "true"
+
+    if (publicOnly) {
+      return NextResponse.json(await getPublicBlogCategories())
+    }
 
     const categories = await prisma.blogCategory.findMany({
       where: {
@@ -26,17 +30,7 @@ export async function GET(request: Request) {
         },
         _count: {
           select: {
-            blogPosts: publicOnly
-              ? {
-                  where: {
-                    opublikowany: true,
-                    OR: [
-                      { dataPublikacji: null },
-                      { dataPublikacji: { lte: new Date() } },
-                    ],
-                  },
-                }
-              : true,
+            blogPosts: true,
             children: true,
           },
         },
@@ -45,19 +39,6 @@ export async function GET(request: Request) {
         nazwa: "asc",
       },
     })
-
-    if (publicOnly) {
-      const prunedTree = pruneEmptyCategoryTree(buildCategoryTree(categories))
-      const keptIds = new Set<string>()
-      const collectIds = (nodes: BlogCategoryNode[]) => {
-        nodes.forEach((node) => {
-          keptIds.add(node.id)
-          collectIds(node.children)
-        })
-      }
-      collectIds(prunedTree)
-      return NextResponse.json(categories.filter((c) => keptIds.has(c.id)))
-    }
 
     return NextResponse.json(categories)
   } catch (error) {

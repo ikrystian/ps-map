@@ -45,8 +45,10 @@ function TypedPhrases() {
   }, [text, isDeleting, phraseIndex])
 
   return (
-    <span className="italic font-bold text-foreground underline decoration-primary/50 underline-offset-8">
-      <span className="sr-only">{TYPED_PHRASES[0]}</span>
+    <span
+      className="italic font-bold text-foreground underline decoration-primary/50 underline-offset-8"
+      aria-label={TYPED_PHRASES[0]}
+    >
       <span aria-hidden="true">
         {text}
         <span className="inline-block w-[3px] h-[0.85em] bg-primary/80 ml-1 align-baseline animate-pulse" />

@@ -65,6 +65,15 @@ const nextConfig: NextConfig = {
     // Enable type checking during build to catch errors before production
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/faq",
+        destination: "/pomoc",
+        permanent: true,
+      },
+    ];
+  },
   serverExternalPackages: ["socket.io", "@libsql/client", "@prisma/adapter-libsql"],
   experimental: {
     webpackMemoryOptimizations: true,
