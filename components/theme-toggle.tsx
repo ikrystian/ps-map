@@ -1,14 +1,15 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { Moon, Sun } from "lucide-react"
+import { motion } from "framer-motion"
+import { Monitor, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { useEffect, useId, useState } from "react"
 
 interface ThemeToggleProps {
   className?: string
-  /** "icon" – okrągły przycisk do headerów, "switch" – przełącznik z torem (np. ustawienia) */
-  variant?: "icon" | "switch"
+  /** "icon" – okrągły przycisk do headerów, "switch" – przełącznik z torem (np. ustawienia), "segmented" – pigułka z ikonami systemowy/jasny/ciemny i przesuwanym tłem */
+  variant?: "icon" | "switch" | "segmented"
 }
 
 /**
@@ -18,14 +19,69 @@ interface ThemeToggleProps {
  * placeholder o identycznych wymiarach — inaczej header „skacze".
  */
 export function ThemeToggle({ className, variant = "icon" }: ThemeToggleProps) {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { theme, resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const activeLayoutId = useId()
 
   useEffect(() => setMounted(true), [])
 
   const isDark = resolvedTheme === "dark"
   const toggle = () => setTheme(isDark ? "light" : "dark")
   const label = isDark ? "Włącz jasny motyw" : "Włącz ciemny motyw"
+
+  if (variant === "segmented") {
+    if (!mounted) {
+      return <div className={cn("h-9 w-[7.5rem] rounded-full bg-muted", className)} />
+    }
+
+    const segments = [
+      { key: "system" as const, icon: Monitor, label: "Systemowy motyw" },
+      { key: "light" as const, icon: Sun, label: "Jasny motyw" },
+      { key: "dark" as const, icon: Moon, label: "Ciemny motyw" },
+    ]
+
+    return (
+      <div
+        role="radiogroup"
+        aria-label="Motyw"
+        className={cn(
+          "relative isolate inline-flex h-9 items-center gap-0.5 rounded-full border border-border bg-muted p-1",
+          className
+        )}
+      >
+        {segments.map(({ key, icon: Icon, label: segmentLabel }) => {
+          const isActive = theme === key
+
+          return (
+            <button
+              key={key}
+              type="button"
+              role="radio"
+              aria-checked={isActive}
+              aria-label={segmentLabel}
+              title={segmentLabel}
+              onClick={() => setTheme(key)}
+              className="relative h-7 w-9 rounded-full cursor-pointer"
+            >
+              {isActive && (
+                <motion.span
+                  layoutId={activeLayoutId}
+                  className="absolute inset-0 rounded-full bg-background shadow-sm"
+                  transition={{ type: "spring", duration: 0.5 }}
+                />
+              )}
+              <Icon
+                className={cn(
+                  "relative z-10 m-auto h-4 w-4 transition-colors duration-200",
+                  isActive ? "text-foreground" : "text-muted-foreground"
+                )}
+              />
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
 
   if (variant === "switch") {
     if (!mounted) {

@@ -683,7 +683,6 @@ export default function PublicHeader({
                     <Link href="/" className="flex items-center relative" onClick={() => setMobileMenuOpen(false)}>
                       <SiteLogo width={130} height={32} className="h-8 w-auto" />
                     </Link>
-                    <ThemeToggle className="-mr-1" />
                   </div>
 
                   {/* Scrollable Content */}
@@ -710,6 +709,13 @@ export default function PublicHeader({
                             Zaloguj się
                           </Button>
                         </Link>
+                        <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">Motyw</p>
+                            <p className="text-xs text-muted-foreground">Dopasuj wygląd aplikacji</p>
+                          </div>
+                          <ThemeToggle variant="segmented" />
+                        </div>
                       </div>
                     )}
 

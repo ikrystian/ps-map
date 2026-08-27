@@ -17,8 +17,8 @@ export function Providers({
       <ThemeProvider
         attribute="class"
         defaultTheme="dark"
-        themes={["light", "dark"]}
-        enableSystem={false}
+        themes={["light", "dark", "system"]}
+        enableSystem
         disableTransitionOnChange
         storageKey="theme"
       >
