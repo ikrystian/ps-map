@@ -29,6 +29,12 @@ function corsHeaders(origin: string): Record<string, string> {
 export default auth((req) => {
   const { nextUrl } = req
 
+  // Ścieżka bez query stringa, udostępniana Server Componentom przez nagłówek —
+  // używana m.in. do wygenerowania domyślnego tagu canonical w app/layout.tsx.
+  const requestHeaders = new Headers(req.headers)
+  requestHeaders.set("x-pathname", nextUrl.pathname)
+  const nextWithPathname = () => NextResponse.next({ request: { headers: requestHeaders } })
+
   // CORS dla publicznych endpointów słownikowych wykorzystywanych przez landing page.
   // Obsługujemy preflight i nagłówki zanim wejdzie logika autoryzacji.
   if (CORS_PATHS.includes(nextUrl.pathname)) {
@@ -36,7 +42,7 @@ export default auth((req) => {
     if (req.method === "OPTIONS") {
       return new NextResponse(null, { status: 204, headers: corsHeaders(origin) })
     }
-    const response = NextResponse.next()
+    const response = nextWithPathname()
     for (const [key, value] of Object.entries(corsHeaders(origin))) {
       response.headers.set(key, value)
     }
@@ -115,7 +121,7 @@ export default auth((req) => {
     }
   }
 
-  return NextResponse.next()
+  return nextWithPathname()
 })
 
 export const config = {

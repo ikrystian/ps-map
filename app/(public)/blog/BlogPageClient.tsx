@@ -257,26 +257,42 @@ function CoverArt({
 /*                                    Page                                    */
 /* -------------------------------------------------------------------------- */
 
-export default function BlogPageClient() {
+interface BlogPageClientProps {
+  initialPosts: BlogPost[];
+  initialPagination: PaginationData;
+  initialCategories: BlogCategory[];
+  initialPopularPosts: BlogPost[];
+  initialTotalPublished: number;
+}
+
+export default function BlogPageClient({
+  initialPosts,
+  initialPagination,
+  initialCategories,
+  initialPopularPosts,
+  initialTotalPublished,
+}: BlogPageClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get("category");
   const activeTag = searchParams.get("tag");
 
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [popularPosts, setPopularPosts] = useState<BlogPost[]>([]);
-  const [totalPublished, setTotalPublished] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  // Kategorie/popularne wpisy są dostarczane raz przez server-side render strony
+  // i nie wymagają odświeżania w trakcie życia tego komponentu.
+  const categories = initialCategories;
+  const popularPosts = initialPopularPosts;
+  const totalPublished = initialTotalPublished;
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(() => {
+    if (!categorySlug) return null;
+    const found = initialCategories.find((c) => c.slug === categorySlug);
+    return found ? found.id : null;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [pagination, setPagination] = useState<PaginationData>({
-    total: 0,
-    page: 1,
-    limit: 10, // 1 wyróżniony + 9 kafelków w siatce
-    pages: 0,
-  });
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState<PaginationData>(initialPagination);
+  const isFirstPostsFetch = useRef(true);
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -307,11 +323,6 @@ export default function BlogPageClient() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  useEffect(() => {
-    fetchCategories();
-    fetchHighlights();
-  }, []);
-
   // Synchronizuj selectedCategory z parametrem category (slug) w URL
   useEffect(() => {
     if (categories.length > 0) {
@@ -330,32 +341,14 @@ export default function BlogPageClient() {
   }, [activeTag]);
 
   useEffect(() => {
+    // Pierwsze wywołanie pomijamy — dane początkowe (zgodne z bieżącym URL)
+    // zostały już dostarczone przez server-side render strony.
+    if (isFirstPostsFetch.current) {
+      isFirstPostsFetch.current = false;
+      return;
+    }
     fetchPosts();
   }, [selectedCategory, debouncedSearch, activeTag, pagination.page]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/blog/categories?public=true");
-      if (response.ok) {
-        setCategories(await response.json());
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  const fetchHighlights = async () => {
-    try {
-      const response = await fetch("/api/blog/posts?sort=popular&limit=4&page=1");
-      if (response.ok) {
-        const data = await response.json();
-        setPopularPosts(data.posts ?? []);
-        setTotalPublished(data.pagination?.total ?? null);
-      }
-    } catch (error) {
-      console.error("Error fetching popular posts:", error);
-    }
-  };
 
   const fetchPosts = async () => {
     try {

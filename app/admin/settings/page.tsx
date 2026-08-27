@@ -1337,7 +1337,7 @@ export default function AdminSettingsPage() {
             <CardHeader>
               <CardTitle>Weryfikacja dodawania sprawy</CardTitle>
               <CardDescription>
-                Dodatkowe zabezpieczenie formularza dodawania sprawy (/panel-klienta/sprawy/dodaj) w panelu klienta.
+                Dodatkowe zabezpieczenie formularza dodawania sprawy (/dodaj-sprawe) — obowiązuje przy każdym utworzeniu sprawy, także zaraz po samodzielnej rejestracji.
               </CardDescription>
             </CardHeader>
             <CardContent>

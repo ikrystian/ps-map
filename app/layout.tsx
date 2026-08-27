@@ -132,8 +132,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const cleanOgImage = sanitizeImageUrl(ogImage, baseUrlStr);
   const cleanFavicon = sanitizeImageUrl(favicon, baseUrlStr);
 
+  // Domyślny canonical wskazuje na bieżącą ścieżkę bez query stringa (nagłówek
+  // ustawiany w proxy.ts). Strony, które tego potrzebują, mogą nadpisać
+  // `alternates.canonical` we własnym generateMetadata — Next scala metadane
+  // od layoutu do strony po kluczach top-level.
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "/";
+
   return {
     metadataBase,
+    alternates: {
+      canonical: pathname,
+    },
     title: {
       default: ogTitle,
       template: `%s | ${siteName}`,

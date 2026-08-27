@@ -107,7 +107,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
     if (isMatchingClient) {
       return (
         <Button variant="primary" size="lg" asChild className="w-full sm:w-auto">
-          <Link href={`/panel-klienta/sprawy/dodaj?referral=${referral.token}`}>
+          <Link href={`/dodaj-sprawe?referral=${referral.token}`}>
             Dokończ zgłoszenie sprawy
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
@@ -159,7 +159,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
 
     return (
       <Button variant="primary" size="lg" asChild className="w-full sm:w-auto">
-        <Link href={`/rejestracja/klient?referral=${referral.token}`}>
+        <Link href={`/dodaj-sprawe?referral=${referral.token}`}>
           <UserPlus className="mr-2 h-4 w-4" />
           Załóż konto i dodaj sprawę
         </Link>

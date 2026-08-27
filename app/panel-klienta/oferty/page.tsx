@@ -236,7 +236,7 @@ export default function ClientOffersPage() {
                 <p className="text-muted-foreground mb-4">
                   Nie masz jeszcze żadnych ofert
                 </p>
-                <Link href="/panel-klienta/sprawy/dodaj">
+                <Link href="/dodaj-sprawe">
                   <Button>Dodaj sprawę</Button>
                 </Link>
               </div>

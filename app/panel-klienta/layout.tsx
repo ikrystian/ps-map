@@ -351,7 +351,7 @@ export default function ClientPanelLayout({
 
           {/* Notifications and User menu */}
           <div className="flex items-center gap-3">
-            <AddCaseButton href="/panel-klienta/sprawy/dodaj" />
+            <AddCaseButton href="/dodaj-sprawe" />
 
             <ThemeToggle />
             <NotificationBell />

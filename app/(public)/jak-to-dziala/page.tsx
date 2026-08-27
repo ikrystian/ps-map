@@ -176,7 +176,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Sprawdź profile eksperta, przeczytaj opinie, porównaj ceny i warunki.
+                  Sprawdź profile ekspertów, przeczytaj opinie, porównaj ceny i warunki.
                   Możesz zadawać pytania i negocjować warunki.
                 </p>
                 <ul className="space-y-2 text-sm">

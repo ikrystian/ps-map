@@ -1,70 +1,11 @@
-import { getOrSetCached, serverCache } from "@/lib/cache"
+import { serverCache } from "@/lib/cache"
+import { getCategoriesList } from "@/lib/categories"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const categories = await getOrSetCached(
-      "categories:all",
-      async () => {
-        return await prisma.category.findMany({
-          select: {
-            id: true,
-            nazwa: true,
-            slug: true,
-            opis: true,
-            opisDodatkowy: true,
-            ikona: true,
-            ikonaUrl: true,
-            backgroundImageUrl: true,
-            typ: true,
-            parentId: true,
-            metaTitle: true,
-            metaDescription: true,
-            aktywna: true,
-            ekspercka: true,
-            kolejnosc: true,
-            wyswietlajNaGlownejPrywatne: true,
-            wyswietlajNaGlownejFirmowe: true,
-            createdAt: true,
-            updatedAt: true,
-            parent: {
-              select: {
-                id: true,
-                nazwa: true,
-                slug: true,
-              },
-            },
-            children: {
-              select: {
-                id: true,
-                nazwa: true,
-                slug: true,
-                ikona: true,
-                ikonaUrl: true,
-                _count: {
-                  select: {
-                    lawFirms: true,
-                    cases: true,
-                  },
-                },
-              },
-            },
-            _count: {
-              select: {
-                lawFirms: true,
-                cases: true,
-              },
-            },
-          },
-          orderBy: [
-            { kolejnosc: "asc" },
-            { nazwa: "asc" },
-          ],
-        })
-      },
-      7200 // Cache categories for 2 hours
-    )
+    const categories = await getCategoriesList()
 
     return NextResponse.json(categories)
   } catch (error) {

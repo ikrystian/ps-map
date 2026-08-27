@@ -14,7 +14,7 @@ Email: {email}
 
 Co możesz teraz zrobić:
 1. Dodaj swoją pierwszą sprawę
-2. Przeglądaj profile eksperta
+2. Przeglądaj profile ekspertów
 3. Otrzymuj oferty od prawników
 4. Porównuj i wybieraj najlepsze oferty
 

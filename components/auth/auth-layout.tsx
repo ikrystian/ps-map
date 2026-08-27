@@ -24,9 +24,9 @@ export function AuthLayout({
   heroTitle = "Twoja droga do rozwiązania problemów prawnych",
   heroDescription = "Połącz się z najlepszymi ekspertami prawnymi w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
   heroStats = [
-    { value: 200, unit: "+", label: "Prawników" },
-    { value: 500, unit: "+", label: "Spraw" },
-    { value: 98, unit: "%", label: "Zadowolenia" },
+    { value: 100, unit: "%", label: "ONLINE" },
+    { value: 0, unit: "%", label: "PROWIZJI" },
+    { value: 24, unit: "/7", label: "DOSTĘP" },
   ],
   containerClassName,
   heroImage,
@@ -72,17 +72,16 @@ export function AuthLayout({
 
       {/* Right Column - Image/Hero */}
       <div
-        className={`hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary overflow-hidden ${
-          !heroImage ? "hero-image" : ""
-        } on-dark`}
+        className={`hidden lg:block relative bg-gradient-to-br from-primary/90 to-primary overflow-hidden ${!heroImage ? "hero-image" : ""
+          } on-dark`}
         style={
           heroImage
             ? {
-                backgroundImage: `url(${heroImage})`,
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-              }
+              backgroundImage: `url(${heroImage})`,
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }
             : undefined
         }
       >

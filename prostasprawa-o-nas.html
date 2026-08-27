@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>O nas | ProstaSprawa.pl - platforma bez prowizji od spraw</title>
+<meta name="description" content="Opisujesz sprawę, a zweryfikowani prawnicy i eksperci sami składają oferty. Bez prowizji, bez zobowiązań. Poznaj ProstaSprawa.pl.">
+
+<!--
+==========================================================================
+  ProstaSprawa.pl - podstrona /o-nas
+  Makieta dla Krystiana, 31.07.2026
+
+  CO TO JEST
+  Statyczna makieta nowej treści strony "O nas". Zastępuje obecną wersję,
+  która zawiera wymyślone statystyki (5000+ rozwiązanych spraw,
+  98% zadowolonych klientów) i zdanie o "największej polskiej platformie".
+
+  STYL
+  Wszystko skopiowane ze stylu /dla-prawnika (arkusz .ps-lp):
+    tło        #20201d
+    tekst      #e0ddd5, wyciszony #aaa
+    złoto      #c8a864  (etykiety sekcji, akcenty, hover kart)
+    turkus     #0da192 -> #0b8c7f (przyciski, ikony)
+    nagłówki   Playfair Display 500/600
+    tekst      Inter 300/400/600
+  Użyte klasy mają te same nazwy co na /dla-prawnika (.ps-lp, .container,
+  .hero, .hero-badge, .section-label, .section-title-light, .btn-primary,
+  .benefit-card, .stat-mini-card itd.), więc we wdrożeniu można wyrzucić
+  cały <style> z tego pliku i podpiąć istniejący arkusz landing page'a.
+  Nowe klasy, których nie ma w serwisie, mają prefiks .ps-about-*.
+
+  CZEGO TU NIE MA
+  Nagłówka, menu, breadcrumbów i stopki. Te elementy bierze layout aplikacji.
+  Zawartość zaczyna się od <section class="hero">.
+
+  LINKI CTA
+  klient   -> /rejestracja/klient  (jeśli "Dodaj sprawę" otwiera modal,
+                                    podmień na wywołanie modala)
+  ekspert  -> /rejestracja/ekspert
+
+  META
+  title:       O nas | ProstaSprawa.pl - platforma bez prowizji od spraw
+  description: Opisujesz sprawę, a zweryfikowani prawnicy i eksperci sami
+               składają oferty. Bez prowizji, bez zobowiązań. Poznaj ProstaSprawa.pl.
+
+  LICZBY W TREŚCI (stan na 31.07.2026, źródło /api/categories)
+  44 kategorie główne, 110 aktywnych podkategorii (w tekście "ponad 100"),
+  16 województw. Świadomie nie ma liczby ekspertów ani spraw, dopóki nie
+  będzie realnych danych.
+
+  PRZY OKAZJI, DO POPRAWY W SERWISIE
+  1. "1000+ Aktywnych Eksperta" -> "Aktywnych ekspertów" (strona główna i /o-nas)
+  2. "profile eksperta", "znalezieniu odpowiedniej eksperta" -> ekspertów
+  3. "Ranking eksperta" w stopce -> "Ranking ekspertów"
+  4. Nagłówki typu "Nasza Misja", "Poznaj naszych Specjalistów" -> wielka
+     litera tylko w pierwszym wyrazie
+  5. Sekcję "Nasi Eksperci" z 24 losowymi profilami można zostawić pod
+     tą stroną, ale opis skrócić do jednego zdania
+==========================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== Tokeny przepisane z arkusza .ps-lp (/dla-prawnika) ===== */
+:root{
+  --ps-gold:#c8a864;
+  --ps-teal:#0da192;
+  --ps-teal-dark:#0b8c7f;
+  --ps-bg:#20201d;
+  --ps-bg-alt:#1c1c19;
+  --ps-text:#e0ddd5;
+  --ps-muted:#aaa;
+  --ps-dim:#777;
+  --font-playfair:"Playfair Display";
+  --font-inter:"Inter";
+}
+html{background:#20201d}
+body{margin:0}
+
+.ps-lp *,.ps-lp :before,.ps-lp :after{box-sizing:border-box;margin:0;padding:0}
+.ps-lp{
+  font-size:16px;
+  font-family:var(--font-inter),"Inter",sans-serif;
+  color:var(--ps-text);
+  background:var(--ps-bg);
+  line-height:1.7;
+  overflow-x:hidden;
+  scroll-behavior:smooth;
+}
+.ps-lp a{color:inherit;text-decoration:none}
+.ps-lp img{max-width:100%;display:block}
+.ps-lp h1,.ps-lp h2,.ps-lp h3{font-family:var(--font-playfair),"Playfair Display",serif;font-weight:500}
+.ps-lp strong{color:#fff;font-weight:600}
+
+.ps-lp .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+.ps-lp .section-label{
+  font-family:var(--font-inter),"Inter",sans-serif;
+  letter-spacing:3px;color:var(--ps-gold);text-transform:uppercase;
+  margin-bottom:20px;font-size:.75rem;font-weight:600;display:inline-block;
+}
+.ps-lp .section-title-light{
+  font-family:var(--font-playfair),"Playfair Display",serif;color:#fff;
+  margin-top:12px;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:500;line-height:1.25;
+}
+.ps-lp .section-subtitle{color:var(--ps-muted);max-width:640px;font-size:1.05rem;margin-top:20px}
+
+.ps-lp .section-dark-bg{background:var(--ps-bg);padding:110px 0;position:relative;overflow:hidden}
+.ps-lp .section-dark-bg:before,.ps-lp .section-dark-bg:after{
+  content:"";pointer-events:none;border-radius:50%;position:absolute;
+}
+.ps-lp .section-dark-bg:before{
+  background:radial-gradient(circle,#0da19212 0%,#0000 62%);
+  width:720px;height:720px;top:-240px;left:-200px;
+}
+.ps-lp .section-dark-bg:after{
+  background:radial-gradient(circle,#c8a8640f 0%,#0000 62%);
+  width:640px;height:640px;bottom:-220px;right:-180px;
+}
+.ps-lp .section-dark-bg > .container{z-index:1;position:relative}
+.ps-lp .section-alt{background:var(--ps-bg-alt)}
+
+/* ===== Przyciski ===== */
+.ps-lp .btn-primary{
+  color:#fff;font-family:var(--font-inter),"Inter",sans-serif;cursor:pointer;
+  background:linear-gradient(135deg,var(--ps-teal),var(--ps-teal-dark));
+  border:none;border-radius:50px;align-items:center;gap:10px;padding:16px 40px;
+  font-size:1rem;font-weight:500;transition:all .4s cubic-bezier(.25,.8,.25,1);
+  display:inline-flex;position:relative;overflow:hidden;
+}
+.ps-lp .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px #0da19259}
+.ps-lp .btn-primary svg{transition:transform .3s}
+.ps-lp .btn-primary:hover svg{transform:translateX(4px)}
+.ps-lp .btn-secondary-outline{
+  font-family:var(--font-inter),"Inter",sans-serif;color:#fff;cursor:pointer;
+  background:#ffffff05;border:1px solid #ffffff1f;border-radius:12px;
+  justify-content:center;align-items:center;padding:14px 28px;font-size:.95rem;
+  font-weight:600;transition:all .3s cubic-bezier(.16,1,.3,1);display:inline-flex;
+}
+.ps-lp .btn-secondary-outline:hover{
+  color:var(--ps-gold);background:#c8a8640d;border-color:#c8a8644d;transform:translateY(-2px);
+}
+
+/* ===== Hero ===== */
+.ps-lp .hero{position:relative;overflow:hidden;padding:120px 0 90px}
+.ps-lp .hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 60% at 20% 0%,#0da1921a 0%,#0000 70%),
+             radial-gradient(50% 50% at 90% 20%,#c8a86414 0%,#0000 70%);
+}
+.ps-lp .hero-container-layout{
+  z-index:10;grid-template-columns:1.15fr .85fr;align-items:center;gap:60px;
+  width:100%;display:grid;position:relative;
+}
+.ps-lp .hero-left{text-align:left;flex-direction:column;align-items:flex-start;display:flex}
+.ps-lp .hero-badge{
+  letter-spacing:3px;color:var(--ps-gold);align-items:center;gap:8px;
+  margin-bottom:24px;font-size:.75rem;font-weight:600;display:inline-flex;
+}
+.ps-lp .badge-dot{background:var(--ps-gold);border-radius:50%;width:6px;height:6px;animation:pslp-pulse-dot 2s infinite}
+@keyframes pslp-pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+.ps-lp .hero-title{margin-bottom:24px;font-size:clamp(2.2rem,4.5vw,3.2rem);line-height:1.15;color:#fff}
+.ps-lp .hero-subtitle{color:var(--ps-muted);max-width:580px;margin-bottom:36px;font-size:1.05rem;line-height:1.7}
+.ps-lp .hero-actions{gap:16px;margin-bottom:40px;display:flex;flex-wrap:wrap}
+.ps-lp .hero-trust{border-top:1px solid #ffffff0d;align-items:center;gap:16px;width:100%;max-width:520px;padding-top:24px;display:flex}
+.ps-lp .trust-text{color:var(--ps-dim);font-size:.8rem;line-height:1.5}
+.ps-lp .trust-text strong{color:#bbb;font-weight:600}
+
+/* ===== Panel z liczbami (wzorowany na .live-cases-mockup) ===== */
+.ps-lp .ps-about-panel{
+  background:linear-gradient(#ffffff05 0%,#ffffff01 100%);
+  border:1px solid #ffffff0f;border-radius:24px;width:100%;max-width:440px;
+  margin-left:auto;padding:28px;overflow:hidden;
+  box-shadow:0 30px 60px #00000080,inset 0 1px #ffffff0d;
+  transition:border-color .4s,box-shadow .4s;
+}
+.ps-lp .ps-about-panel:hover{border-color:#c8a86426;box-shadow:0 30px 60px #0009,0 0 30px #c8a86405}
+.ps-lp .ps-about-panel-label{
+  font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:#666;
+  font-weight:600;margin-bottom:20px;display:block;
+}
+.ps-lp .ps-about-stat{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  padding:14px 0;border-bottom:1px solid #ffffff08;
+}
+.ps-lp .ps-about-stat:last-child{border-bottom:none;padding-bottom:0}
+.ps-lp .ps-about-stat-value{
+  font-family:var(--font-inter),"Inter",sans-serif;color:var(--ps-gold);
+  font-size:1.5rem;font-weight:700;line-height:1;white-space:nowrap;
+  text-shadow:0 0 15px #c8a86426;
+}
+.ps-lp .ps-about-stat-label{color:#8a8880;font-size:.85rem;text-align:right;line-height:1.4}
+
+/* ===== Historia ===== */
+.ps-lp .ps-about-story{max-width:760px}
+.ps-lp .ps-about-story p{margin-bottom:20px;color:var(--ps-muted);font-size:1.05rem}
+.ps-lp .ps-about-story p:last-child{margin-bottom:0}
+.ps-lp .ps-about-pullquote{
+  font-family:var(--font-playfair),"Playfair Display",serif;
+  color:var(--ps-gold);font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.35;
+  border-left:2px solid #c8a8644d;padding:6px 0 6px 24px;margin:36px 0;
+}
+
+/* ===== Karty wartości (.benefit-card z /dla-prawnika) ===== */
+.ps-lp .benefits-header{margin-bottom:60px}
+.ps-lp .benefits-header.center{text-align:center}
+.ps-lp .benefits-header.center .section-subtitle{margin-left:auto;margin-right:auto}
+.ps-lp .benefits-grid{grid-template-columns:repeat(4,1fr);gap:24px;display:grid}
+.ps-lp .benefits-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.ps-lp .benefit-card{
+  text-align:left;background:linear-gradient(#ffffff04 0%,#ffffff01 100%);
+  border:1px solid #ffffff0a;border-radius:24px;padding:40px 28px 36px;
+  transition:all .4s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;
+}
+.ps-lp .benefit-card:hover{
+  background:linear-gradient(#ffffff08 0%,#ffffff03 100%);
+  border-color:#c8a86433;transform:translateY(-4px);box-shadow:0 15px 35px #0000004d;
+}
+.ps-lp .benefit-card:hover .benefit-icon-wrapper{
+  color:var(--ps-gold);background:#c8a86414;border-color:#c8a86440;transform:scale(1.05);
+}
+.ps-lp .benefit-card:hover .benefit-text{color:#bbb}
+.ps-lp .benefit-card:hover .benefit-number{color:#c8a86414}
+.ps-lp .benefit-icon-wrapper{
+  color:var(--ps-teal);background:#0da1920f;border:1px solid #0da1921f;border-radius:12px;
+  justify-content:center;align-items:center;width:48px;height:48px;margin-bottom:28px;
+  transition:all .3s;display:flex;
+}
+.ps-lp .benefit-icon-wrapper svg{width:22px;height:22px}
+.ps-lp .benefit-title{
+  font-family:var(--font-playfair),"Playfair Display",serif;color:#fff;
+  margin-bottom:12px;font-size:1.15rem;font-weight:600;
+}
+.ps-lp .benefit-text{color:#999;font-size:.92rem;transition:color .3s}
+.ps-lp .benefit-number{
+  font-family:var(--font-inter),"Inter",sans-serif;color:#ffffff08;font-size:.85rem;
+  font-weight:700;transition:color .3s;position:absolute;top:28px;right:28px;
+}
+
+/* ===== Kroki ===== */
+.ps-lp .ps-about-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:8px}
+.ps-lp .ps-about-step{
+  background:#0003;border:1px solid #ffffff08;border-radius:16px;padding:28px 24px;
+  transition:all .3s;
+}
+.ps-lp .ps-about-step:hover{border-color:#c8a8644d;background:#c8a8640d}
+.ps-lp .step-indicator{
+  color:var(--ps-gold);font-family:var(--font-playfair),"Playfair Display",serif;
+  margin-bottom:16px;font-size:1rem;font-style:italic;
+}
+.ps-lp .ps-about-step h3{color:#fff;font-size:1.05rem;font-weight:600;margin-bottom:10px}
+.ps-lp .ps-about-step p{color:#999;font-size:.9rem}
+
+/* ===== Pas "zero prowizji" ===== */
+.ps-lp .ps-about-band{
+  background:linear-gradient(135deg,#c8a8640d 0%,#0da1920a 100%);
+  border:1px solid #c8a86426;border-radius:24px;padding:56px 48px;
+}
+.ps-lp .ps-about-band h2{color:#fff;font-size:clamp(1.6rem,3.4vw,2.2rem);margin-bottom:8px}
+.ps-lp .ps-about-band .ps-about-band-lead{
+  color:var(--ps-gold);font-size:1.05rem;font-weight:600;margin-bottom:24px;
+}
+.ps-lp .ps-about-band p{color:var(--ps-muted);max-width:820px;margin-bottom:16px}
+.ps-lp .ps-about-band p:last-child{margin-bottom:0}
+
+/* ===== Chipy specjalizacji ===== */
+.ps-lp .ps-about-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.ps-lp .ps-about-chip{
+  border:1px solid #ffffff14;border-radius:50px;padding:8px 18px;font-size:.85rem;
+  color:#bbb;background:#ffffff05;transition:all .3s;
+}
+.ps-lp .ps-about-chip:hover{color:var(--ps-gold);border-color:#c8a8644d;background:#c8a8640d}
+
+/* ===== Blok wydawcy ===== */
+.ps-lp .ps-about-publisher{
+  display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:start;
+}
+.ps-lp .ps-about-publisher p{color:var(--ps-muted)}
+.ps-lp .ps-about-card{
+  background:#0003;border:1px solid #ffffff0a;border-radius:16px;padding:28px;
+}
+.ps-lp .ps-about-card .company{color:#fff;font-weight:600;margin-bottom:10px;display:block}
+.ps-lp .ps-about-card .legal{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;color:#8a8880;
+  line-height:1.9;margin-bottom:18px;
+}
+.ps-lp .ps-about-card a{color:var(--ps-teal);font-size:.9rem;display:block;line-height:2}
+.ps-lp .ps-about-card a:hover{color:var(--ps-gold)}
+
+/* ===== CTA końcowe ===== */
+.ps-lp .ps-about-cta{text-align:center}
+.ps-lp .ps-about-cta h2{color:#fff;font-size:clamp(1.7rem,3.6vw,2.4rem);margin-bottom:16px}
+.ps-lp .ps-about-cta p{color:var(--ps-muted);max-width:620px;margin:0 auto 32px}
+
+/* ===== Responsywność (breakpointy jak w serwisie) ===== */
+@media (max-width:1024px){
+  .ps-lp .hero-container-layout{grid-template-columns:1fr;gap:48px}
+  .ps-lp .ps-about-panel{margin-left:0;max-width:none}
+  .ps-lp .benefits-grid,.ps-lp .ps-about-steps{grid-template-columns:repeat(2,1fr)}
+  .ps-lp .ps-about-publisher{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  .ps-lp .hero{padding:80px 0 60px}
+  .ps-lp .section-dark-bg{padding:72px 0}
+  .ps-lp .benefits-grid,.ps-lp .benefits-grid.cols-3,.ps-lp .ps-about-steps{grid-template-columns:1fr}
+  .ps-lp .ps-about-band{padding:36px 24px}
+  .ps-lp .btn-primary{padding:14px 30px;width:100%;justify-content:center}
+  .ps-lp .btn-secondary-outline{width:100%}
+  .ps-lp .hero-actions{width:100%}
+}
+</style>
+</head>
+
+<body>
+<div class="ps-lp">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="container hero-container-layout">
+
+      <div class="hero-left">
+        <div class="hero-badge"><span class="badge-dot"></span>O NAS</div>
+
+        <h1 class="hero-title">Zbudowaliśmy to,<br>czego sami nie mogliśmy znaleźć</h1>
+
+        <p class="hero-subtitle">
+          ProstaSprawa.pl nie powstała z analizy rynku. Powstała z naszych własnych spraw,
+          z którymi nie wiedzieliśmy, co zrobić.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn-primary" href="/rejestracja/klient">
+            <span>Dodaj sprawę</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn-secondary-outline" href="/rejestracja/ekspert">Dołącz jako specjalista</a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="trust-text">
+            Rejestracja i dodanie sprawy nic nie kosztują. Zero prowizji, <strong>teraz i w przyszłości</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <!-- Panel z liczbami. Wszystkie wartości do sprawdzenia przed publikacją: /api/categories -->
+        <div class="ps-about-panel">
+          <span class="ps-about-panel-label">ProstaSprawa.pl w liczbach</span>
+
+          <div class="ps-about-stat">
+            <span class="ps-about-stat-value">44</span>
+            <span class="ps-about-stat-label">kategorie spraw<br>22 prywatne i 22 firmowe</span>
+          </div>
+          <div class="ps-about-stat">
+            <span class="ps-about-stat-value">100+</span>
+            <span class="ps-about-stat-label">podkategorii, od rozwodu<br>po RODO w firmie</span>
+          </div>
+          <div class="ps-about-stat">
+            <span class="ps-about-stat-value">16</span>
+            <span class="ps-about-stat-label">województw,<br>specjaliści z całej Polski</span>
+          </div>
+          <div class="ps-about-stat">
+            <span class="ps-about-stat-value">0 zł</span>
+            <span class="ps-about-stat-label">prowizji od sprawy,<br>dla obu stron</span>
+          </div>
+          <div class="ps-about-stat">
+            <span class="ps-about-stat-value">3 mies.</span>
+            <span class="ps-about-stat-label">bezpłatnego testu<br>dla nowego specjalisty</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ HISTORIA ============ -->
+  <section class="section-dark-bg">
+    <div class="container">
+      <div class="benefits-header" style="margin-bottom:40px">
+        <span class="section-label">Jak to się zaczęło</span>
+        <h2 class="section-title-light">Znamy ten moment od środka</h2>
+      </div>
+
+      <div class="ps-about-story">
+        <p>
+          Przychodzi pismo z sądu albo umowa napisana tak, że nie wiadomo, co się właściwie
+          podpisuje, i zaczyna się szukanie. Wpisujesz coś w wyszukiwarkę, otwierasz dwadzieścia
+          kart, dzwonisz do kolejnych kancelarii. Jedna nie odbiera, druga nie prowadzi takich
+          spraw, trzecia oddzwoni w przyszłym tygodniu. Mija kilka dni, a Ty jesteś w tym samym
+          punkcie, tylko bardziej zmęczony i o kilka dni bliżej terminu.
+        </p>
+        <p>
+          Przeszliśmy przez to tyle razy, że w końcu zadaliśmy sobie pytanie: dlaczego to musi
+          tak wyglądać? Po jednej stronie jest człowiek z konkretnym problemem. Po drugiej
+          specjalista, który zajmuje się dokładnie takimi sprawami. Obaj szukają siebie nawzajem,
+          a brakuje tylko miejsca, w którym się spotkają.
+        </p>
+
+        <p class="ps-about-pullquote">Tak powstała ProstaSprawa.pl.</p>
+
+        <p>
+          Dziś łączymy klientów z prawnikami i ekspertami z całej Polski. Działamy we wszystkich
+          16 województwach, obejmujemy 44 kategorie spraw i ponad 100 specjalizacji, prywatnych
+          i firmowych.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JAK DZIAŁAMY ============ -->
+  <section class="section-dark-bg section-alt">
+    <div class="container">
+      <div class="benefits-header">
+        <span class="section-label">Jak działamy</span>
+        <h2 class="section-title-light">Odwracamy kolejność</h2>
+        <p class="section-subtitle">
+          U nas to nie klient szuka specjalisty. To specjaliści zgłaszają się do jego sprawy.
+        </p>
+      </div>
+
+      <div class="ps-about-steps">
+        <div class="ps-about-step">
+          <div class="step-indicator">01</div>
+          <h3>Opisujesz problem</h3>
+          <p>Własnymi słowami, bez prawniczego języka. Wybierasz kategorię i lokalizację. Tyle wystarczy, a rejestracja i dodanie sprawy nic nie kosztują.</p>
+        </div>
+        <div class="ps-about-step">
+          <div class="step-indicator">02</div>
+          <h3>Sprawa trafia do właściwych osób</h3>
+          <p>Twoja sprawa nie wisi publicznie w internecie. Widzą ją wyłącznie ci specjaliści, których profil i doświadczenie do niej pasują.</p>
+        </div>
+        <div class="ps-about-step">
+          <div class="step-indicator">03</div>
+          <h3>Dostajesz konkretne oferty</h3>
+          <p>Każda mówi wprost, co specjalista zrobi, w jakim zakresie i za ile. To nie jest forum z darmowymi poradami.</p>
+        </div>
+        <div class="ps-about-step">
+          <div class="step-indicator">04</div>
+          <h3>Porównujesz i wybierasz</h3>
+          <p>Albo nie wybierasz nikogo, bo dodanie sprawy do niczego nie zobowiązuje. Płacisz bezpośrednio wybranemu specjaliście.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ZERO PROWIZJI ============ -->
+  <section class="section-dark-bg">
+    <div class="container">
+      <div class="ps-about-band">
+        <span class="section-label">Zero haczyków</span>
+        <h2>Nie bierzemy prowizji od spraw</h2>
+        <p class="ps-about-band-lead">Ani od klienta, ani od specjalisty. Teraz i w przyszłości.</p>
+        <p>
+          Prowizja podnosi cenę klientowi i zabiera specjaliście część wynagrodzenia za pracę,
+          której nie wykonaliśmy. Dlatego płacisz wyłącznie za realną pomoc i płacisz bezpośrednio
+          wybranemu specjaliście, na warunkach, które ustalicie między sobą. Nie stoimy w środku
+          tej płatności.
+        </p>
+        <p>
+          Utrzymujemy się z pakietów, które specjaliści kupują, żeby być bardziej widocznymi.
+          To cały nasz model i nie ma w nim drugiego dna.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NIE TYLKO PRAWNICY ============ -->
+  <section class="section-dark-bg section-alt">
+    <div class="container">
+      <div class="benefits-header" style="margin-bottom:0">
+        <span class="section-label">Kogo tu znajdziesz</span>
+        <h2 class="section-title-light">To nie są wyłącznie prawnicy</h2>
+        <p class="section-subtitle">
+          Sprawy z życia rzadko mieszczą się w jednej dziedzinie. Rozwód to zwykle także podział
+          majątku i podatek. Zakup mieszkania to umowa, ale i opinia rzeczoznawcy. Spór
+          z wykonawcą kończy się na dokumentacji i kosztorysie. Dlatego obok adwokatów, radców
+          prawnych i aplikantów działają u nas specjaliści innych dziedzin. Jedna sprawa, jedno
+          miejsce, kilka głów, które mogą się nią zająć.
+        </p>
+
+        <div class="ps-about-chips">
+          <span class="ps-about-chip">Adwokaci</span>
+          <span class="ps-about-chip">Radcowie prawni</span>
+          <span class="ps-about-chip">Aplikanci</span>
+          <span class="ps-about-chip">Doradcy podatkowi</span>
+          <span class="ps-about-chip">Doradcy finansowi</span>
+          <span class="ps-about-chip">Księgowi</span>
+          <span class="ps-about-chip">Rzeczoznawcy</span>
+          <span class="ps-about-chip">Architekci</span>
+          <span class="ps-about-chip">Specjaliści BHP</span>
+          <span class="ps-about-chip">Specjaliści PPOŻ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WARTOŚCI ============ -->
+  <section class="section-dark-bg">
+    <div class="container">
+      <div class="benefits-header center">
+        <span class="section-label">Nasze zasady</span>
+        <h2 class="section-title-light">Na czym nam zależy</h2>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3 class="benefit-title">Sprawdzamy, kto tu odpowiada</h3>
+          <p class="benefit-text">
+            Każdy profil weryfikuje administrator platformy, zanim specjalista zacznie odpowiadać
+            na sprawy. Sprawdzamy dokumenty zawodowe i przynależność do samorządu, czyli OIRP albo ORA.
+          </p>
+          <span class="benefit-number">01</span>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 class="benefit-title">Twoje dane zostają Twoje</h3>
+          <p class="benefit-text">
+            Sprawę widzą tylko dopasowani specjaliści, nigdy cały internet. Opinie na profilach
+            wystawiają wyłącznie klienci, którzy naprawdę współpracowali, i każda przechodzi moderację.
+          </p>
+          <span class="benefit-number">02</span>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h12"/><circle cx="19" cy="18" r="2"/></svg>
+          </div>
+          <h3 class="benefit-title">Wybór zamiast działania w ciemno</h3>
+          <p class="benefit-text">
+            Zanim zdecydujesz, wchodzisz na profil: specjalizacje, doświadczenie, publikacje,
+            certyfikaty, opinie innych klientów. Wybierasz świadomie, a nie na podstawie pierwszego
+            wyniku w wyszukiwarce.
+          </p>
+          <span class="benefit-number">03</span>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="benefit-title">Konkret zamiast darmowych porad</h3>
+          <p class="benefit-text">
+            To nie jest forum z poradami. Specjalista, który odpowiada na Twoją sprawę, chce się
+            nią zająć i od razu mówi, na jakich warunkach.
+          </p>
+          <span class="benefit-number">04</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DLA KLIENTA ============ -->
+  <section class="section-dark-bg section-alt">
+    <div class="container">
+      <div class="benefits-header center">
+        <span class="section-label">Dla klienta</span>
+        <h2 class="section-title-light">Masz sprawę do załatwienia?</h2>
+      </div>
+
+      <div class="benefits-grid cols-3">
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15h6"/></svg>
+          </div>
+          <h3 class="benefit-title">Dodaj sprawę</h3>
+          <p class="benefit-text">
+            Opisz problem, wybierz kategorię i lokalizację. Zajmie Ci to kilka minut i nic nie
+            kosztuje. Możesz podać widełki cenowe i termin, jeśli goni Cię czas.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+          <h3 class="benefit-title">Porównaj oferty</h3>
+          <p class="benefit-text">
+            Zamiast jednej wyceny dostajesz kilka. Widzisz zakres pomocy, warunki i cenę, a obok
+            pełny profil osoby, która je proponuje.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v3"/></svg>
+          </div>
+          <h3 class="benefit-title">Prowadź sprawę w jednym miejscu</h3>
+          <p class="benefit-text">
+            Czat z wybranym specjalistą, statusy, dokumenty i cała historia zgłoszeń w Twoim
+            panelu. Bez przekopywania skrzynki mailowej.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:48px">
+        <a class="btn-primary" href="/rejestracja/klient">
+          <span>Dodaj sprawę</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DLA SPECJALISTY ============ -->
+  <section class="section-dark-bg">
+    <div class="container ps-about-cta">
+      <span class="section-label">Dla specjalisty</span>
+      <h2>Jesteś prawnikiem albo ekspertem?</h2>
+      <p>
+        Zamiast szukać klientów, wybierasz sprawy. Trafiają do Ciebie zapytania dopasowane do
+        specjalizacji, a Ty decydujesz, które bierzesz i na jakich warunkach.
+      </p>
+      <p>
+        Konto zakładasz za darmo, pierwsze 3 miesiące są bezpłatne i bez zobowiązań. Od spraw nie
+        pobieramy prowizji, więc to, co ustalisz z klientem, zostaje u Ciebie w całości. W panelu
+        masz sprawy ze statusami, czat, historię kontaktów, faktury i statystyki. Możesz publikować
+        artykuły eksperckie, które budują Twoją widoczność w wyszukiwarkach i w odpowiedziach
+        sztucznej inteligencji. Nad profilem czuwa opiekun, a zaplecze marketingowe zapewnia dom
+        mediowy 4Connection.
+      </p>
+      <a class="btn-primary" href="/rejestracja/ekspert">
+        <span>Dołącz jako specjalista</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ WYDAWCA ============ -->
+  <section class="section-dark-bg section-alt">
+    <div class="container">
+      <div class="benefits-header" style="margin-bottom:40px">
+        <span class="section-label">Kto za tym stoi</span>
+        <h2 class="section-title-light">Ludzie i firma za platformą</h2>
+      </div>
+
+      <div class="ps-about-publisher">
+        <div>
+          <p>
+            ProstaSprawa.pl prowadzi Polska Grupa Identyfikacji Firm Sp. z o.o. z Kielc. Platformę
+            budujemy z zespołem, który na co dzień zajmuje się marketingiem i produkcją
+            internetową, więc dobrze wiemy, ile kosztuje dotarcie do klienta i dlaczego dobry
+            specjalista nie powinien walczyć o to sam.
+          </p>
+        </div>
+
+        <div class="ps-about-card">
+          <span class="company">Polska Grupa Identyfikacji Firm Sp. z o.o.</span>
+          <div class="legal">
+            ul. Gen. Mariana Langiewicza 16 lok. 3<br>
+            25-381 Kielce<br>
+            KRS 0000768210<br>
+            NIP 9592020678<br>
+            REGON 382401289
+          </div>
+          <a href="mailto:bok@prostasprawa.pl">bok@prostasprawa.pl</a>
+          <a href="tel:+48534888555">+48 534 888 555</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

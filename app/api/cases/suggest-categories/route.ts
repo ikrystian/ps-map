@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { NextRequest, NextResponse } from "next/server"
 
 const OPENROUTER_MODEL = "deepseek/deepseek-v4-flash"
@@ -21,14 +22,22 @@ function parseModelJson(content: string): unknown {
   return JSON.parse(match[0])
 }
 
-// POST /api/cases/suggest-categories - AI dobiera kategorie sprawy na podstawie opisu (tylko CLIENT)
+// POST /api/cases/suggest-categories - AI dobiera kategorie sprawy na podstawie opisu.
+// Dostępne też bez sesji (kreator /dodaj-sprawe przed rejestracją) — jeśli sesja jest,
+// musi to być CLIENT. Koszt wywołania (OpenRouter) ograniczamy rate-limitem per IP.
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "CLIENT") {
+    if (session?.user && session.user.role !== "CLIENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    const rl = rateLimit(`suggest-categories:${getClientIp(request)}`, {
+      limit: 15,
+      windowMs: 60 * 60 * 1000,
+    })
+    if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
 
     const { opisSprawy, nazwaSprawy, typSprawy } = await request.json()
 
