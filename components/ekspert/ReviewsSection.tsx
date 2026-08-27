@@ -11,7 +11,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -42,7 +41,7 @@ import {
   UserCheck
 } from "lucide-react"
 import { expertAvatar } from "@/lib/expert-avatar"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { Review } from "@/types"
 import { clientAvatar } from "@/lib/client-avatar"
@@ -65,6 +64,8 @@ export function ReviewsSection({
   onReviewSubmitted,
 }: ReviewsSectionProps) {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
 
   // Form states
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
@@ -313,6 +314,7 @@ export function ReviewsSection({
   return (
     <div className="space-y-8">
       {/* 1. Header Rating Statistics Dashboard */}
+      {totalReviews > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Card A: Overall Rating Summary */}
@@ -349,171 +351,13 @@ export function ReviewsSection({
 
             {/* Call To Action - Add Review */}
             {session?.user?.role === "CLIENT" ? (
-              <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="w-full mt-2 font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow transition-all duration-300 gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    Dodaj opinię
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold tracking-tight">Dodaj opinię o ekspercie</DialogTitle>
-                    <DialogDescription className="text-muted-foreground">
-                      Podziel się swoimi doświadczeniami ze współpracy z ekspertem <strong>{lawFirmName}</strong>. Twoja opinia pomaga innym użytkownikom podjąć właściwą decyzję.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <form onSubmit={handleReviewSubmit} className="space-y-6 pt-2">
-                    {/* Ocena ogólna */}
-                    <div className="space-y-2 bg-secondary/30 p-4 rounded-xl border">
-                      <Label htmlFor="ocenaOgolna" className="text-base font-semibold">Ocena ogólna *</Label>
-                      <p className="text-xs text-muted-foreground mb-3">Jak oceniasz całościową współpracę z ekspertem?</p>
-                      <div className="flex gap-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            type="button"
-                            key={star}
-                            onClick={() => setReviewForm({ ...reviewForm, ocenaOgolna: star })}
-                            className="p-1 hover:scale-110 transition-transform focus:outline-none"
-                          >
-                            <Star
-                              className={`h-8 w-8 ${star <= reviewForm.ocenaOgolna
-                                ? "fill-amber-500/80 text-amber-500/80"
-                                : "fill-muted text-muted-foreground/30"
-                                }`}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Szczegółowe oceny */}
-                    <div className="space-y-4">
-                      <Label className="text-base font-semibold">Oceny szczegółowe</Label>
-                      <p className="text-xs text-muted-foreground -mt-3">Oceń poszczególne aspekty współpracy (skala 1-5):</p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {[
-                          { key: "profesjonalizm", label: "Profesjonalizm", icon: Briefcase },
-                          { key: "komunikacja", label: "Komunikacja", icon: MessageSquare },
-                          { key: "terminowosc", label: "Terminowość", icon: Clock },
-                          { key: "stosunekJakosci", label: "Cena do jakości", icon: Coins },
-                        ].map(({ key, label, icon: Icon }) => {
-                          const val = reviewForm[key as keyof typeof reviewForm] as number
-                          return (
-                            <div key={key} className="flex flex-col gap-2 p-3 border rounded-xl bg-card">
-                              <div className="flex items-center gap-2 justify-between">
-                                <span className="text-sm font-medium flex items-center gap-1.5">
-                                  <Icon className="h-4 w-4 text-muted-foreground" />
-                                  {label}
-                                </span>
-                                <span className="text-xs font-semibold px-2 py-0.5 bg-muted rounded-full">
-                                  {val}/5
-                                </span>
-                              </div>
-                              <div className="flex gap-1.5 mt-1 justify-between">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <button
-                                    type="button"
-                                    key={star}
-                                    onClick={() => setReviewForm({ ...reviewForm, [key]: star })}
-                                    className="focus:outline-none hover:scale-110 transition-transform"
-                                  >
-                                    <Star
-                                      className={`h-6 w-6 ${star <= val
-                                        ? "fill-amber-500/80 text-amber-500/80"
-                                        : "fill-muted text-muted-foreground/30"
-                                        }`}
-                                    />
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {/* Tytuł opinii */}
-                      <div className="space-y-2">
-                        <Label htmlFor="tytulOpinii" className="text-sm font-semibold">Tytuł opinii *</Label>
-                        <Input
-                          id="tytulOpinii"
-                          value={reviewForm.tytulOpinii}
-                          onChange={(e) =>
-                            setReviewForm({ ...reviewForm, tytulOpinii: e.target.value })
-                          }
-                          placeholder="np. Bardzo profesjonalna pomoc, polecam!"
-                          required
-                        />
-                      </div>
-
-                      {/* Treść opinii */}
-                      <div className="space-y-2">
-                        <Label htmlFor="trescOpinii" className="text-sm font-semibold">Treść opinii * (minimum 50 znaków)</Label>
-                        <Textarea
-                          id="trescOpinii"
-                          value={reviewForm.trescOpinii}
-                          onChange={(e) =>
-                            setReviewForm({ ...reviewForm, trescOpinii: e.target.value })
-                          }
-                          placeholder="Opisz szczegółowo swoje doświadczenia ze współpracy z ekspertem. Jak oceniasz zaangażowanie, poziom wiedzy merytorycznej oraz podejście do klienta..."
-                          rows={6}
-                          required
-                        />
-                        <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-                          <span>Konkretne opinie są najbardziej pomocne dla innych</span>
-                          <span className={reviewForm.trescOpinii.length >= 50 ? "text-muted-foreground" : "text-muted-foreground/80 font-medium"}>
-                            {reviewForm.trescOpinii.length} / 50 znaków
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-3 p-4 border rounded-xl bg-secondary/10">
-                      {/* Polecam */}
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="polecam"
-                          checked={reviewForm.polecam}
-                          onCheckedChange={(checked) =>
-                            setReviewForm({ ...reviewForm, polecam: !!checked })
-                          }
-                        />
-                        <Label htmlFor="polecam" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
-                          <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
-                          Poleca tę eksperta
-                        </Label>
-                      </div>
-
-                      {/* Anonimowa */}
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="anonimowa"
-                          checked={reviewForm.anonimowa}
-                          onCheckedChange={(checked) =>
-                            setReviewForm({ ...reviewForm, anonimowa: !!checked })
-                          }
-                        />
-                        <Label htmlFor="anonimowa" className="text-sm font-medium cursor-pointer">
-                          Opublikuj opinię anonimowo
-                        </Label>
-                      </div>
-                    </div>
-
-                    <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
-                      <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>
-                        Anuluj
-                      </Button>
-                      <Button type="submit" disabled={submittingReview} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                        {submittingReview ? "Dodawanie..." : "Dodaj opinię"}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              <Button
+                onClick={() => setReviewDialogOpen(true)}
+                className="w-full mt-2 font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow transition-all duration-300 gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Dodaj opinię
+              </Button>
             ) : (
               <div className="text-xs text-center text-muted-foreground bg-muted/50 p-2.5 rounded-lg border">
                 Zaloguj się jako Klient, aby dodać opinię.
@@ -608,8 +452,10 @@ export function ReviewsSection({
           </CardContent>
         </Card>
       </div>
+      )}
 
       {/* 2. Advanced Search, Filter & Sort Controls */}
+      {totalReviews > 0 && (
       <div className="bg-card border rounded-xl p-4 shadow-sm flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
         {/* Search */}
@@ -679,13 +525,16 @@ export function ReviewsSection({
           )}
         </div>
       </div>
+      )}
 
       {/* 3. Review Count info */}
+      {totalReviews > 0 && (
       <div className="flex items-center justify-between text-sm text-muted-foreground px-1">
         <p>
           Znaleziono <span className="font-semibold text-foreground">{filteredReviews.length}</span> z {totalReviews} opinii
         </p>
       </div>
+      )}
 
       {/* 4. Reviews List */}
       <div className="space-y-6">
@@ -856,6 +705,31 @@ export function ReviewsSection({
                       : "Zmień kryteria wyszukiwania lub filtry gwiazdek, aby zobaczyć pozostałe opinie."}
                   </p>
                 </div>
+
+                {totalReviews === 0 && session?.user?.role === "CLIENT" && (
+                  <Button
+                    onClick={() => setReviewDialogOpen(true)}
+                    className="mt-2 gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Dodaj pierwszą opinię
+                  </Button>
+                )}
+
+                {totalReviews === 0 && !session?.user && (
+                  <Button
+                    onClick={() =>
+                      router.push(
+                        `/logowanie?callbackUrl=${encodeURIComponent(`${pathname}?tab=reviews&review=1`)}`
+                      )
+                    }
+                    variant="outline"
+                    className="mt-2"
+                  >
+                    Zaloguj się, aby dodać opinię
+                  </Button>
+                )}
+
                 {(ratingFilter !== null || recommendFilter !== "ALL" || searchQuery !== "") && (
                   <Button onClick={handleResetFilters} variant="outline" className="mt-2">
                     Wyczyść filtry
@@ -867,7 +741,168 @@ export function ReviewsSection({
         </AnimatePresence>
       </div>
 
-      {/* 5. Report Dialog */}
+      {/* 5. Add Review Dialog */}
+      <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold tracking-tight">Dodaj opinię o ekspercie</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Podziel się swoimi doświadczeniami ze współpracy z ekspertem <strong>{lawFirmName}</strong>. Twoja opinia pomaga innym użytkownikom podjąć właściwą decyzję.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleReviewSubmit} className="space-y-6 pt-2">
+            {/* Ocena ogólna */}
+            <div className="space-y-2 bg-secondary/30 p-4 rounded-xl border">
+              <Label htmlFor="ocenaOgolna" className="text-base font-semibold">Ocena ogólna *</Label>
+              <p className="text-xs text-muted-foreground mb-3">Jak oceniasz całościową współpracę z ekspertem?</p>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    type="button"
+                    key={star}
+                    onClick={() => setReviewForm({ ...reviewForm, ocenaOgolna: star })}
+                    className="p-1 hover:scale-110 transition-transform focus:outline-none"
+                  >
+                    <Star
+                      className={`h-8 w-8 ${star <= reviewForm.ocenaOgolna
+                        ? "fill-amber-500/80 text-amber-500/80"
+                        : "fill-muted text-muted-foreground/30"
+                        }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Szczegółowe oceny */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Oceny szczegółowe</Label>
+              <p className="text-xs text-muted-foreground -mt-3">Oceń poszczególne aspekty współpracy (skala 1-5):</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { key: "profesjonalizm", label: "Profesjonalizm", icon: Briefcase },
+                  { key: "komunikacja", label: "Komunikacja", icon: MessageSquare },
+                  { key: "terminowosc", label: "Terminowość", icon: Clock },
+                  { key: "stosunekJakosci", label: "Cena do jakości", icon: Coins },
+                ].map(({ key, label, icon: Icon }) => {
+                  const val = reviewForm[key as keyof typeof reviewForm] as number
+                  return (
+                    <div key={key} className="flex flex-col gap-2 p-3 border rounded-xl bg-card">
+                      <div className="flex items-center gap-2 justify-between">
+                        <span className="text-sm font-medium flex items-center gap-1.5">
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          {label}
+                        </span>
+                        <span className="text-xs font-semibold px-2 py-0.5 bg-muted rounded-full">
+                          {val}/5
+                        </span>
+                      </div>
+                      <div className="flex gap-1.5 mt-1 justify-between">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            type="button"
+                            key={star}
+                            onClick={() => setReviewForm({ ...reviewForm, [key]: star })}
+                            className="focus:outline-none hover:scale-110 transition-transform"
+                          >
+                            <Star
+                              className={`h-6 w-6 ${star <= val
+                                ? "fill-amber-500/80 text-amber-500/80"
+                                : "fill-muted text-muted-foreground/30"
+                                }`}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Tytuł opinii */}
+              <div className="space-y-2">
+                <Label htmlFor="tytulOpinii" className="text-sm font-semibold">Tytuł opinii *</Label>
+                <Input
+                  id="tytulOpinii"
+                  value={reviewForm.tytulOpinii}
+                  onChange={(e) =>
+                    setReviewForm({ ...reviewForm, tytulOpinii: e.target.value })
+                  }
+                  placeholder="np. Bardzo profesjonalna pomoc, polecam!"
+                  required
+                />
+              </div>
+
+              {/* Treść opinii */}
+              <div className="space-y-2">
+                <Label htmlFor="trescOpinii" className="text-sm font-semibold">Treść opinii * (minimum 50 znaków)</Label>
+                <Textarea
+                  id="trescOpinii"
+                  value={reviewForm.trescOpinii}
+                  onChange={(e) =>
+                    setReviewForm({ ...reviewForm, trescOpinii: e.target.value })
+                  }
+                  placeholder="Opisz szczegółowo swoje doświadczenia ze współpracy z ekspertem. Jak oceniasz zaangażowanie, poziom wiedzy merytorycznej oraz podejście do klienta..."
+                  rows={6}
+                  required
+                />
+                <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                  <span>Konkretne opinie są najbardziej pomocne dla innych</span>
+                  <span className={reviewForm.trescOpinii.length >= 50 ? "text-muted-foreground" : "text-muted-foreground/80 font-medium"}>
+                    {reviewForm.trescOpinii.length} / 50 znaków
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 p-4 border rounded-xl bg-secondary/10">
+              {/* Polecam */}
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="polecam"
+                  checked={reviewForm.polecam}
+                  onCheckedChange={(checked) =>
+                    setReviewForm({ ...reviewForm, polecam: !!checked })
+                  }
+                />
+                <Label htmlFor="polecam" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
+                  <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
+                  Poleca tę eksperta
+                </Label>
+              </div>
+
+              {/* Anonimowa */}
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="anonimowa"
+                  checked={reviewForm.anonimowa}
+                  onCheckedChange={(checked) =>
+                    setReviewForm({ ...reviewForm, anonimowa: !!checked })
+                  }
+                />
+                <Label htmlFor="anonimowa" className="text-sm font-medium cursor-pointer">
+                  Opublikuj opinię anonimowo
+                </Label>
+              </div>
+            </div>
+
+            <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+              <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>
+                Anuluj
+              </Button>
+              <Button type="submit" disabled={submittingReview} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                {submittingReview ? "Dodawanie..." : "Dodaj opinię"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* 6. Report Dialog */}
       <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>

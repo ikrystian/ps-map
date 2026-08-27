@@ -125,7 +125,7 @@ export async function GET(
           },
         },
         expertiseCategory: {
-          select: { id: true, nazwa: true },
+          select: { id: true, nazwa: true, kolor: true },
         },
       },
     })

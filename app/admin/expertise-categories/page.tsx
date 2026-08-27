@@ -38,13 +38,15 @@ type ExpertiseCategory = {
   parentId: string | null
   kolejnosc: number
   aktywna: boolean
+  kolor: string | null
   parent?: { id: string; nazwa: string } | null
   children?: ExpertiseCategory[]
 }
 
 type FlatItem = ExpertiseCategory & { children: ExpertiseCategory[] }
 
-const emptyForm = { nazwa: "", parentId: "", kolejnosc: 0, aktywna: true }
+const emptyForm = { nazwa: "", parentId: "", kolejnosc: 0, aktywna: true, kolor: "" }
+const defaultCategoryColor = "#0DA192"
 
 export default function ExpertiseCategoriesPage() {
   const [items, setItems] = useState<FlatItem[]>([])
@@ -104,6 +106,7 @@ export default function ExpertiseCategoriesPage() {
       parentId: item.parentId || "",
       kolejnosc: item.kolejnosc,
       aktywna: item.aktywna,
+      kolor: item.kolor || "",
     })
     setDialogOpen(true)
   }
@@ -120,6 +123,7 @@ export default function ExpertiseCategoriesPage() {
         parentId: form.parentId || null,
         kolejnosc: form.kolejnosc,
         aktywna: form.aktywna,
+        kolor: form.kolor || null,
       }
 
       const res = editingItem
@@ -193,6 +197,13 @@ export default function ExpertiseCategoriesPage() {
                 </Button>
               ) : (
                 <span className="h-6 w-6 shrink-0" />
+              )}
+              {item.kolor && (
+                <span
+                  className="h-3 w-3 rounded-full shrink-0 border border-border/50"
+                  style={{ backgroundColor: item.kolor }}
+                  title={item.kolor}
+                />
               )}
               <span className={depth === 0 ? "font-semibold" : depth === 1 ? "font-medium" : "text-muted-foreground"}>
                 {item.nazwa}
@@ -336,6 +347,38 @@ export default function ExpertiseCategoriesPage() {
                 value={form.kolejnosc}
                 onChange={e => setForm(p => ({ ...p, kolejnosc: parseInt(e.target.value) || 0 }))}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="kolor">Kolor</Label>
+              <div className="flex items-center gap-3">
+                <input
+                  id="kolor"
+                  type="color"
+                  value={form.kolor || defaultCategoryColor}
+                  onChange={e => setForm(p => ({ ...p, kolor: e.target.value }))}
+                  className="h-10 w-14 rounded-md border border-input bg-transparent p-1 cursor-pointer"
+                />
+                <Input
+                  value={form.kolor}
+                  onChange={e => setForm(p => ({ ...p, kolor: e.target.value }))}
+                  placeholder="Domyślny (bez koloru)"
+                  className="font-mono"
+                />
+                {form.kolor && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setForm(p => ({ ...p, kolor: "" }))}
+                  >
+                    Wyczyść
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Kolor używany do wyróżnienia specjalizacji/podkategorii w profilu eksperta.
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
