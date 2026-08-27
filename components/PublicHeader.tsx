@@ -348,271 +348,271 @@ export default function PublicHeader({
             <SiteLogo className="hidden lg:block min-w-[150px] min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
             <Image className="lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
           </Link>
-
-          {/* Navigation Menu */}
-          <NavigationMenu className="hidden xl:flex">
-            <NavigationMenuList className="flex lg:gap-2">
-              {/* Szukaj / Zamknij Animated Button */}
-              <NavigationMenuItem>
-                <AnimatePresence mode="wait">
-                  {!searchFormOpen ? (
-                    <motion.button
-                      key="search-btn"
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.92 }}
-                      transition={{ duration: 0.15, ease: "easeInOut" }}
-                      onClick={() => setSearchFormOpen(true)}
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "flex items-center justify-center gap-2 bg-transparent hover:bg-background transition-colors lg:w-[108px]"
-                      )}
-                    >
-                      <Search className="h-4 w-4 text-muted-foreground" />
-                      <span className="hidden min-[1200px]:block">Szukaj</span>
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      key="close-btn"
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.92 }}
-                      transition={{ duration: 0.15, ease: "easeInOut" }}
-                      onClick={() => setSearchFormOpen(false)}
-                      className="flex w-[108px] h-9 items-center justify-center rounded-md  bg-background text-foreground px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none transition-colors gap-2 shadow-lg shadow-black/10 dark:shadow-black/30"
-                    >
-                      <motion.div
-                        initial={{ rotate: -90, opacity: 0 }}
-                        animate={{ rotate: 0, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 220, damping: 15 }}
+          <div className="flex">
+            {/* Navigation Menu */}
+            <NavigationMenu className="hidden xl:flex">
+              <NavigationMenuList className="flex lg:gap-2">
+                {/* Szukaj / Zamknij Animated Button */}
+                <NavigationMenuItem>
+                  <AnimatePresence mode="wait">
+                    {!searchFormOpen ? (
+                      <motion.button
+                        key="search-btn"
+                        initial={{ opacity: 0, scale: 0.92 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.92 }}
+                        transition={{ duration: 0.15, ease: "easeInOut" }}
+                        onClick={() => setSearchFormOpen(true)}
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "flex items-center justify-center gap-2 bg-transparent hover:bg-background transition-colors lg:w-[108px]"
+                        )}
                       >
-                        <X className="h-4 w-4 text-foreground/80" />
-                      </motion.div>
-                      <span className="text-neutral-700 select-none font-light">|</span>
-                      <span>Zamknij</span>
-                    </motion.button>
-                  )}
-                </AnimatePresence>
-              </NavigationMenuItem>
-
-
-
-              {/* Sprawy Firmowe - Mega Menu */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  className={cn(
-                    "bg-transparent hover:bg-background",
-                    isFirmoweActive && "text-primary font-semibold"
-                  )}
-                >
-                  Sprawy firmowe
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
-                    <div className="grid grid-cols-4">
-                      {splitIntoColumns(firmoweCat, 4).map((column, columnIndex) => (
-                        <div
-                          key={columnIndex}
-                          className={cn(
-                            "space-y-5 px-5 first:pl-0 last:pr-0",
-                            columnIndex > 0 && "border-l border-white/[0.08]"
-                          )}
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                        <span className="hidden min-[1200px]:block">Szukaj</span>
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        key="close-btn"
+                        initial={{ opacity: 0, scale: 0.92 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.92 }}
+                        transition={{ duration: 0.15, ease: "easeInOut" }}
+                        onClick={() => setSearchFormOpen(false)}
+                        className="flex w-[108px] h-9 items-center justify-center rounded-md  bg-background text-foreground px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none transition-colors gap-2 shadow-lg shadow-black/10 dark:shadow-black/30"
+                      >
+                        <motion.div
+                          initial={{ rotate: -90, opacity: 0 }}
+                          animate={{ rotate: 0, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 220, damping: 15 }}
                         >
-                          {column.map((category) => (
-                            <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href={`/kategorie/${category.slug}`}
-                                  className={cn(
-                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
-                                    pathname === `/kategorie/${category.slug}` && "text-primary"
-                                  )}
-                                >
-                                  <span>{category.nazwa}</span>
-                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
-                                      {category._count.lawFirms}
-                                    </span>
-                                  )}
-                                  <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
-                                </Link>
-                              </NavigationMenuLink>
-                              {category.children && category.children.length > 0 && (
-                                <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
-                                  {category.children.slice(0, 5).map((child) => (
-                                    <NavigationMenuLink key={child.id} asChild>
-                                      <Link
-                                        href={`/kategorie/${category?.slug}/${child.slug}`}
-                                        className={cn(
-                                          "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
-                                          pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                            ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
-                                            : "text-muted-foreground"
-                                        )}
-                                      >
-                                        <span>{child.nazwa}</span>
-                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
-                                          <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
-                                            ({child._count.lawFirms})
-                                          </span>
-                                        )}
-                                      </Link>
-                                    </NavigationMenuLink>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Potrzebujesz pomocy prawnej? Dodaj swoją sprawę na portalu.</span>
-                      <NavigationMenuLink asChild>
-                        <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
-                          Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+                          <X className="h-4 w-4 text-foreground/80" />
+                        </motion.div>
+                        <span className="text-neutral-700 select-none font-light">|</span>
+                        <span>Zamknij</span>
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </NavigationMenuItem>
 
-              {/* Sprawy Prywatne - Mega Menu */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  className={cn(
-                    "bg-transparent hover:bg-background",
-                    isPrywatneActive && "text-primary font-semibold"
-                  )}
-                >
-                  Sprawy prywatne
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
-                    <div className="grid grid-cols-4">
-                      {splitIntoColumns(prywatneCat, 4).map((column, columnIndex) => (
-                        <div
-                          key={columnIndex}
-                          className={cn(
-                            "space-y-5 px-5 first:pl-0 last:pr-0",
-                            columnIndex > 0 && "border-l border-white/[0.08]"
-                          )}
-                        >
-                          {column.map((category) => (
-                            <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href={`/kategorie/${category.slug}`}
-                                  className={cn(
-                                    "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
-                                    pathname === `/kategorie/${category.slug}` && "text-primary"
-                                  )}
-                                >
-                                  <span>{category.nazwa}</span>
-                                  {showCategoryCounts && category._count?.lawFirms !== undefined && (
-                                    <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
-                                      {category._count.lawFirms}
-                                    </span>
-                                  )}
-                                  <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
-                                </Link>
-                              </NavigationMenuLink>
-                              {category.children && category.children.length > 0 && (
-                                <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
-                                  {category.children.slice(0, 5).map((child) => (
-                                    <NavigationMenuLink key={child.id} asChild>
-                                      <Link
-                                        href={`/kategorie/${category?.slug}/${child.slug}`}
-                                        className={cn(
-                                          "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
-                                          pathname === `/kategorie/${category?.slug}/${child.slug}`
-                                            ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
-                                            : "text-muted-foreground"
-                                        )}
-                                      >
-                                        <span>{child.nazwa}</span>
-                                        {showCategoryCounts && child._count?.lawFirms !== undefined && (
-                                          <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
-                                            ({child._count.lawFirms})
-                                          </span>
-                                        )}
-                                      </Link>
-                                    </NavigationMenuLink>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Chcesz rozwiązać problem osobisty? Dodaj sprawę i otrzymaj oferty.</span>
-                      <NavigationMenuLink asChild>
-                        <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
-                          Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
 
-              <NavigationMenuIndicator />
-            </NavigationMenuList>
-          </NavigationMenu>
 
-          {/*
+                {/* Sprawy Firmowe - Mega Menu */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "bg-transparent hover:bg-background",
+                      isFirmoweActive && "text-primary font-semibold"
+                    )}
+                  >
+                    Sprawy firmowe
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                      <div className="grid grid-cols-4">
+                        {splitIntoColumns(firmoweCat, 4).map((column, columnIndex) => (
+                          <div
+                            key={columnIndex}
+                            className={cn(
+                              "space-y-5 px-5 first:pl-0 last:pr-0",
+                              columnIndex > 0 && "border-l border-white/[0.08]"
+                            )}
+                          >
+                            {column.map((category) => (
+                              <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href={`/kategorie/${category.slug}`}
+                                    className={cn(
+                                      "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
+                                      pathname === `/kategorie/${category.slug}` && "text-primary"
+                                    )}
+                                  >
+                                    <span>{category.nazwa}</span>
+                                    {showCategoryCounts && category._count?.lawFirms !== undefined && (
+                                      <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
+                                        {category._count.lawFirms}
+                                      </span>
+                                    )}
+                                    <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
+                                  </Link>
+                                </NavigationMenuLink>
+                                {category.children && category.children.length > 0 && (
+                                  <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
+                                    {category.children.slice(0, 5).map((child) => (
+                                      <NavigationMenuLink key={child.id} asChild>
+                                        <Link
+                                          href={`/kategorie/${category?.slug}/${child.slug}`}
+                                          className={cn(
+                                            "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
+                                            pathname === `/kategorie/${category?.slug}/${child.slug}`
+                                              ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
+                                              : "text-muted-foreground"
+                                          )}
+                                        >
+                                          <span>{child.nazwa}</span>
+                                          {showCategoryCounts && child._count?.lawFirms !== undefined && (
+                                            <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
+                                              ({child._count.lawFirms})
+                                            </span>
+                                          )}
+                                        </Link>
+                                      </NavigationMenuLink>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Potrzebujesz pomocy prawnej? Dodaj swoją sprawę na portalu.</span>
+                        <NavigationMenuLink asChild>
+                          <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                            Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
+                          </Link>
+                        </NavigationMenuLink>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                {/* Sprawy Prywatne - Mega Menu */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "bg-transparent hover:bg-background",
+                      isPrywatneActive && "text-primary font-semibold"
+                    )}
+                  >
+                    Sprawy prywatne
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                      <div className="grid grid-cols-4">
+                        {splitIntoColumns(prywatneCat, 4).map((column, columnIndex) => (
+                          <div
+                            key={columnIndex}
+                            className={cn(
+                              "space-y-5 px-5 first:pl-0 last:pr-0",
+                              columnIndex > 0 && "border-l border-white/[0.08]"
+                            )}
+                          >
+                            {column.map((category) => (
+                              <div key={category.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href={`/kategorie/${category.slug}`}
+                                    className={cn(
+                                      "group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground",
+                                      pathname === `/kategorie/${category.slug}` && "text-primary"
+                                    )}
+                                  >
+                                    <span>{category.nazwa}</span>
+                                    {showCategoryCounts && category._count?.lawFirms !== undefined && (
+                                      <span className="text-sm px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-muted text-muted-foreground dark:text-muted-foreground group-hover/cat-title:bg-primary/15 group-hover/cat-title:text-primary transition-all duration-250 font-semibold border border-neutral-250/20 dark:border-border/30">
+                                        {category._count.lawFirms}
+                                      </span>
+                                    )}
+                                    <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
+                                  </Link>
+                                </NavigationMenuLink>
+                                {category.children && category.children.length > 0 && (
+                                  <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
+                                    {category.children.slice(0, 5).map((child) => (
+                                      <NavigationMenuLink key={child.id} asChild>
+                                        <Link
+                                          href={`/kategorie/${category?.slug}/${child.slug}`}
+                                          className={cn(
+                                            "group/child-item flex items-center justify-between text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full",
+                                            pathname === `/kategorie/${category?.slug}/${child.slug}`
+                                              ? "text-primary font-medium pl-3 before:opacity-100 before:scale-100"
+                                              : "text-muted-foreground"
+                                          )}
+                                        >
+                                          <span>{child.nazwa}</span>
+                                          {showCategoryCounts && child._count?.lawFirms !== undefined && (
+                                            <span className="text-sm text-muted-foreground/60 group-hover/child-item:text-primary/80 transition-colors ml-2 font-medium">
+                                              ({child._count.lawFirms})
+                                            </span>
+                                          )}
+                                        </Link>
+                                      </NavigationMenuLink>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Chcesz rozwiązać problem osobisty? Dodaj sprawę i otrzymaj oferty.</span>
+                        <NavigationMenuLink asChild>
+                          <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                            Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
+                          </Link>
+                        </NavigationMenuLink>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuIndicator />
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            {/*
             Osobny NavigationMenu (własny Viewport) dla "Dlaczego warto" — współdzielony
             Viewport pozycjonuje się względem lewej krawędzi całego menu, a nie triggera,
             więc dwuelementowy dropdown wyświetlał się przy logo zamiast pod przyciskiem.
           */}
-          <NavigationMenu className="hidden xl:flex">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  className={cn(
-                    "bg-transparent hover:bg-background",
-                    isDlaczegoWartoActive && "text-primary font-semibold"
-                  )}
-                >
-                  Dlaczego warto
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-[260px] p-2 bg-card">
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/dla-prawnika"
-                          className={cn(
-                            "block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors",
-                            isDlaPrawnikaActive && "text-primary"
-                          )}
-                        >
-                          dla Prawnika i Eksperta
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/z-nami-wygrywasz"
-                          className={cn(
-                            "block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors",
-                            isZNamiWygrywaszActive && "text-primary"
-                          )}
-                        >
-                          dla Użytkownika
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
+            <NavigationMenu className="hidden xl:flex">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "bg-transparent hover:bg-background",
+                      isDlaczegoWartoActive && "text-primary font-semibold"
+                    )}
+                  >
+                    Dlaczego warto
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="w-[260px] p-2 bg-card">
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/dla-prawnika"
+                            className={cn(
+                              "block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors",
+                              isDlaPrawnikaActive && "text-primary"
+                            )}
+                          >
+                            dla Prawnika i Eksperta
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/z-nami-wygrywasz"
+                            className={cn(
+                              "block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors",
+                              isZNamiWygrywaszActive && "text-primary"
+                            )}
+                          >
+                            dla Użytkownika
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
           {/* Right Side - User Menu / Login & Hamburger */}
           <div className="flex items-center gap-2 min-[400px]:gap-3 md:gap-4">
             {isAuthenticated && userRole ? (
