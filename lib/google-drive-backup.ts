@@ -2,28 +2,67 @@ import { exec } from "child_process"
 import { promisify } from "util"
 import fs from "fs"
 import path from "path"
-import { Readable } from "stream"
 import { google } from "googleapis"
 
 const execPromise = promisify(exec)
 
+const DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
 /**
- * Creates a local SQLite database backup, uploads it to Google Drive,
- * and performs retention cleanup both locally and on Google Drive.
+ * Builds a Google auth client for Drive access, preferring an OAuth2 refresh
+ * token (a standard @gmail.com account has its own storage quota) over the
+ * service account JWT (service accounts have 0 bytes of Drive storage quota
+ * unless used with a Workspace shared drive — see lib/google-meet.ts for the
+ * same fallback pattern used for Calendar/Meet).
+ *
+ * Returns null if no credentials are configured at all.
+ */
+function getDriveAuth() {
+  const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN
+  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET
+
+  if (refreshToken && clientId && clientSecret) {
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret)
+    oauth2Client.setCredentials({ refresh_token: refreshToken })
+    return oauth2Client
+  }
+
+  if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+    return new google.auth.JWT({
+      email: process.env.GOOGLE_CLIENT_EMAIL,
+      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      scopes: DRIVE_SCOPES,
+    })
+  }
+
+  return null
+}
+
+/**
+ * Creates a local SQLite database backup + an archive of application file
+ * directories, uploads both to Google Drive, and performs retention cleanup
+ * both locally and on Google Drive.
+ *
+ * Cleanup always runs, even if the upload fails, so a persistent upload
+ * failure (e.g. Google blocking the server's IP, or a misconfigured account)
+ * doesn't fill up local disk. Upload failures are thrown (not swallowed into
+ * a `{success:false}` return) so the scheduler's job-runner correctly marks
+ * the run as FAILED and its retry mechanism kicks in.
  */
 export async function backupDbToGoogleDrive() {
-  const isDev = process.env.NODE_ENV === "development"
-  
-  // 1. Check if Google Drive credentials are configured
-  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
-    console.warn("[BACKUP] Google credentials not configured. Skipping Google Drive upload.")
+  const auth = getDriveAuth()
+
+  if (!auth) {
+    console.warn("[BACKUP] Google Drive credentials not configured. Skipping upload.")
     return {
       success: false,
-      error: "Google credentials (GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY) are not configured in environment variables.",
+      error:
+        "Google Drive credentials are not configured (need either GOOGLE_DRIVE_REFRESH_TOKEN + GOOGLE_CLIENT_ID/AUTH_GOOGLE_ID + GOOGLE_CLIENT_SECRET/AUTH_GOOGLE_SECRET, or GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY).",
     }
   }
 
-  // 2. Resolve database path
+  // 1. Resolve database path
   let dbUrl = process.env.DATABASE_URL || "file:./prisma/dev.db"
   if (dbUrl.startsWith("file:")) {
     dbUrl = dbUrl.substring(5)
@@ -34,20 +73,20 @@ export async function backupDbToGoogleDrive() {
     throw new Error(`Database file does not exist at: ${dbPath}`)
   }
 
-  // 3. Prepare backup directory
+  // 2. Prepare local backup directory
   const backupDir = path.resolve(process.cwd(), "backups/db")
   if (!fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true })
   }
 
-  // 4. Create timestamped backup file name
+  // 3. Create timestamped DB backup file name
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-")
   const backupFileName = `db_${timestamp}_gdrive.db`
   const backupFilePath = path.join(backupDir, backupFileName)
 
-  console.log(`[BACKUP] Creating local backup: ${backupFilePath}`)
-  
-  // 5. Perform backup using sqlite3 CLI if available, otherwise fallback to simple copy
+  console.log(`[BACKUP] Creating local database backup: ${backupFilePath}`)
+
+  // 4. Perform SQLite backup
   try {
     await execPromise(`sqlite3 "${dbPath}" ".backup '${backupFilePath}'"`)
     console.log("[BACKUP] Local SQLite backup created successfully via sqlite3 CLI.")
@@ -60,59 +99,75 @@ export async function backupDbToGoogleDrive() {
   const fileSize = fs.statSync(backupFilePath).size
   const fileSizeMb = (fileSize / (1024 * 1024)).toFixed(2)
 
-  // 6. Authenticate with Google Drive API
-  console.log("[BACKUP] Authenticating with Google API...")
-  const auth = new google.auth.JWT({
-    email: process.env.GOOGLE_CLIENT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"],
-  })
+  // 5. Archive application file directories (files, .uploads, .invoices, public/uploads)
+  const filesArchiveName = `files_${timestamp}_gdrive.tar.gz`
+  const filesArchivePath = path.join(backupDir, filesArchiveName)
+  let filesArchiveCreated = false
+  let filesSizeMb = "0"
 
-  const drive = google.drive({ version: "v3", auth })
+  const fileDirs = [
+    { name: "files", path: path.resolve(process.cwd(), "files") },
+    { name: ".uploads", path: path.resolve(process.cwd(), ".uploads") },
+    { name: ".invoices", path: path.resolve(process.cwd(), ".invoices") },
+    { name: "public/uploads", path: path.resolve(process.cwd(), "public/uploads") },
+  ]
+  const existingTargets = fileDirs.filter((d) => fs.existsSync(d.path)).map((d) => d.name)
 
-  // 7. Upload the backup file to Google Drive
-  console.log("[BACKUP] Uploading backup to Google Drive...")
-  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID || undefined
-  const fileMetadata: any = {
-    name: backupFileName,
-  }
-  if (folderId) {
-    fileMetadata.parents = [folderId]
-  }
-
-  // Read file into buffer to avoid multipart boundary issues with createReadStream
-  const fileBuffer = fs.readFileSync(backupFilePath)
-  const fileReadable = new Readable()
-  fileReadable.push(fileBuffer)
-  fileReadable.push(null)
-
-  const media = {
-    mimeType: "application/x-sqlite3",
-    body: fileReadable,
-  }
-
-  let driveFileId = ""
-  try {
-    const response = await drive.files.create({
-      requestBody: fileMetadata,
-      media: media,
-      fields: "id, name",
-    })
-
-    driveFileId = response.data.id || ""
-    console.log(`[BACKUP] Successfully uploaded to Google Drive. File ID: ${driveFileId}`)
-  } catch (uploadError: any) {
-    console.error("[BACKUP] Google Drive upload failed:", uploadError)
-    // Clean up local backup if it fails (optional, but keep it for manual debugging if needed)
-    return {
-      success: false,
-      error: `Google Drive upload failed: ${uploadError.message || uploadError}`,
-      localBackupPath: backupFilePath,
-      fileSizeMb,
+  if (existingTargets.length > 0) {
+    console.log(`[BACKUP] Archiving application file directories (${existingTargets.join(", ")})...`)
+    try {
+      await execPromise(`tar -czf "${filesArchivePath}" -C "${process.cwd()}" ${existingTargets.join(" ")}`)
+      if (fs.existsSync(filesArchivePath)) {
+        filesArchiveCreated = true
+        const size = fs.statSync(filesArchivePath).size
+        filesSizeMb = (size / (1024 * 1024)).toFixed(2)
+        console.log(`[BACKUP] Application files archive created: ${filesArchiveName} (${filesSizeMb} MB)`)
+      }
+    } catch (archError) {
+      console.warn("[BACKUP] Failed to create application files archive tar.gz:", archError)
     }
   }
 
-  // 8. Retention & Cleanup (Default: 30 days)
+  // 6. Google Drive client
+  console.log("[BACKUP] Authenticating with Google API...")
+  const drive = google.drive({ version: "v3", auth: auth as any })
+  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID || undefined
+
+  async function uploadFile(filePath: string, fileName: string, mimeType: string) {
+    const fileMetadata: any = { name: fileName }
+    if (folderId) fileMetadata.parents = [folderId]
+
+    const response = await drive.files.create({
+      requestBody: fileMetadata,
+      media: { mimeType, body: fs.createReadStream(filePath) },
+      fields: "id, name",
+      supportsAllDrives: true,
+    })
+    return response.data.id || ""
+  }
+
+  // 7. Upload DB backup & files archive to Google Drive. Cleanup (step 8)
+  // always runs afterwards, even on upload failure — the failure is only
+  // thrown at the very end so retention cleanup isn't skipped.
+  console.log("[BACKUP] Uploading backups to Google Drive...")
+  let driveFileId = ""
+  let filesArchiveDriveFileId: string | undefined
+  let uploadError: unknown = null
+
+  try {
+    driveFileId = await uploadFile(backupFilePath, backupFileName, "application/x-sqlite3")
+    console.log(`[BACKUP] Successfully uploaded DB backup to Google Drive. File ID: ${driveFileId}`)
+
+    if (filesArchiveCreated && fs.existsSync(filesArchivePath)) {
+      filesArchiveDriveFileId = await uploadFile(filesArchivePath, filesArchiveName, "application/gzip")
+      console.log(`[BACKUP] Successfully uploaded application files archive to Google Drive. File ID: ${filesArchiveDriveFileId}`)
+    }
+  } catch (error: any) {
+    console.error("[BACKUP] Google Drive upload failed:", error)
+    uploadError = error
+  }
+
+  // 8. Retention & Cleanup (Default: 30 days) — runs regardless of upload result.
   const keepDays = parseInt(process.env.BACKUP_KEEP_DAYS || "30", 10)
   const cutoffDate = new Date()
   cutoffDate.setDate(cutoffDate.getDate() - keepDays)
@@ -122,7 +177,7 @@ export async function backupDbToGoogleDrive() {
   // 8a. Clean up old backups on Google Drive
   let deletedDriveCount = 0
   try {
-    let query = "name contains 'db_' and name contains '_gdrive.db' and trashed = false"
+    let query = "(name contains 'db_' or name contains 'files_') and name contains '_gdrive' and trashed = false"
     if (folderId) {
       query += ` and '${folderId}' in parents`
     }
@@ -131,6 +186,8 @@ export async function backupDbToGoogleDrive() {
       q: query,
       fields: "files(id, name, createdTime)",
       orderBy: "createdTime desc",
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
     })
 
     const driveFiles = driveList.data.files || []
@@ -139,7 +196,7 @@ export async function backupDbToGoogleDrive() {
         const createdDate = new Date(file.createdTime)
         if (createdDate < cutoffDate) {
           console.log(`[BACKUP] Deleting old Google Drive backup: ${file.name} (${file.id})`)
-          await drive.files.delete({ fileId: file.id })
+          await drive.files.delete({ fileId: file.id, supportsAllDrives: true })
           deletedDriveCount++
         }
       }
@@ -148,12 +205,14 @@ export async function backupDbToGoogleDrive() {
     console.error("[BACKUP] Failed to clean up old files on Google Drive:", cleanupError)
   }
 
-  // 8b. Clean up old local backup files
+  // 8b. Clean up old local backup files (db_*.db and files_*.tar.gz)
   let deletedLocalCount = 0
   try {
     const localFiles = fs.readdirSync(backupDir)
     for (const file of localFiles) {
-      if (file.startsWith("db_") && file.endsWith("_gdrive.db")) {
+      const isDbBackup = file.startsWith("db_") && file.endsWith("_gdrive.db")
+      const isFilesArchive = file.startsWith("files_") && file.endsWith("_gdrive.tar.gz")
+      if (isDbBackup || isFilesArchive) {
         const filePath = path.join(backupDir, file)
         const stats = fs.statSync(filePath)
         if (stats.mtime < cutoffDate) {
@@ -167,11 +226,20 @@ export async function backupDbToGoogleDrive() {
     console.error("[BACKUP] Failed to clean up old local backup files:", cleanupError)
   }
 
+  if (uploadError) {
+    const message = uploadError instanceof Error ? uploadError.message : String(uploadError)
+    throw new Error(`Google Drive upload failed: ${message}`)
+  }
+
   return {
     success: true,
     fileName: backupFileName,
     fileSizeMb,
+    filesArchiveName: filesArchiveCreated ? filesArchiveName : undefined,
+    filesSizeMb: filesArchiveCreated ? filesSizeMb : undefined,
+    archivedDirectories: existingTargets,
     driveFileId,
+    filesArchiveDriveFileId,
     deletedDriveCount,
     deletedLocalCount,
     keepDays,
@@ -210,16 +278,12 @@ export async function listBackups(): Promise<BackupInfo[]> {
   }
 
   const driveFilesList: BackupInfo[] = []
-  if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+  const auth = getDriveAuth()
+  if (auth) {
     try {
-      const auth = new google.auth.JWT({
-        email: process.env.GOOGLE_CLIENT_EMAIL,
-        key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-        scopes: ["https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/drive"],
-      })
-      const drive = google.drive({ version: "v3", auth })
+      const drive = google.drive({ version: "v3", auth: auth as any })
       const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
-      
+
       let query = "name contains 'db_' and name contains '.db' and trashed = false"
       if (folderId) {
         query += ` and '${folderId}' in parents`
@@ -228,6 +292,8 @@ export async function listBackups(): Promise<BackupInfo[]> {
       const driveList = await drive.files.list({
         q: query,
         fields: "files(id, name, size, createdTime)",
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
       })
 
       for (const file of driveList.data.files || []) {
@@ -293,20 +359,16 @@ export async function restoreBackup(backupFileName: string, driveFileId?: string
     if (!driveFileId) {
       throw new Error(`Plik backupu ${backupFileName} nie istnieje lokalnie, a ID z Google Drive nie zostało przesłane.`)
     }
-    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
-      throw new Error("Dane uwierzytelniające Google Drive (Service Account) nie są skonfigurowane.")
+    const auth = getDriveAuth()
+    if (!auth) {
+      throw new Error("Dane uwierzytelniające Google Drive nie są skonfigurowane.")
     }
 
     console.log(`[RESTORE] Downloading backup ${backupFileName} (${driveFileId}) from Google Drive...`)
-    const auth = new google.auth.JWT({
-      email: process.env.GOOGLE_CLIENT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-      scopes: ["https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/drive"],
-    })
-    const drive = google.drive({ version: "v3", auth })
+    const drive = google.drive({ version: "v3", auth: auth as any })
 
     const response = await drive.files.get(
-      { fileId: driveFileId, alt: "media" },
+      { fileId: driveFileId, alt: "media", supportsAllDrives: true },
       { responseType: "stream" }
     )
 
@@ -354,4 +416,3 @@ export async function restoreBackup(backupFileName: string, driveFileId?: string
     safetyBackup: path.basename(safetyBackupPath),
   }
 }
-
