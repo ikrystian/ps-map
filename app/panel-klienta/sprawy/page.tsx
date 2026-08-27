@@ -23,6 +23,7 @@ import {
   Euro,
   Filter,
   Loader2,
+  Mail,
   MapPin,
   MessageSquare,
   Plus,
@@ -41,6 +42,7 @@ interface Case {
   opisSprawy: string
   trybPilny: boolean
   status: string
+  czekaNaAktywacjeEmail: boolean
   createdAt: string
   budzetOd: number | null
   budzetDo: number | null
@@ -528,6 +530,14 @@ export default function ClientCasesPage() {
                         <Badge variant="outline" className="inline-flex items-center bg-muted/40 text-muted-foreground border border-border/30 text-xs font-medium">
                           {caseTypeLabels[caseItem.typSprawy] || caseItem.typSprawy}
                         </Badge>
+
+                        {/* Sprawa czeka na potwierdzenie e-maila — niewidoczna dla ekspertów */}
+                        {caseItem.czekaNaAktywacjeEmail && (
+                          <Badge variant="outline" className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold">
+                            <Mail className="h-3 w-3" />
+                            Czeka na potwierdzenie e-maila
+                          </Badge>
+                        )}
 
                         {/* Sprawa z polecenia eksperta */}
                         {caseItem.referral && (

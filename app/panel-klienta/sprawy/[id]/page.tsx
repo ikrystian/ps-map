@@ -61,6 +61,7 @@ interface Case {
   telefonKontakt: string
   preferowanyKontakt: string
   status: string
+  czekaNaAktywacjeEmail: boolean
   createdAt: string
   updatedAt: string
   zamknieto?: string
@@ -347,6 +348,12 @@ export default function ClientCaseDetailsPage() {
             >
               {statusLabels[caseData.status]?.label || caseData.status}
             </span>
+            {caseData.czekaNaAktywacjeEmail && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold tracking-wide">
+                <Mail className="h-3 w-3" />
+                Czeka na potwierdzenie e-maila
+              </span>
+            )}
             {caseData.referral && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold tracking-wide">
                 <Share2 className="h-3 w-3" />
@@ -361,6 +368,18 @@ export default function ClientCaseDetailsPage() {
           </div>
         </PageHeader>
       </div>
+
+      {caseData.czekaNaAktywacjeEmail && (
+        <Card variant="glass" className="border-amber-500/30 bg-amber-500/5">
+          <CardContent className="flex items-center gap-3 py-4 px-6 text-sm text-amber-300">
+            <Mail className="h-5 w-5 shrink-0" />
+            <span>
+              Twoja sprawa jest jeszcze niewidoczna dla ekspertów. Potwierdź adres e-mail, klikając w link
+              z wiadomości, którą wysłaliśmy przy rejestracji — dopiero wtedy eksperci zobaczą sprawę i będą mogli składać oferty.
+            </span>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Wybrana Ekspert (Zaakceptowana oferta) */}
       {(() => {

@@ -79,6 +79,9 @@ model User {
   // Kody OTP przy dodawaniu sprawy
   caseOtpVerifications CaseOtpVerification[]
 
+  // Bilety jednorazowe na utworzenie sprawy bez logowania (kreator /dodaj-sprawe)
+  caseCreationTickets CaseCreationTicket[]
+
   // Rejestr anonimizacji konta (RODO art. 17)
   accountDeletion AccountDeletion?
 
@@ -128,6 +131,24 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Jednorazowy bilet wydawany zamiast zalogowania po rejestracji z kreatora
+// /dodaj-sprawe — użytkownik NIE może się zalogować, dopóki nie potwierdzi
+// e-maila (patrz auth.ts: authorize() wymaga emailVerified), więc ten token
+// pozwala dokończyć TYLKO utworzenie jednej, konkretnej sprawy w tym samym
+// przebiegu formularza (POST /api/cases przyjmuje go zamiast sesji NextAuth).
+// Zużywany dopiero przy faktycznym utworzeniu sprawy — do tego czasu może być
+// użyty wielokrotnie (obsługa retry przy weryfikacji OTP e-mail).
+model CaseCreationTicket {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 // Jednorazowy kod (OTP) wysyłany mailem do klienta w celu dodatkowej weryfikacji
@@ -704,6 +725,12 @@ model Case {
 
   // Status
   status                    CaseStatus @default(NOWA)
+
+  // Kreator /dodaj-sprawe loguje klienta od razu po weryfikacji SMS (bez klikania
+  // linku w mailu) — sprawa zostaje ukryta przed ekspertami, dopóki klient
+  // faktycznie nie potwierdzi adresu e-mail. Pozostałe ścieżki tworzenia sprawy
+  // (klient już zweryfikowany) mają tu zawsze false.
+  czekaNaAktywacjeEmail     Boolean  @default(false)
 
   // Archiwizacja (soft delete)
   isArchived                Boolean  @default(false)

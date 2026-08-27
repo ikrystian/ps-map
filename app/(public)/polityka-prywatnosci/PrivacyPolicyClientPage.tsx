@@ -3,14 +3,14 @@
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import type { LegalPageContent } from "@/lib/legal-pages/types"
-import { 
-  Search, 
-  FileText, 
-  Printer, 
-  Download, 
-  Copy, 
-  Check, 
-  BookOpen, 
+import {
+  Search,
+  FileText,
+  Printer,
+  Download,
+  Copy,
+  Check,
+  BookOpen,
   ShieldCheck,
   Target,
   Database,
@@ -82,7 +82,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
       const scrollPosition = window.scrollY
       const windowHeight = window.innerHeight
       const docHeight = document.documentElement.scrollHeight
-      
+
       // Update progress bar
       const totalScroll = docHeight - windowHeight
       if (totalScroll > 0) {
@@ -135,7 +135,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
     return sections.map(section => {
       const titleMatches = section.title.toLowerCase().includes(query)
       const matchingParagraphs = section.paragraphs.filter(p => p.toLowerCase().includes(query))
-      
+
       if (titleMatches || matchingParagraphs.length > 0) {
         return {
           ...section,
@@ -170,7 +170,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
     const parts = text.split(new RegExp(`(${search})`, "gi"))
     return (
       <>
-        {parts.map((part, i) => 
+        {parts.map((part, i) =>
           part.toLowerCase() === search.toLowerCase() ? (
             <mark key={i} className="bg-teal-500/30 text-teal-200 font-semibold rounded px-0.5 border border-teal-500/20">
               {part}
@@ -185,19 +185,19 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
   return (
     <div className="bg-background min-h-[calc(100vh-65px)] text-white pb-20 relative font-sans selection:bg-teal-500/20 selection:text-teal-200">
-      
+
       {/* Scroll Progress Bar (Only visible in full view) */}
       {activeTab === "full" && (
         <div className="fixed top-[65px] left-0 right-0 h-1 bg-card z-50 print:hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-100" 
+          <div
+            className="h-full bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-100"
             style={{ width: `${scrollProgress}%` }}
           />
         </div>
       )}
 
       {/* Hero Banner Header */}
-      <div 
+      <div
         className="relative w-full h-[180px] md:h-[240px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 print:bg-white print:border-b print:text-black print:h-auto print:py-6 on-dark"
         style={{ backgroundImage: "url('/images/security-lock.png')" }}
       >
@@ -230,27 +230,25 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
       {/* Interactive Controls & View Selection */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10 print:mt-2">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-card/90 border border-border/80 rounded-2xl p-4 backdrop-blur-md mb-8 print:hidden">
-          
+
           {/* Tab Selector */}
           <div className="flex bg-background p-1.5 rounded-xl border border-border w-full md:w-auto">
             <button
               onClick={() => setActiveTab("tldr")}
-              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                activeTab === "tldr"
+              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "tldr"
                   ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <Sparkles className="w-4 h-4" />
               Podsumowanie w pigułce
             </button>
             <button
               onClick={() => setActiveTab("full")}
-              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                activeTab === "full"
+              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "full"
                   ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <FileText className="w-4 h-4" />
               Pełny dokument prawny
@@ -290,7 +288,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
           >
             {/* Header info */}
             <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
-              <h2 className="font-playfair text-2xl sm:text-3xl font-bold">Twoja prywatność w skrócie</h2>
+              <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-foreground">Twoja prywatność w skrócie</h2>
               <p className="text-muted-foreground text-sm sm:text-base font-light">
                 Twoje zaufanie jest dla nas kluczowe. Przygotowaliśmy to interaktywne streszczenie, aby ułatwić Ci zapoznanie się z najważniejszymi kwestiami dotyczącymi Twoich danych osobowych.
               </p>
@@ -298,7 +296,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
             {/* TLDR Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
+
               {/* Card 1: Administrator */}
               <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-teal-500/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
@@ -316,7 +314,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     </p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("definicje"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -340,7 +338,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <li><strong className="text-foreground">Analizy</strong> – optymalizacja działania serwisu.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("cel-zbierania-danych"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -364,7 +362,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <li><strong className="text-foreground">Zgłoszenie sprzeciwu</strong> – wobec określonego przetwarzania.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("prawa-uzytkownikow"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -386,7 +384,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <li><strong className="text-foreground">Brak transferów poza EOG</strong> – Twoje dane pozostają na terenie Unii Europejskiej.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("okres-przetwarzania"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -408,7 +406,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <li><strong className="text-foreground">Kontrola</strong> – możesz samodzielnie zmienić ustawienia plików cookies w swojej przeglądarce w dowolnym momencie.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("pliki-cookies"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -429,7 +427,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <li><strong className="text-foreground">Profilowanie ofert</strong> – dopasowanie ofert serwisu następuje wyłącznie po wyrażeniu przez Ciebie dobrowolnej zgody.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("zautomatyzowane-decyzje"), 100) }}
                   className="mt-6 text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -442,47 +440,47 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
             {/* Glossary/Definitions Accordion */}
             {content.definitions.length > 0 && (
-            <div className="bg-card/50 border border-border/80 rounded-2xl p-6 sm:p-8 mt-12">
-              <h3 className="font-playfair text-xl sm:text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <Info className="w-5 h-5 text-teal-500" />
-                Słownik podstawowych pojęć prawnych
-              </h3>
-              
-              <div className="space-y-3">
-                {content.definitions.map((def, idx) => {
-                  const isOpen = openGlossaryIndex === idx
-                  return (
-                    <div 
-                      key={def.term}
-                      className="bg-card/45 border border-border/70 rounded-xl overflow-hidden transition-all duration-300"
-                    >
-                      <button
-                        onClick={() => setOpenGlossaryIndex(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm sm:text-base text-foreground hover:text-teal-400 transition-colors cursor-pointer"
+              <div className="bg-card/50 border border-border/80 rounded-2xl p-6 sm:p-8 mt-12">
+                <h3 className="font-playfair text-xl sm:text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                  <Info className="w-5 h-5 text-teal-500" />
+                  Słownik podstawowych pojęć prawnych
+                </h3>
+
+                <div className="space-y-3">
+                  {content.definitions.map((def, idx) => {
+                    const isOpen = openGlossaryIndex === idx
+                    return (
+                      <div
+                        key={def.term}
+                        className="bg-card/45 border border-border/70 rounded-xl overflow-hidden transition-all duration-300"
                       >
-                        <span>{def.term}</span>
-                        <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90 text-teal-400" : ""}`} />
-                      </button>
-                      
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.25 }}
-                          >
-                            <div className="px-4 pb-4 pt-1 border-t border-border/40 text-xs sm:text-sm text-neutral-450 leading-relaxed">
-                              {def.desc}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )
-                })}
+                        <button
+                          onClick={() => setOpenGlossaryIndex(isOpen ? null : idx)}
+                          className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm sm:text-base text-foreground hover:text-teal-400 transition-colors cursor-pointer"
+                        >
+                          <span>{def.term}</span>
+                          <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90 text-teal-400" : ""}`} />
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              <div className="px-4 pb-4 pt-1 border-t border-border/40 text-xs sm:text-sm text-neutral-450 leading-relaxed">
+                                {def.desc}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
             )}
 
             {/* DPO / IOD Spotlight Banner */}
@@ -530,7 +528,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
         {/* Tab 2: Full Privacy Policy Document */}
         {activeTab === "full" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Sidebar Navigation (TOC) */}
             <aside className="lg:col-span-4 sticky top-[100px] h-[calc(100vh-140px)] overflow-y-auto pr-4 hidden lg:flex flex-col space-y-4 print:hidden custom-scrollbar">
               <div className="bg-card/80 border border-border/80 rounded-2xl p-5 backdrop-blur-md">
@@ -542,17 +540,15 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     <button
                       key={section.id}
                       onClick={() => scrollToSection(section.id)}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${
-                        activeSection === section.id
+                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${activeSection === section.id
                           ? "bg-teal-600 text-white font-semibold shadow-md shadow-teal-900/10"
                           : "text-muted-foreground hover:text-foreground hover:bg-card/50"
-                      }`}
+                        }`}
                     >
-                      <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${
-                        activeSection === section.id
+                      <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${activeSection === section.id
                           ? "bg-white/20 text-white"
                           : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
-                      }`}>
+                        }`}>
                         {section.number}
                       </span>
                       <span className="truncate">{section.title}</span>
@@ -583,7 +579,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
 
             {/* Document Content Column */}
             <main className="lg:col-span-8 space-y-8 print:col-span-12">
-              
+
               {/* Live Search */}
               <div className="bg-card/70 border border-border/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md print:hidden space-y-4">
                 <div className="relative">
@@ -604,7 +600,7 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                     </button>
                   )}
                 </div>
-                
+
                 {/* Search Match Stats Banner */}
                 {searchQuery.trim() && (
                   <div className="flex items-center justify-between text-xs text-muted-foreground bg-card/60 p-2.5 rounded-lg border border-border">
@@ -654,9 +650,9 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                           {section.paragraphs.map((para, pIdx) => {
                             // Check if it is a list bullet element
                             const isBullet = para.trim().startsWith("•")
-                            
+
                             return (
-                              <p 
+                              <p
                                 key={pIdx}
                                 className={`${isBullet ? "pl-5 -indent-5 text-neutral-350" : ""} transition-all`}
                               >

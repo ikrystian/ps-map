@@ -1,0 +1,405 @@
+[2026-08-27T09:46:22.391Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "767b904c-b782-40e7-bfba-27f397d9cc3b",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "df43a73e-800b-41d4-abd9-fec83071215d",
+           categories: {
+             create: [
+               {
+                 categoryId: "df43a73e-800b-41d4-abd9-fec83071215d"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem ipsum",
+           opisSprawy: "lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "767b904c-b782-40e7-bfba-27f397d9cc3b",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "df43a73e-800b-41d4-abd9-fec83071215d",
+           categories: {
+             create: [
+               {
+                 categoryId: "df43a73e-800b-41d4-abd9-fec83071215d"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem ipsum",
+           opisSprawy: "lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T09:46:27.236Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "767b904c-b782-40e7-bfba-27f397d9cc3b",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "df43a73e-800b-41d4-abd9-fec83071215d",
+           categories: {
+             create: [
+               {
+                 categoryId: "df43a73e-800b-41d4-abd9-fec83071215d"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem ipsum",
+           opisSprawy: "lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "767b904c-b782-40e7-bfba-27f397d9cc3b",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "df43a73e-800b-41d4-abd9-fec83071215d",
+           categories: {
+             create: [
+               {
+                 categoryId: "df43a73e-800b-41d4-abd9-fec83071215d"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem ipsum",
+           opisSprawy: "lorem ipsum lorem ipsum lorem ipsumlorem ipsum lorem ipsum lorem ipsum",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T09:50:56.223Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "e1a02546-f10a-405c-968a-ff16f1db68d5",
+           typSprawy: "FIRMA",
+           categoryId: "f8eb6c30-7085-4f49-ada7-0a2dc7ec66e2",
+           categories: {
+             create: [
+               {
+                 categoryId: "f8eb6c30-7085-4f49-ada7-0a2dc7ec66e2"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ",
+           opisSprawy: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "6b3c6499-9546-4e4d-97ff-3aecf526556c",
+           cityId: "3bd181ba-da1e-4e8f-9bfe-ca45a79e15ed",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1z0f4-5._.js:3194:158
+
+  3191 }) : null;
+  3192 const requiresEmailActivation = Boolean(pendingEmailVerification);
+  3193 // Utwórz sprawę
+→ 3194 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "e1a02546-f10a-405c-968a-ff16f1db68d5",
+           typSprawy: "FIRMA",
+           categoryId: "f8eb6c30-7085-4f49-ada7-0a2dc7ec66e2",
+           categories: {
+             create: [
+               {
+                 categoryId: "f8eb6c30-7085-4f49-ada7-0a2dc7ec66e2"
+               }
+             ]
+           },
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ",
+           opisSprawy: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "jan kowalski kowalski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "6b3c6499-9546-4e4d-97ff-3aecf526556c",
+           cityId: "3bd181ba-da1e-4e8f-9bfe-ca45a79e15ed",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: true,
+           ~~~~~~~~~~~~~~~~~~~~~
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `czekaNaAktywacjeEmail`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T10:50:57.299Z] Context: POST /api/cases
+Error: undefined is not an object (evaluating '__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].caseCreationTicket.findUnique')
+Stack: TypeError: undefined is not an object (evaluating '__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].caseCreationTicket.findUnique')
+    at POST (file:///home/krystian/Projects/ps-map/.next/dev/server/chunks/%5Broot-of-the-server%5D__1z0f4-5._.js?id=%5Bproject%5D%2Fapp%2Fapi%2Fcases%2Froute.ts+%5Bapp-route%5D+%28ecmascript%29:296:178)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T10:50:59.168Z] Context: POST /api/cases
+Error: undefined is not an object (evaluating '__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].caseCreationTicket.findUnique')
+Stack: TypeError: undefined is not an object (evaluating '__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].caseCreationTicket.findUnique')
+    at POST (file:///home/krystian/Projects/ps-map/.next/dev/server/chunks/%5Broot-of-the-server%5D__1z0f4-5._.js?id=%5Bproject%5D%2Fapp%2Fapi%2Fcases%2Froute.ts+%5Bapp-route%5D+%28ecmascript%29:296:178)
+    at processTicksAndRejections (native)
+================================================================================

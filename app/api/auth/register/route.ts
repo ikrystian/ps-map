@@ -11,6 +11,20 @@ import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import { NextRequest, NextResponse } from "next/server"
 
+// Formularze wysyłają w tym polu raz rzeczywiste `Voivodeship.id` (np. wybór
+// z listy w /rejestracja/klient i /rejestracja/ekspert), a raz slug (kreator
+// /dodaj-sprawe, który dzieli stan z `POST /api/cases` — tam pole `voivodeshipId`
+// zawsze oznacza slug). Bez tego rozróżnienia slug trafiał wprost do FK i
+// `prisma.user.update` padał na naruszeniu klucza obcego (P2003).
+async function resolveVoivodeshipId(value: string | null | undefined): Promise<string | null> {
+  if (!value) return null
+  const voivodeship = await prisma.voivodeship.findFirst({
+    where: { OR: [{ id: value }, { slug: value }] },
+    select: { id: true },
+  })
+  return voivodeship?.id ?? null
+}
+
 export async function POST(request: NextRequest) {
   try {
     const rl = rateLimit(`register:${getClientIp(request)}`, { limit: 5, windowMs: 60 * 60 * 1000 })
@@ -34,14 +48,15 @@ export async function POST(request: NextRequest) {
     const role: UserRole =
       requestedRole === "LAW_FIRM" ? UserRole.LAW_FIRM : UserRole.CLIENT
 
-    // Kreator /dodaj-sprawe (opisz sprawę → załóż konto na końcu) wysyła tę flagę,
-    // żeby użytkownik mógł zalogować się od razu, bez czekania na klik w mailu.
-    // Bezpieczne, bo w tym miejscu telefon i tak musi przejść weryfikację SMS-em
-    // (patrz phoneCheck niżej) — to silniejszy dowód tożsamości niż standardowy
-    // link weryfikacyjny e-mail. Nie dotyczy rejestracji społecznościowej ani
+    // Kreator /dodaj-sprawe (opisz sprawę → załóż konto na końcu) wysyła tę flagę.
+    // Konto NIE jest logowalne, dopóki użytkownik nie kliknie linku w mailu
+    // (auth.ts: authorize() wymaga emailVerified) — mimo weryfikacji SMS telefonu.
+    // Żeby mimo to dało się od razu utworzyć sprawę bez logowania, wydajemy
+    // jednorazowy bilet (CaseCreationTicket), który POST /api/cases przyjmuje
+    // zamiast sesji NextAuth. Nie dotyczy rejestracji społecznościowej ani
     // /rejestracja/klient i /rejestracja/ekspert, które tej flagi nigdy nie wysyłają.
-    const shouldAutoVerifyEmail =
-      body.autoVerifyEmail === true && role === UserRole.CLIENT && !isSocialRegistration
+    const issueCaseCreationTicket =
+      body.issueCaseCreationTicket === true && role === UserRole.CLIENT && !isSocialRegistration
 
     // Walidacja
     if (!email || typeof email !== "string") {
@@ -150,14 +165,28 @@ export async function POST(request: NextRequest) {
       // Hashowanie hasła
       const hashedPassword = await bcrypt.hash(password, 10)
 
-      // Utworzenie użytkownika
+      // Utworzenie użytkownika — emailVerified zawsze null aż do kliknięcia linku
       user = await prisma.user.create({
         data: {
           email: normalizedEmail,
           password: hashedPassword,
           role,
           name: userData.name || null,
-          emailVerified: shouldAutoVerifyEmail ? new Date() : null,
+        },
+      })
+    }
+
+    // Bilet na jednorazowe utworzenie sprawy bez logowania — patrz komentarz przy
+    // `issueCaseCreationTicket` wyżej. Ważny 30 minut, wystarczająco na dokończenie
+    // kreatora wraz z ewentualnym retry przy weryfikacji OTP e-mail.
+    let caseCreationToken: string | null = null
+    if (issueCaseCreationTicket) {
+      caseCreationToken = crypto.randomBytes(32).toString('hex')
+      await prisma.caseCreationTicket.create({
+        data: {
+          token: caseCreationToken,
+          userId: user.id,
+          expires: new Date(Date.now() + 30 * 60 * 1000),
         },
       })
     }
@@ -242,7 +271,7 @@ export async function POST(request: NextRequest) {
           numerTelefonu: phoneCheck.phone || clientData.telefon || null,
           telefonZweryfikowany: new Date(),
           adres: clientData.adres || null,
-          voivodeshipId: clientData.voivodeshipId || null,
+          voivodeshipId: await resolveVoivodeshipId(clientData.voivodeshipId),
           miasto: clientData.miasto || null,
           kodPocztowy: clientData.kodPocztowy || null,
         },
@@ -354,7 +383,7 @@ export async function POST(request: NextRequest) {
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
           miasto: userData.lawFirm.miasto,
-          voivodeshipId: userData.lawFirm.voivodeshipId || defaultVoivodeship.id,
+          voivodeshipId: (await resolveVoivodeshipId(userData.lawFirm.voivodeshipId)) || defaultVoivodeship.id,
         },
       })
 
@@ -412,15 +441,16 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: shouldAutoVerifyEmail
-          ? "Rejestracja zakończona pomyślnie."
+        message: issueCaseCreationTicket
+          ? "Konto zostało utworzone. Sprawdź skrzynkę email i potwierdź adres, aby móc się zalogować."
           : "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email, aby potwierdzić adres.",
         user: {
           id: user.id,
           email: user.email,
           role: user.role,
         },
-        requiresEmailVerification: !shouldAutoVerifyEmail,
+        requiresEmailVerification: true,
+        ...(caseCreationToken ? { caseCreationToken } : {}),
       },
       { status: 201 }
     )
