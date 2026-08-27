@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { isReferralUsable } from "@/lib/case-referrals"
+import { generateCaseNumber } from "@/lib/case-number"
 import { notifyMatchingLawFirmsForCase } from "@/lib/case-notifications"
 import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { generateCaseOtpEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
@@ -429,6 +430,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Utwórz sprawę
+    const numerSprawy = await generateCaseNumber(category.id)
+
     const newCase = await prisma.case.create({
       data: {
         clientId: client.id,
@@ -437,6 +440,7 @@ export async function POST(request: NextRequest) {
         categories: {
           create: allCategoryIds.map((categoryId) => ({ categoryId })),
         },
+        numerSprawy,
         wybranadziedzinaPrawa: null,
         wybranaSpecyfikacja: null,
         nazwaSprawy: body.nazwaSprawy,
@@ -520,6 +524,7 @@ export async function POST(request: NextRequest) {
         variables: {
           "{klient}": `${client.imie} ${client.nazwisko}`,
           "{nazwaSprawy}": newCase.nazwaSprawy,
+          "{numerSprawy}": newCase.numerSprawy || "",
           "{kategoria}": allCategoryNames,
           "{budzet}": budzetText,
           "{linkDoSprawy}": `${baseUrl}/panel-klienta/sprawy/${newCase.id}`,

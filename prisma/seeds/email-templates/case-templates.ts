@@ -216,6 +216,7 @@ Zespół Prosta Sprawa`,
 Twoja sprawa "{nazwaSprawy}" została pomyślnie dodana do serwisu Prosta Sprawa!
 
 Szczegóły sprawy:
+- Numer sprawy: {numerSprawy}
 - Tytuł: {nazwaSprawy}
 - Kategoria: {kategoria}
 - Budżet: {budzet}
@@ -233,8 +234,12 @@ Zespół Prosta Sprawa`,
   <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #222222; padding-bottom: 8px;">Szczegóły zgłoszenia:</h3>
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr>
-      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">Tytuł:</td>
-      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{nazwaSprawy}</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;" width="30%">Numer sprawy:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;" width="70%">{numerSprawy}</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;" width="30%">Tytuł:</td>
+      <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600; border-top: 1px solid #222222;" width="70%">{nazwaSprawy}</td>
     </tr>
     <tr>
       <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500; border-top: 1px solid #222222;" width="30%">Kategoria:</td>
@@ -252,10 +257,11 @@ Zespół Prosta Sprawa`,
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSprawy}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Śledź swoją sprawę</a>
 </div>`,
-    zmienne: ['{klient}', '{nazwaSprawy}', '{kategoria}', '{budzet}', '{linkDoSprawy}'],
+    zmienne: ['{klient}', '{nazwaSprawy}', '{numerSprawy}', '{kategoria}', '{budzet}', '{linkDoSprawy}'],
     opisZmiennych: {
       '{klient}': 'Imię i nazwisko klienta',
       '{nazwaSprawy}': 'Tytuł sprawy',
+      '{numerSprawy}': 'Numer sprawy (kategoria/podkategoria/rok/numer)',
       '{kategoria}': 'Kategoria prawna',
       '{budzet}': 'Budżet sprawy',
       '{linkDoSprawy}': 'Link do szczegółów sprawy w panelu klienta',

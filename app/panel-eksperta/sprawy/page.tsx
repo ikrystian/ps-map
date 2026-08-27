@@ -49,6 +49,7 @@ import { usePermissions } from "@/hooks/usePermissions"
 
 interface Case {
   id: string
+  numerSprawy: string | null
   nazwaSprawy: string
   opisSprawy: string
   typSprawy: string
@@ -847,9 +848,16 @@ const SprawyPage = () => {
                       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                         <div className="flex-grow space-y-4 w-full">
                           {/* Case Title */}
-                          <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">
-                            {sprawa.nazwaSprawy}
-                          </h3>
+                          <div className="space-y-1">
+                            <h3 className="text-xl sm:text-2xl font-bold font-playfair tracking-tight text-foreground group-hover:text-primary transition-colors leading-tight">
+                              {sprawa.nazwaSprawy}
+                            </h3>
+                            {sprawa.numerSprawy && (
+                              <p className="text-xs font-medium text-muted-foreground/70 tracking-wide">
+                                Nr sprawy: {sprawa.numerSprawy}
+                              </p>
+                            )}
+                          </div>
 
                           {/* Preview Description snippet */}
                           <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">

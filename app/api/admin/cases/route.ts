@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { generateCaseNumber } from "@/lib/case-number"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -182,11 +183,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Utwórz sprawę
+    const numerSprawy = await generateCaseNumber(body.categoryId)
+
     const newCase = await prisma.case.create({
       data: {
         clientId: body.clientId,
         typSprawy: body.typSprawy,
         categoryId: body.categoryId,
+        numerSprawy,
         wybranadziedzinaPrawa: body.wybranadziedzinaPrawa || null,
         wybranaSpecyfikacja: body.wybranaSpecyfikacja || null,
         specjalizacja: body.specjalizacja || null,

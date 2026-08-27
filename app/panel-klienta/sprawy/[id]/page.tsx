@@ -40,6 +40,7 @@ import { expertAvatar } from "@/lib/expert-avatar"
 
 interface Case {
   id: string
+  numerSprawy: string | null
   client?: {
     user?: {
       email?: string
@@ -336,10 +337,18 @@ export default function ClientCaseDetailsPage() {
           Powrót do listy spraw
         </Button>
         <PageHeader
+          className="md:flex-col md:items-start"
           title={caseData.nazwaSprawy}
           titleClassName="text-foreground text-2xl sm:text-3xl lg:text-4xl"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center w-full justify-between gap-2">
+            {caseData.numerSprawy && (
+              <div className="">
+                Nr sprawy:
+                <Badge className="bg-neutral-900 text-neutral-50 border border-neutral-800/60 font-mono text-[14px] font-semibold tracking-wide">
+                  {caseData.numerSprawy}</Badge>
+              </div>
+            )}
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide border",

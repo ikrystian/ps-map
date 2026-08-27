@@ -41,6 +41,7 @@ import { useEffect, useState } from "react"
 
 interface Case {
   id: string
+  numerSprawy: string | null
   typSprawy: string
   nazwaSprawy: string
   opisSprawy: string
@@ -319,11 +320,10 @@ export default function LawFirmCaseDetailsPage() {
 
         <PageHeader
           title={caseData.nazwaSprawy}
-          subtitle={`${
-            caseData.categories && caseData.categories.length > 0
+          subtitle={`${caseData.numerSprawy ? `Nr ${caseData.numerSprawy} • ` : ""}${caseData.categories && caseData.categories.length > 0
               ? caseData.categories.map((link) => link.category.nazwa).join(", ")
               : caseData.category.nazwa
-          } • ${getCaseTypeLabel(caseData.typSprawy)}`}
+            } • ${getCaseTypeLabel(caseData.typSprawy)}`}
           titleClassName="text-foreground text-2xl sm:text-3xl font-playfair tracking-tight"
         >
           <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0">

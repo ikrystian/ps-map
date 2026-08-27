@@ -137,6 +137,9 @@ export default function DodajSprawaClientPage() {
   const [categories, setCategories] = useState<any[]>([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
   const [selectedCityName, setSelectedCityName] = useState("")
+  const [accountCityOptions, setAccountCityOptions] = useState<{ id: string; nazwa: string }[]>([])
+  const [accountCityId, setAccountCityId] = useState("")
+  const [isLoadingAccountCities, setIsLoadingAccountCities] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [isSuggestingCategories, setIsSuggestingCategories] = useState(false)
@@ -195,6 +198,35 @@ export default function DodajSprawaClientPage() {
     updateAccountField("kodPocztowy", formatted)
   }
 
+  // --- Podpowiedź miasta na podstawie kodu pocztowego wpisanego w Kroku 6 ---
+  useEffect(() => {
+    const kod = account.kodPocztowy
+    if (!/^\d{2}-\d{3}$/.test(kod)) {
+      setAccountCityOptions([])
+      setAccountCityId("")
+      return
+    }
+
+    const controller = new AbortController()
+    setIsLoadingAccountCities(true)
+    fetch(`/api/cities?search=${encodeURIComponent(kod)}`, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        const options = Array.isArray(data) ? data.map((c: any) => ({ id: c.id, nazwa: c.nazwa })) : []
+        setAccountCityOptions(options)
+        setAccountCityId(options.length === 1 ? options[0].id : "")
+        clearError("accountMiasto")
+      })
+      .catch((error) => {
+        if (!(error instanceof Error) || error.name !== "AbortError") {
+          console.error("Error fetching cities for postal code:", error)
+        }
+      })
+      .finally(() => setIsLoadingAccountCities(false))
+
+    return () => controller.abort()
+  }, [account.kodPocztowy])
+
   const handleSelectCaseType = (value: CaseType) => {
     setCaseData((prev) => ({ ...prev, typSprawy: value, categoryIds: [] }))
     setAiSuggestion(null)
@@ -248,6 +280,23 @@ export default function DodajSprawaClientPage() {
   const clearDraftStorage = () => {
     localStorage.removeItem(DRAFT_DATA_KEY)
     localStorage.removeItem(DRAFT_STEP_KEY)
+  }
+
+  // Po pomyślnym utworzeniu sprawy: czyścimy zarówno localStorage, jak i stan formularza
+  // w pamięci — nawigacja po sukcesie zwykle odmontowuje ten komponent, ale w ścieżce
+  // anonimowej (bilet rejestracji) użytkownik może zamknąć dialog sukcesu i zostać na
+  // /dodaj-sprawe, więc bez tego zobaczyłby z powrotem wypełniony formularz.
+  const resetFormState = () => {
+    setCaseData(initialCaseDraftData)
+    setContact(initialContact)
+    setAccount(initialAccount)
+    setUploadedFiles([])
+    setSelectedCityName("")
+    setAccountCityOptions([])
+    setAccountCityId("")
+    setAiSuggestion(null)
+    setErrors({})
+    setCurrentStep(1)
   }
 
   // Jeśli okaże się, że wchodzimy tu z aktywną sesją CLIENT i zapisanym krokiem 6
@@ -370,7 +419,7 @@ export default function DodajSprawaClientPage() {
     5: isAuthed
       ? ["imieNazwiskoSession", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"]
       : ["imie", "nazwisko", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"],
-    6: ["email", "adres", "kodPocztowy", "password", "confirmPassword", "zgodaRegulamin"],
+    6: ["email", "adres", "kodPocztowy", "accountMiasto", "password", "confirmPassword", "zgodaRegulamin"],
   }
 
   const getStepErrors = (step: number): Record<string, string> => {
@@ -416,6 +465,8 @@ export default function DodajSprawaClientPage() {
       stepErrors.kodPocztowy = "Kod pocztowy jest wymagany"
     } else if (!/^\d{2}-\d{3}$/.test(account.kodPocztowy)) {
       stepErrors.kodPocztowy = "Wpisz poprawny kod pocztowy (np. 00-000)"
+    } else if (accountCityOptions.length > 1 && !accountCityId) {
+      stepErrors.accountMiasto = "Wybierz miasto pasujące do kodu pocztowego"
     }
     if (!account.password) {
       stepErrors.password = "Hasło jest wymagane"
@@ -583,6 +634,7 @@ export default function DodajSprawaClientPage() {
 
       if (response.ok) {
         clearDraftStorage()
+        resetFormState()
         setCreatedCaseId(data.id)
         setShowSuccessDialog(true)
       } else {
@@ -630,7 +682,8 @@ export default function DodajSprawaClientPage() {
             telefon: contact.telefonKontakt,
             adres: account.adres,
             kodPocztowy: account.kodPocztowy,
-            miasto: selectedCityName || null,
+            miasto:
+              accountCityOptions.find((c) => c.id === accountCityId)?.nazwa || selectedCityName || null,
             voivodeshipId: caseData.voivodeshipId || null,
             nazwa: isBusinessCase ? contact.nazwaFirmy.trim() || null : null,
             zgodaRegulamin: account.zgodaRegulamin,
@@ -694,6 +747,7 @@ export default function DodajSprawaClientPage() {
       if (response.ok && !data?.requiresOtp) {
         setShowOtpDialog(false)
         clearDraftStorage()
+        resetFormState()
         setCreatedCaseId(data.id)
         setShowSuccessDialog(true)
         return
@@ -1020,18 +1074,59 @@ export default function DodajSprawaClientPage() {
         {errors.adres && <p className="text-xs text-destructive mt-1">{errors.adres}</p>}
       </div>
 
-      <div id="field-kodPocztowy">
-        <Label htmlFor="kodPocztowy" className="text-muted-foreground text-xs font-semibold">
-          Kod pocztowy *
-        </Label>
-        <Input
-          id="kodPocztowy"
-          value={account.kodPocztowy}
-          onChange={handleAccountPostalCodeChange}
-          placeholder="00-000"
-          className={cn("max-w-[160px]", errors.kodPocztowy && "border-destructive focus-visible:ring-destructive")}
-        />
-        {errors.kodPocztowy && <p className="text-xs text-destructive mt-1">{errors.kodPocztowy}</p>}
+      <div className="flex gap-3">
+        <div id="field-kodPocztowy" className="w-[140px] shrink-0">
+          <Label htmlFor="kodPocztowy" className="text-muted-foreground text-xs font-semibold">
+            Kod pocztowy *
+          </Label>
+          <Input
+            id="kodPocztowy"
+            value={account.kodPocztowy}
+            onChange={handleAccountPostalCodeChange}
+            placeholder="00-000"
+            className={cn(errors.kodPocztowy && "border-destructive focus-visible:ring-destructive")}
+          />
+          {errors.kodPocztowy && <p className="text-xs text-destructive mt-1">{errors.kodPocztowy}</p>}
+        </div>
+
+        <div id="field-accountMiasto" className="flex-1 min-w-0">
+          <Label htmlFor="accountMiasto" className="text-muted-foreground text-xs font-semibold">
+            Miasto {accountCityOptions.length > 1 && "*"}
+          </Label>
+          <Select
+            value={accountCityId}
+            onValueChange={(value) => {
+              setAccountCityId(value)
+              clearError("accountMiasto")
+            }}
+            disabled={isLoadingAccountCities || accountCityOptions.length === 0}
+          >
+            <SelectTrigger
+              id="accountMiasto"
+              className={cn(errors.accountMiasto && "border-destructive focus-visible:ring-destructive")}
+            >
+              <SelectValue
+                placeholder={
+                  isLoadingAccountCities
+                    ? "Wyszukiwanie miasta..."
+                    : !/^\d{2}-\d{3}$/.test(account.kodPocztowy)
+                      ? "Najpierw podaj kod pocztowy"
+                      : accountCityOptions.length === 0
+                        ? "Nie znaleziono miasta dla tego kodu"
+                        : "Wybierz miasto"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {accountCityOptions.map((city) => (
+                <SelectItem key={city.id} value={city.id}>
+                  {city.nazwa}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.accountMiasto && <p className="text-xs text-destructive mt-1">{errors.accountMiasto}</p>}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

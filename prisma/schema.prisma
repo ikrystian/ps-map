@@ -700,6 +700,9 @@ model Case {
   wybranaSpecyfikacja       String?  // Szczegółowa specyfikacja
   specjalizacja             String?  // Dodatkowe wymagania
 
+  // Numer sprawy: [inicjały kategorii]/[inicjały podkategorii]/[rok]/[numer w roku] — patrz lib/case-number.ts
+  numerSprawy                String?  @unique
+
   // Opis sprawy
   nazwaSprawy               String
   opisSprawy                String   // Min 100 znaków
