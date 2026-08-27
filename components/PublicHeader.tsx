@@ -836,7 +836,7 @@ export default function PublicHeader({
                 {userRole === "CLIENT" && (
                   <>
                     <AddCaseButton
-                      href="/panel-klienta/sprawy/dodaj"
+                      href="/dodaj-sprawe"
                       className="flex"
                       labelClassName="hidden min-[390px]:block"
                       iconClassName="min-[390px]:hidden"
@@ -865,7 +865,7 @@ export default function PublicHeader({
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <AddCaseButton href="/panel-klienta/sprawy/dodaj" className="flex" />
+                <AddCaseButton href="/dodaj-sprawe" className="flex" />
                 <AddCaseButton
                   href="/panel-klienta/konsultacje/zapytaj"
                   label="Konsultacja online"
@@ -908,7 +908,7 @@ export default function PublicHeader({
                     {!isAuthenticated && (
                       <div className="flex flex-col gap-3">
                         <AddCaseButton
-                          href="/panel-klienta/sprawy/dodaj"
+                          href="/dodaj-sprawe"
                           className="w-full"
                           innerClassName="w-full h-11 justify-center text-base"
                           onClick={() => setMobileMenuOpen(false)}

@@ -286,7 +286,7 @@ export function SearchHelpSection() {
         >
 
 
-          <Link href="/logowanie">
+          <Link href="/dodaj-sprawe">
             <InteractiveHoverButton>Dodaj sprawę</InteractiveHoverButton>
           </Link>
         </motion.div>

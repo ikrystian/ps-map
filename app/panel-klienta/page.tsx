@@ -190,7 +190,7 @@ export default function ClientDashboardPage() {
           <Button
             variant="primary"
             size="lg"
-            onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
+            onClick={() => router.push("/dodaj-sprawe")}
             className="w-full sm:w-auto shadow-md hover:shadow-lg hover:shadow-primary/10 transition-all border-t border-border group gap-2"
           >
             <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
@@ -432,7 +432,7 @@ export default function ClientDashboardPage() {
                   <p className="text-sm text-muted-foreground font-light mb-4">Nie dodałeś jeszcze żadnych spraw.</p>
                   <Button
                     variant="primary"
-                    onClick={() => router.push("/panel-klienta/sprawy/dodaj")}
+                    onClick={() => router.push("/dodaj-sprawe")}
                     className="shadow-md gap-2"
                   >
                     <Plus className="h-4 w-4" />

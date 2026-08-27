@@ -34,6 +34,15 @@ export async function POST(request: NextRequest) {
     const role: UserRole =
       requestedRole === "LAW_FIRM" ? UserRole.LAW_FIRM : UserRole.CLIENT
 
+    // Kreator /dodaj-sprawe (opisz sprawę → załóż konto na końcu) wysyła tę flagę,
+    // żeby użytkownik mógł zalogować się od razu, bez czekania na klik w mailu.
+    // Bezpieczne, bo w tym miejscu telefon i tak musi przejść weryfikację SMS-em
+    // (patrz phoneCheck niżej) — to silniejszy dowód tożsamości niż standardowy
+    // link weryfikacyjny e-mail. Nie dotyczy rejestracji społecznościowej ani
+    // /rejestracja/klient i /rejestracja/ekspert, które tej flagi nigdy nie wysyłają.
+    const shouldAutoVerifyEmail =
+      body.autoVerifyEmail === true && role === UserRole.CLIENT && !isSocialRegistration
+
     // Walidacja
     if (!email || typeof email !== "string") {
       return NextResponse.json(
@@ -77,25 +86,8 @@ export async function POST(request: NextRequest) {
       referralId = referral!.id
     }
 
-    // Weryfikacja numeru telefonu kodem SMS — MUSI przejść zanim powstanie konto
-    // i zanim wyjdzie mail potwierdzający. Token pochodzi z /api/auth/phone-verification/verify
-    // i jest jednorazowy; sprawdzamy też, czy dotyczy numeru podanego w formularzu.
-    const submittedPhone =
-      (body.client || userData.client)?.telefon ?? userData.lawFirm?.numerTelefonu ?? null
-
-    const phoneCheck = await consumePhoneVerificationToken(phoneVerificationToken, submittedPhone)
-    if (!phoneCheck.success) {
-      return NextResponse.json(
-        {
-          error:
-            PHONE_VERIFICATION_MESSAGES[phoneCheck.error || ""] ||
-            "Numer telefonu nie został zweryfikowany.",
-          phoneVerificationRequired: true,
-        },
-        { status: 400 }
-      )
-    }
-
+    // Sprawdzamy zajęty e-mail PRZED konsumpcją kodu SMS (niżej) — inaczej zajęty
+    // adres paliłby użytkownikowi jednorazową weryfikację telefonu na darmo.
     const existingUser = await prisma.user.findUnique({
       where: { email: normalizedEmail },
     })
@@ -125,6 +117,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Weryfikacja numeru telefonu kodem SMS — MUSI przejść zanim powstanie konto
+    // i zanim wyjdzie mail potwierdzający. Token pochodzi z /api/auth/phone-verification/verify
+    // i jest jednorazowy; sprawdzamy też, czy dotyczy numeru podanego w formularzu.
+    const submittedPhone =
+      (body.client || userData.client)?.telefon ?? userData.lawFirm?.numerTelefonu ?? null
+
+    const phoneCheck = await consumePhoneVerificationToken(phoneVerificationToken, submittedPhone)
+    if (!phoneCheck.success) {
+      return NextResponse.json(
+        {
+          error:
+            PHONE_VERIFICATION_MESSAGES[phoneCheck.error || ""] ||
+            "Numer telefonu nie został zweryfikowany.",
+          phoneVerificationRequired: true,
+        },
+        { status: 400 }
+      )
+    }
+
     let user;
 
     if (existingUser && isSocialRegistration) {
@@ -146,7 +157,7 @@ export async function POST(request: NextRequest) {
           password: hashedPassword,
           role,
           name: userData.name || null,
-          emailVerified: null, // Email nie zweryfikowany
+          emailVerified: shouldAutoVerifyEmail ? new Date() : null,
         },
       })
     }
@@ -257,7 +268,7 @@ export async function POST(request: NextRequest) {
             "{imie}": clientData.imie,
             "{nazwisko}": clientData.nazwisko,
             "{email}": user.email,
-            "{linkDodajSprawa}": `${baseUrl}/sprawy/dodaj`,
+            "{linkDodajSprawa}": `${baseUrl}/dodaj-sprawe`,
           }
         })
       } catch (emailError) {
@@ -401,13 +412,15 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email, aby potwierdzić adres.",
+        message: shouldAutoVerifyEmail
+          ? "Rejestracja zakończona pomyślnie."
+          : "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email, aby potwierdzić adres.",
         user: {
           id: user.id,
           email: user.email,
           role: user.role,
         },
-        requiresEmailVerification: true,
+        requiresEmailVerification: !shouldAutoVerifyEmail,
       },
       { status: 201 }
     )

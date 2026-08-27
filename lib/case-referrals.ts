@@ -4,7 +4,7 @@ import crypto from "crypto"
 /**
  * Polecenia spraw — ekspert generuje jednorazowy link dla klienta pozyskanego poza platformą.
  * Link jest związany z konkretnym adresem e-mail i wygasa; klient zakłada konto (lub loguje się)
- * i dokańcza sprawę w zwykłym kreatorze `/panel-klienta/sprawy/dodaj`.
+ * i dokańcza sprawę w zwykłym kreatorze `/dodaj-sprawe`.
  */
 
 /** Ile dni link polecający pozostaje ważny od chwili wygenerowania / ponownej wysyłki. */
