@@ -403,3 +403,934 @@ Stack: TypeError: undefined is not an object (evaluating '__TURBOPACK__imported_
     at POST (file:///home/krystian/Projects/ps-map/.next/dev/server/chunks/%5Broot-of-the-server%5D__1z0f4-5._.js?id=%5Bproject%5D%2Fapp%2Fapi%2Fcases%2Froute.ts+%5Bapp-route%5D+%28ecmascript%29:296:178)
     at processTicksAndRejections (native)
 ================================================================================
+[2026-08-27T17:18:13.367Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:21:09.854Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:21:17.572Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:21:25.739Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:22:16.798Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:22:49.433Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-08-27T17:23:22.541Z] Context: POST /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create()` invocation in
+/home/krystian/Projects/ps-map/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:3327:158
+
+  3324 }
+  3325 // Utwórz sprawę
+  3326 const numerSprawy = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$case$2d$number$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["generateCaseNumber"])(category.id);
+→ 3327 const newCase = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.create({
+         data: {
+           clientId: "489cd1d8-4306-4d06-a0db-0a163810302c",
+           typSprawy: "OSOBA_PRYWATNA",
+           categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496",
+           categories: {
+             create: [
+               {
+                 categoryId: "dcd4f27d-cc5c-4009-8a0a-a077f7cc6496"
+               }
+             ]
+           },
+           numerSprawy: "PK/WYK/2026/0008",
+           ~~~~~~~~~~~
+           wybranadziedzinaPrawa: null,
+           wybranaSpecyfikacja: null,
+           nazwaSprawy: "Opis sprawy",
+           opisSprawy: "Nazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawyNazwa sprawy",
+           zalaczniki: null,
+           oczekiwanyTerminRealizacji: null,
+           trybPilny: false,
+           budzetOd: null,
+           budzetDo: null,
+           doNegocjacji: true,
+           imieNazwisko: "Krystian Kuzminski",
+           telefonKontakt: "794734431",
+           preferowanyKontakt: "EMAIL",
+           voivodeshipId: "c20854dc-bf62-4653-8a4c-883725ac54e9",
+           cityId: "3d4b4246-77b7-47f0-9b9d-dd97c27f9d5f",
+           akceptujeKlauzule: true,
+           status: "NOWA",
+           czekaNaAktywacjeEmail: false,
+       ?   id?: String,
+       ?   specjalizacja?: String | Null,
+       ?   isArchived?: Boolean,
+       ?   archivedAt?: DateTime | Null,
+       ?   createdAt?: DateTime,
+       ?   updatedAt?: DateTime,
+       ?   zamknieto?: DateTime | Null,
+       ?   offers?: OfferUncheckedCreateNestedManyWithoutCaseInput,
+       ?   messages?: MessageUncheckedCreateNestedManyWithoutCaseInput,
+       ?   referral?: CaseReferralUncheckedCreateNestedOneWithoutCaseInput
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true
+         }
+       })
+
+Unknown argument `numerSprawy`. Available options are marked with ?.
+    at ar (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================

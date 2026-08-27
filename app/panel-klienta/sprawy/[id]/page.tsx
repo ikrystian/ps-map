@@ -26,6 +26,7 @@ import {
   MapPin,
   MessageSquare,
   Paperclip,
+  Pencil,
   Phone,
   Share2,
   Sparkles,
@@ -40,6 +41,7 @@ import { expertAvatar } from "@/lib/expert-avatar"
 
 interface Case {
   id: string
+  numerSprawy: string | null
   client?: {
     user?: {
       email?: string
@@ -326,20 +328,41 @@ export default function ClientCaseDetailsPage() {
 
       {/* Header & Back Action */}
       <div className="relative z-10 space-y-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push("/panel-klienta/sprawy")}
-          className="-ml-2 text-muted-foreground hover:text-foreground gap-1.5"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Powrót do listy spraw
-        </Button>
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/panel-klienta/sprawy")}
+            className="-ml-2 text-muted-foreground hover:text-foreground gap-1.5"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Powrót do listy spraw
+          </Button>
+          {caseData.status !== "ANULOWANA" && caseData.status !== "ZAKONCZONA" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/panel-klienta/sprawy/${caseData.id}/edytuj`)}
+              className="gap-1.5"
+            >
+              <Pencil className="h-4 w-4" />
+              Edytuj sprawę
+            </Button>
+          )}
+        </div>
         <PageHeader
+          className="md:flex-col md:items-start"
           title={caseData.nazwaSprawy}
           titleClassName="text-foreground text-2xl sm:text-3xl lg:text-4xl"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center w-full justify-between gap-2">
+            {caseData.numerSprawy && (
+              <div className="">
+                Nr sprawy:
+                <Badge className="bg-neutral-900 text-neutral-50 border border-neutral-800/60 font-mono text-[14px] font-semibold tracking-wide">
+                  {caseData.numerSprawy}</Badge>
+              </div>
+            )}
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide border",

@@ -74,6 +74,7 @@ interface Message {
 
 interface CaseDetails {
   id: string
+  numerSprawy: string | null
   nazwaSprawy: string
   opisSprawy: string
   status: string
@@ -215,7 +216,10 @@ export default function CaseDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <AdminHeaderSetter title={caseData.nazwaSprawy} subtitle={`ID: ${caseData.id}`} />
+      <AdminHeaderSetter
+        title={caseData.nazwaSprawy}
+        subtitle={caseData.numerSprawy ? `Nr sprawy: ${caseData.numerSprawy}` : `ID: ${caseData.id}`}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">

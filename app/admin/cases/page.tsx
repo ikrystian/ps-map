@@ -59,6 +59,7 @@ interface Offer {
 
 interface Case {
   id: string
+  numerSprawy: string | null
   nazwaSprawy: string
   opisSprawy: string
   status: string
@@ -281,7 +282,13 @@ export default function AdminCasesPage() {
                       <TableCell className="font-medium">
                         <div className="max-w-xs">
                           <div className="font-semibold truncate">{caseItem.nazwaSprawy}</div>
-                          <div className="text-xs text-muted-foreground truncate">{caseItem.id.slice(0, 8)}...</div>
+                          {caseItem.numerSprawy ? (
+                            <Badge className="mt-1 bg-neutral-900 text-neutral-50 border border-neutral-800/60 font-mono text-[11px] font-semibold tracking-wide">
+                              {caseItem.numerSprawy}
+                            </Badge>
+                          ) : (
+                            <div className="text-xs text-muted-foreground truncate">{caseItem.id.slice(0, 8)}...</div>
+                          )}
                           {caseItem.trybPilny && (
                             <Badge variant="destructive" className="mt-1 text-xs">
                               Pilne

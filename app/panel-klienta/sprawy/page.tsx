@@ -37,6 +37,7 @@ import { useEffect, useState } from "react"
 
 interface Case {
   id: string
+  numerSprawy: string | null
   typSprawy: string
   nazwaSprawy: string
   opisSprawy: string
@@ -589,9 +590,16 @@ export default function ClientCasesPage() {
                       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                         <div className="flex-grow space-y-4 w-full">
                           {/* Case Title */}
-                          <Heading level="h3" size="h3" className="text-xl sm:text-2xl group-hover:text-primary leading-tight">
-                            {caseItem.nazwaSprawy}
-                          </Heading>
+                          <div className="space-y-1.5">
+                            <Heading level="h3" size="h3" className="text-xl sm:text-2xl group-hover:text-primary leading-tight">
+                              {caseItem.nazwaSprawy}
+                            </Heading>
+                            {caseItem.numerSprawy && (
+                              <Badge className="bg-neutral-900 text-neutral-50 border border-neutral-800/60 font-mono text-[11px] font-semibold tracking-wide">
+                                Nr sprawy: {caseItem.numerSprawy}
+                              </Badge>
+                            )}
+                          </div>
 
                           {/* Description preview */}
                           <p className="text-base text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
