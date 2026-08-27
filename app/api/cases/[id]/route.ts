@@ -214,6 +214,10 @@ export async function GET(
   }
 }
 
+// PUT /api/cases/[id] — pozwala klientowi edytować dane własnej sprawy (m.in. zamknąć ją,
+// czyli ustawić status ANULOWANA, żeby przestała być widoczna w wynikach dla ekspertów —
+// patrz filtr w GET /api/cases dla roli LAW_FIRM). Pola są jawnie wybielone (whitelist),
+// żeby klient nie mógł nadpisać pól takich jak clientId, kategoria czy lokalizacja.
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -221,14 +225,14 @@ export async function PUT(
   try {
     const session = await auth()
 
-    if (!session || !session.user) {
+    if (!session || !session.user || session.user.role !== "CLIENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const { id } = await params
     const body = await request.json()
 
-    // Sprawdź, czy sprawa istnieje
+    // Sprawdź, czy sprawa istnieje i należy do zalogowanego klienta
     const existingCase = await prisma.case.findUnique({
       where: { id },
     })
@@ -237,27 +241,74 @@ export async function PUT(
       return NextResponse.json({ error: "Case not found" }, { status: 404 })
     }
 
-    // Sprawdź uprawnienia
-    if (session.user.role === "CLIENT") {
-      const client = await prisma.client.findUnique({
-        where: { userId: session.user.id },
-      })
+    const client = await prisma.client.findUnique({
+      where: { userId: session.user.id },
+    })
 
-      if (!client || existingCase.clientId !== client.id) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (!client || existingCase.clientId !== client.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    const updateData: Record<string, any> = {}
+
+    if (typeof body.nazwaSprawy === "string" && body.nazwaSprawy.trim()) {
+      updateData.nazwaSprawy = body.nazwaSprawy.trim()
+    }
+    if (typeof body.opisSprawy === "string" && body.opisSprawy.trim()) {
+      updateData.opisSprawy = body.opisSprawy
+    }
+    if (typeof body.imieNazwisko === "string" && body.imieNazwisko.trim()) {
+      updateData.imieNazwisko = body.imieNazwisko.trim()
+    }
+    if (typeof body.telefonKontakt === "string" && body.telefonKontakt.trim()) {
+      updateData.telefonKontakt = body.telefonKontakt.trim()
+    }
+    if (["EMAIL", "TELEFON", "OBA"].includes(body.preferowanyKontakt)) {
+      updateData.preferowanyKontakt = body.preferowanyKontakt
+    }
+    if (typeof body.trybPilny === "boolean") {
+      updateData.trybPilny = body.trybPilny
+    }
+    if (typeof body.doNegocjacji === "boolean") {
+      updateData.doNegocjacji = body.doNegocjacji
+      // "Do negocjacji" i widełki budżetowe się wykluczają
+      if (body.doNegocjacji) {
+        updateData.budzetOd = null
+        updateData.budzetDo = null
       }
+    }
+    if (!body.doNegocjacji && body.budzetOd !== undefined) {
+      updateData.budzetOd = body.budzetOd === null || body.budzetOd === "" ? null : Number(body.budzetOd)
+    }
+    if (!body.doNegocjacji && body.budzetDo !== undefined) {
+      updateData.budzetDo = body.budzetDo === null || body.budzetDo === "" ? null : Number(body.budzetDo)
+    }
+    if (body.oczekiwanyTerminRealizacji !== undefined) {
+      updateData.oczekiwanyTerminRealizacji = body.oczekiwanyTerminRealizacji
+        ? new Date(body.oczekiwanyTerminRealizacji)
+        : null
+    }
+
+    // Klient może samodzielnie wyłącznie zamknąć sprawę (ANULOWANA) — pozostałe statusy
+    // są sterowane przepływem ofert (NOWA/OFERTY_OTRZYMANE/W_TRAKCIE) albo panelem admina (ZAKONCZONA)
+    if (body.status === "ANULOWANA" && existingCase.status !== "ANULOWANA") {
+      updateData.status = "ANULOWANA"
+      updateData.zamknieto = new Date()
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "Brak pól do aktualizacji" }, { status: 400 })
     }
 
     // Aktualizuj sprawę
     const updatedCase = await prisma.case.update({
       where: { id },
-      data: {
-        ...body,
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         category: true,
+        categories: { include: { category: true } },
         voivodeship: true,
+        city: true,
       },
     })
 

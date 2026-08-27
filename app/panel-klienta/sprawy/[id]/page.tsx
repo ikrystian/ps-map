@@ -26,6 +26,7 @@ import {
   MapPin,
   MessageSquare,
   Paperclip,
+  Pencil,
   Phone,
   Share2,
   Sparkles,
@@ -327,15 +328,28 @@ export default function ClientCaseDetailsPage() {
 
       {/* Header & Back Action */}
       <div className="relative z-10 space-y-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push("/panel-klienta/sprawy")}
-          className="-ml-2 text-muted-foreground hover:text-foreground gap-1.5"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Powrót do listy spraw
-        </Button>
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/panel-klienta/sprawy")}
+            className="-ml-2 text-muted-foreground hover:text-foreground gap-1.5"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Powrót do listy spraw
+          </Button>
+          {caseData.status !== "ANULOWANA" && caseData.status !== "ZAKONCZONA" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/panel-klienta/sprawy/${caseData.id}/edytuj`)}
+              className="gap-1.5"
+            >
+              <Pencil className="h-4 w-4" />
+              Edytuj sprawę
+            </Button>
+          )}
+        </div>
         <PageHeader
           className="md:flex-col md:items-start"
           title={caseData.nazwaSprawy}
