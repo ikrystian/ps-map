@@ -21,11 +21,11 @@ interface AddCaseButtonProps {
 export function AddCaseButton({
   href,
   label = "Dodaj sprawę",
-  shortLabel = "",
+  shortLabel = "+",
   className,
   innerClassName,
   labelClassName,
-  iconClassName = "flex",
+  iconClassName = "",
   onClick,
 }: AddCaseButtonProps) {
   return (
@@ -41,8 +41,9 @@ export function AddCaseButton({
           innerClassName
         )}
       >
+        <span className={cn("whitespace-nowrap inline lg:hidden", iconClassName)}>{shortLabel}</span>
 
-        <span className={cn("whitespace-nowrap inline", labelClassName)}>{label}</span>
+        <span className={cn("whitespace-nowrap inline hidden lg:block", labelClassName)}>{label}</span>
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"
           animate={{ x: ["-130%", "130%"] }}

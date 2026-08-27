@@ -282,6 +282,10 @@ export default function PublicHeader({
   const isDlaPrawnikaActive = pathname.startsWith("/dla-prawnika")
   const isZNamiWygrywaszActive = pathname === "/z-nami-wygrywasz"
   const isDlaczegoWartoActive = isDlaPrawnikaActive || isZNamiWygrywaszActive
+  const isAktualnosciActive = pathname.startsWith("/blog")
+  const isKontaktActive = pathname === "/kontakt"
+  const isReklamaActive = pathname === "/reklama"
+  const isRankingActive = pathname.startsWith("/ranking")
 
   // Helpers for nested categories navigation
   const getVisibleCategories = () => {
@@ -345,8 +349,8 @@ export default function PublicHeader({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <SiteLogo className="hidden lg:block min-w-[150px] min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="lg:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
+            <SiteLogo className="block min-w-[150px] min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
           </Link>
           <div className="flex">
             {/* Navigation Menu */}
@@ -888,6 +892,50 @@ export default function PublicHeader({
                         )}
                       >
                         O nas
+                      </Link>
+
+                      <Link
+                        href="/blog"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isAktualnosciActive ? "text-primary font-semibold" : "text-foreground"
+                        )}
+                      >
+                        Aktualności
+                      </Link>
+
+                      <Link
+                        href="/ranking"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isRankingActive ? "text-primary font-semibold" : "text-foreground"
+                        )}
+                      >
+                        Ranking eksperta
+                      </Link>
+
+                      <Link
+                        href="/kontakt"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isKontaktActive ? "text-primary font-semibold" : "text-foreground"
+                        )}
+                      >
+                        Kontakt
+                      </Link>
+
+                      <Link
+                        href="/reklama"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          isReklamaActive ? "text-primary font-semibold" : "text-foreground"
+                        )}
+                      >
+                        Reklama
                       </Link>
                     </div>
                   </div>
