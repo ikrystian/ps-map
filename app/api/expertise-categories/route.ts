@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nazwa, parentId, kolejnosc, aktywna } = body
+    const { nazwa, parentId, kolejnosc, aktywna, kolor } = body
 
     if (!nazwa?.trim()) {
       return NextResponse.json({ error: "Nazwa jest wymagana" }, { status: 400 })
@@ -52,6 +52,7 @@ export async function POST(request: Request) {
         parentId: parentId || null,
         kolejnosc: kolejnosc ?? 0,
         aktywna: aktywna !== undefined ? aktywna : true,
+        kolor: kolor || null,
       },
       include: { parent: { select: { id: true, nazwa: true } } },
     })

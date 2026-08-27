@@ -2819,6 +2819,7 @@ model ExpertiseCategory {
   children  ExpertiseCategory[] @relation("ExpertiseCategoryTree")
   kolejnosc Int      @default(0)
   aktywna   Boolean  @default(true)
+  kolor     String?  // hex koloru przypisanego do kategorii, np. #0DA192
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

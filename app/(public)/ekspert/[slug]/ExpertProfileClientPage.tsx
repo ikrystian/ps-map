@@ -699,8 +699,17 @@ export default function LawFirmProfilePage() {
                     )
                   })()}
                   {lawFirm.expertiseCategory?.nazwa && (
-                    <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
-
+                    <div
+                      className={cn(
+                        "flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full border shadow-sm",
+                        !lawFirm.expertiseCategory.kolor && "bg-teal-500/10 border-teal-500/30 text-teal-400"
+                      )}
+                      style={lawFirm.expertiseCategory.kolor ? {
+                        backgroundColor: `color-mix(in srgb, ${lawFirm.expertiseCategory.kolor} 12%, transparent)`,
+                        borderColor: `color-mix(in srgb, ${lawFirm.expertiseCategory.kolor} 35%, transparent)`,
+                        color: lawFirm.expertiseCategory.kolor,
+                      } : undefined}
+                    >
                       {lawFirm.expertiseCategory.nazwa}
                     </div>
                   )}

@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params
   try {
     const body = await req.json()
-    const { nazwa, parentId, kolejnosc, aktywna } = body
+    const { nazwa, parentId, kolejnosc, aktywna, kolor } = body
 
     if (!nazwa?.trim()) {
       return NextResponse.json({ error: "Nazwa jest wymagana" }, { status: 400 })
@@ -42,6 +42,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         parentId: parentId || null,
         kolejnosc: kolejnosc ?? 0,
         aktywna: aktywna !== undefined ? aktywna : true,
+        kolor: kolor || null,
       },
       include: { parent: { select: { id: true, nazwa: true } } },
     })

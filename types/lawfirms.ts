@@ -88,6 +88,7 @@ export interface LawFirm extends LawFirmWithLocation {
   expertiseCategory?: {
     id: string
     nazwa: string
+    kolor?: string | null
   } | null
   // Flagi pochodzące z ustawień powiadomień eksperta (profil publiczny)
   przyjmujeBezposrednieZapytania?: boolean
