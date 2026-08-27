@@ -42,6 +42,7 @@ import {
 import {
   Award,
   Clock,
+  Eye,
   Globe,
   Heart,
   Mail,
@@ -108,6 +109,7 @@ export default function LawFirmProfilePage() {
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [activeTab, setActiveTab] = useState("about")
   const [mapsDialogOpen, setMapsDialogOpen] = useState(false)
+  const [showContactData, setShowContactData] = useState(false)
 
   // Contact Form States
   const [contactForm, setContactForm] = useState({
@@ -919,7 +921,7 @@ export default function LawFirmProfilePage() {
                   <div className="space-y-1">
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</p>
                     <div className="text-sm text-foreground">
-                      {session?.user ? (
+                      {session?.user || showContactData ? (
                         <button
                           onClick={() => setMapsDialogOpen(true)}
                           className="leading-relaxed text-left hover:text-primary transition-colors cursor-pointer group"
@@ -934,7 +936,16 @@ export default function LawFirmProfilePage() {
                           </span>
                         </button>
                       ) : (
-                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowContactData(true)}
+                          className="gap-1.5 h-7 text-xs"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          Pokaż
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -947,7 +958,7 @@ export default function LawFirmProfilePage() {
                   <div className="space-y-1">
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Telefon</p>
                     <div className="text-sm text-foreground">
-                      {session?.user ? (
+                      {session?.user || showContactData ? (
                         <>
                           <a href={`tel:${lawFirm.numerTelefonu}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.numerTelefonu}</a>
                           {lawFirm.numerTelefonu2 && (
@@ -955,7 +966,16 @@ export default function LawFirmProfilePage() {
                           )}
                         </>
                       ) : (
-                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowContactData(true)}
+                          className="gap-1.5 h-7 text-xs"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          Pokaż
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -968,10 +988,19 @@ export default function LawFirmProfilePage() {
                   <div className="space-y-1 flex-1">
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
                     <div className="text-sm text-foreground break-all">
-                      {session?.user ? (
+                      {session?.user || showContactData ? (
                         <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.user?.email}</a>
                       ) : (
-                        <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowContactData(true)}
+                          className="gap-1.5 h-7 text-xs"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          Pokaż
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -985,19 +1014,15 @@ export default function LawFirmProfilePage() {
                     <div className="space-y-1 min-w-0">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
                       <div className="text-sm text-foreground">
-                        {session?.user ? (
-                          <TooltipPreview
-                            href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
-                            title={lawFirm.nazwa}
-                            description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
-                            favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
-                            className="text-primary font-medium break-all"
-                          >
-                            {lawFirm.stronaWww}
-                          </TooltipPreview>
-                        ) : (
-                          <p className="text-muted-foreground italic bg-muted/30 px-2.5 py-1 rounded-lg">[dane ukryte]</p>
-                        )}
+                        <TooltipPreview
+                          href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
+                          title={lawFirm.nazwa}
+                          description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
+                          favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
+                          className="text-primary font-medium break-all"
+                        >
+                          {lawFirm.stronaWww}
+                        </TooltipPreview>
                       </div>
                     </div>
                   </div>
@@ -1074,7 +1099,7 @@ export default function LawFirmProfilePage() {
                       "border border-border bg-card";
 
               return (
-                <Card className={cn("transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.01] hover:shadow-md", cardClass)}>
+                <Card className={cn("transition-all duration-300 rounded-2xl overflow-hidden hidden hover:scale-[1.01] hover:shadow-md", cardClass)}>
                   <CardHeader className="pb-2 border-b border-border/30 bg-muted/10">
                     <CardTitle className="text-sm text-center uppercase tracking-wider text-muted-foreground font-semibold">Plan subskrypcji</CardTitle>
                   </CardHeader>
