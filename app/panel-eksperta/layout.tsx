@@ -467,7 +467,6 @@ export default function LawFirmPanelLayout({
             {!isCollapsed && <Link href="/" className="flex items-center relative" id="main-logo">
               <SiteLogo className="hidden sm:block" title="Przystąp do sprawy" width={200} height={50} />
               <span className="sm:hidden text-lg font-semibold">PS</span>
-              <span className="absolute -right-3 -bottom-3 text-primary font-bold text-base">DEV</span>
             </Link>}
           </div>
           {/* Navigation */}
