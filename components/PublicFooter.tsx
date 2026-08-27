@@ -143,6 +143,11 @@ export default function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/dla-prawnika" className="hover:text-[#d7b56d] transition-colors">
+                  Dla prawnika
+                </Link>
+              </li>
+              <li>
                 <Link href="/o-nas" className="hover:text-[#d7b56d] transition-colors">
                   O nas
                 </Link>

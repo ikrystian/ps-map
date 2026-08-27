@@ -21,11 +21,11 @@ interface AddCaseButtonProps {
 export function AddCaseButton({
   href,
   label = "Dodaj sprawę",
-  shortLabel = "+",
+  shortLabel = "",
   className,
   innerClassName,
   labelClassName,
-  iconClassName,
+  iconClassName = "flex",
   onClick,
 }: AddCaseButtonProps) {
   return (
@@ -41,7 +41,6 @@ export function AddCaseButton({
           innerClassName
         )}
       >
-        {iconClassName && <Plus className={cn("h-4 w-4 shrink-0", iconClassName)} aria-hidden="true" />}
 
         <span className={cn("whitespace-nowrap inline", labelClassName)}>{label}</span>
         <motion.div
