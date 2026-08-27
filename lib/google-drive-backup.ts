@@ -2,7 +2,6 @@ import { exec } from "child_process"
 import { promisify } from "util"
 import fs from "fs"
 import path from "path"
-import { Readable } from "stream"
 import { google } from "googleapis"
 
 const execPromise = promisify(exec)
@@ -138,14 +137,9 @@ export async function backupDbToGoogleDrive() {
     const fileMetadata: any = { name: fileName }
     if (folderId) fileMetadata.parents = [folderId]
 
-    const fileBuffer = fs.readFileSync(filePath)
-    const fileReadable = new Readable()
-    fileReadable.push(fileBuffer)
-    fileReadable.push(null)
-
     const response = await drive.files.create({
       requestBody: fileMetadata,
-      media: { mimeType, body: fileReadable },
+      media: { mimeType, body: fs.createReadStream(filePath) },
       fields: "id, name",
       supportsAllDrives: true,
     })
