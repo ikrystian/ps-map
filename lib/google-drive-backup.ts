@@ -7,23 +7,59 @@ import { google } from "googleapis"
 
 const execPromise = promisify(exec)
 
+const DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
+/**
+ * Builds a Google auth client for Drive access, preferring an OAuth2 refresh
+ * token (a standard @gmail.com account has its own storage quota) over the
+ * service account JWT (service accounts have 0 bytes of Drive storage quota
+ * unless used with a Workspace shared drive — see lib/google-meet.ts for the
+ * same fallback pattern used for Calendar/Meet).
+ *
+ * Returns null if no credentials are configured at all.
+ */
+function getDriveAuth() {
+  const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN
+  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET
+
+  if (refreshToken && clientId && clientSecret) {
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret)
+    oauth2Client.setCredentials({ refresh_token: refreshToken })
+    return oauth2Client
+  }
+
+  if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+    return new google.auth.JWT({
+      email: process.env.GOOGLE_CLIENT_EMAIL,
+      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      scopes: DRIVE_SCOPES,
+    })
+  }
+
+  return null
+}
+
 /**
  * Creates a local SQLite database backup + an archive of application file
  * directories, uploads both to Google Drive, and performs retention cleanup
  * both locally and on Google Drive.
  *
  * Cleanup always runs, even if the upload fails, so a persistent upload
- * failure (e.g. Google blocking the server's IP) doesn't fill up local disk.
- * Upload failures are thrown (not swallowed into a `{success:false}` return)
- * so the scheduler's job-runner correctly marks the run as FAILED and its
- * retry mechanism kicks in.
+ * failure (e.g. Google blocking the server's IP, or a misconfigured account)
+ * doesn't fill up local disk. Upload failures are thrown (not swallowed into
+ * a `{success:false}` return) so the scheduler's job-runner correctly marks
+ * the run as FAILED and its retry mechanism kicks in.
  */
 export async function backupDbToGoogleDrive() {
-  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
-    console.warn("[BACKUP] Google credentials not configured. Skipping Google Drive upload.")
+  const auth = getDriveAuth()
+
+  if (!auth) {
+    console.warn("[BACKUP] Google Drive credentials not configured. Skipping upload.")
     return {
       success: false,
-      error: "Google credentials (GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY) are not configured in environment variables.",
+      error:
+        "Google Drive credentials are not configured (need either GOOGLE_DRIVE_REFRESH_TOKEN + GOOGLE_CLIENT_ID/AUTH_GOOGLE_ID + GOOGLE_CLIENT_SECRET/AUTH_GOOGLE_SECRET, or GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY).",
     }
   }
 
@@ -93,14 +129,9 @@ export async function backupDbToGoogleDrive() {
     }
   }
 
-  // 6. Authenticate with Google Drive API
+  // 6. Google Drive client
   console.log("[BACKUP] Authenticating with Google API...")
-  const auth = new google.auth.JWT({
-    email: process.env.GOOGLE_CLIENT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"],
-  })
-  const drive = google.drive({ version: "v3", auth })
+  const drive = google.drive({ version: "v3", auth: auth as any })
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID || undefined
 
   async function uploadFile(filePath: string, fileName: string, mimeType: string) {
@@ -253,14 +284,10 @@ export async function listBackups(): Promise<BackupInfo[]> {
   }
 
   const driveFilesList: BackupInfo[] = []
-  if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+  const auth = getDriveAuth()
+  if (auth) {
     try {
-      const auth = new google.auth.JWT({
-        email: process.env.GOOGLE_CLIENT_EMAIL,
-        key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-        scopes: ["https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/drive"],
-      })
-      const drive = google.drive({ version: "v3", auth })
+      const drive = google.drive({ version: "v3", auth: auth as any })
       const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
       let query = "name contains 'db_' and name contains '.db' and trashed = false"
@@ -338,17 +365,13 @@ export async function restoreBackup(backupFileName: string, driveFileId?: string
     if (!driveFileId) {
       throw new Error(`Plik backupu ${backupFileName} nie istnieje lokalnie, a ID z Google Drive nie zostało przesłane.`)
     }
-    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
-      throw new Error("Dane uwierzytelniające Google Drive (Service Account) nie są skonfigurowane.")
+    const auth = getDriveAuth()
+    if (!auth) {
+      throw new Error("Dane uwierzytelniające Google Drive nie są skonfigurowane.")
     }
 
     console.log(`[RESTORE] Downloading backup ${backupFileName} (${driveFileId}) from Google Drive...`)
-    const auth = new google.auth.JWT({
-      email: process.env.GOOGLE_CLIENT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-      scopes: ["https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/drive"],
-    })
-    const drive = google.drive({ version: "v3", auth })
+    const drive = google.drive({ version: "v3", auth: auth as any })
 
     const response = await drive.files.get(
       { fileId: driveFileId, alt: "media", supportsAllDrives: true },
