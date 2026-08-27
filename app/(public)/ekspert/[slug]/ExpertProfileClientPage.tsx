@@ -557,7 +557,7 @@ export default function LawFirmProfilePage() {
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start justify-between relative z-10">
 
             {/* Logo and Metadata */}
-            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start flex-1 w-full text-center md:text-left">
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start flex-1 w-full text-center md:text-left" id="expert-bar">
               {/* Logo */}
               <div className="relative group flex-shrink-0 self-center md:self-start">
                 <div className={cn(
@@ -596,6 +596,7 @@ export default function LawFirmProfilePage() {
                     <h1 className="text-2xl md:text-3xl lg:text-4xl font-playfair tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text">
                       {lawFirm?.nazwa}
                     </h1>
+
                     <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
                       {lawFirm.zweryfikowana && (
                         <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-sm">
@@ -603,6 +604,7 @@ export default function LawFirmProfilePage() {
                           Zweryfikowany ekspert
                         </Badge>
                       )}
+
                       {lawFirm.pakietSubskrypcji && (
                         <PackageBadge
                           packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}
@@ -616,6 +618,8 @@ export default function LawFirmProfilePage() {
 
                 {/* Rating, Opening Status, and Location details in clean pills */}
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm pt-1">
+
+
                   {/* Review Pill */}
                   {lawFirm.reviewCount > 0 ? (
                     <div className="flex items-center gap-2 bg-yellow-500/10 dark:bg-yellow-500/15 border border-yellow-500/30 px-3.5 py-1.5 rounded-full shadow-sm">
@@ -638,9 +642,7 @@ export default function LawFirmProfilePage() {
                       </span>
                     </div>
                   ) : (
-                    <span className="text-xs text-muted-foreground font-medium bg-foreground/5 border border-border px-3 py-1.5 rounded-full italic">
-                      Brak opinii
-                    </span>
+                    <></>
                   )}
 
                   {/* Open / Closed status indicator with pulse animation */}
@@ -696,13 +698,21 @@ export default function LawFirmProfilePage() {
                       </div>
                     )
                   })()}
+                  {lawFirm.expertiseCategory?.nazwa && (
+                    <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
 
+                      {lawFirm.expertiseCategory.nazwa}
+                    </div>
+                  )}
                   {/* Location pill */}
                   <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
                     {lawFirm.miasto}
                   </div>
-                </div>
 
+                  <div className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 shadow-sm">
+                    {lawFirm.voivodeship?.nazwa && `${lawFirm.voivodeship.nazwa}`}
+                  </div>
+                </div>
                 {/* Słowa kluczowe (tags) */}
                 {lawFirm.slowaKluczowe && lawFirm.slowaKluczowe.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 pt-1 justify-center md:justify-start">
@@ -914,117 +924,95 @@ export default function LawFirmProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div className="flex gap-4">
-                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</p>
-                    <div className="text-sm text-foreground">
-                      {session?.user || showContactData ? (
-                        <button
-                          onClick={() => setMapsDialogOpen(true)}
-                          className="leading-relaxed text-left hover:text-primary transition-colors cursor-pointer group"
-                          title="Pokaż na mapie"
-                        >
-                          <span className="group-hover:underline underline-offset-2 decoration-primary/50">
-                            {lawFirm.adres}<br />
-                            {lawFirm.kodPocztowy} {lawFirm.miasto}
-                          </span>
-                          <span className="inline-flex items-center gap-1 ml-1 text-xs text-primary/60 group-hover:text-primary transition-colors">
-                            <MapPin className="h-3 w-3" />
-                          </span>
-                        </button>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowContactData(true)}
-                          className="gap-1.5 h-7 text-xs"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          Pokaż
-                        </Button>
-                      )}
+                {session?.user || showContactData ? (
+                  <>
+                    <div className="flex gap-4">
+                      <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</p>
+                        <div className="text-sm text-foreground">
+                          <button
+                            onClick={() => setMapsDialogOpen(true)}
+                            className="leading-relaxed text-left hover:text-primary transition-colors cursor-pointer group"
+                            title="Pokaż na mapie"
+                          >
+                            <span className="group-hover:underline underline-offset-2 decoration-primary/50">
+                              {lawFirm.adres}<br />
+                              {lawFirm.kodPocztowy} {lawFirm.miasto}
+                            </span>
+                            <span className="inline-flex items-center gap-1 ml-1 text-xs text-primary/60 group-hover:text-primary transition-colors">
+                              <MapPin className="h-3 w-3" />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="flex gap-4 border-t border-border/30 pt-4">
-                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
-                    <Phone className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Telefon</p>
-                    <div className="text-sm text-foreground">
-                      {session?.user || showContactData ? (
-                        <>
+                    <div className="flex gap-4 border-t border-border/30 pt-4">
+                      <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                        <Phone className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Telefon</p>
+                        <div className="text-sm text-foreground">
                           <a href={`tel:${lawFirm.numerTelefonu}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.numerTelefonu}</a>
                           {lawFirm.numerTelefonu2 && (
                             <p><a href={`tel:${lawFirm.numerTelefonu2}`} className="hover:text-primary transition-colors">{lawFirm.numerTelefonu2}</a></p>
                           )}
-                        </>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowContactData(true)}
-                          className="gap-1.5 h-7 text-xs"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          Pokaż
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 border-t border-border/30 pt-4">
-                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1 flex-1">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
-                    <div className="text-sm text-foreground break-all">
-                      {session?.user || showContactData ? (
-                        <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.user?.email}</a>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowContactData(true)}
-                          className="gap-1.5 h-7 text-xs"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          Pokaż
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {lawFirm.stronaWww && (
-                  <div className="flex gap-4 border-t border-border/30 pt-4">
-                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
-                      <Globe className="h-5 w-5" />
-                    </div>
-                    <div className="space-y-1 min-w-0">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
-                      <div className="text-sm text-foreground">
-                        <TooltipPreview
-                          href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
-                          title={lawFirm.nazwa}
-                          description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
-                          favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
-                          className="text-primary font-medium break-all"
-                        >
-                          {lawFirm.stronaWww}
-                        </TooltipPreview>
+                        </div>
                       </div>
                     </div>
+
+                    <div className="flex gap-4 border-t border-border/30 pt-4">
+                      <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                        <Mail className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</p>
+                        <div className="text-sm text-foreground break-all">
+                          <a href={`mailto:${lawFirm.user?.email}`} className="hover:text-primary transition-colors font-semibold">{lawFirm.user?.email}</a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {lawFirm.stronaWww && (
+                      <div className="flex gap-4 border-t border-border/30 pt-4">
+                        <div className="p-2.5 rounded-xl bg-primary/10 text-primary h-fit">
+                          <Globe className="h-5 w-5" />
+                        </div>
+                        <div className="space-y-1 min-w-0">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strona WWW</p>
+                          <div className="text-sm text-foreground">
+                            <TooltipPreview
+                              href={lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}
+                              title={lawFirm.nazwa}
+                              description={lawFirm.opis || `Oficjalna strona internetowa eksperta ${lawFirm.nazwa}`}
+                              favicon={`https://www.google.com/s2/favicons?domain=${lawFirm.stronaWww.startsWith('http') ? lawFirm.stronaWww : `https://${lawFirm.stronaWww}`}&sz=32`}
+                              className="text-primary font-medium break-all"
+                            >
+                              {lawFirm.stronaWww}
+                            </TooltipPreview>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center gap-3 py-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Dane kontaktowe są ukryte. Kliknij poniżej, aby je wyświetlić.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowContactData(true)}
+                      className="gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      Pokaż dane kontaktowe
+                    </Button>
                   </div>
                 )}
               </CardContent>
