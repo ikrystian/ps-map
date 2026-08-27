@@ -86,6 +86,10 @@ export function buildLawFirmCaseWhereInput(
 
   scopeConditions.push(acceptedByOtherCondition)
 
+  // Sprawa z kreatora /dodaj-sprawe jest ukryta przed wszystkimi ekspertami,
+  // dopóki klient nie potwierdzi adresu e-mail (patrz Case.czekaNaAktywacjeEmail).
+  scopeConditions.push({ czekaNaAktywacjeEmail: false })
+
   if (additionalWhere) {
     scopeConditions.push(additionalWhere)
   }

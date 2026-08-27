@@ -52,7 +52,7 @@ import {
   Share2,
   Sparkles,
 } from "lucide-react"
-import { signIn, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -71,6 +71,8 @@ interface ContactState {
 
 interface AccountState {
   email: string
+  adres: string
+  kodPocztowy: string
   password: string
   confirmPassword: string
   zgodaRegulamin: boolean
@@ -90,6 +92,8 @@ const initialContact: ContactState = {
 
 const initialAccount: AccountState = {
   email: "",
+  adres: "",
+  kodPocztowy: "",
   password: "",
   confirmPassword: "",
   zgodaRegulamin: false,
@@ -147,6 +151,9 @@ export default function DodajSprawaClientPage() {
   const [showPhoneVerification, setShowPhoneVerification] = useState(false)
   const [isSubmittingAccount, setIsSubmittingAccount] = useState(false)
   const [accountError, setAccountError] = useState<string | null>(null)
+  // Konto z tego kreatora nie może się zalogować przed potwierdzeniem e-maila —
+  // ten bilet z /api/auth/register pozwala mimo to utworzyć sprawę bez sesji.
+  const [caseCreationToken, setCaseCreationToken] = useState<string | null>(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [createdCaseId, setCreatedCaseId] = useState<string | null>(null)
@@ -179,6 +186,13 @@ export default function DodajSprawaClientPage() {
   const updateAccountField = <K extends keyof AccountState>(field: K, value: AccountState[K]) => {
     setAccount((prev) => ({ ...prev, [field]: value }))
     clearError(field as string)
+  }
+
+  const handleAccountPostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^\d]/g, "")
+    if (val.length > 5) val = val.slice(0, 5)
+    const formatted = val.length > 2 ? `${val.slice(0, 2)}-${val.slice(2)}` : val
+    updateAccountField("kodPocztowy", formatted)
   }
 
   const handleSelectCaseType = (value: CaseType) => {
@@ -356,7 +370,7 @@ export default function DodajSprawaClientPage() {
     5: isAuthed
       ? ["imieNazwiskoSession", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"]
       : ["imie", "nazwisko", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"],
-    6: ["email", "password", "confirmPassword", "zgodaRegulamin"],
+    6: ["email", "adres", "kodPocztowy", "password", "confirmPassword", "zgodaRegulamin"],
   }
 
   const getStepErrors = (step: number): Record<string, string> => {
@@ -392,6 +406,16 @@ export default function DodajSprawaClientPage() {
       stepErrors.email = "Adres email jest wymagany"
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account.email)) {
       stepErrors.email = "Podaj poprawny adres email"
+    }
+    if (!account.adres.trim()) {
+      stepErrors.adres = "Adres jest wymagany"
+    } else if (account.adres.trim().length < 3) {
+      stepErrors.adres = "Adres musi mieć co najmniej 3 znaki"
+    }
+    if (!account.kodPocztowy) {
+      stepErrors.kodPocztowy = "Kod pocztowy jest wymagany"
+    } else if (!/^\d{2}-\d{3}$/.test(account.kodPocztowy)) {
+      stepErrors.kodPocztowy = "Wpisz poprawny kod pocztowy (np. 00-000)"
     }
     if (!account.password) {
       stepErrors.password = "Hasło jest wymagane"
@@ -520,10 +544,14 @@ export default function DodajSprawaClientPage() {
     return contact.nazwaFirmy.trim() || `${contact.imie} ${contact.nazwisko}`.trim()
   }
 
-  const submitCase = (otpCodeValue?: string) =>
-    fetch("/api/cases", {
+  const submitCase = (otpCodeValue?: string, tokenOverride?: string | null) => {
+    const effectiveToken = tokenOverride ?? caseCreationToken
+    return fetch("/api/cases", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(effectiveToken ? { "x-case-creation-token": effectiveToken } : {}),
+      },
       body: JSON.stringify({
         ...caseData,
         oczekiwanyTerminRealizacji: caseData.oczekiwanyTerminRealizacji || null,
@@ -537,11 +565,12 @@ export default function DodajSprawaClientPage() {
         ...(otpCodeValue ? { otpCode: otpCodeValue } : {}),
       }),
     })
+  }
 
-  const createCaseAfterAuth = async () => {
+  const createCaseAfterAuth = async (tokenOverride?: string) => {
     setIsSubmitting(true)
     try {
-      const response = await submitCase()
+      const response = await submitCase(undefined, tokenOverride)
       const data = await response.json().catch(() => null)
 
       if (response.ok && data?.requiresOtp) {
@@ -568,8 +597,10 @@ export default function DodajSprawaClientPage() {
     }
   }
 
-  // --- Krok 6 (anonimowo): rejestracja → auto-login → utworzenie sprawy, bez
-  // dodatkowej interakcji użytkownika między tymi trzema żądaniami ---
+  // --- Krok 6 (anonimowo): rejestracja → utworzenie sprawy biletem z rejestracji,
+  // bez dodatkowej interakcji użytkownika. Konto NIE loguje się tutaj — dopóki
+  // klient nie potwierdzi e-maila, logowanie jest zablokowane (auth.ts), więc
+  // sprawa powstaje przy pomocy jednorazowego biletu (caseCreationToken). ---
   const submitAnonymousRegistrationAndCase = async (phoneVerificationToken: string) => {
     setShowPhoneVerification(false)
     setAccountError(null)
@@ -588,7 +619,7 @@ export default function DodajSprawaClientPage() {
           recaptchaToken,
           phoneVerificationToken,
           role: "CLIENT",
-          autoVerifyEmail: true,
+          issueCaseCreationTicket: true,
           referralToken: referralToken || undefined,
           telemetry: getBrowserTelemetry(),
           name: contact.nazwaFirmy.trim() || `${contact.imie} ${contact.nazwisko}`.trim(),
@@ -597,6 +628,8 @@ export default function DodajSprawaClientPage() {
             imie: contact.imie,
             nazwisko: contact.nazwisko,
             telefon: contact.telefonKontakt,
+            adres: account.adres,
+            kodPocztowy: account.kodPocztowy,
             miasto: selectedCityName || null,
             voivodeshipId: caseData.voivodeshipId || null,
             nazwa: isBusinessCase ? contact.nazwaFirmy.trim() || null : null,
@@ -621,23 +654,18 @@ export default function DodajSprawaClientPage() {
         return
       }
 
-      const signInResult = await signIn("credentials", {
-        email: account.email,
-        password: account.password,
-        redirect: false,
-      })
-
-      if (signInResult?.error) {
+      if (!registerData?.caseCreationToken) {
         setAccountError(
-          "Konto zostało utworzone. Zaloguj się, aby dokończyć dodawanie sprawy — Twoje dane pozostaną zapisane."
+          "Konto zostało utworzone, ale nie udało się dokończyć dodawania sprawy. Potwierdź adres e-mail i zaloguj się, aby dodać sprawę ponownie."
         )
         setIsSubmittingAccount(false)
         return
       }
 
-      await createCaseAfterAuth()
+      setCaseCreationToken(registerData.caseCreationToken)
+      await createCaseAfterAuth(registerData.caseCreationToken)
     } catch (error) {
-      console.error("Error during registration + auto-login:", error)
+      console.error("Error during registration + case creation:", error)
       setAccountError("Wystąpił błąd podczas rejestracji")
       setIsSubmittingAccount(false)
     }
@@ -978,6 +1006,34 @@ export default function DodajSprawaClientPage() {
         {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
       </div>
 
+      <div id="field-adres">
+        <Label htmlFor="adres" className="text-muted-foreground text-xs font-semibold">
+          Adres (ulica i numer) *
+        </Label>
+        <Input
+          id="adres"
+          value={account.adres}
+          onChange={(e) => updateAccountField("adres", e.target.value)}
+          placeholder="Np. ul. Warszawska 1/2"
+          className={cn(errors.adres && "border-destructive focus-visible:ring-destructive")}
+        />
+        {errors.adres && <p className="text-xs text-destructive mt-1">{errors.adres}</p>}
+      </div>
+
+      <div id="field-kodPocztowy">
+        <Label htmlFor="kodPocztowy" className="text-muted-foreground text-xs font-semibold">
+          Kod pocztowy *
+        </Label>
+        <Input
+          id="kodPocztowy"
+          value={account.kodPocztowy}
+          onChange={handleAccountPostalCodeChange}
+          placeholder="00-000"
+          className={cn("max-w-[160px]", errors.kodPocztowy && "border-destructive focus-visible:ring-destructive")}
+        />
+        {errors.kodPocztowy && <p className="text-xs text-destructive mt-1">{errors.kodPocztowy}</p>}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div id="field-password">
           <Label htmlFor="password" className="text-muted-foreground text-xs font-semibold">
@@ -1272,7 +1328,7 @@ export default function DodajSprawaClientPage() {
         <Dialog
           open={showSuccessDialog}
           onOpenChange={(open) => {
-            if (!open && createdCaseId) {
+            if (!open && createdCaseId && !caseCreationToken) {
               router.push(`/panel-klienta/sprawy/${createdCaseId}`)
             }
             setShowSuccessDialog(open)
@@ -1293,37 +1349,52 @@ export default function DodajSprawaClientPage() {
                 Sprawa została dodana!
               </DialogTitle>
               <DialogDescription className="text-muted-foreground text-sm leading-relaxed mt-1">
-                Twoja sprawa jest już w systemie! Prawnicy specjalizujący się w
-                tej dziedzinie wkrótce zapoznają się z jej szczegółami i złożą
-                swoje oferty. Otrzymasz powiadomienie, gdy tylko pojawią się nowe
-                propozycje. Dziękujemy za zaufanie!
+                {caseCreationToken
+                  ? "Twoja sprawa jest już w systemie! Zanim eksperci zobaczą jej szczegóły, potwierdź adres e-mail — kliknij link, który właśnie wysłaliśmy na Twoją skrzynkę. Dopiero wtedy będziesz też mógł się zalogować do panelu klienta."
+                  : "Twoja sprawa jest już w systemie! Prawnicy specjalizujący się w tej dziedzinie wkrótce zapoznają się z jej szczegółami i złożą swoje oferty. Otrzymasz powiadomienie, gdy tylko pojawią się nowe propozycje. Dziękujemy za zaufanie!"}
               </DialogDescription>
             </DialogHeader>
 
             <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-center gap-2.5">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setShowSuccessDialog(false)
-                  router.push("/panel-klienta/sprawy")
-                }}
-                className="h-11 px-5"
-              >
-                Przejdź do listy spraw
-              </Button>
-              <Button
-                type="button"
-                variant="primary"
-                onClick={() => {
-                  setShowSuccessDialog(false)
-                  if (createdCaseId) router.push(`/panel-klienta/sprawy/${createdCaseId}`)
-                }}
-                className="h-11 px-5 shadow-md shadow-primary/20 gap-1.5"
-              >
-                Zobacz sprawę
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+              {caseCreationToken ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => {
+                    setShowSuccessDialog(false)
+                    router.push("/")
+                  }}
+                  className="h-11 px-5 shadow-md shadow-primary/20"
+                >
+                  Rozumiem
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowSuccessDialog(false)
+                      router.push("/panel-klienta/sprawy")
+                    }}
+                    className="h-11 px-5"
+                  >
+                    Przejdź do listy spraw
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => {
+                      setShowSuccessDialog(false)
+                      if (createdCaseId) router.push(`/panel-klienta/sprawy/${createdCaseId}`)
+                    }}
+                    className="h-11 px-5 shadow-md shadow-primary/20 gap-1.5"
+                  >
+                    Zobacz sprawę
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>

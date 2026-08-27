@@ -1,3 +1,4 @@
+import { unlockGatedCasesForUser } from "@/lib/case-notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -46,8 +47,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/weryfikacja-email?error=nie-znaleziono-uzytkownika', baseUrl))
     }
 
-    // Sprawdź czy email nie został już zweryfikowany
+    // Sprawdź czy email nie został już zweryfikowany. Uwaga: rejestracja z kreatora
+    // /dodaj-sprawe ustawia `emailVerified` od razu (na podstawie weryfikacji SMS),
+    // więc znalezienie tego tokenu wciąż nieusuniętym to JEDYNY dowód, że to pierwsze
+    // realne kliknięcie linku — dlatego odblokowujemy ukryte sprawy w obu gałęziach.
     if (user.emailVerified) {
+      await unlockGatedCasesForUser(user.id)
+
       // Usuń token
       await prisma.verificationToken.delete({
         where: { token },
@@ -65,6 +71,8 @@ export async function GET(request: NextRequest) {
         ...(user.status === "PENDING" ? { status: "ACTIVE" } : {}),
       },
     })
+
+    await unlockGatedCasesForUser(user.id)
 
     // Usuń użyty token
     await prisma.verificationToken.delete({

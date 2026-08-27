@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { isReferralUsable } from "@/lib/case-referrals"
+import { notifyMatchingLawFirmsForCase } from "@/lib/case-notifications"
 import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { generateCaseOtpEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
@@ -188,11 +189,46 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const nextAuthSession = await auth()
 
-    if (!session || !session.user || session.user.role !== "CLIENT") {
+    let session: { user: { id: string; email: string; role: "CLIENT" } } | null = null
+    let usedCaseCreationTicketToken: string | null = null
+
+    if (nextAuthSession?.user && nextAuthSession.user.role === "CLIENT") {
+      session = {
+        user: { id: nextAuthSession.user.id, email: nextAuthSession.user.email!, role: "CLIENT" },
+      }
+    } else {
+      // Kreator /dodaj-sprawe: konto jeszcze niezalogowane (auth.ts blokuje
+      // logowanie do czasu kliknięcia linku w mailu), więc zamiast sesji NextAuth
+      // przyjmujemy jednorazowy bilet wydany przez /api/auth/register — patrz
+      // CaseCreationTicket. Ticket zostaje skonsumowany dopiero po udanym
+      // utworzeniu sprawy niżej, bo retry przy OTP e-mail wykonuje kolejne
+      // żądania do tego endpointu z tym samym biletem.
+      const ticketToken = request.headers.get("x-case-creation-token")
+      if (ticketToken) {
+        const ticket = await prisma.caseCreationTicket.findUnique({ where: { token: ticketToken } })
+        if (ticket && ticket.expires > new Date()) {
+          const ticketUser = await prisma.user.findUnique({
+            where: { id: ticket.userId },
+            select: { id: true, email: true, role: true },
+          })
+          if (ticketUser?.role === "CLIENT") {
+            session = { user: { id: ticketUser.id, email: ticketUser.email, role: "CLIENT" } }
+            usedCaseCreationTicketToken = ticketToken
+          }
+        }
+      }
+    }
+
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
+    // Sprawa utworzona przez bilet (bez sesji) należy do konta, które jeszcze nie
+    // potwierdziło e-maila — musi zostać ukryta przed ekspertami do tego czasu
+    // (patrz Case.czekaNaAktywacjeEmail i buildLawFirmCaseWhereInput).
+    const requiresEmailActivation = !nextAuthSession?.user
 
     // Znajdź klienta
     const client = await prisma.client.findUnique({
@@ -418,6 +454,7 @@ export async function POST(request: NextRequest) {
         cityId: city.id,
         akceptujeKlauzule: body.akceptujeKlauzule,
         status: "NOWA",
+        czekaNaAktywacjeEmail: requiresEmailActivation,
       },
       include: {
         category: true,
@@ -450,7 +487,9 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       typ: "SYSTEM",
       tytul: "Sprawa dodana pomyślnie",
-      tresc: `Twoja sprawa "${body.nazwaSprawy}" została dodana. Eksperci prawni mogą teraz składać oferty.`,
+      tresc: requiresEmailActivation
+        ? `Twoja sprawa "${body.nazwaSprawy}" została dodana. Potwierdź adres e-mail klikając w link, który wysłaliśmy — dopiero wtedy eksperci prawni zobaczą sprawę i będą mogli składać oferty.`
+        : `Twoja sprawa "${body.nazwaSprawy}" została dodana. Eksperci prawni mogą teraz składać oferty.`,
       linkUrl: `/panel-klienta/sprawy/${newCase.id}`,
       force: true, // Kluczowe / systemowe powiadomienie
     })
@@ -458,52 +497,6 @@ export async function POST(request: NextRequest) {
     // Emit notification to client via Socket.IO
     const { emitNewNotification } = await import("@/lib/socket")
     await emitNewNotification(session.user.id, clientNotification)
-
-    // Powiadom ekspertów o nowej sprawie – TYLKO te, którym ta sprawa pojawi się na liście:
-    // - calaPolska=true: pasuje do kategorii (lub brak kategorii → wszystkie)
-    // - calaPolska=false: AND(lokalizacja, kategoria)
-    const lawFirms = await prisma.lawFirm.findMany({
-      where: {
-        aktywna: true,
-        user: { deletedAt: null },
-        AND: [
-          // Warunek lokalizacji: calaPolska LUB (voivodeship|city pasuje)
-          {
-            OR: [
-              { calaPolska: true },
-              {
-                voivodeships: {
-                  some: { voivodeshipId: newCase.voivodeshipId },
-                },
-              },
-              ...(newCase.cityId
-                ? [{ cities: { some: { cityId: newCase.cityId } } }]
-                : []),
-            ],
-          },
-          // Warunek kategorii: firma nie ma zadeklarowanych kategorii (brak filtra) LUB dowolna kategoria sprawy pasuje
-          {
-            OR: [
-              { categories: { none: {} } },
-              {
-                categories: {
-                  some: { categoryId: { in: allCategoryIds } },
-                },
-              },
-            ],
-          },
-        ],
-      },
-      select: {
-        id: true,
-        userId: true,
-        nazwa: true,
-        calaPolska: true,
-        user: {
-          select: { email: true },
-        },
-      },
-    })
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
     let budzetText = "Do negocjacji"
@@ -536,85 +529,16 @@ export async function POST(request: NextRequest) {
       console.error("Failed to send case confirmation email to client:", emailError)
     }
 
-    // Utwórz powiadomienia dla ekspertów
-    console.log(`[NOTIFY] Found ${lawFirms.length} law firm(s) matching new case "${newCase.nazwaSprawy}" (cats: ${allCategoryIds.join(",")}, voiv: ${newCase.voivodeshipId}, city: ${newCase.cityId})`)
-
-    if (lawFirms.length > 0) {
-      const locationText = [
-        newCase.city?.nazwa,
-        newCase.voivodeship?.nazwa,
-      ].filter(Boolean).join(", ")
-
-      for (const lf of lawFirms) {
-        // Polecający ekspert dostaje osobne, dokładniejsze powiadomienie – nie dublujemy
-        if (referral && lf.id === referral.lawFirmId) continue
-
-        console.log(`[NOTIFY] Sending notification to: ${lf.nazwa} (userId: ${lf.userId})`)
-        const { notification: lfNotification, success, emailSent } = await sendSystemNotification({
-          userId: lf.userId,
-          typ: "NOWA_OFERTA",
-          tytul: "Nowa sprawa zgodna z Twoim zakresem",
-          tresc: `📋 ${newCase.nazwaSprawy} · ${allCategoryNames}${locationText ? ` · 📍 ${locationText}` : ""}. Sprawdź szczegóły i złóż ofertę.`,
-          linkUrl: "/panel-eksperta/sprawy",
-        })
-        console.log(`[NOTIFY] Result for ${lf.nazwa}: success=${success}, emailSent=${emailSent}, notificationId=${lfNotification?.id}`)
-
-        // Real-time socket emit do konkretnej eksperta
-        await emitNewNotification(lf.userId, lfNotification)
-
-        // Wyślij e-mail powiadomienie do ekspercie
-        if (lf.user?.email) {
-          try {
-            await sendEmailWithTemplate({
-              to: lf.user.email,
-              templateType: EmailType.NOWA_SPRAWA,
-              variables: {
-                "{ekspert}": lf.nazwa,
-                "{nazwaSprawi}": newCase.nazwaSprawy,
-                "{kategoria}": allCategoryNames,
-                "{klient}": `${client.imie} ${client.nazwisko}`,
-                "{budżet}": budzetText,
-                "{linkDoPanelu}": `${baseUrl}/panel-eksperta/sprawy`,
-              }
-            })
-          } catch (emailError) {
-            console.error(`Failed to send case email to law firm ${lf.nazwa}:`, emailError)
-          }
-        }
-      }
+    // Powiadom ekspertów o nowej sprawie — pomiń, dopóki klient nie potwierdzi e-maila
+    // (sprawa i tak jest wtedy niewidoczna dla ekspertów, patrz buildLawFirmCaseWhereInput).
+    // Odblokowanie i wysyłka powiadomień: /api/auth/verify-email.
+    if (!requiresEmailActivation) {
+      await notifyMatchingLawFirmsForCase(newCase.id)
     }
 
-    // Powiadom eksperta, którego polecenie doprowadziło do powstania sprawy
-    if (referral) {
-      try {
-        const referringFirm = await prisma.lawFirm.findUnique({
-          where: { id: referral.lawFirmId },
-          select: { nazwa: true, userId: true, user: { select: { email: true } } },
-        })
-
-        if (referringFirm) {
-          const { notification } = await sendSystemNotification({
-            userId: referringFirm.userId,
-            typ: "POLECENIE_WYKORZYSTANE",
-            tytul: "Klient z Twojego polecenia dodał sprawę",
-            tresc: `🤝 ${newCase.nazwaSprawy} · ${allCategoryNames}. Sprawa jest już w Twoim panelu — możesz złożyć ofertę.`,
-            linkUrl: `/panel-eksperta/sprawy/${newCase.id}`,
-            emailTemplateType: EmailType.POLECENIE_SPRAWA_UTWORZONA,
-            emailVariables: {
-              "{ekspert}": referringFirm.nazwa,
-              "{klient}": `${client.imie} ${client.nazwisko}`,
-              "{email}": session.user.email || "",
-              "{nazwaSprawy}": newCase.nazwaSprawy,
-              "{kategorie}": allCategoryNames,
-              "{linkDoSprawy}": `${baseUrl}/panel-eksperta/sprawy/${newCase.id}`,
-            },
-          })
-
-          await emitNewNotification(referringFirm.userId, notification)
-        }
-      } catch (referralNotifyError) {
-        console.error("Failed to notify referring law firm:", referralNotifyError)
-      }
+    // Sprawa powstała — bilet spełnił swoją rolę, nie pozwalamy utworzyć nim drugiej
+    if (usedCaseCreationTicketToken) {
+      await prisma.caseCreationTicket.delete({ where: { token: usedCaseCreationTicketToken } }).catch(() => {})
     }
 
     return NextResponse.json(newCase, { status: 201 })
