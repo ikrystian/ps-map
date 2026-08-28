@@ -554,7 +554,7 @@ export default function WinWithUsClientPage() {
               <div className="relative w-full max-w-[420px]">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/80 aspect-square">
                   <Image
-                    src="/images/meet-expert.png"
+                    src="/images/spotkanie_online.webp"
                     alt="Spotkanie online z ekspertem"
                     fill
                     sizes="(max-width: 768px) 100vw, 420px"
