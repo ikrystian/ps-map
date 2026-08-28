@@ -45,10 +45,10 @@ export default function RegistrationPage() {
           >
             {/* Background Image */}
             <Image
-              src="/images/registration_client.png"
+              src="/images/registration_client.webp"
               alt="Klient szukający pomocy"
               fill
-              sizes="(max-width: 768px) 100vw, 400px"
+              sizes="(max-width: 768px) 100vw, 960px"
               priority
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 z-0"
             />
@@ -79,7 +79,7 @@ export default function RegistrationPage() {
           >
             {/* Background Image */}
             <Image
-              src="/images/registration_lawyer.png"
+              src="/images/registration_lawyer.webp"
               alt="Ekspert"
               fill
               sizes="(max-width: 768px) 100vw, 400px"
