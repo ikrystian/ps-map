@@ -3,8 +3,11 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { Check, Paperclip } from "lucide-react"
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
+import { cn } from "@/lib/utils"
 import {
   HowItWorksIcon,
   PayForRealHelpIcon,
@@ -23,7 +26,64 @@ import {
   ScheduleMeetingIcon
 } from "@/components/ui/win-with-us-icons"
 
+// Treść mockupu odtwarza Krok 2 kreatora /dodaj-sprawe (nazwa + opis sprawy)
+// jako animowany podgląd formularza, w duchu .live-cases-mockup z /dla-prawnika.
+const MOCKUP_NAZWA_TARGET = "Sporządzenie umowy najmu lokalu komercyjnego"
+const MOCKUP_OPIS_TARGET =
+  "Prowadzę jednoosobową działalność i chcę wynająć lokal pod biuro. Potrzebuję sprawdzenia projektu umowy najmu, negocjacji zapisów dotyczących kaucji i kar umownych oraz doradztwa przed podpisaniem."
+
 export default function WinWithUsClientPage() {
+  const [mockupStarted, setMockupStarted] = useState(false)
+  const [mockupNazwa, setMockupNazwa] = useState("")
+  const [mockupOpis, setMockupOpis] = useState("")
+  const [mockupPhase, setMockupPhase] = useState<"nazwa" | "opis" | "done">("nazwa")
+  const [showMockupAttachment, setShowMockupAttachment] = useState(false)
+
+  useEffect(() => {
+    if (!mockupStarted) return
+
+    let cancelled = false
+    const timers: ReturnType<typeof setTimeout>[] = []
+    const wait = (fn: () => void, ms: number) => {
+      timers.push(setTimeout(() => !cancelled && fn(), ms))
+    }
+
+    let opisIdx = 0
+    const typeOpis = () => {
+      opisIdx++
+      setMockupOpis(MOCKUP_OPIS_TARGET.slice(0, opisIdx))
+      if (opisIdx < MOCKUP_OPIS_TARGET.length) {
+        wait(typeOpis, 10 + Math.random() * 16)
+      } else {
+        wait(() => {
+          setShowMockupAttachment(true)
+          setMockupPhase("done")
+        }, 500)
+      }
+    }
+
+    let nazwaIdx = 0
+    const typeNazwa = () => {
+      nazwaIdx++
+      setMockupNazwa(MOCKUP_NAZWA_TARGET.slice(0, nazwaIdx))
+      if (nazwaIdx < MOCKUP_NAZWA_TARGET.length) {
+        wait(typeNazwa, 30 + Math.random() * 35)
+      } else {
+        wait(() => {
+          setMockupPhase("opis")
+          typeOpis()
+        }, 550)
+      }
+    }
+
+    wait(typeNazwa, 500)
+
+    return () => {
+      cancelled = true
+      timers.forEach(clearTimeout)
+    }
+  }, [mockupStarted])
+
   return (
     <>
       {/* Breadcrumbs Banner */}
@@ -554,10 +614,10 @@ export default function WinWithUsClientPage() {
               <div className="relative w-full max-w-[420px]">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/80 aspect-square">
                   <Image
-                    src="/images/spotkanie_online.webp"
+                    src="/images/spotkania_online.webp"
                     alt="Spotkanie online z ekspertem"
                     fill
-                    sizes="(max-width: 768px) 100vw, 420px"
+                    sizes="(max-width: 768px) 100vw, 920px"
                     className="object-cover"
                     priority
                   />
@@ -663,17 +723,91 @@ export default function WinWithUsClientPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            onViewportEnter={() => setMockupStarted(true)}
             transition={{ duration: 0.8 }}
-            className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/80 aspect-[730/296] w-full mb-12"
+            className="w-full mb-12"
           >
-            <Image
-              src="/images/lawyers_meeting.png"
-              alt="Zespół specjalistów ProstaSprawa.pl"
-              fill
-              sizes="(max-width: 1024px) 100vw, 896px"
-              className="object-cover"
-              priority
-            />
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/80 bg-card"
+            >
+              {/* Mockup header */}
+              <div className="flex items-center gap-2 border-b border-border/60 bg-background-sec/30 px-5 py-3.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+                <span className="ml-3 text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+                  Dodaj sprawę — krok 2
+                </span>
+              </div>
+
+              {/* Mockup body — podgląd kroku "Opis i szczegóły" z /dodaj-sprawe */}
+              <div className="p-6 sm:p-8">
+                <div className="mb-5">
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">
+                    Nazwa sprawy *
+                  </span>
+                  <div className="rounded-lg border border-border/60 bg-background px-3.5 py-2.5 text-sm text-foreground min-h-[2.75rem] flex items-center">
+                    {mockupNazwa}
+                    {mockupPhase === "nazwa" && (
+                      <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+                        className="ml-0.5 inline-block h-4 w-[1.5px] bg-[#2b8265]"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="mb-1.5 block text-xs font-semibold text-muted-foreground">
+                    Opis sprawy * (minimum 50 znaków)
+                  </span>
+                  <div className="min-h-[110px] rounded-lg border border-border/60 bg-background px-3.5 py-3 text-sm leading-relaxed text-foreground">
+                    {mockupOpis}
+                    {mockupPhase === "opis" && (
+                      <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+                        className="ml-0.5 inline-block h-4 w-[1.5px] bg-[#2b8265] align-middle"
+                      />
+                    )}
+                  </div>
+                  <div className="flex justify-between items-center mt-2.5">
+                    <span className="text-sm text-muted-foreground/70 font-light">
+                      Opisz problem prawny jak najdokładniej.
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xs font-semibold px-2 py-0.5 rounded-lg border transition-colors duration-300",
+                        mockupOpis.length >= 50
+                          ? "bg-success/10 text-success border-success/20"
+                          : "bg-background-sec/20 text-muted-foreground border-border/20",
+                      )}
+                    >
+                      Znaki: {mockupOpis.length} / 50
+                    </span>
+                  </div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={showMockupAttachment ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="mt-4 flex items-center justify-between rounded-lg border border-border/10 bg-background-sec/20 p-3.5"
+                >
+                  <span className="flex items-center gap-2 text-xs text-muted-foreground truncate">
+                    <Paperclip className="h-3.5 w-3.5 shrink-0" />
+                    umowa_najmu_wstepna.pdf
+                  </span>
+                  <span className="flex items-center gap-1 text-xs font-medium text-success shrink-0">
+                    <Check className="h-3.5 w-3.5" />
+                    Przesłano
+                  </span>
+                </motion.div>
+              </div>
+            </motion.div>
           </motion.div>
 
           <motion.h2
