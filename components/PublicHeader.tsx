@@ -20,13 +20,14 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/theme-toggle"
 import UserMenu from "@/components/UserMenu"
 import { NotificationBell } from "@/components/NotificationBell"
-import { cn } from "@/lib/utils"
+import { cn, clearAppCacheAndStorage } from "@/lib/utils"
 import type { CategoryWithChildren } from "@/types/categories"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check, ChevronDown, ChevronRight, IdCard, List, MapPin, Menu, Search, X } from "lucide-react"
+import { Check, ChevronDown, ChevronRight, IdCard, LayoutDashboard, List, LogOut, MapPin, Menu, Search, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
+import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
 
@@ -321,6 +322,12 @@ export default function PublicHeader({
     return parent ? parent.nazwa : "Specjalizacja"
   }
 
+  const handleMobileLogout = async () => {
+    setMobileMenuOpen(false)
+    await clearAppCacheAndStorage()
+    await signOut({ callbackUrl: "/wylogowano" })
+  }
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const params = new URLSearchParams()
@@ -349,8 +356,8 @@ export default function PublicHeader({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center relative" id="main-logo">
-            <SiteLogo className="block min-w-[150px] min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
-            <Image className="hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
+            <SiteLogo className="hidden md:block min-w-[150px] min-w-[150px]" title="Przystąp do sprawy" width={200} height={50} />
+            <Image className="block md:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
           </Link>
           <div className="flex">
             {/* Navigation Menu */}
@@ -720,6 +727,30 @@ export default function PublicHeader({
                           </div>
                           <ThemeToggle variant="segmented" />
                         </div>
+                      </div>
+                    )}
+
+                    {isAuthenticated && (userRole === "CLIENT" || userRole === "LAW_FIRM") && (
+                      <div className="flex flex-col gap-3">
+                        <Link
+                          href={userRole === "LAW_FIRM" ? "/panel-eksperta" : "/panel-klienta"}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="w-full"
+                        >
+                          <Button className="w-full cursor-pointer h-11 justify-center text-base gap-2" size="lg" variant="outline">
+                            <LayoutDashboard className="h-4 w-4" />
+                            Dashboard
+                          </Button>
+                        </Link>
+                        <Button
+                          onClick={handleMobileLogout}
+                          className="w-full cursor-pointer h-11 justify-center text-base gap-2"
+                          size="lg"
+                          variant="outline"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Wyloguj
+                        </Button>
                       </div>
                     )}
 
