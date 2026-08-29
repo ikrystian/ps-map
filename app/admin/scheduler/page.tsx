@@ -16,6 +16,7 @@ import {
   Cloud,
   RotateCcw,
   Database,
+  Trash2,
 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 
@@ -39,9 +40,10 @@ type JobRunStatus = "RUNNING" | "SUCCESS" | "FAILED"
 
 interface BackupInfo {
   name: string
-  location: "local" | "gdrive" | "both"
+  location: "local" | "gcs" | "gdrive" | "both"
   sizeBytes?: number
   createdTime?: string
+  gcsPath?: string
   driveFileId?: string
 }
 
@@ -120,6 +122,8 @@ export default function AdminSchedulerPage() {
   const [loadingBackups, setLoadingBackups] = useState(true)
   const [restoring, setRestoring] = useState<string | null>(null)
   const [confirmRestore, setConfirmRestore] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const fetchBackups = useCallback(async () => {
     setLoadingBackups(true)
@@ -149,6 +153,7 @@ export default function AdminSchedulerPage() {
         body: JSON.stringify({
           action: "restore",
           fileName: backup.name,
+          gcsPath: backup.gcsPath,
           driveFileId: backup.driveFileId,
         }),
       })
@@ -159,16 +164,11 @@ export default function AdminSchedulerPage() {
         return
       }
 
-      toast.success(
-        <div className="space-y-1">
-          <p className="font-semibold">{data.message}</p>
-          {data.safetyBackup && (
-            <p className="text-xs text-muted-foreground">
-              Poprzedni stan zapisano w pliku: {data.safetyBackup}
-            </p>
-          )}
-        </div>
-      )
+      toast.success(data.message, {
+        description: data.safetyBackup
+          ? `Poprzedni stan zapisano w pliku: ${data.safetyBackup}`
+          : undefined,
+      })
       
       fetchData()
       fetchBackups()
@@ -178,6 +178,35 @@ export default function AdminSchedulerPage() {
     } finally {
       setRestoring(null)
       setConfirmRestore(null)
+    }
+  }
+
+  const handleDelete = async (backup: BackupInfo) => {
+    setDeleting(backup.name)
+    try {
+      const response = await fetch("/api/admin/backups", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: backup.name,
+          gcsPath: backup.gcsPath,
+        }),
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        toast.error(data.error || "Błąd podczas usuwania kopii zapasowej")
+        return
+      }
+
+      toast.success(data.message || "Kopia zapasowa została pomyślnie usunięta")
+      fetchBackups()
+    } catch (error) {
+      console.error("Error deleting backup:", error)
+      toast.error("Nie udało się usunąć kopii zapasowej")
+    } finally {
+      setDeleting(null)
+      setConfirmDelete(null)
     }
   }
 
@@ -344,7 +373,7 @@ export default function AdminSchedulerPage() {
           <CardTitle className="flex items-center justify-between text-base">
             <span className="flex items-center gap-2">
               <Database className="h-5 w-5 text-primary" />
-              Kopie zapasowe bazy danych (Google Drive / Lokalne)
+              Kopie zapasowe bazy danych (Google Cloud Storage / Lokalne)
             </span>
             <Button
               variant="outline"
@@ -382,7 +411,8 @@ export default function AdminSchedulerPage() {
                 <TableBody>
                   {backups.map((backup) => {
                     const isLocal = backup.location === "local" || backup.location === "both"
-                    const isGDrive = backup.location === "gdrive" || backup.location === "both"
+                    const isGCS = backup.location === "gcs" || backup.location === "both"
+                    const isGDrive = backup.location === "gdrive"
                     
                     return (
                       <TableRow key={backup.name}>
@@ -397,8 +427,14 @@ export default function AdminSchedulerPage() {
                                 Lokalnie
                               </Badge>
                             )}
+                            {isGCS && (
+                              <Badge variant="secondary" className="flex items-center gap-1 bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/20">
+                                <Cloud className="h-3 w-3" />
+                                Google Cloud Storage
+                              </Badge>
+                            )}
                             {isGDrive && (
-                              <Badge variant="secondary" className="flex items-center gap-1 bg-green-500/10 text-green-700 border-green-500/20">
+                              <Badge variant="secondary" className="flex items-center gap-1 bg-emerald-500/10 text-emerald-700 border-emerald-500/20">
                                 <Cloud className="h-3 w-3" />
                                 Google Drive
                               </Badge>
@@ -412,7 +448,33 @@ export default function AdminSchedulerPage() {
                           {formatBytes(backup.sizeBytes)}
                         </TableCell>
                         <TableCell className="text-right">
-                          {confirmRestore === backup.name ? (
+                          {confirmDelete === backup.name ? (
+                            <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/30 p-1.5 rounded-md">
+                              <span className="text-xs text-destructive font-medium">Usunąć kopię (lokalnie i z GCS)?</span>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                disabled={deleting === backup.name}
+                                onClick={() => handleDelete(backup)}
+                                className="h-7 px-2.5 text-xs"
+                              >
+                                {deleting === backup.name ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  "Tak, usuń"
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={deleting === backup.name}
+                                onClick={() => setConfirmDelete(null)}
+                                className="h-7 px-2.5 text-xs"
+                              >
+                                Anuluj
+                              </Button>
+                            </div>
+                          ) : confirmRestore === backup.name ? (
                             <div className="inline-flex items-center gap-2 bg-error/5 border border-error/20 p-1.5 rounded-md">
                               <span className="text-xs text-error font-medium">Na pewno przywrócić?</span>
                               <Button
@@ -439,16 +501,34 @@ export default function AdminSchedulerPage() {
                               </Button>
                             </div>
                           ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled={restoring != null}
-                              onClick={() => setConfirmRestore(backup.name)}
-                              className="h-8 text-xs"
-                            >
-                              <RotateCcw className="h-3 w-3 mr-1.5" />
-                              Przywróć
-                            </Button>
+                            <div className="inline-flex items-center gap-1.5 justify-end">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={restoring != null || deleting != null}
+                                onClick={() => {
+                                  setConfirmDelete(null)
+                                  setConfirmRestore(backup.name)
+                                }}
+                                className="h-8 text-xs"
+                              >
+                                <RotateCcw className="h-3 w-3 mr-1.5" />
+                                Przywróć
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={restoring != null || deleting != null}
+                                onClick={() => {
+                                  setConfirmRestore(null)
+                                  setConfirmDelete(backup.name)
+                                }}
+                                className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+                                title="Usuń kopię zapasową"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
                           )}
                         </TableCell>
                       </TableRow>

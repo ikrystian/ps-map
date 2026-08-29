@@ -57,7 +57,7 @@ public/uploads/
 files/
 .understand-anything
 # database backups
-backups/
+/backups/
 
 # Sentry Config File
 .env.sentry-build-plugin
