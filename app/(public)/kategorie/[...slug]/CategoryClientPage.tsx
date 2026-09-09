@@ -32,7 +32,6 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
-  ChevronUp,
   Clock,
   Filter,
   Grid3x3,
@@ -57,7 +56,7 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 const ICON_MAP: Record<string, any> = {
   Scale,
@@ -116,13 +115,29 @@ const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOt
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
-export default function CategoryClientPage() {
+interface CategoryClientPageProps {
+  initialCategory?: Category | null
+  initialCategories?: Category[]
+}
+
+export default function CategoryClientPage({
+  initialCategory = null,
+  initialCategories = [],
+}: CategoryClientPageProps = {}) {
   const params = useParams()
   const slugArray = Array.isArray(params?.slug) ? params.slug : params?.slug ? [params.slug] : []
   const slug = slugArray[slugArray.length - 1] || ""
   const router = useRouter()
-  const [category, setCategory] = useState<Category | null>(null)
-  const [allCategories, setAllCategories] = useState<Category[]>([])
+  const [allCategories, setAllCategories] = useState<Category[]>(initialCategories)
+
+  // Current category is derived from the list (seeded server-side, so the header,
+  // opis and breadcrumb are in the initial HTML). `initialCategory` is the
+  // last-resort fallback for the slug we were rendered for.
+  const category = useMemo<Category | null>(() => {
+    const fromList = allCategories.find((cat) => cat.slug === slug)
+    if (fromList) return fromList
+    return initialCategory && initialCategory.slug === slug ? initialCategory : null
+  }, [allCategories, slug, initialCategory])
   const [lawFirms, setLawFirms] = useState<LawFirm[]>([])
   const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [selectedVoivodeship, setSelectedVoivodeship] = useState("all")
@@ -141,8 +156,6 @@ export default function CategoryClientPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("list")
   const [total, setTotal] = useState(0)
-  const [isDescExpanded, setIsDescExpanded] = useState(false)
-  const hasLongDescription = ((category?.opis?.length || 0) + (category?.opisDodatkowy?.length || 0)) > 400
   const [promotedExperts, setPromotedExperts] = useState<LawFirm[]>([])
 
   // Geographic hierarchy
@@ -159,16 +172,17 @@ export default function CategoryClientPage() {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(12)
 
-  // Fetch category data
+  // Only hit the API when no list was provided by the server (e.g. an unusual
+  // client-side navigation that skipped the server component).
   useEffect(() => {
+    if (allCategories.length > 0) return
+
     const fetchCategories = async () => {
       try {
         const response = await fetch(`/api/categories`)
         if (response.ok) {
           const data = await response.json()
           setAllCategories(data)
-          const currentCategory = data.find((cat: Category) => cat.slug === slug)
-          setCategory(currentCategory || null)
         }
       } catch (error) {
         console.error("Error fetching categories:", error)
@@ -176,7 +190,7 @@ export default function CategoryClientPage() {
     }
 
     fetchCategories()
-  }, [slug])
+  }, [allCategories.length])
 
   // Fetch promowanych ekspertów (PROMOCJA_KATEGORII) dla slidera pod opisem kategorii
   useEffect(() => {
@@ -373,6 +387,17 @@ export default function CategoryClientPage() {
 
   const totalPages = Math.ceil(total / limit)
 
+  const hasActiveFilters = Boolean(
+    searchQuery ||
+    (selectedVoivodeship && selectedVoivodeship !== "all") ||
+    selectedCity ||
+    selectedCounty ||
+    (minRating && minRating !== "all") ||
+    onlineOnly ||
+    verifiedOnly ||
+    (selectedExpertiseCategory && selectedExpertiseCategory !== "all")
+  )
+
   // Cities filtered by selected voivodeship
   const filteredCities = cities
 
@@ -457,7 +482,12 @@ export default function CategoryClientPage() {
                     href: `/kategorie/${slugArray.slice(0, index + 1).join('/')}`,
                   }
                 })
-                : []),
+                : category?.parent
+                  ? [{
+                    label: category.parent.nazwa,
+                    href: `/kategorie/${category.parent.slug ?? ""}`,
+                  }]
+                  : []),
               { label: category ? category.nazwa : "Kategoria" },
             ]}
           />
@@ -467,35 +497,24 @@ export default function CategoryClientPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Category Header */}
         {category ? (
-          <div className="mb-8 md:flex justify-between">
-            <h1 className="text-4xl mb-4 font-playfair">{category.nazwa}</h1>
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-primary" />
-              <span>
-                <strong>{category._count?.lawFirms ?? 0}</strong>{" "}
-                {category._count?.lawFirms === 1 ? "ekspert" : "eksperci"}
-              </span>
+          <div className="mb-8">
+            <div className="md:flex justify-between md:items-start gap-6">
+              <h1 className="text-4xl mb-4 font-playfair">{category.nazwa}</h1>
+              <div className="flex items-center gap-2 shrink-0">
+                <Briefcase className="h-4 w-4 text-primary" />
+                <span>
+                  <strong>{category._count?.lawFirms ?? 0}</strong>{" "}
+                  {category._count?.lawFirms === 1 ? "ekspert" : "eksperci"}
+                </span>
+              </div>
             </div>
 
-            {/* Subcategories */}
-            {category.children && category.children.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-sm font-semibold mb-3">Podkategorie:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {category.children.map((child) => (
-                    <Link key={child.id} href={`/kategorie/${category.slug}/${child.slug}`}>
-                      <Badge variant="outline" className="hover:bg-accent cursor-pointer gap-1.5">
-                        <span>{child.nazwa}</span>
-                        {child._count?.lawFirms !== undefined && (
-                          <span className="text-sm text-muted-foreground/80 font-medium">
-                            ({child._count?.lawFirms})
-                          </span>
-                        )}
-                      </Badge>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+            {/* Opis kategorii — nad listą wyników (pierwszy ekran + indeks) */}
+            {category.opis && (
+              <div
+                className="mt-2 max-w-3xl prose prose-sm md:prose-base dark:prose-invert whitespace-pre-line text-foreground/90 prose-p:text-foreground/90 prose-headings:text-foreground"
+                dangerouslySetInnerHTML={{ __html: category.opis }}
+              />
             )}
           </div>
         ) : (
@@ -977,99 +996,97 @@ export default function CategoryClientPage() {
                 )}
               </>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-12 max-w-md mx-auto">
                 <div>
-                  <img src="/images/undraw_share-results_lfh5.svg" />
+                  <img src="/images/undraw_share-results_lfh5.svg" className="mx-auto mb-6 max-h-40" alt="" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">nie znaleziono eksperta</h3>
-                <p className="text-muted-foreground mb-4">
-                  Spróbuj zmienić filtry wyszukiwania lub wyczyść je, aby zobaczyć więcej wyników
+                <h3 className="text-lg font-semibold mb-2">
+                  {hasActiveFilters
+                    ? "Brak wyników dla wybranych filtrów"
+                    : "W tej kategorii nie ma jeszcze specjalistów z Twojego regionu"}
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  {hasActiveFilters
+                    ? "Spróbuj zmienić lub wyczyścić filtry, aby zobaczyć więcej wyników."
+                    : "Dodaj sprawę — trafi do nich, gdy tylko dołączą."}
                 </p>
-                <Button variant="outline" onClick={handleResetFilters}>
-                  Wyczyść filtry
-                </Button>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Link href="/dodaj-sprawe">
+                    <Button>Dodaj sprawę</Button>
+                  </Link>
+                  {hasActiveFilters && (
+                    <Button variant="outline" onClick={handleResetFilters}>
+                      Wyczyść filtry
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Sekcja opisu kategorii (nad stopką) */}
-        {category && (category.opis || category.opisDodatkowy) && (
-          <div className="mt-20 pt-12 border-t border-border/60 container text-left" id="category-desc-footer">
-            <div className="relative overflow-hidden bg-gradient-to-br from-background via-background/90 to-background border border-border/40 rounded-3xl p-6 md:p-10 shadow-2xl backdrop-blur-sm">
-              {/* Decorative Background Glows */}
-              <div className="absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
-              <div className="absolute -left-24 -top-24 w-96 h-96 rounded-full bg-teal-500/5 blur-[100px] pointer-events-none" />
+        {/* Podkategorie — pod listą wyników, tylko na kategorii głównej */}
+        {category && category.children && category.children.length > 0 && (
+          <section className="mt-16 pt-10 border-t border-border/60">
+            <h2 className="font-playfair text-2xl font-bold text-foreground mb-4">
+              Podkategorie
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {category.children.map((child) => (
+                <Link key={child.id} href={`/kategorie/${category.slug}/${child.slug}`}>
+                  <Badge
+                    variant="outline"
+                    className="hover:bg-accent cursor-pointer gap-1.5 text-sm py-1.5 px-3"
+                  >
+                    <span>{child.nazwa}</span>
+                    {child._count?.lawFirms !== undefined && (
+                      <span className="text-sm text-muted-foreground/80 font-medium">
+                        ({child._count?.lawFirms})
+                      </span>
+                    )}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
-              {/* Section Header */}
-              <div className="flex items-center gap-3 mb-8 pb-4 border-b border-border/40 relative z-10">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-teal-500/10 flex items-center justify-center border border-primary/20 shadow-inner">
-                  <Scale className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h2 className="font-playfair text-xl md:text-2xl font-bold text-foreground tracking-tight">
-                    O kategorii: {category.nazwa}
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Szczegółowe informacje prawne i porady ekspertów
-                  </p>
-                </div>
+        {/* Opis dodatkowy — pod listą wyników */}
+        {category && category.opisDodatkowy && (
+          <section
+            className="mt-16 pt-10 border-t border-border/60"
+            id="category-desc-footer"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-teal-500/10 flex items-center justify-center border border-primary/20 shadow-inner shrink-0">
+                <Scale className="w-5 h-5 text-primary" />
               </div>
-
-              {/* Description Content wrapper with Expand/Collapse */}
-              <div className="relative z-10">
-                <div
-                  className={cn(
-                    "relative transition-all duration-500 ease-in-out overflow-hidden",
-                    hasLongDescription && !isDescExpanded ? "max-h-[300px]" : "max-h-[5000px]"
-                  )}
-                >
-                  <div className="space-y-6 prose prose-sm md:prose-base dark:prose-invert max-w-none whitespace-pre-line text-left">
-                    {category.opis && (
-                      <div
-                        className="text-foreground text-base md:text-lg leading-relaxed font-medium prose-p:text-foreground prose-headings:text-foreground"
-                        dangerouslySetInnerHTML={{ __html: category.opis }}
-                      />
-                    )}
-                    {category.opisDodatkowy && (
-                      <div
-                        className="text-foreground/80 text-sm md:text-base leading-relaxed prose-p:text-foreground/80 prose-headings:text-foreground"
-                        dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Gradient Fade Overlay for collapsed state */}
-                  {hasLongDescription && !isDescExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
-                  )}
-                </div>
-
-                {/* Show More / Show Less Button */}
-                {hasLongDescription && (
-                  <div className="mt-8 flex justify-center border-t border-border/30 pt-6">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsDescExpanded(!isDescExpanded)}
-                      className="border-border bg-background/60 hover:bg-muted text-neutral-350 hover:text-foreground rounded-xl px-6 py-5 transition-all text-sm font-medium gap-2 shadow-md hover:shadow-primary/5"
-                    >
-                      {isDescExpanded ? (
-                        <>
-                          Zwiń opis
-                          <ChevronUp className="w-4 h-4 text-primary" />
-                        </>
-                      ) : (
-                        <>
-                          Rozwiń pełny opis
-                          <ChevronDown className="w-4 h-4 text-primary" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+              <div>
+                <h2 className="font-playfair text-xl md:text-2xl font-bold text-foreground tracking-tight">
+                  O kategorii: {category.nazwa}
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Szczegółowe informacje i porady ekspertów
+                </p>
               </div>
             </div>
+            <div
+              className="prose prose-sm md:prose-base dark:prose-invert max-w-none whitespace-pre-line leading-relaxed text-foreground/80 prose-p:text-foreground/80 prose-headings:text-foreground"
+              dangerouslySetInnerHTML={{ __html: category.opisDodatkowy }}
+            />
+          </section>
+        )}
+
+        {/* CTA — dodaj sprawę w tej kategorii */}
+        {category && (
+          <div className="mt-16 pt-10 border-t border-border/60 text-center">
+            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              Opisanie sprawy zajmuje kilka minut i nic nie kosztuje. Trafi do
+              specjalistów z tej kategorii — także tych, którzy dopiero dołączą.
+            </p>
+            <Link href="/dodaj-sprawe">
+              <Button size="lg">Dodaj sprawę w kategorii {category.nazwa}</Button>
+            </Link>
           </div>
         )}
 
