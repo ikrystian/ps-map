@@ -14,6 +14,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "db:seed:pages": "bun run prisma/seed-static-pages-only.ts",
     "reset": "prisma generate && prisma migrate dev && prisma db seed && python3 prisma/import_postal_codes.py",
     "update": "prisma generate && prisma migrate deploy && pm2 reload 0 --update-env",
     "deploy": "bash scripts/deploy.sh",
