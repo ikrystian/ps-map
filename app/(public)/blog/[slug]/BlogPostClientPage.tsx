@@ -256,7 +256,7 @@ export default function BlogPostPage() {
                       {post.lawFirm.nazwa}
                     </Link>
                   ) : (
-                    <span className="font-medium text-foreground">Administracja</span>
+                    <span className="font-medium text-foreground">Redakcja Prosta Sprawa</span>
                   )}
                 </div>
 
@@ -348,7 +348,7 @@ export default function BlogPostPage() {
                       {post.lawFirm.nazwa}
                     </Link>
                   ) : (
-                    <span className="font-medium text-foreground">Administracja</span>
+                    <span className="font-medium text-foreground">Redakcja Prosta Sprawa</span>
                   )}
                 </div>
 
@@ -700,7 +700,7 @@ export default function BlogPostPage() {
 
                     <div>
                       <Badge className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider mb-1.5 font-semibold">
-                        Administracja
+                        Redakcja
                       </Badge>
                       <h3 className="font-semibold text-foreground text-base leading-tight">
                         Prosta Sprawa

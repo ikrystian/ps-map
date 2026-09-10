@@ -645,7 +645,7 @@ export default function AdminBlogPage() {
             <div className="space-y-6">
               <DialogHeader>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <span className="font-semibold">{selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Administracja"}</span>
+                  <span className="font-semibold">{selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Redakcja Prosta Sprawa"}</span>
                   <span>•</span>
                   <span>{formatDate(selectedPost.createdAt)}</span>
                 </div>

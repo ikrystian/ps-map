@@ -695,11 +695,10 @@ export default function BlogPageClient({
               <div className="scrollbar-none flex gap-2 overflow-x-auto py-1">
                 <button
                   onClick={() => handleCategoryChange(null)}
-                  className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
-                    selectedCategory === null
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${selectedCategory === null
+                    ? "text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {selectedCategory === null && (
                     <motion.div
@@ -720,13 +719,12 @@ export default function BlogPageClient({
                     <button
                       key={category.id}
                       onClick={() => handleCategoryChange(category.id)}
-                      className={`relative z-10 flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
-                        isSelected
-                          ? "text-primary-foreground"
-                          : isParentSelected
-                            ? "text-primary font-bold"
-                            : "text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`relative z-10 flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${isSelected
+                        ? "text-primary-foreground"
+                        : isParentSelected
+                          ? "text-primary font-bold"
+                          : "text-muted-foreground hover:text-foreground"
+                        }`}
                     >
                       {isSelected && (
                         <motion.div
@@ -776,13 +774,12 @@ export default function BlogPageClient({
                       <button
                         key={child.id}
                         onClick={() => handleCategoryChange(child.id)}
-                        className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
-                          isChildSelected
-                            ? "border-transparent text-primary-foreground"
-                            : selectedPathIds.includes(child.id)
-                              ? "border-primary/40 bg-primary/10 text-primary"
-                              : "border-border/70 text-muted-foreground hover:border-border hover:text-foreground"
-                        }`}
+                        className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${isChildSelected
+                          ? "border-transparent text-primary-foreground"
+                          : selectedPathIds.includes(child.id)
+                            ? "border-primary/40 bg-primary/10 text-primary"
+                            : "border-border/70 text-muted-foreground hover:border-border hover:text-foreground"
+                          }`}
                       >
                         {isChildSelected && (
                           <motion.div
@@ -978,7 +975,7 @@ export default function BlogPageClient({
                         <AuthorAvatar post={featuredPost} size="md" />
                         <div>
                           <span className="block text-sm font-semibold leading-tight text-foreground">
-                            {featuredPost.lawFirm?.nazwa ?? "Administracja"}
+                            {featuredPost.lawFirm?.nazwa ?? "Redakcja Prosta Sprawa"}
                           </span>
                           <span className="mt-1 flex items-center gap-3 text-xs text-foreground/70">
                             <span className="flex items-center gap-1">
@@ -1060,7 +1057,7 @@ export default function BlogPageClient({
                             <div className="flex min-w-0 items-center gap-2.5">
                               <AuthorAvatar post={post} />
                               <span className="truncate text-xs font-semibold text-foreground">
-                                {post.lawFirm?.nazwa ?? "Administracja"}
+                                {post.lawFirm?.nazwa ?? "Redakcja Prosta Sprawa"}
                               </span>
                             </div>
                             <div className="flex shrink-0 items-center gap-3 text-[11px] text-muted-foreground">
@@ -1114,11 +1111,10 @@ export default function BlogPageClient({
                           aria-current={
                             page === pagination.page ? "page" : undefined
                           }
-                          className={`h-10 min-w-10 cursor-pointer rounded-xl px-3.5 text-sm font-semibold transition-colors ${
-                            page === pagination.page
-                              ? "bg-primary text-primary-foreground shadow-xs"
-                              : "border border-border/70 text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                          }`}
+                          className={`h-10 min-w-10 cursor-pointer rounded-xl px-3.5 text-sm font-semibold transition-colors ${page === pagination.page
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "border border-border/70 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                            }`}
                         >
                           {page}
                         </button>

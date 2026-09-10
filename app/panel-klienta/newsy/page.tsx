@@ -37,7 +37,7 @@ export default function ClientNewsCenterPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
-  
+
   // Dialog scroll progress tracking
   const dialogContentRef = useRef<HTMLDivElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -236,8 +236,8 @@ export default function ClientNewsCenterPage() {
                   "rounded-full text-xs font-semibold uppercase tracking-wider h-9 px-4",
                   // Przodek wybranej podkategorii — zaznaczony subtelniej niż aktywna kategoria
                   selectedCategory !== cat.id &&
-                    selectedPath.some((node) => node.id === cat.id) &&
-                    "border-primary/50 text-primary"
+                  selectedPath.some((node) => node.id === cat.id) &&
+                  "border-primary/50 text-primary"
                 )}
               >
                 {cat.nazwa}
@@ -297,8 +297,8 @@ export default function ClientNewsCenterPage() {
                     className={cn(
                       "rounded-full text-xs font-medium h-8 px-3.5",
                       selectedCategory !== child.id &&
-                        selectedPath.some((node) => node.id === child.id) &&
-                        "border-primary/50 text-primary"
+                      selectedPath.some((node) => node.id === child.id) &&
+                      "border-primary/50 text-primary"
                     )}
                   >
                     {child.nazwa}
@@ -448,7 +448,7 @@ export default function ClientNewsCenterPage() {
                           </div>
                         )}
                         <span className="font-semibold text-foreground truncate max-w-[120px]">
-                          {post.lawFirm ? post.lawFirm.nazwa : "Administracja"}
+                          {post.lawFirm ? post.lawFirm.nazwa : "Redakcja Prosta Sprawa"}
                         </span>
                       </div>
 
@@ -648,7 +648,7 @@ export default function ClientNewsCenterPage() {
                       )}
                       <div>
                         <span className="block text-sm font-semibold text-foreground leading-none mb-1">
-                          {selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Administracja"}
+                          {selectedPost.lawFirm ? selectedPost.lawFirm.nazwa : "Redakcja Prosta Sprawa"}
                         </span>
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
