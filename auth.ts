@@ -11,6 +11,7 @@ import Apple from "next-auth/providers/apple"
 import CredentialsProvider from "next-auth/providers/credentials"
 import Facebook from "next-auth/providers/facebook"
 import Google from "next-auth/providers/google"
+import LinkedIn from "next-auth/providers/linkedin"
 
 export const authOptions: NextAuthConfig = {
   // @ts-ignore - version mismatch between @auth/prisma-adapter and next-auth
@@ -37,6 +38,11 @@ export const authOptions: NextAuthConfig = {
     Apple({
       clientId: process.env.AUTH_APPLE_ID,
       clientSecret: process.env.AUTH_APPLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    LinkedIn({
+      clientId: process.env.AUTH_LINKEDIN_ID,
+      clientSecret: process.env.AUTH_LINKEDIN_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
@@ -339,7 +345,7 @@ export const authOptions: NextAuthConfig = {
       return session
     },
     async signIn({ user, account }: { user: User; account?: any }) {
-      // Handle OAuth sign-ins (Google, Facebook, Apple).
+      // Handle OAuth sign-ins (Google, Facebook, Apple, LinkedIn).
       // Provider "impersonate" traktujemy jak logowanie danymi (pomijamy logikę OAuth).
       if (account?.provider !== "credentials" && account?.provider !== "impersonate") {
         try {

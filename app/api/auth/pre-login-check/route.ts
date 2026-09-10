@@ -39,11 +39,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // Jeśli użytkownik rejestrował się przez Google/Facebook/Apple i nie ma hasła
+    // Jeśli użytkownik rejestrował się przez Google/Facebook/Apple/LinkedIn i nie ma hasła
     if (!user.password) {
       return NextResponse.json(
         {
-          error: "To konto zostało utworzone za pomocą logowania społecznościowego (Google, Facebook lub Apple). Zaloguj się za pomocą odpowiedniego przycisku poniżej."
+          error: "To konto zostało utworzone za pomocą logowania społecznościowego (Google, LinkedIn, Facebook lub Apple). Zaloguj się za pomocą odpowiedniego przycisku poniżej."
         },
         { status: 401 }
       )

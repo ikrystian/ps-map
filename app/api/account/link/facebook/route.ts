@@ -1,3 +1,9 @@
+import {
+  LINK_COOKIE_OPTIONS,
+  LINK_RETURN_COOKIE,
+  linkResultUrl,
+  sanitizeLinkReturnPath,
+} from "@/lib/account-link"
 import { auth } from "@/lib/auth"
 import { FB_LINK_STATE_COOKIE } from "@/lib/facebook-link"
 import { randomBytes } from "crypto"
@@ -16,10 +22,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/logowanie", request.nextUrl.origin))
   }
 
+  const returnPath = sanitizeLinkReturnPath(
+    request.nextUrl.searchParams.get("returnTo")
+  )
+
   const clientId = process.env.AUTH_FACEBOOK_ID
   if (!clientId) {
     return NextResponse.redirect(
-      new URL("/panel-klienta/profil?fb_link=error", request.nextUrl.origin)
+      linkResultUrl(request.nextUrl.origin, returnPath, "fb_link", "error")
     )
   }
 
@@ -34,13 +44,8 @@ export async function GET(request: NextRequest) {
   dialogUrl.searchParams.set("scope", "public_profile,email")
 
   const response = NextResponse.redirect(dialogUrl)
-  response.cookies.set(FB_LINK_STATE_COOKIE, state, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 10 * 60, // 10 minut na dokończenie procesu
-    path: "/",
-  })
+  response.cookies.set(FB_LINK_STATE_COOKIE, state, LINK_COOKIE_OPTIONS)
+  response.cookies.set(LINK_RETURN_COOKIE, returnPath, LINK_COOKIE_OPTIONS)
 
   return response
 }

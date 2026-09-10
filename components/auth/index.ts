@@ -1,4 +1,5 @@
 export { AuthLayout } from "./auth-layout"
+export { ConnectedAccountsCard } from "./connected-accounts-card"
 export { DeleteAccountSection } from "./delete-account-section"
 export { LoginHistory } from "./login-history"
 export { PhoneVerificationDialog } from "./phone-verification-dialog"

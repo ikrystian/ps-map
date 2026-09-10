@@ -22,7 +22,7 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { FaFacebook, FaGoogle } from "react-icons/fa"
+import { FaFacebook, FaGoogle, FaLinkedinIn } from "react-icons/fa"
 
 interface DevUser {
   id: string
@@ -123,7 +123,7 @@ export default function LoginPage() {
     const oauthError = searchParams.get("error")
     if (oauthError) {
       if (oauthError === "OAuthSignin" || oauthError === "OAuthCallback" || oauthError === "AccessDenied") {
-        setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
+        setError("Nie masz jeszcze konta. Aby korzystać z logowania przez Google, LinkedIn lub Facebook, musisz najpierw utworzyć konto używając standardowego formularza rejestracji.")
       } else if (oauthError === "BlockedAccount") {
         setError("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
       } else if (oauthError === "PendingAccount") {
@@ -450,15 +450,26 @@ export default function LoginPage() {
             </div>
 
             {/* Social Login Buttons */}
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <Button
                 type="button"
                 variant="outline"
                 className="h-11"
                 onClick={() => signIn("google", { callbackUrl: callbackUrl ?? "/panel-klienta" })}
                 disabled={isLoading}
+                aria-label="Zaloguj się przez Google"
               >
                 <FaGoogle className="h-5 w-5" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11"
+                onClick={() => signIn("linkedin", { callbackUrl: callbackUrl ?? "/panel-klienta" })}
+                disabled={isLoading}
+                aria-label="Zaloguj się przez LinkedIn"
+              >
+                <FaLinkedinIn className="h-5 w-5" />
               </Button>
               {/* <Button
                 type="button"

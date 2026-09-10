@@ -1,6 +1,6 @@
 "use client"
 
-import { DeleteAccountSection, LoginHistory } from "@/components/auth"
+import { ConnectedAccountsCard, DeleteAccountSection, LoginHistory } from "@/components/auth"
 import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -416,6 +416,9 @@ export default function LawFirmSettingsPage() {
               </Alert>
             </CardContent>
           </Card>
+
+          {/* Połączone konta społecznościowe */}
+          <ConnectedAccountsCard returnTo="/panel-eksperta/ustawienia" variant="expert" />
 
           {/* Login history wrapped in glass card */}
           <Card variant="glass" className="rounded-2xl shadow-lg">

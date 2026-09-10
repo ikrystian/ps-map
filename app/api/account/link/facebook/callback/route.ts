@@ -1,3 +1,4 @@
+import { LINK_RETURN_COOKIE, linkResultUrl } from "@/lib/account-link"
 import { auth } from "@/lib/auth"
 import { FB_LINK_STATE_COOKIE } from "@/lib/facebook-link"
 import { prisma } from "@/lib/prisma"
@@ -6,18 +7,18 @@ import { NextRequest, NextResponse } from "next/server"
 const FACEBOOK_TOKEN_URL = "https://graph.facebook.com/v19.0/oauth/access_token"
 const FACEBOOK_ME_URL = "https://graph.facebook.com/v19.0/me"
 
-const PROFILE_URL = "/panel-klienta/profil"
-
-function redirectToProfile(origin: string, status: string) {
+function redirectToProfile(origin: string, returnPath: string | undefined, status: string) {
   const response = NextResponse.redirect(
-    new URL(`${PROFILE_URL}?fb_link=${status}`, origin)
+    linkResultUrl(origin, returnPath, "fb_link", status)
   )
   response.cookies.delete(FB_LINK_STATE_COOKIE)
+  response.cookies.delete(LINK_RETURN_COOKIE)
   return response
 }
 
 export async function GET(request: NextRequest) {
   const origin = process.env.NEXTAUTH_URL || request.nextUrl.origin
+  const returnPath = request.cookies.get(LINK_RETURN_COOKIE)?.value
   const session = await auth()
 
   if (!session?.user?.id) {
@@ -31,11 +32,11 @@ export async function GET(request: NextRequest) {
 
   // Użytkownik anulował w oknie Facebooka
   if (searchParams.get("error") || !code) {
-    return redirectToProfile(origin, "cancelled")
+    return redirectToProfile(origin, returnPath, "cancelled")
   }
 
   if (!state || !cookieState || state !== cookieState) {
-    return redirectToProfile(origin, "error")
+    return redirectToProfile(origin, returnPath, "error")
   }
 
   try {
@@ -50,7 +51,7 @@ export async function GET(request: NextRequest) {
     const tokenResponse = await fetch(tokenUrl)
     if (!tokenResponse.ok) {
       console.error("Facebook token exchange failed:", await tokenResponse.text())
-      return redirectToProfile(origin, "error")
+      return redirectToProfile(origin, returnPath, "error")
     }
 
     const tokenData: {
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
     const meResponse = await fetch(meUrl)
     if (!meResponse.ok) {
       console.error("Facebook profile fetch failed:", await meResponse.text())
-      return redirectToProfile(origin, "error")
+      return redirectToProfile(origin, returnPath, "error")
     }
 
     const profile: { id: string } = await meResponse.json()
@@ -82,7 +83,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (existingAccount && existingAccount.userId !== session.user.id) {
-      return redirectToProfile(origin, "in_use")
+      return redirectToProfile(origin, returnPath, "in_use")
     }
 
     const accountData = {
@@ -115,9 +116,9 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    return redirectToProfile(origin, "success")
+    return redirectToProfile(origin, returnPath, "success")
   } catch (error) {
     console.error("Error linking Facebook account:", error)
-    return redirectToProfile(origin, "error")
+    return redirectToProfile(origin, returnPath, "error")
   }
 }
