@@ -450,7 +450,7 @@ export default function LoginPage() {
             </div>
 
             {/* Social Login Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <Button
                 type="button"
                 variant="outline"
@@ -460,7 +460,7 @@ export default function LoginPage() {
               >
                 <FaGoogle className="h-5 w-5" />
               </Button>
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 className="h-11"
@@ -468,7 +468,7 @@ export default function LoginPage() {
                 disabled={isLoading}
               >
                 <FaFacebook className="h-5 w-5" />
-              </Button>
+              </Button> */}
             </div>
 
             <div className="relative">
