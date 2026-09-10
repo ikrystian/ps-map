@@ -466,13 +466,13 @@ ${formData.tresc}`
                     key={format.id}
                     onClick={() => setActiveFormat(format.id)}
                     className={`flex items-start text-left p-4.5 rounded-2xl border transition-all duration-300 group cursor-pointer ${isActive
-                        ? "bg-card border-primary dark:border-[#0da192] shadow-md shadow-primary/5"
-                        : "bg-background border-border/60 hover:bg-card hover:border-border"
+                      ? "bg-card border-primary dark:border-[#0da192] shadow-md shadow-primary/5"
+                      : "bg-background border-border/60 hover:bg-card hover:border-border"
                       }`}
                   >
                     <div className={`p-2.5 rounded-lg mr-4 transition-colors ${isActive
-                        ? "bg-primary/10 text-primary dark:text-[#0da192]"
-                        : "bg-muted text-muted-foreground group-hover:text-foreground"
+                      ? "bg-primary/10 text-primary dark:text-[#0da192]"
+                      : "bg-muted text-muted-foreground group-hover:text-foreground"
                       }`}>
                       <IconComponent className="h-5 w-5" />
                     </div>
@@ -480,8 +480,8 @@ ${formData.tresc}`
                       <div className="flex items-center gap-2.5">
                         <span className="font-bold text-sm md:text-base text-foreground">{format.title}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive
-                            ? "bg-primary/20 text-primary dark:text-[#0da192]"
-                            : "bg-muted text-muted-foreground"
+                          ? "bg-primary/20 text-primary dark:text-[#0da192]"
+                          : "bg-muted text-muted-foreground"
                           }`}>
                           {format.badge}
                         </span>
@@ -803,8 +803,8 @@ ${formData.tresc}`
                     <button
                       onClick={() => setCalcType("banner-top")}
                       className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "banner-top"
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
-                          : "bg-background border-border hover:bg-muted"
+                        ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
+                        : "bg-background border-border hover:bg-muted"
                         }`}
                     >
                       Baner Poziomy
@@ -812,8 +812,8 @@ ${formData.tresc}`
                     <button
                       onClick={() => setCalcType("banner-sidebar")}
                       className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "banner-sidebar"
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
-                          : "bg-background border-border hover:bg-muted"
+                        ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
+                        : "bg-background border-border hover:bg-muted"
                         }`}
                     >
                       Baner w Sidebarze
@@ -821,8 +821,8 @@ ${formData.tresc}`
                     <button
                       onClick={() => setCalcType("profile-highlight")}
                       className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "profile-highlight"
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
-                          : "bg-background border-border hover:bg-muted"
+                        ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
+                        : "bg-background border-border hover:bg-muted"
                         }`}
                     >
                       Wyróżnienie Profilu
@@ -830,8 +830,8 @@ ${formData.tresc}`
                     <button
                       onClick={() => setCalcType("sponsored-article")}
                       className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "sponsored-article"
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
-                          : "bg-background border-border hover:bg-muted"
+                        ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
+                        : "bg-background border-border hover:bg-muted"
                         }`}
                     >
                       Artykuł na blogu
@@ -1248,7 +1248,7 @@ ${formData.tresc}`
             <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-6 border-t border-border/40 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <Mail className="h-3.5 w-3.5" />
-                reklama@prostawsprawa.pl
+                reklama@prostasprawa.pl
               </span>
               <span className="hidden sm:block text-border">|</span>
               <span className="flex items-center gap-1.5">
