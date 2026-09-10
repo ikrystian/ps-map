@@ -2,21 +2,21 @@
 
 import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { 
-  TrendingUp, 
-  Target, 
-  Award, 
-  FileText, 
-  BarChart3, 
-  Users, 
-  MousePointerClick, 
-  Mail, 
-  Phone, 
-  ArrowRight, 
-  HelpCircle, 
-  CheckCircle2, 
-  Calculator, 
-  Briefcase, 
+import {
+  TrendingUp,
+  Target,
+  Award,
+  FileText,
+  BarChart3,
+  Users,
+  MousePointerClick,
+  Mail,
+  Phone,
+  ArrowRight,
+  HelpCircle,
+  CheckCircle2,
+  Calculator,
+  Briefcase,
   ShieldCheck,
   Building2,
   Sparkles,
@@ -138,7 +138,7 @@ function BlogIcon(props: any) {
 
 export default function ReklamaClientPage() {
   const [activeFormat, setActiveFormat] = useState("banner-top")
-  
+
   // Kalkulator stan
   const [calcBudget, setCalcBudget] = useState(1500)
   const [calcType, setCalcType] = useState("banner-top")
@@ -163,7 +163,7 @@ export default function ReklamaClientPage() {
   const getCalcResults = () => {
     let ctr = 0.048 // banner-top
     let cpm = 25 // koszt za 1000 wyswietlen
-    
+
     if (calcType === "banner-sidebar") {
       ctr = 0.035
       cpm = 18
@@ -254,7 +254,7 @@ ${formData.tresc}`
 
   return (
     <div className="relative min-h-screen bg-background text-foreground overflow-hidden">
-      
+
       {/* Background Ambient Glows */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-glow-orange pointer-events-none z-0" />
       <div className="absolute top-[30vh] right-1/4 w-[600px] h-[600px] bg-glow-teal pointer-events-none z-0" />
@@ -267,10 +267,10 @@ ${formData.tresc}`
       <section className="relative z-10 pt-10 pb-20 md:pt-16 md:pb-28 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -280,7 +280,7 @@ ${formData.tresc}`
                 <span>OFERTA REKLAMOWA 2026</span>
               </motion.div>
 
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -289,34 +289,34 @@ ${formData.tresc}`
                 Docieraj bezpośrednio do osób poszukujących <span className="text-primary dark:text-[#0da192] italic">pomocy prawnej</span>
               </motion.h1>
 
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-muted-foreground text-lg md:text-xl max-w-2xl leading-relaxed"
               >
-                ProstaSprawa.pl to wiodąca platforma łącząca klientów z kancelariami w całej Polsce. 
+                ProstaSprawa.pl to wiodąca platforma łącząca klientów z kancelariami w całej Polsce.
                 Pokaż się tam, gdzie Twoi przyszli klienci aktywnie szukają wsparcia. Zwiększ widoczność, zbuduj zaufanie i generuj zlecenia.
               </motion.p>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap gap-4 pt-2"
               >
-                <Button 
+                <Button
                   onClick={() => document.getElementById("contact-section")?.scrollIntoView({ behavior: "smooth" })}
-                  size="lg" 
+                  size="lg"
                   className="bg-primary text-white hover:bg-primary-hover font-semibold px-8 h-12 shadow-lg shadow-primary/20 cursor-pointer"
                 >
                   Skontaktuj się z nami
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button 
+                <Button
                   onClick={() => document.getElementById("formats-section")?.scrollIntoView({ behavior: "smooth" })}
-                  variant="outline" 
-                  size="lg" 
+                  variant="outline"
+                  size="lg"
                   className="border-border hover:bg-muted font-medium px-8 h-12 cursor-pointer"
                 >
                   Poznaj formaty reklam
@@ -324,7 +324,7 @@ ${formData.tresc}`
               </motion.div>
 
               {/* Trust markers */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -346,7 +346,7 @@ ${formData.tresc}`
             </div>
 
             {/* Right Graphic */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -355,9 +355,9 @@ ${formData.tresc}`
               <div className="relative group w-full max-w-[460px]">
                 <div className="absolute -inset-1.5 bg-gradient-to-r from-primary to-emerald-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition duration-1000" />
                 <div className="relative bg-card border border-border/80 rounded-3xl p-3 shadow-2xl overflow-hidden glass-panel">
-                  <img 
-                    src="/images/reklama_hero.png" 
-                    alt="Statystyki i Prawo Reklama" 
+                  <img
+                    src="/images/reklama_hero.png"
+                    alt="Statystyki i Prawo Reklama"
                     className="w-full h-auto object-cover rounded-2xl animate-float"
                   />
                 </div>
@@ -372,7 +372,7 @@ ${formData.tresc}`
       <section className="relative z-10 py-12 bg-muted/40 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            
+
             <div className="text-center space-y-1.5">
               <div className="text-3xl md:text-4xl font-extrabold text-primary dark:text-[#0da192] flex items-center justify-center">
                 <NumberTicker value={50000} />
@@ -443,7 +443,7 @@ ${formData.tresc}`
       {/* SECTION 3: AD FORMATS EXHIBITION */}
       <section id="formats-section" className="relative z-10 py-20 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
-          
+
           <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold tracking-tight">
               Wybierz format idealny dla Twojego biznesu
@@ -454,7 +454,7 @@ ${formData.tresc}`
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Formats Selector (Left) */}
             <div className="lg:col-span-5 flex flex-col gap-3">
               {AD_FORMATS.map((format) => {
@@ -465,27 +465,24 @@ ${formData.tresc}`
                   <button
                     key={format.id}
                     onClick={() => setActiveFormat(format.id)}
-                    className={`flex items-start text-left p-4.5 rounded-2xl border transition-all duration-300 group cursor-pointer ${
-                      isActive 
-                        ? "bg-card border-primary dark:border-[#0da192] shadow-md shadow-primary/5" 
+                    className={`flex items-start text-left p-4.5 rounded-2xl border transition-all duration-300 group cursor-pointer ${isActive
+                        ? "bg-card border-primary dark:border-[#0da192] shadow-md shadow-primary/5"
                         : "bg-background border-border/60 hover:bg-card hover:border-border"
-                    }`}
+                      }`}
                   >
-                    <div className={`p-2.5 rounded-lg mr-4 transition-colors ${
-                      isActive 
-                        ? "bg-primary/10 text-primary dark:text-[#0da192]" 
+                    <div className={`p-2.5 rounded-lg mr-4 transition-colors ${isActive
+                        ? "bg-primary/10 text-primary dark:text-[#0da192]"
                         : "bg-muted text-muted-foreground group-hover:text-foreground"
-                    }`}>
+                      }`}>
                       <IconComponent className="h-5 w-5" />
                     </div>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2.5">
                         <span className="font-bold text-sm md:text-base text-foreground">{format.title}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          isActive 
-                            ? "bg-primary/20 text-primary dark:text-[#0da192]" 
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive
+                            ? "bg-primary/20 text-primary dark:text-[#0da192]"
                             : "bg-muted text-muted-foreground"
-                        }`}>
+                          }`}>
                           {format.badge}
                         </span>
                       </div>
@@ -665,7 +662,7 @@ ${formData.tresc}`
                       </div>
 
                       <div className="pt-2 flex justify-end">
-                        <Button 
+                        <Button
                           onClick={() => {
                             setFormData(prev => ({ ...prev, format: format.id }))
                             document.getElementById("contact-section")?.scrollIntoView({ behavior: "smooth" })
@@ -689,7 +686,7 @@ ${formData.tresc}`
       <section className="relative z-10 py-20 bg-muted/20 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            
+
             {/* Left Column: text */}
             <div className="space-y-6">
               <div className="space-y-3">
@@ -698,9 +695,9 @@ ${formData.tresc}`
                   Dlaczego warto reklamować się na ProstaSprawa.pl?
                 </h2>
               </div>
-              
+
               <p className="text-muted-foreground leading-relaxed">
-                Jesteśmy jedynym w Polsce portalem prawniczym, który łączy w sobie bazę realnych spraw ze strefą wyszukiwania prawników. 
+                Jesteśmy jedynym w Polsce portalem prawniczym, który łączy w sobie bazę realnych spraw ze strefą wyszukiwania prawników.
                 Użytkownicy trafiają do nas z konkretnymi problemami i pilną potrzebą zatrudnienia profesjonalisty.
               </p>
 
@@ -746,9 +743,9 @@ ${formData.tresc}`
             {/* Right Column: target sectors grid */}
             <div className="bg-card border border-border p-6 md:p-8 rounded-3xl glass-panel space-y-6">
               <h3 className="font-playfair text-xl md:text-2xl font-bold text-foreground text-center">Do kogo kierujemy naszą ofertę?</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
+
                 <div className="p-4 bg-muted/60 border border-border/40 rounded-2xl space-y-2">
                   <Briefcase className="h-6 w-6 text-primary dark:text-[#0da192]" />
                   <h4 className="font-bold text-sm text-foreground">Kancelarie prawne</h4>
@@ -783,7 +780,7 @@ ${formData.tresc}`
       {/* SECTION 5: INTERACTIVE ROI CALCULATOR */}
       <section className="relative z-10 py-20 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
-          
+
           <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold tracking-tight">
               Oszacuj wyniki swojej kampanii
@@ -795,51 +792,47 @@ ${formData.tresc}`
 
           <div className="bg-card border border-border rounded-3xl p-6 md:p-10 shadow-2xl glass-panel max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              
+
               {/* Inputs Column */}
               <div className="space-y-8">
-                
+
                 {/* Format selection */}
                 <div className="space-y-3">
                   <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">1. Wybierz format reklamy</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    <button 
+                    <button
                       onClick={() => setCalcType("banner-top")}
-                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${
-                        calcType === "banner-top" 
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]" 
+                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "banner-top"
+                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
                           : "bg-background border-border hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Baner Poziomy
                     </button>
-                    <button 
+                    <button
                       onClick={() => setCalcType("banner-sidebar")}
-                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${
-                        calcType === "banner-sidebar" 
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]" 
+                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "banner-sidebar"
+                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
                           : "bg-background border-border hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Baner w Sidebarze
                     </button>
-                    <button 
+                    <button
                       onClick={() => setCalcType("profile-highlight")}
-                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${
-                        calcType === "profile-highlight" 
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]" 
+                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "profile-highlight"
+                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
                           : "bg-background border-border hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Wyróżnienie Profilu
                     </button>
-                    <button 
+                    <button
                       onClick={() => setCalcType("sponsored-article")}
-                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${
-                        calcType === "sponsored-article" 
-                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]" 
+                      className={`py-2.5 px-3 text-xs font-semibold border rounded-xl transition-all cursor-pointer ${calcType === "sponsored-article"
+                          ? "bg-primary/10 border-primary text-primary dark:text-[#0da192]"
                           : "bg-background border-border hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Artykuł na blogu
                     </button>
@@ -873,10 +866,10 @@ ${formData.tresc}`
 
               {/* Outputs Column */}
               <div className="bg-muted/40 border border-border/60 rounded-2xl p-6 flex flex-col justify-between space-y-6">
-                
+
                 <div className="space-y-5">
                   <h4 className="text-sm font-bold text-foreground uppercase tracking-wide border-b border-border pb-2">Przewidywane efekty</h4>
-                  
+
                   {/* Stat 1: Impressions */}
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground flex items-center gap-1.5">
@@ -908,10 +901,10 @@ ${formData.tresc}`
                   <div className="space-y-3 pt-4 border-t border-border/40">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Wizualna prognoza efektywności</div>
                     <div className="flex items-end justify-around h-24 bg-background/60 border border-border/40 rounded-xl p-3 relative overflow-hidden">
-                      
+
                       {/* Bar 1: Zasięg */}
                       <div className="flex flex-col items-center gap-1.5 w-1/3">
-                        <motion.div 
+                        <motion.div
                           className="w-7 bg-primary rounded-t-md shadow-lg"
                           style={{ transformOrigin: "bottom" }}
                           animate={{ height: `${reachBarHeight}%` }}
@@ -922,7 +915,7 @@ ${formData.tresc}`
 
                       {/* Bar 2: Kliknięcia */}
                       <div className="flex flex-col items-center gap-1.5 w-1/3">
-                        <motion.div 
+                        <motion.div
                           className="w-7 bg-primary rounded-t-md shadow-lg"
                           style={{ transformOrigin: "bottom" }}
                           animate={{ height: `${clicksBarHeight}%` }}
@@ -933,7 +926,7 @@ ${formData.tresc}`
 
                       {/* Bar 3: Zwrot z ROI */}
                       <div className="flex flex-col items-center gap-1.5 w-1/3">
-                        <motion.div 
+                        <motion.div
                           className="w-7 bg-amber-500 rounded-t-md shadow-lg"
                           style={{ transformOrigin: "bottom" }}
                           animate={{ height: `${roiBarHeight}%` }}
@@ -950,10 +943,10 @@ ${formData.tresc}`
                   <p className="text-[10px] text-muted-foreground leading-normal mb-4">
                     * Przedstawione wyliczenia są szacunkami opartymi o dotychczasowe statystyki serwisu. Rzeczywiste wyniki zależą m.in. od atrakcyjności kreacji graficznej, popytu w danej kategorii i wybranego targetowania.
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => {
-                      setFormData(prev => ({ 
-                        ...prev, 
+                      setFormData(prev => ({
+                        ...prev,
                         budzet: calcBudget.toString(),
                         format: calcType
                       }))
@@ -976,7 +969,7 @@ ${formData.tresc}`
       {/* SECTION 6: PROCESS FLOW */}
       <section className="relative z-10 py-20 bg-muted/10 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-7xl">
-          
+
           <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold tracking-tight">
               Jak wygląda współpraca?
@@ -987,7 +980,7 @@ ${formData.tresc}`
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            
+
             {/* Step 1 */}
             <div className="space-y-3 relative text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-4">
@@ -1051,7 +1044,7 @@ ${formData.tresc}`
       {/* SECTION 7: FAQ */}
       <section className="relative z-10 py-20 border-b border-border/40">
         <div className="container mx-auto px-4 max-w-4xl">
-          
+
           <div className="text-center space-y-4 mb-16">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold tracking-tight">
               Najczęściej zadawane pytania (FAQ)
@@ -1066,7 +1059,7 @@ ${formData.tresc}`
               const isOpen = openFaqIdx === idx
 
               return (
-                <div 
+                <div
                   key={idx}
                   className="bg-card border border-border/60 rounded-2xl overflow-hidden transition-all duration-300 shadow-xs"
                 >
@@ -1080,7 +1073,7 @@ ${formData.tresc}`
                     </span>
                     <ChevronDown className={`h-4.5 w-4.5 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                   </button>
-                  
+
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
@@ -1106,9 +1099,9 @@ ${formData.tresc}`
       {/* SECTION 8: CONTACT LEAD FORM */}
       <section id="contact-section" className="relative z-10 py-20 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
-          
+
           <div className="bg-card border border-border/80 rounded-3xl p-6 md:p-10 shadow-2xl glass-panel text-left space-y-8">
-            
+
             <div className="text-center space-y-3">
               <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full text-primary dark:text-[#0da192] mb-1">
                 <Mail className="h-6 w-6" />
@@ -1120,7 +1113,7 @@ ${formData.tresc}`
             </div>
 
             {submitted ? (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-8 text-center space-y-4"
@@ -1130,9 +1123,9 @@ ${formData.tresc}`
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
                   Dziękujemy za kontakt. Nasz konsultant przeanalizuje Twoje zapytanie i skontaktuje się z Tobą na podany adres e-mail lub numer telefonu.
                 </p>
-                <Button 
+                <Button
                   onClick={() => setSubmitted(false)}
-                  variant="outline" 
+                  variant="outline"
                   className="mt-2"
                 >
                   Wyślij kolejne zapytanie
@@ -1140,7 +1133,7 @@ ${formData.tresc}`
               </motion.div>
             ) : (
               <form onSubmit={handleFormSubmit} className="space-y-6">
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <Label htmlFor="imieNazwisko" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Imię i nazwisko *</Label>
@@ -1225,7 +1218,7 @@ ${formData.tresc}`
                 </div>
 
                 <div className="flex items-start space-x-3 pt-2">
-                  <Checkbox 
+                  <Checkbox
                     id="politykaPrivacy"
                     checked={formData.politykaPrivacy}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, politykaPrivacy: checked === true }))}
@@ -1260,7 +1253,7 @@ ${formData.tresc}`
               <span className="hidden sm:block text-border">|</span>
               <span className="flex items-center gap-1.5">
                 <Phone className="h-3.5 w-3.5" />
-                +48 789 456 123
+                +48 534 888 555
               </span>
             </div>
 
