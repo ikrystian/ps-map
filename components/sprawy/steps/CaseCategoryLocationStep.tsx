@@ -69,14 +69,14 @@ export function CaseCategoryLocationStep({
           type="button"
           onClick={onSuggestCategories}
           disabled={isSuggestingCategories}
-          className="mt-3.5 w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl border border-dashed border-primary/40 bg-primary/[0.05] hover:bg-primary/[0.12] hover:border-primary transition-all text-center cursor-pointer group shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
+          className="mt-3.5 w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl border border-dashed border-secondary/40 bg-secondary/10 hover:bg-secondary/[0.18] hover:border-secondary/60 transition-all text-center cursor-pointer group shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isSuggestingCategories ? (
-            <Loader2 className="h-4.5 w-4.5 animate-spin text-primary shrink-0" />
+            <Loader2 className="h-4.5 w-4.5 animate-spin text-secondary shrink-0" />
           ) : (
-            <Sparkles className="h-4.5 w-4.5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+            <Sparkles className="h-4.5 w-4.5 text-secondary shrink-0 group-hover:scale-110 transition-transform" />
           )}
-          <span className="text-xs font-bold text-primary group-hover:text-primary-foreground group-hover:underline transition-colors">
+          <span className="text-xs font-bold text-secondary group-hover:underline transition-colors">
             {isSuggestingCategories
               ? "Analizujemy opis sprawy i dobieramy kategorie..."
               : "Nie wiem, do jakiej kategorii przyporządkować sprawę — dobierz za mnie (AI)"}
@@ -84,10 +84,10 @@ export function CaseCategoryLocationStep({
         </button>
 
         {aiSuggestion && (
-          <div className="mt-3 rounded-xl border border-primary/30 bg-primary/10 p-4 flex items-start gap-3 shadow-xs">
-            <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+          <div className="mt-3 rounded-xl border border-secondary/30 bg-secondary/10 p-4 flex items-start gap-3 shadow-xs">
+            <Sparkles className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
             <div className="space-y-0.5">
-              <h5 className="text-xs font-bold text-primary uppercase tracking-wider">
+              <h5 className="text-xs font-bold text-secondary uppercase tracking-wider">
                 Kategorie dobrane automatycznie
               </h5>
               <p className="text-xs text-foreground/80 leading-relaxed font-normal">

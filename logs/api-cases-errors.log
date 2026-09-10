@@ -1334,3 +1334,193 @@ Unknown argument `numerSprawy`. Available options are marked with ?.
     at request (/home/krystian/Projects/ps-map/node_modules/@prisma/client/runtime/client.js:65:7288)
     at processTicksAndRejections (native)
 ================================================================================
+[2026-09-10T12:35:05.246Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/projects/prosta-sprawa/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:2817:160
+
+  2814         status: 404
+  2815     });
+  2816 }
+→ 2817 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "d297c7bd-1c96-4ff3-bcf7-c5c1a8651c05"
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true,
+           referral: {
+           ~~~~~~~~
+             select: {
+               lawFirm: {
+                 select: {
+                   nazwa: true
+                 }
+               }
+             }
+           },
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `referral` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/projects/prosta-sprawa/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:2817:160
+
+  2814         status: 404
+  2815     });
+  2816 }
+→ 2817 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "d297c7bd-1c96-4ff3-bcf7-c5c1a8651c05"
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true,
+           referral: {
+           ~~~~~~~~
+             select: {
+               lawFirm: {
+                 select: {
+                   nazwa: true
+                 }
+               }
+             }
+           },
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `referral` for include statement on model `Case`. Available options are marked with ?.
+    at ar (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
+[2026-09-10T12:35:05.395Z] Context: GET /api/cases
+Error: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/projects/prosta-sprawa/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:2817:160
+
+  2814         status: 404
+  2815     });
+  2816 }
+→ 2817 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "d297c7bd-1c96-4ff3-bcf7-c5c1a8651c05"
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true,
+           referral: {
+           ~~~~~~~~
+             select: {
+               lawFirm: {
+                 select: {
+                   nazwa: true
+                 }
+               }
+             }
+           },
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `referral` for include statement on model `Case`. Available options are marked with ?.
+Stack: PrismaClientValidationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany()` invocation in
+/home/krystian/projects/prosta-sprawa/.next/dev/server/chunks/[root-of-the-server]__1-vgkre._.js:2817:160
+
+  2814         status: 404
+  2815     });
+  2816 }
+→ 2817 const cases = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].case.findMany({
+         where: {
+           clientId: "d297c7bd-1c96-4ff3-bcf7-c5c1a8651c05"
+         },
+         include: {
+           category: true,
+           categories: {
+             include: {
+               category: true
+             }
+           },
+           voivodeship: true,
+           city: true,
+           referral: {
+           ~~~~~~~~
+             select: {
+               lawFirm: {
+                 select: {
+                   nazwa: true
+                 }
+               }
+             }
+           },
+           offers: {
+             include: {
+               lawFirm: true
+             }
+           },
+       ?   client?: true,
+       ?   messages?: true
+         },
+         orderBy: {
+           createdAt: "desc"
+         }
+       })
+
+Unknown field `referral` for include statement on model `Case`. Available options are marked with ?.
+    at ar (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:10:1374)
+    at handleRequestError (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7929)
+    at handleAndLogRequestError (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7581)
+    at request (/home/krystian/projects/prosta-sprawa/node_modules/@prisma/client/runtime/client.js:65:7288)
+    at processTicksAndRejections (native)
+================================================================================
