@@ -169,16 +169,6 @@ export function getJobDefinitions(): JobDefinition[] {
         return { purged: result.purged, filesDeleted: result.filesDeleted }
       },
     },
-
-<<<<<<< HEAD
-    // 11. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
-    //     Tymczasowo przywrócone z Google Cloud Storage — IP serwera jest
-    //     blokowane przez Google przy uwierzytelnionym uploadzie do GCS
-    //     (403 "not available in your location", najpewniej reputacja ASN
-    //     dostawcy VPS). Do rewizji, gdy problem z GCS zostanie rozwiązany.
-=======
-    // 11. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (co 12 godzin)
->>>>>>> a0701d6a46b52a413c7f997ce95e358a2813e55c
     {
       name: "db-backup-gcs",
       description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (2x dziennie)",
