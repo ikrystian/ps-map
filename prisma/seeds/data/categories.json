@@ -7,7 +7,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
     "opis": "RODO w firmie: dokumentacja, naruszenia, kontrole UODO.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Dane osobowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z certyfikowanym inspektorem ochrony danych (IOD) lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Naruszenie ochrony danych trzeba zgłosić do UODO w ciągu 72 godzin od stwierdzenia, jeśli wiąże się z ryzykiem dla osób, których dane dotyczą. Zegar rusza niezależnie od tego, czy firma ma przygotowaną procedurę. Poza reagowaniem na incydenty porządkuje się tu dokumentację: rejestr czynności przetwarzania, klauzule informacyjne, umowy powierzenia, politykę ochrony danych, obsługę żądań klientów i pracowników oraz funkcję inspektora ochrony danych.\n\nOpisz, czym zajmuje się firma i co jest do zrobienia: dokumentacja od zera, audyt, incydent, kontrola urzędu. Specjaliści od ochrony danych i radcowie prawni odpowiedzą ofertami z zakresem i ceną. Wycena nic nie kosztuje.",
     "metaTitle": "RODO w firmie – wdrożenia i kontrole | Prosta Sprawa",
     "metaDescription": "Dokumentacja RODO, naruszenia, kontrola UODO? Opisz sprawę bezpłatnie i porównaj oferty prawników i specjalistów ochrony danych.",
     "children": [
@@ -37,7 +37,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
     "opis": "Założenie i bieżąca obsługa prawna jednoosobowej działalności gospodarczej.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Działalność gospodarcza**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady prawnej doświadczonego adwokata dla biznesu, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Przy starcie jednoosobowej działalności najwięcej pieniędzy robią decyzje z pierwszych tygodni: forma opodatkowania, VAT, ulga na start zwalniająca ze składek społecznych przez pełne 6 miesięcy i preferencyjne składki przez kolejne 24. Później zaczyna się bieżąca obsługa: umowy z kontrahentami, regulaminy, windykacja faktur, kontrole, zawieszenie albo zamknięcie firmy. Pomagają prawnicy, doradcy podatkowi i księgowi.\n\nPowiedz, na jakim jesteś etapie i czym zajmuje się albo ma zajmować firma. Specjaliści odpowiedzą ofertami: jednorazowa konsultacja, przygotowanie dokumentów albo stała obsługa. Dodanie sprawy jest bezpłatne i nie wiąże Cię z nikim.",
     "metaTitle": "Prawnik dla firmy jednoosobowej (JDG) | Prosta Sprawa",
     "metaDescription": "Zakładasz lub prowadzisz działalność? Umowy, ZUS, spory z kontrahentami — opisz sprawę bezpłatnie i porównaj oferty prawników dla firm.",
     "children": [
@@ -66,7 +66,7 @@
     "ikona": "animate-ui:orbit",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
     "opis": "Regulacje środowiskowe, pozwolenia i gospodarowanie odpadami w firmie.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Ochrona środowiska**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż kontakt ze specjalistą od prawa ochrony środowiska, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Obowiązki środowiskowe dotyczą znacznie większej liczby firm, niż się wydaje: wpis do BDO, ewidencja odpadów, roczne sprawozdanie odpadowe do 15 marca i opłata za korzystanie ze środowiska rozliczana do 31 marca. Osobno idą pozwolenia wodnoprawne, na emisję i zintegrowane, oceny oddziaływania na środowisko przy inwestycjach oraz kontrole inspekcji ochrony środowiska.\n\nZgłoszenie zacznij od tego, czym zajmuje się firma i co się wydarzyło: kontrola, wezwanie, brakujące pozwolenie, planowana inwestycja. Prawnicy i specjaliści środowiskowi odpowiedzą ofertami. Sprawę dodajesz bezpłatnie.",
     "metaTitle": "Prawo ochrony środowiska dla firm | Prosta Sprawa",
     "metaDescription": "Pozwolenia środowiskowe, BDO, gospodarka odpadami — opisz sprawę bezpłatnie i porównaj oferty prawników i ekspertów środowiskowych.",
     "children": [
@@ -96,7 +96,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
     "opis": "Obowiązki podatkowe firmy, optymalizacja, ulgi i zwolnienia — wsparcie doradcy podatkowego.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Podatki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z licencjonowanym doradcą podatkowym lub adwokatem, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Faktury sprzedażowe wystawia się dziś w Krajowym Systemie e-Faktur. Obowiązek objął największych podatników od lutego 2026, pozostałych od kwietnia 2026, a najmniejszym przesunięto termin na 2027 rok. Poza tym załatwia się tu bieżące podatki firmy: CIT i estoński CIT, VAT i jego rozliczenia, podatek u źródła, ceny transferowe, ulgi na badania i rozwój oraz interpretacje indywidualne.\n\nNapisz, czym zajmuje się firma i czego dotyczy pytanie. Im dokładniej, tym sensowniejsze oferty dostaniesz. Doradcy podatkowi odpowiedzą wyceną i propozycją rozwiązania. Za opisanie sprawy nie płacisz.",
     "metaTitle": "Podatki firmowe – doradca podatkowy | Prosta Sprawa",
     "metaDescription": "CIT, VAT, kontrola skarbowa, optymalizacja? Opisz sprawę bezpłatnie i porównaj oferty doradców podatkowych i prawników. Bez prowizji.",
     "children": [
@@ -126,7 +126,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
     "opis": "Zatrudnianie (w tym cudzoziemców), umowy, ZUS i spory pracownicze od strony pracodawcy.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo pracy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się ze specjalistą ds. prawa pracy, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Po stronie pracodawcy prawo pracy to głównie dokumenty i terminy: umowy i ich wypowiadanie, regulaminy pracy i wynagradzania, ewidencja czasu pracy, PPK, rozliczenia z ZUS oraz procedura zgłoszeń wewnętrznych dla sygnalistów, obowiązkowa przy zatrudnieniu co najmniej 50 osób. Dochodzi do tego zatrudnianie cudzoziemców, kontrole PIP i spory sądowe z byłymi pracownikami.\n\nOpisz sytuację: ilu masz pracowników, czego dotyczy sprawa i czy jest już termin, którego trzeba dotrzymać. Prawnicy od prawa pracy odpowiedzą ofertami: jednorazowe pismo, komplet dokumentów albo stała obsługa kadr. Zgłoszenie jest bezpłatne.",
     "metaTitle": "Prawo pracy dla pracodawców | Prosta Sprawa",
     "metaDescription": "Zatrudnianie, zwolnienia, regulaminy, ZUS, spory z pracownikami — opisz sprawę bezpłatnie i porównaj oferty prawników od prawa pracy.",
     "children": [
@@ -180,7 +180,7 @@
     "ikona": "animate-ui:copy",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80",
     "opis": "Ochrona utworów, licencje, umowy i reagowanie na naruszenia praw autorskich.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawa autorskie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy rzecznika patentowego lub prawnika od IP, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Umowa przenosząca autorskie prawa majątkowe wymaga formy pisemnej pod rygorem nieważności i musi wymieniać pola eksploatacji. Bez tego zamawiający, mimo zapłaty, nie nabywa praw, na które liczył. Dotyczy to grafik, zdjęć, tekstów, kodu, muzyki i projektów. Druga strona tej kategorii to reagowanie na naruszenia: skopiowana strona, wykorzystane zdjęcie, przejęty projekt, plagiat.\n\nNapisz, co powstało albo co zostało wykorzystane, i jakie masz dokumenty: umowy, korespondencję, dowody autorstwa i daty. Prawnicy od własności intelektualnej i rzecznicy patentowi odpowiedzą ofertami. Opisanie sprawy nic nie kosztuje.",
     "metaTitle": "Prawa autorskie – ochrona i umowy | Prosta Sprawa",
     "metaDescription": "Ktoś kradnie Twoje treści? Potrzebujesz umowy lub licencji? Opisz sprawę bezpłatnie i porównaj oferty prawników od własności intelektualnej.",
     "children": [
@@ -218,7 +218,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
     "opis": "Kontrole skarbowe, spory z fiskusem, obrona w sprawach karnoskarbowych.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Przestępstwa skarbowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z adwokatem specjalizującym się w prawie karno-skarbowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Czynny żal złożony, zanim urząd sam wykryje nieprawidłowość, pozwala uniknąć kary za czyn skarbowy. Po rozpoczęciu czynności zmierzających do wykrycia sprawy zwykle nie odnosi już skutku, więc liczy się kolejność ruchów: korekta deklaracji, wyjaśnienia, zabezpieczenie dokumentów. W tej kategorii prowadzi się kontrole i postępowania podatkowe, spory o VAT i puste faktury, zarzuty z Kodeksu karnego skarbowego oraz sprawy o odpowiedzialność zarządu i księgowych.\n\nOpisz, co dostałeś z urzędu i czego dotyczy sprawa, nawet jeśli to na razie samo zawiadomienie o kontroli. Adwokaci i doradcy podatkowi odpowiedzą ofertami z planem obrony.",
     "metaTitle": "Sprawy karnoskarbowe – obrona firmy | Prosta Sprawa",
     "metaDescription": "Kontrola skarbowa, zarzuty KKS, spór z fiskusem? Działaj, zanim sprawa urośnie. Opisz ją bezpłatnie i porównaj oferty prawników.",
     "children": [
@@ -248,7 +248,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
     "opis": "Zamówienia publiczne od startu w postępowaniu po odwołania do KIO.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Przetargi**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z ekspertem od zamówień publicznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Termin na odwołanie do Krajowej Izby Odwoławczej liczy się w dniach, zwykle 5 albo 10, zależnie od wartości zamówienia i sposobu przekazania informacji, i nie podlega przywróceniu. Poza sporami przygotowuje się tu oferty i JEDZ, wyjaśnia rażąco niską cenę, buduje konsorcja, korzysta z zasobów podmiotów trzecich oraz negocjuje zmiany i waloryzację umowy po wygranej.\n\nNapisz, w jakim postępowaniu startujesz albo co zrobił zamawiający, i podaj datę, kiedy się o tym dowiedziałeś. Specjaliści od zamówień publicznych odpowiedzą ofertami z oceną szans. Zgłoszenie sprawy nic nie kosztuje.",
     "metaTitle": "Zamówienia publiczne i przetargi | Prosta Sprawa",
     "metaDescription": "Startujesz w przetargu albo przegrałeś przez błąd zamawiającego? Opisz sprawę bezpłatnie i poznaj oferty specjalistów od zamówień publicznych.",
     "children": [
@@ -286,7 +286,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
     "opis": "Zakładanie, przekształcenia i bieżąca obsługa spółek: umowy, uchwały, KRS.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Spółki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z doradztwa radcy prawnego specjalizującego się w spółkach, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Spółkę z o.o. da się założyć w systemie S24 w jeden dzień, przy kapitale zakładowym od 5000 zł, ale gotowy wzorzec umowy nie obsłuży wspólników o różnych wkładach ani nie zabezpieczy nikogo na wypadek konfliktu. Poza zakładaniem załatwia się tu przekształcenia, sprzedaż udziałów, umowy inwestycyjne i wspólników, uchwały, zmiany w KRS, odpowiedzialność zarządu i wyjście ze spółki.\n\nNapisz, co planujesz: nowa spółka, zmiana formy, wejście albo wyjście wspólnika, spór w zarządzie. Radcowie prawni i adwokaci od prawa spółek odpowiedzą ofertami z zakresem i wyceną. Opisanie sprawy jest darmowe.",
     "metaTitle": "Prawnik od spółek – KRS, umowy, obsługa | Prosta Sprawa",
     "metaDescription": "Zakładanie i przekształcanie spółek, umowy wspólników, uchwały, KRS — opisz sprawę bezpłatnie i porównaj oferty kancelarii. Online.",
     "children": [
@@ -315,7 +315,7 @@
     "ikona": "animate-ui:paperclip",
     "wyswietlajNaGlownejFirmowe": true,
     "opis": "Przygotowanie i weryfikacja umów: B2B, o pracę, zlecenia i dzieła.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Umowy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć analizę lub napisanie umowy doświadczonemu prawnikowi, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Umowa broni Cię dopiero wtedy, gdy przewiduje sytuację, w której coś idzie nie tak: terminy, kary umowne, warunki wypowiedzenia, zakres odpowiedzialności, prawa do tego, co powstanie w trakcie. Umowa o dzieło z osobą fizyczną wymaga dodatkowo zgłoszenia do ZUS w ciągu 7 dni od zawarcia. Przygotowuje się i sprawdza tu umowy handlowe B2B, o pracę, zlecenia, dzieła, NDA i umowy ramowe.\n\nOpisz umowę i powiedz, po której jesteś stronie oraz co Cię w niej niepokoi. Prawnicy odpowiedzą ofertami: od krótkiej opinii z listą ryzyk po napisanie dokumentu od zera. Wycena jest bezpłatna.",
     "metaTitle": "Umowy firmowe – przygotowanie i analiza | Prosta Sprawa",
     "metaDescription": "Umowa B2B, o pracę, zlecenie, dzieło? Nie podpisuj w ciemno — prawnik sprawdzi lub napisze umowę. Bezpłatna wycena, oferty od kancelarii.",
     "children": [
@@ -353,7 +353,7 @@
     "wyswietlajNaGlownejFirmowe": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
     "opis": "Pozwy, windykacja należności, egzekucja i mediacje gospodarcze w imieniu firmy.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Sprawy sądowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z adwokatem procesowym lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Niezapłacona faktura ma swoją ścieżkę: wezwanie do zapłaty, pozew, nakaz zapłaty, od którego dłużnik ma dwa tygodnie na sprzeciw, a potem komornik. Gdy to Twoja firma jest pozwana, terminy są równie ostre, a milczenie kończy się wyrokiem zaocznym. Prowadzi się tu też spory o wykonanie umów, kary umowne i odszkodowania oraz mediacje gospodarcze, gdy proces nie ma sensu.\n\nOpisz spór: kwota, dokumenty, co już zrobiłeś i na jakim etapie jest sprawa. Prawnicy procesowi odpowiedzą ofertami z oceną szans i wyceną, także za samo poprowadzenie windykacji. Dodanie sprawy jest bezpłatne.",
     "metaTitle": "Sprawy sądowe firm – pozwy, windykacja | Prosta Sprawa",
     "metaDescription": "Kontrahent nie płaci albo pozywa Twoją firmę? Opisz sprawę bezpłatnie i porównaj oferty prawników procesowych z całej Polski.",
     "children": [
@@ -390,7 +390,7 @@
     "ikona": "animate-ui:ellipsis",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&q=80",
     "opis": "Regulacje branżowe, sprawy międzynarodowe i tematy spoza pozostałych kategorii.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Inne kwestie firmowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z doradcą biznesowym lub radcą prawnym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Nie każdy problem da się od razu przypisać do gotowej szuflady. Trafiają tu sprawy z pogranicza kilku dziedzin, regulacje branżowe, czyli koncesje, zezwolenia, wpisy do rejestrów, wymogi sanitarne czy transportowe, oraz wątki międzynarodowe: kontrahent z zagranicy, wybór prawa właściwego, sąd albo arbitraż poza Polską, oddział lub spółka w innym kraju.\n\nOpisz problem własnymi słowami, nawet jeśli nie wiesz, do czyjej działki należy. Sprawa trafi do specjalistów z różnych dziedzin, a oni sami ocenią, czy potrafią pomóc, i odpowiedzą ofertą. Zgłoszenie jest bezpłatne.",
     "metaTitle": "Inne sprawy firmowe – znajdź eksperta | Prosta Sprawa",
     "metaDescription": "Nietypowy problem prawny lub biznesowy? Opisz go bezpłatnie — dopasujemy prawników i ekspertów, którzy prześlą Ci swoje oferty.",
     "children": [
@@ -419,7 +419,7 @@
     "ikona": "animate-ui:circuit-board",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
     "opis": "Bezpieczeństwo IT, transformacja cyfrowa i ochrona własności intelektualnej.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Technologie i innowacje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż kontakt z prawnikiem specjalizującym się w prawie IT i nowych technologiach, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Przy wdrożeniu systemu, aplikacji czy strony spory dotyczą zwykle tego samego: kto ma prawa do kodu, co dokładnie obejmował zakres i kto odpowiada za opóźnienie. Drugi obszar to bezpieczeństwo, czyli incydenty i wycieki, kopie zapasowe, umowy z dostawcami chmury i powierzenie danych. Trzeci to ochrona tego, co firma wypracowała: znaki towarowe, wzory przemysłowe, tajemnica przedsiębiorstwa i umowy o zachowaniu poufności.\n\nWyjaśnij, co wdrażasz albo co poszło nie tak, i jakie masz umowy z wykonawcą. Prawnicy od prawa IT i specjaliści od bezpieczeństwa odpowiedzą ofertami. Sprawę dodajesz bezpłatnie.",
     "metaTitle": "IT i technologie – eksperci dla firm | Prosta Sprawa",
     "metaDescription": "Bezpieczeństwo IT, transformacja cyfrowa, ochrona własności intelektualnej — opisz potrzeby bezpłatnie i porównaj oferty specjalistów.",
     "children": [
@@ -457,7 +457,7 @@
     "ikona": "animate-ui:cloud-download",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80",
     "opis": "Dotacje unijne i wsparcie rządowe: wnioski, umowy, rozliczenia.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Dotacje i finansowanie zewnętrzne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy eksperta ds. dotacji unijnych i pomocy publicznej, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Dotacja to nie przelew, tylko umowa z listą obowiązków: wskaźniki do osiągnięcia, okres trwałości projektu, zasady kwalifikowalności wydatków i kontrola po zakończeniu. Najwięcej pieniędzy przepada przy rozliczeniu, nie na etapie wniosku, bo źle udokumentowany wydatek albo niezrealizowany wskaźnik kończą się zwrotem dofinansowania z odsetkami. Eksperci z tej kategorii prowadzą sprawę od wyboru naboru po obronę rozliczenia.\n\nNapisz, jaką masz firmę, na co szukasz pieniędzy albo na jakim etapie utknął projekt. Doradcy od funduszy odpowiedzą ofertami: od samego wniosku po pełne prowadzenie. Porównasz zakres i wynagrodzenie, zanim kogokolwiek zaangażujesz.",
     "metaTitle": "Dotacje unijne i finansowanie firm | Prosta Sprawa",
     "metaDescription": "Wnioski o dotacje, rozliczenia, zwroty dofinansowania? Opisz sprawę bezpłatnie i porównaj oferty prawników i ekspertów od funduszy UE.",
     "children": [
@@ -494,7 +494,7 @@
     "ikona": "animate-ui:chart-line",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80",
     "opis": "Doradcy finansowi dla firm: pozyskiwanie kapitału, analiza ryzyka, zarządzanie finansami.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Finanse i inwestycje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem transakcyjnym lub doradcą finansowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Firma rośnie szybciej, niż spływają płatności, albo szykuje inwestycję, na którą nie ma z czego. W grę wchodzi kredyt obrotowy, leasing, faktoring, pożyczka od wspólnika, inwestor albo finansowanie zwrotne z funduszy. Każda z tych dróg ma inną cenę, inne zabezpieczenia i inne skutki dla kontroli nad firmą. Doradcy z tej kategorii liczą warianty, przygotowują dokumenty i sprawdzają umowy inwestycyjne przed podpisem.\n\nNapisz, ile potrzebujesz, na co i jak wygląda dziś sytuacja firmy. Doradcy finansowi i prawnicy transakcyjni odpowiedzą propozycjami z zakresem pracy i wyceną. Opisanie potrzeby nic nie kosztuje.",
     "metaTitle": "Finanse firmy – doradcy i eksperci | Prosta Sprawa",
     "metaDescription": "Pozyskanie kapitału, analiza ryzyka, zarządzanie finansami firmy — opisz potrzeby bezpłatnie i porównaj oferty doradców finansowych.",
     "children": [
@@ -532,7 +532,7 @@
     "ikona": "animate-ui:map-pin",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
     "opis": "Zakup, najem i zarządzanie nieruchomościami firmowymi oraz inwestycje.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Nieruchomości komercyjne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z usług adwokata specjalizującego się w nieruchomościach komercyjnych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Umowa najmu lokalu użytkowego rządzi się innymi prawami niż mieszkaniowa. Nie chroni jej ustawa o ochronie praw lokatorów, więc wszystko zależy od tego, co strony zapiszą: czas trwania, waloryzacja czynszu, zabezpieczenia, kary, warunki wyjścia. Do tego dochodzi zakup i sprzedaż nieruchomości firmowych, badanie stanu prawnego przed transakcją, dzierżawa, zarządzanie budynkiem i podatek od nieruchomości.\n\nOpisz nieruchomość i cel: najem, zakup, sprzedaż, spór z drugą stroną. Prawnicy i eksperci rynku nieruchomości odpowiedzą ofertami z zakresem i wyceną. Analiza umowy przed podpisem jest tańsza od sporu po nim.",
     "metaTitle": "Nieruchomości komercyjne – obsługa | Prosta Sprawa",
     "metaDescription": "Zakup, najem, inwestycje w nieruchomości firmowe — opisz sprawę bezpłatnie i porównaj oferty prawników i ekspertów rynku nieruchomości.",
     "children": [
@@ -577,7 +577,7 @@
     "ikona": "animate-ui:radio-tower",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=600&q=80",
     "opis": "Eksperci od promocji: marketing internetowy, budowanie marki, zgodność reklam z prawem.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Marketing i reklama**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem ds. prawa reklamy i własności przemysłowej, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Reklama ma swoje przepisy. Materiały płatne trzeba wyraźnie oznaczać, przy promocjach cenowych podaje się najniższą cenę z 30 dni przed obniżką, a porównania z konkurencją i hasła o najlepszym produkcie łatwo przekraczają granicę nieuczciwej konkurencji. Obok tego są zwykłe sprawy marketingowe: nazwa i znak towarowy, umowy z agencją i twórcami, prawa do zdjęć i muzyki, regulaminy konkursów.\n\nStreść, co planujesz albo co poszło nie tak: kampania do sprawdzenia, spór o wykorzystanie materiałów, marka do zastrzeżenia. Specjaliści od marketingu i prawnicy od prawa reklamy odpowiedzą ofertami. Dodanie sprawy nic nie kosztuje.",
     "metaTitle": "Marketing i reklama – eksperci dla firm | Prosta Sprawa",
     "metaDescription": "Promocja w internecie, budowa marki, zgodność reklam z prawem — opisz potrzeby firmy bezpłatnie i porównaj oferty specjalistów.",
     "children": [
@@ -607,7 +607,7 @@
     "ikona": "animate-ui:accessibility",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
     "opis": "Przepisy BHP, wypadki przy pracy i ochrona pracowników.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zdrowie i bezpieczeństwo w pracy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z doradztwa eksperta BHP lub prawnika ds. prawa pracy, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Szkolenie wstępne BHP musi się odbyć przed dopuszczeniem pracownika do pracy, a po wypadku przy pracy zespół powypadkowy ma co do zasady 14 dni od zawiadomienia na sporządzenie protokołu. Poza tym przygotowuje się tu ocenę ryzyka zawodowego, instrukcje stanowiskowe i dokumentację dla PIP oraz sanepidu, a także prowadzi sprawy o świadczenia po wypadku. Pomagają specjaliści BHP i prawnicy prawa pracy.\n\nOpisz, czego potrzebujesz i czym zajmuje się firma: dokumentacja, szkolenia, wypadek, zapowiedziana kontrola. Specjaliści BHP i prawnicy odpowiedzą ofertami z zakresem i terminem. Za samo opisanie sprawy nie płacisz nic.",
     "metaTitle": "BHP w firmie – przepisy i ochrona | Prosta Sprawa",
     "metaDescription": "Obowiązki BHP, wypadek przy pracy, kontrola PIP? Opisz sprawę bezpłatnie i porównaj oferty specjalistów BHP i prawników prawa pracy.",
     "children": [
@@ -636,7 +636,7 @@
     "ikona": "animate-ui:users-round",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
     "opis": "Eksperci HR: rekrutacja, oceny pracownicze, szkolenia i rozwój zespołu.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zarządzanie zasobami ludzkimi**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się ze specjalistą ds. prawa HR i compliance, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Rekrutacja zaczyna się od ogłoszenia, a kończy na dokumentach: zakres danych, których wolno żądać od kandydata, zgody na przyszłe rekrutacje, okres przechowywania aplikacji. Dalej idą systemy ocen, ścieżki rozwoju, wdrożenie nowej osoby, badanie satysfakcji i szkolenia, które da się częściowo sfinansować z Krajowego Funduszu Szkoleniowego. Znajdziesz tu rekruterów, trenerów i specjalistów HR.\n\nPowiedz, kogo szukasz albo co chcesz poprawić w zespole: rekrutacja, oceny, szkolenie, uporządkowanie dokumentów kadrowych. Specjaliści HR odpowiedzą ofertami z zakresem i wyceną. Opisanie potrzeby jest bezpłatne.",
     "metaTitle": "HR dla firm – rekrutacja i rozwój | Prosta Sprawa",
     "metaDescription": "Rekrutacja, oceny pracownicze, szkolenia zespołu — opisz potrzeby kadrowe firmy bezpłatnie i porównaj oferty ekspertów HR.",
     "children": [
@@ -666,7 +666,7 @@
     "ikona": "animate-ui:bell-ring",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80",
     "opis": "Komunikacja kryzysowa i plany awaryjne dla firm w trudnych sytuacjach.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zarządzanie kryzysowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Nawiąż współpracę z radcą prawnym ds. sytuacji kryzysowych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Kryzys rzadko bywa wyłącznie wizerunkowy. Wyciek danych, wypadek, kontrola, nagły artykuł albo lawina komentarzy w sieci to zwykle jednocześnie sprawa prawna, komunikacyjna i organizacyjna, a pierwsze godziny przesądzają o reszcie. Specjaliści z tej kategorii układają treść oświadczeń, ustalają, co wolno powiedzieć, przygotowują procedury na wypadek awarii i prowadzą firmę przez kontakt z mediami i urzędami.\n\nOpisz, co się dzieje i czego się obawiasz, także wtedy, gdy sprawa dopiero się zaczyna. Prawnicy i specjaliści od komunikacji kryzysowej odpowiedzą ofertami. Zgłoszenie sprawy nic nie kosztuje.",
     "metaTitle": "Zarządzanie kryzysowe w firmie | Prosta Sprawa",
     "metaDescription": "Kryzys wizerunkowy, awaria, nagły problem prawny? Opisz sytuację bezpłatnie i szybko poznaj oferty ekspertów od zarządzania kryzysem.",
     "children": [
@@ -696,7 +696,7 @@
     "ikona": "animate-ui:fan",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=600&q=80",
     "opis": "Prawne aspekty inwestycji OZE: umowy instalacyjne, koncesje, eksploatacja.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Odnawialne Źródła Energii (OZE)**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z prawnikiem specjalizującym się w prawie energetycznym i OZE, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Inwestycja w OZE po stronie firmy to najpierw prawo, potem sprzęt: tytuł do gruntu lub dachu, warunki przyłączenia do sieci, decyzje środowiskowe i lokalizacyjne, koncesja albo wpis do rejestru wytwórców, umowy z wykonawcą i umowy sprzedaży energii. Dochodzą do tego magazyny energii, klastry i spółdzielnie energetyczne oraz spory z instalatorem, gdy instalacja nie osiąga obiecanych parametrów.\n\nOpisz inwestycję: moc, lokalizacja, etap, kto jest wykonawcą. Prawnicy od prawa energetycznego i specjaliści OZE odpowiedzą ofertami z zakresem prac. Zgłoszenie sprawy jest bezpłatne.",
     "metaTitle": "OZE dla firm – prawo i inwestycje | Prosta Sprawa",
     "metaDescription": "Farma PV, magazyny energii, umowy PPA, koncesje — opisz inwestycję bezpłatnie i porównaj oferty prawników od energetyki odnawialnej.",
     "children": [
@@ -733,7 +733,7 @@
     "ikona": "animate-ui:refresh-cw",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?auto=format&fit=crop&w=600&q=80",
     "opis": "Upadłość i restrukturyzacja firmy, likwidacja i sprzedaż majątku.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo upadłościowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy doradcy restrukturyzacyjnego lub syndyka, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Wniosek o ogłoszenie upadłości trzeba złożyć w ciągu 30 dni od dnia, w którym firma stała się niewypłacalna. Spóźnienie otwiera drogę do osobistej odpowiedzialności członków zarządu za długi spółki. Zanim dojdzie do upadłości, w grze jest jeszcze restrukturyzacja, bo układ z wierzycielami pozwala zachować firmę i zatrzymać egzekucje. Doradcy restrukturyzacyjni i prawnicy z tej kategorii oceniają, który tryb jest w danej sytuacji dostępny.\n\nPrzedstaw sytuację w kilku zdaniach: skala zobowiązań, opóźnienia w płatnościach, tocząca się egzekucja, forma prawna firmy. Specjaliści odpowiedzą ofertami z oceną, co da się zrobić. Im wcześniej opiszesz sprawę, tym więcej wariantów zostaje w grze.",
     "metaTitle": "Upadłość i restrukturyzacja firmy | Prosta Sprawa",
     "metaDescription": "Firma traci płynność? Restrukturyzacja lub upadłość mogą uratować majątek i zarząd przed odpowiedzialnością. Bezpłatna wycena sprawy.",
     "children": [
@@ -763,7 +763,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80",
     "opis": "Pomoc przy długach, windykacji, egzekucji komorniczej oraz sporach o kredyty i pożyczki, w tym frankowe.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zobowiązania finansowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się z prawnikiem ds. oddłużania lub upadłości, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Komornik zajął konto, firma windykacyjna dzwoni w sprawie długu sprzed lat, rata przestała się spinać albo w umowie kredytu znalazły się wadliwe zapisy. Roszczenia majątkowe się przedawniają: zasadniczo po sześciu latach, a te związane z działalnością gospodarczą i świadczenia okresowe po trzech. Warto o tym wiedzieć, zanim wpłaci się cokolwiek na poczet starego długu, bo taka wpłata potrafi przerwać bieg przedawnienia. Trafiają tu też sprawy o kredyty frankowe, sankcję kredytu darmowego i upadłość konsumencką.\n\nWypisz, jakie masz zobowiązania, kto się o nie upomina i czy sprawa trafiła już do sądu albo komornika. Prawnicy od oddłużania odpowiedzą propozycjami: od negocjacji z wierzycielem po wniosek o upadłość. Opisanie sprawy do niczego nie zobowiązuje.",
     "metaTitle": "Długi, kredyty, windykacja – pomoc prawna | Prosta Sprawa",
     "metaDescription": "Problem z długami, komornikiem lub bankiem? Opisz sprawę bezpłatnie, a prawnicy od spraw finansowych prześlą Ci propozycje rozwiązań i wyceny.",
     "children": [
@@ -801,7 +801,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80",
     "opis": "Rozwody, alimenty, opieka nad dziećmi, podział majątku — wsparcie prawnika w sprawach rodzinnych.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Rodzina**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj ze wsparcia doświadczonego adwokata rodzinnego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Rozwód bez orzekania o winie kończy się zwykle na jednej rozprawie. Z orzekaniem o winie potrafi trwać latami i wymaga dowodów. Do tego dochodzą alimenty i ich zmiana, władza rodzicielska, kontakty z dzieckiem i ich egzekwowanie, podział majątku wspólnego, rozdzielność majątkowa, sprawy opiekuńcze i adopcja. Adwokaci rodzinni prowadzą je od pierwszej rozmowy po wykonanie orzeczenia.\n\nOpisz sytuację tak, jak umiesz. Nie musisz znać nazw instytucji ani przepisów. Prawnicy odpowiedzą ofertami z pomysłem na sprawę i wyceną, a Ty wybierzesz osobę, z którą chcesz o tym rozmawiać. Za dodanie sprawy nie płacisz.",
     "metaTitle": "Prawnik od spraw rodzinnych online | Prosta Sprawa",
     "metaDescription": "Rozwód, alimenty, opieka nad dzieckiem? Opisz sprawę bezpłatnie, a zweryfikowani prawnicy rodzinni prześlą Ci oferty. Porównaj i wybierz najlepszą.",
     "children": [
@@ -839,7 +839,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80",
     "opis": "Spadki, testamenty, dziedziczenie i bezpieczne zarządzanie prywatnym majątkiem.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Majątek osobisty**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z notariuszem lub adwokatem spadkowym, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Razem ze spadkiem dziedziczy się długi, jeśli nie zareaguje się na czas. Na oświadczenie o przyjęciu albo odrzuceniu spadku jest sześć miesięcy od dnia, w którym dowiedziałeś się o powołaniu. Brak reakcji oznacza przyjęcie z dobrodziejstwem inwentarza. W tej kategorii załatwia się też testamenty, zachowek, dział spadku, darowizny za życia i uporządkowanie majątku, zanim zrobi to za Ciebie ustawa.\n\nOpisz sytuację: kto zmarł, jak wygląda rodzina i majątek, czy jest testament i ile czasu minęło. Adwokaci od spraw spadkowych oraz notariusze prześlą oferty, a Ty wybierzesz. Za dodanie sprawy nie płacisz.",
     "metaTitle": "Spadki, testamenty, majątek – prawnik | Prosta Sprawa",
     "metaDescription": "Sprawy spadkowe, testament, zabezpieczenie majątku — opisz sprawę bezpłatnie i porównaj oferty prawników. Online, z całej Polski, bez prowizji.",
     "children": [
@@ -869,7 +869,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80",
     "opis": "Polubowne rozwiązywanie sporów z pomocą mediatora, bez długiego procesu sądowego.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Mediacje**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy licencjonowanego mediatora wpisanego na listę sądową, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Mediacja to rozmowa przy udziale bezstronnej osoby, która ma doprowadzić do porozumienia zamiast wyroku. Najczęściej sięga się po nią przy rozstaniu, gdy trzeba ustalić kontakty z dziećmi, alimenty albo podział majątku, ale sprawdza się też w sporach sąsiedzkich i gospodarczych. Ugoda zawarta przed mediatorem i zatwierdzona przez sąd ma moc ugody sądowej, więc da się ją wyegzekwować tak samo jak wyrok. Zwykle jest szybsza i tańsza od procesu.\n\nWystarczy krótki opis sporu i tego, co chcesz osiągnąć. Nie musisz pisać pozwu ani deklarować, że idziesz do sądu. Mediatorzy odpowiedzą ofertami z informacją o trybie i koszcie, a same rozmowy są poufne.",
     "metaTitle": "Mediacje – rozwiąż spór bez sądu | Prosta Sprawa",
     "metaDescription": "Mediacja jest szybsza i tańsza niż proces. Opisz swój spór bezpłatnie i porównaj oferty mediatorów — rodzinnych i gospodarczych. Online.",
     "children": [
@@ -891,7 +891,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
     "opis": "Bezpieczny zakup, sprzedaż i wynajem mieszkania lub domu: umowy, księgi wieczyste, zadatki.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Nieruchomości**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć weryfikację transakcji prawnikowi ds. nieruchomości, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Przy mieszkaniu albo domu najwięcej zależy od tego, co sprawdzisz przed podpisem: księga wieczysta, stan prawny gruntu, hipoteki i służebności, zapisy umowy przedwstępnej. Warto też wiedzieć, czym różni się zadatek od zaliczki. Zadatek przepada albo wraca w podwójnej wysokości, zaliczka po prostu wraca. Prawnicy z tej kategorii sprawdzają dokumenty przed transakcją, prowadzą sprawy o wady lokalu i przygotowują umowy najmu.\n\nNapisz, co kupujesz, sprzedajesz lub wynajmujesz i na jakim jesteś etapie. Specjaliści od nieruchomości odpowiedzą ofertami: od samej analizy umowy po poprowadzenie całej transakcji. Sprawdzenie papierów kosztuje ułamek tego, co odkręcanie złej transakcji.",
     "metaTitle": "Prawnik od nieruchomości online | Prosta Sprawa",
     "metaDescription": "Kupno, sprzedaż lub wynajem mieszkania? Sprawdź umowę z prawnikiem, zanim podpiszesz. Bezpłatne dodanie sprawy, oferty od zweryfikowanych ekspertów.",
     "children": [
@@ -920,7 +920,7 @@
     "ikona": "animate-ui:list",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=600&q=80",
     "opis": "Rozliczenia PIT, ulgi podatkowe i spory z urzędem skarbowym w sprawach prywatnych.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Podatki osobiste**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady doradcy podatkowego dla osób fizycznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Rozliczenie roczne ma termin do 30 kwietnia, ale problemy zaczynają się wcześniej: sprzedaż mieszkania przed upływem pięciu lat, przychody z zagranicy, najem, kryptowaluty, darowizna od rodziny, której nie zgłoszono w terminie. Doradcy podatkowi policzą podatek, wskażą przysługujące ulgi, przygotują korektę albo czynny żal i poprowadzą sprawę, gdy urząd skarbowy zacznie zadawać pytania.\n\nWskaż, czego dotyczy sprawa i jakiego roku. Im konkretniej, tym trafniejsze oferty dostaniesz. Doradcy odpowiedzą wyceną i propozycją, co zrobić. Za opisanie sprawy nie płacisz, płacisz dopiero wybranej osobie za konkretną pracę.",
     "metaTitle": "Podatki osobiste – doradca podatkowy | Prosta Sprawa",
     "metaDescription": "PIT, ulgi, spadki i darowizny, kontrola z urzędu skarbowego? Opisz sprawę bezpłatnie i porównaj oferty doradców podatkowych z całej Polski.",
     "children": [
@@ -949,7 +949,7 @@
     "ikona": "animate-ui:user-round",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=600&q=80",
     "opis": "Prawa pracownika: zwolnienia, mobbing, zaległe wynagrodzenia i spory z pracodawcą.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zatrudnienie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z adwokatem specjalizującym się w prawach pracowniczych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Na odwołanie do sądu pracy od wypowiedzenia albo zwolnienia dyscyplinarnego jest 21 dni. Termin jest krótki i bez ważnego powodu się go nie przywraca. Poza zwolnieniami załatwia się tu zaległe wynagrodzenie i nadgodziny, świadectwo pracy z błędami, mobbing i dyskryminację, umowę cywilnoprawną zamiast etatu oraz spory o urlopy i zwolnienia lekarskie. Pomagają adwokaci i radcowie od prawa pracy.\n\nWystarczy, że napiszesz, co się stało i kiedy dostałeś dokumenty. Data wręczenia wypowiedzenia decyduje o tym, ile czasu Ci zostało. Prawnicy odpowiedzą ofertami z oceną szans i wyceną, a sprawę dodajesz bezpłatnie.",
     "metaTitle": "Prawa pracownika – prawnik prawa pracy | Prosta Sprawa",
     "metaDescription": "Zwolnienie, mobbing, zaległa pensja, L4? Poznaj swoje prawa jako pracownik. Opisz sprawę bezpłatnie i porównaj oferty prawników od prawa pracy.",
     "children": [
@@ -979,7 +979,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80",
     "opis": "Spory z ubezpieczycielem, zaniżone odszkodowania, odmowy wypłaty z polis majątkowych i na życie.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Ubezpieczenia**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy radcy prawnego ds. odszkodowań, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Ubezpieczyciel ma co do zasady 30 dni od zgłoszenia szkody na wypłatę świadczenia. Spory dotyczą najczęściej odmowy wypłaty z powołaniem na wyłączenie w ogólnych warunkach, zaniżonej wyceny szkody albo przeciągania postępowania. Dotyczy to polis mieszkaniowych, komunikacyjnych, turystycznych i na życie. Prawnicy z tej kategorii czytają OWU, piszą odwołania od decyzji i prowadzą sprawy sądowe przeciwko towarzystwom.\n\nPodaj rodzaj polisy, datę szkody i to, co napisał ubezpieczyciel w decyzji. Sam ten dokument mówi już bardzo dużo. Prawnicy od odszkodowań odpowiedzą ofertami z oceną, ile realnie da się jeszcze uzyskać.",
     "metaTitle": "Spory z ubezpieczycielem – prawnik | Prosta Sprawa",
     "metaDescription": "Odmowa wypłaty z polisy, zaniżone odszkodowanie z OC/AC lub polisy na życie? Bezpłatnie opisz sprawę i porównaj oferty prawników.",
     "children": [
@@ -1009,7 +1009,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
     "opis": "Pomoc obrońcy w sprawach o przestępstwa i wykroczenia: od przesłuchania, przez akt oskarżenia, po apelację.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo karne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skontaktuj się niezwłocznie z adwokatem karnistą, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Prawo do obrońcy masz od pierwszej chwili, nie dopiero w sądzie. Także wtedy, gdy jesteś zatrzymany albo wezwany tylko na rozmowę. To, co powiesz na pierwszym przesłuchaniu, zostaje w aktach do końca sprawy. Adwokaci z tej kategorii bronią w postępowaniu przygotowawczym, przed sądem i w apelacji, reprezentują też pokrzywdzonych, w sprawach o przestępstwa i o wykroczenia.\n\nSprawę możesz opisać ogólnie, bez szczegółów, których nie chcesz nigdzie zapisywać. Wystarczy rodzaj zarzutu i etap postępowania. Obrońcy odpowiedzą ofertami, a resztę ustalisz już bezpośrednio z wybraną osobą.",
     "metaTitle": "Adwokat sprawy karne – obrońca online | Prosta Sprawa",
     "metaDescription": "Zatrzymanie, zarzuty, wezwanie na przesłuchanie? Opisz sprawę anonimowo i bezpłatnie — doświadczeni obrońcy sami zgłoszą się z ofertą pomocy.",
     "children": [
@@ -1039,7 +1039,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
     "opis": "Odszkodowania i zadośćuczynienia po wypadkach oraz wsparcie w procesie rehabilitacji.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Zdrowie i wypadki**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj ze wsparcia prawnika ds. szkód osobowych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Roszczenia o naprawienie szkody z wypadku przedawniają się co do zasady po trzech latach od dnia, w którym poszkodowany dowiedział się o szkodzie i o osobie zobowiązanej do jej naprawienia. Gdy szkoda wynikła z przestępstwa, termin wydłuża się do dwudziestu lat. W grę wchodzi zwrot kosztów leczenia, zadośćuczynienie za krzywdę, a przy trwałej niezdolności do pracy także renta.\n\nOpisz wypadek: kiedy, gdzie, jakie są obrażenia i co dotąd wypłacono. Prawnicy od szkód osobowych odpowiedzą ofertami, a przy zaniżonym świadczeniu podpowiedzą, co jeszcze da się zrobić. Znajdziesz tu również specjalistów od rehabilitacji i powrotu do sprawności.",
     "metaTitle": "Odszkodowania po wypadku – pomoc prawna | Prosta Sprawa",
     "metaDescription": "Wypadek, uszczerbek na zdrowiu, zaniżone odszkodowanie? Opisz sprawę bezpłatnie i poznaj oferty prawników oraz ekspertów od odszkodowań.",
     "children": [
@@ -1069,7 +1069,7 @@
     "wyswietlajNaGlownejPrywatne": true,
     "backgroundImageUrl": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80",
     "opis": "Reklamacje, zwroty, problemy z zakupami online i nieuczciwe umowy z usługodawcami.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo konsumenckie**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z rzecznikiem praw konsumentów lub prawnikiem, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Przy zakupach przez internet masz 14 dni na odstąpienie od umowy bez podawania powodu, a przy wadliwym towarze dwa lata na reklamację z tytułu niezgodności z umową. Sklep nie może odsyłać Cię do producenta ani uzależniać zwrotu od oryginalnego kartonu. Drugi obszar to umowy z operatorami, siłowniami, firmami energetycznymi i pożyczkowymi, gdzie problem tkwi zwykle w regulaminie i w karach za wcześniejsze rozwiązanie.\n\nNapisz, co kupiłeś albo podpisałeś, kiedy i co odpowiedział sprzedawca. Prawnicy odpowiedzą ofertami: od gotowego pisma reklamacyjnego po poprowadzenie sprawy w sądzie. Przy drobnych kwotach często wystarcza samo pismo z powołaniem konkretnych przepisów.",
     "metaTitle": "Prawa konsumenta – reklamacje i zwroty | Prosta Sprawa",
     "metaDescription": "Odrzucona reklamacja, problem ze sklepem lub usługodawcą? Poznaj swoje prawa konsumenta. Opisz sprawę bezpłatnie i porównaj oferty prawników.",
     "children": [
@@ -1106,7 +1106,7 @@
     "ikona": "animate-ui:cross",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
     "opis": "Błędy medyczne, prawa pacjenta i odszkodowania za szkody powstałe podczas leczenia.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo medyczne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy radcy prawnego ds. błędów medycznych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Powikłanie nie zawsze oznacza błąd, ale zawsze warto sprawdzić dokumentację, a szpital ma obowiązek udostępnić ją pacjentowi lub osobie przez niego upoważnionej. Poza drogą sądową działa Fundusz Kompensacyjny Zdarzeń Medycznych przy Rzeczniku Praw Pacjenta, gdzie wniosek składa się co do zasady w ciągu roku od dowiedzenia się o szkodzie i nie później niż trzy lata od zdarzenia. Prawnicy z tej kategorii oceniają, która droga ma w danej sprawie sens.\n\nDo zgłoszenia wystarczy krótki opis tego, co się stało, i lista dokumentów, które masz: karta informacyjna, wyniki, opinie innych lekarzy. Prawnicy od spraw medycznych odpowiedzą ofertami z oceną szans, zanim zdecydujesz się na jakikolwiek krok.",
     "metaTitle": "Błąd medyczny, prawa pacjenta – prawnik | Prosta Sprawa",
     "metaDescription": "Błąd lekarza, powikłania, odmowa dokumentacji medycznej? Opisz sprawę bezpłatnie i poznaj oferty prawników od spraw medycznych.",
     "children": [
@@ -1135,7 +1135,7 @@
     "ikona": "animate-ui:wifi",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
     "opis": "Ochrona danych i wizerunku w sieci, problemy z subskrypcjami i umowami cyfrowymi.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo cyfrowe i internetowe**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skonsultuj się z prawnikiem ds. nowych mediów i prawa internetowego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Przejęte konto, wyciek danych, zdjęcia publikowane bez zgody, obraźliwe wpisy, subskrypcja, której nie da się anulować, sklep albo aplikacja milcząca po zapłacie. Prawnicy z tej kategorii przygotowują żądania usunięcia danych i treści, wezwania do zaprzestania naruszeń, zgłoszenia do administratorów serwisów i do UODO, a gdy trzeba, pozwy o ochronę dóbr osobistych.\n\nZbierz to, co masz: zrzuty ekranu, adresy stron, korespondencję, potwierdzenia płatności, i opisz sprawę. Prawnicy od spraw internetowych odpowiedzą ofertami z planem działania. Im szybciej, tym większa szansa, że dowody nie znikną.",
     "metaTitle": "Prawo internetu – prawnik online | Prosta Sprawa",
     "metaDescription": "Kradzież konta, hejt, wyciek danych, problem z subskrypcją? Opisz sprawę bezpłatnie i porównaj oferty prawników od spraw internetowych.",
     "children": [
@@ -1164,7 +1164,7 @@
     "ikona": "animate-ui:lock-keyhole",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&w=600&q=80",
     "opis": "Konflikty z wynajmującym, kaucje, eksmisje i problemy z wynajmem mieszkania.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawa lokatora i najemcy**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z porady prawnej specjalisty ds. ochrony praw lokatorów, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Wynajmujący nie może na własną rękę wymienić zamków, odciąć prądu ani wystawić rzeczy na klatkę. Eksmisja wymaga wyroku sądu, a wyroków nakazujących opróżnienie lokalu nie wykonuje się od 1 listopada do 31 marca, jeśli eksmitowanemu nie wskazano lokalu, do którego ma się przenieść. W tej kategorii rozstrzyga się też spory o kaucję, podwyżki czynszu, naprawy, wady mieszkania i zapisy umowy, w tym najmu okazjonalnego.\n\nNapisz, co się dzieje i co masz na papierze: umowa, protokół zdawczo-odbiorczy, wiadomości od właściciela. Prawnicy odpowiedzą ofertami. Czasem wystarcza jedno pismo, żeby druga strona zmieniła zdanie.",
     "metaTitle": "Prawa lokatora i najemcy – prawnik | Prosta Sprawa",
     "metaDescription": "Konflikt z wynajmującym, zatrzymana kaucja, eksmisja? Poznaj swoje prawa — opisz sprawę bezpłatnie i porównaj oferty prawników. Online.",
     "children": [
@@ -1201,7 +1201,7 @@
     "ikona": "animate-ui:layers",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80",
     "opis": "Odwołania od decyzji urzędów i reprezentacja w postępowaniach administracyjnych.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Prawo administracyjne**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Zleć sporządzenie odwołania radcy prawnemu ds. prawa administracyjnego, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Na odwołanie od decyzji administracyjnej masz zwykle 14 dni od jej doręczenia. Po tym terminie decyzja staje się ostateczna, a odkręcenie jej jest dużo trudniejsze. Dotyczy to decyzji gminy, wojewody, ZUS-u, nadzoru budowlanego, sanepidu i dziesiątek innych urzędów. Prawnicy z tej kategorii piszą odwołania i skargi do sądu administracyjnego, reprezentują w postępowaniu i reagują, gdy urząd przekracza własne terminy.\n\nPodaj, jaki organ wydał decyzję, czego ona dotyczy i kiedy ją odebrałeś. Data doręczenia jest tu najważniejsza. Radcowie prawni i adwokaci odpowiedzą ofertami z oceną szans. Zgłoszenie sprawy jest darmowe, więc nie warto z nim czekać do ostatniego dnia.",
     "metaTitle": "Odwołanie od decyzji urzędu – prawnik | Prosta Sprawa",
     "metaDescription": "Niekorzystna decyzja urzędu, gminy, ZUS? Masz prawo się odwołać — i krótki termin. Opisz sprawę bezpłatnie i porównaj oferty prawników.",
     "children": [
@@ -1230,7 +1230,7 @@
     "ikona": "animate-ui:sun",
     "backgroundImageUrl": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=600&q=80",
     "opis": "Umowy na instalacje fotowoltaiczne, rozliczenia prosumenta i formalności środowiskowe.",
-    "opisDodatkowy": "Wybierając pomoc w obszarze **Fotowoltaika i OZE**, zyskujesz dostęp do praktycznej wiedzy, która jest kluczem do pomyślnego załatwienia spraw. Skorzystaj z pomocy prawnej w sprawach OZE i umów instalacyjnych, który pomoże Ci przeanalizować Twoją sytuację, przygotować strategię działania oraz sporządzić niezbędne dokumenty.",
+    "opisDodatkowy": "Instalacja fotowoltaiczna to najpierw umowa z firmą instalacyjną, a dopiero potem panele na dachu. Kłopoty biorą się zwykle z zapisów o terminie, mocy, gwarancji i karach umownych, ze sprzętu innego niż w ofercie oraz z rozliczeń z zakładem energetycznym. Nowi prosumenci rozliczają się w systemie net-billing, czyli wartościowo, a nie ilościowo. Przy większych instalacjach dochodzą zgody i formalności środowiskowe.\n\nZacznij od tego, na jakim jesteś etapie: umowa przed podpisem, instalacja działająca gorzej, niż obiecywano, spór z wykonawcą, pytanie o rozliczenie. Prawnicy i specjaliści od OZE odpowiedzą ofertami z planem działania i wyceną. Sprawę dodajesz bezpłatnie.",
     "metaTitle": "Fotowoltaika i OZE – pomoc prawna | Prosta Sprawa",
     "metaDescription": "Umowa na fotowoltaikę, rozliczenia prosumenta, spór z instalatorem? Opisz sprawę bezpłatnie i porównaj oferty prawników od OZE.",
     "children": [
@@ -1266,6 +1266,7 @@
     "kolejnosc": 17,
     "ikona": "animate-ui:route",
     "opis": "Wypadki i kolizje, odszkodowania z OC, jazda po alkoholu, zatrzymane prawo jazdy i punkty karne.",
+    "opisDodatkowy": "Od 0,2 do 0,5 promila to wykroczenie, powyżej 0,5 promila przestępstwo, z zakazem prowadzenia pojazdów włącznie. Prawo jazdy zabiera się na trzy miesiące także za przekroczenie prędkości o ponad 50 km/h w terenie zabudowanym, a osobno liczą się punkty karne. Po kolizji otwiera się drugi front: zaniżona wycena szkody z OC sprawcy, odmowa auta zastępczego, spór o to, kto zawinił. Adwokaci z tej kategorii prowadzą sprawy z obu stron.\n\nOpisz zdarzenie: co się stało, co ustaliła policja, co napisał ubezpieczyciel i jakie masz terminy. Specjaliści od spraw drogowych odpowiedzą ofertami z oceną sytuacji. Przy zatrzymanym prawie jazdy liczy się każdy dzień.",
     "children": [
       {
         "nazwa": "Wypadki i kolizje drogowe",
@@ -1301,6 +1302,7 @@
     "kolejnosc": 18,
     "ikona": "animate-ui:log-in",
     "opis": "Legalizacja pobytu, zezwolenia na pracę i obywatelstwo — pomoc prawna dla cudzoziemców w Polsce.",
+    "opisDodatkowy": "Sprawy pobytowe rozstrzygają się w urzędzie wojewódzkim i potrafią ciągnąć się miesiącami, a jeden brak w dokumentach cofa procedurę do początku. Pobyt czasowy i stały, karta pobytu, rezydent długoterminowy UE, zezwolenie na pracę, zezwolenie jednolite, zmiana pracodawcy, uznanie za obywatela polskiego albo potwierdzenie obywatelstwa po przodkach. Każda z tych ścieżek ma inne warunki i inny komplet dokumentów.\n\nW zgłoszeniu podaj, skąd jesteś, na jakiej podstawie przebywasz w Polsce i czego potrzebujesz. Prawnicy od spraw cudzoziemców i tłumacze przysięgli prześlą oferty, a Ty porównasz doświadczenie i cenę, zanim komukolwiek powierzysz oryginały dokumentów. Część specjalistów obsługuje klientów po angielsku lub ukraińsku.",
     "children": [
       {
         "nazwa": "Legalizacja pobytu",
@@ -1336,6 +1338,7 @@
     "kolejnosc": 19,
     "ikona": "animate-ui:pickaxe",
     "opis": "Pozwolenia na budowę, samowola budowlana, spory z wykonawcą lub deweloperem.",
+    "opisDodatkowy": "Z jednej strony pozwolenie na budowę, zgłoszenie, warunki zabudowy i odbiór. Z drugiej nakaz rozbiórki, wstrzymanie robót i kara od nadzoru budowlanego. Samowolę sprzed co najmniej 20 lat można zalegalizować w uproszczonym postępowaniu, bez opłaty legalizacyjnej, o ile obiekt nie zagraża życiu ani zdrowiu. Trzeci wątek to spory z wykonawcą i deweloperem: opóźnienia, wady, niewypłacone wynagrodzenie, kary umowne.\n\nOpisz inwestycję i problem: co budujesz, na jakim etapie i co powiedział urząd albo wykonawca. Prawnicy od budowlanki odpowiedzą ofertami, a przy sporach technicznych możesz od razu poszukać rzeczoznawcy. Dodanie sprawy nic nie kosztuje.",
     "children": [
       {
         "nazwa": "Pozwolenia i formalności budowlane",
@@ -1372,6 +1375,7 @@
     "ikona": "animate-ui:gauge",
     "ekspercka": true,
     "opis": "Rzeczoznawcy majątkowi: operaty szacunkowe, wyceny szkód i opinie do sądu lub banku.",
+    "opisDodatkowy": "Operat szacunkowy jest ważny 12 miesięcy od sporządzenia i może być potwierdzony przez rzeczoznawcę na kolejny rok. Starszy bank i sąd zwykle odrzucą. Wycena bywa potrzebna do kredytu, podziału majątku, sprawy spadkowej, podatku od darowizny, sporu z ubezpieczycielem albo do postępowania wywłaszczeniowego. Poza rzeczoznawcami majątkowymi znajdziesz tu osoby wyceniające szkody, maszyny, pojazdy i wyposażenie.\n\nNapisz, co ma być wycenione i po co. Cel wyceny decyduje o formie dokumentu i o cenie. Rzeczoznawcy z Twojego regionu odpowiedzą ofertami z terminem realizacji. Zlecenie opisujesz bezpłatnie.",
     "children": [
       {
         "nazwa": "Wycena nieruchomości (operat szacunkowy)",
@@ -1408,6 +1412,7 @@
     "ikona": "animate-ui:axis-3d",
     "ekspercka": true,
     "opis": "Architekci: projekty domów i wnętrz, adaptacje projektów, nadzór budowlany.",
+    "opisDodatkowy": "Budowa domu zaczyna się od papierów, nie od wykopu. Projekt gotowy trzeba zaadaptować do konkretnej działki, warunków gruntowych i zapisów planu miejscowego, a podpisuje się pod tym architekt z uprawnieniami. Przy projekcie indywidualnym dochodzi praca koncepcyjna od zera. Przy samej budowie potrzebny jest kierownik budowy, bez którego nie da się jej legalnie prowadzić, a często też inspektor nadzoru pilnujący wykonawcy po Twojej stronie. Znajdziesz tu również projektantów wnętrz.\n\nOpisz, co planujesz i gdzie: działka, etap, budżet, termin. Architekci i kierownicy budowy z Twojego regionu odpowiedzą ofertami z zakresem prac i wyceną, a Ty porównasz je bez obdzwaniania biur. Dodanie sprawy nic nie kosztuje.",
     "children": [
       {
         "nazwa": "Projekty domów i wnętrz",
@@ -1444,6 +1449,7 @@
     "ikona": "animate-ui:chart-spline",
     "ekspercka": true,
     "opis": "Doradcy finansowi dla osób prywatnych: kredyt hipoteczny, inwestowanie, oszczędzanie i emerytura.",
+    "opisDodatkowy": "Kredyt hipoteczny na dwadzieścia kilka lat, pierwsze poważne oszczędności, pytanie ile realnie zostanie z emerytury. Takich decyzji nie odkręca się szybko. Doradcy z tej kategorii policzą zdolność kredytową i porównają oferty banków, ułożą plan oszczędzania z wykorzystaniem IKE, IKZE, PPK i zwykłych rozwiązań bankowych albo oszacują prognozowaną emeryturę i pokażą, co da się jeszcze zmienić.\n\nOpisz swoją sytuację: wiek, formę zatrudnienia, cel i horyzont czasowy. Doradcy odpowiedzą propozycjami współpracy, w których zobaczysz, ile kosztuje sama porada i na czym zarabia druga strona. To wiedza, którą warto mieć, zanim cokolwiek podpiszesz.",
     "children": [
       {
         "nazwa": "Kredyty hipoteczne i doradztwo kredytowe",

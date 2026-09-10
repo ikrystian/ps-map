@@ -15,6 +15,7 @@
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
     "db:seed:pages": "bun run prisma/seed-static-pages-only.ts",
+    "db:update:category-descriptions": "bun run prisma/update-category-descriptions.ts",
     "reset": "prisma generate && prisma migrate dev && prisma db seed && python3 prisma/import_postal_codes.py",
     "update": "prisma generate && prisma migrate deploy && pm2 reload 0 --update-env",
     "deploy": "bash scripts/deploy.sh",
