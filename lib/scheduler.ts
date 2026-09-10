@@ -7,7 +7,7 @@ import { expireStalePrzelewy24Orders } from "./przelewy24-resolve"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
-import { backupDbToGoogleDrive } from "./google-drive-backup"
+import { backupDbToGCS } from "./gcs-backup"
 
 
 const MINUTE = 60 * 1000
@@ -170,18 +170,22 @@ export function getJobDefinitions(): JobDefinition[] {
       },
     },
 
+<<<<<<< HEAD
     // 11. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (co 12 godzin)
     //     Tymczasowo przywrócone z Google Cloud Storage — IP serwera jest
     //     blokowane przez Google przy uwierzytelnionym uploadzie do GCS
     //     (403 "not available in your location", najpewniej reputacja ASN
     //     dostawcy VPS). Do rewizji, gdy problem z GCS zostanie rozwiązany.
+=======
+    // 11. Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (co 12 godzin)
+>>>>>>> a0701d6a46b52a413c7f997ce95e358a2813e55c
     {
-      name: "db-backup-gdrive",
-      description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Drive (2x dziennie)",
+      name: "db-backup-gcs",
+      description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (2x dziennie)",
       intervalMs: 12 * HOUR,
       options: { retries: 2, retryDelayMs: 60 * 1000 },
       fn: async () => {
-        const result = await backupDbToGoogleDrive()
+        const result = await backupDbToGCS()
         return result
       },
     },

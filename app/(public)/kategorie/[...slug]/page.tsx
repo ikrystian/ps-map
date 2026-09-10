@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma"
+import { getCategoriesList } from "@/lib/categories"
 import { Metadata } from "next"
+import { notFound } from "next/navigation"
 import CategoryClientPage from "./CategoryClientPage"
 
 interface PageProps {
@@ -13,17 +14,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const slug = slugArray[slugArray.length - 1]
 
   try {
-    const category = await prisma.category.findUnique({
-      where: {
-        slug,
-      },
-      select: {
-        nazwa: true,
-        opis: true,
-        metaTitle: true,
-        metaDescription: true,
-      },
-    })
+    const categories = await getCategoriesList()
+    const category = categories.find((cat) => cat.slug === slug)
 
     if (!category) {
       return {
@@ -43,6 +35,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default function CategoryPage() {
-  return <CategoryClientPage />
+export default async function CategoryPage({ params }: PageProps) {
+  const { slug: slugArray } = await params
+  const slug = slugArray[slugArray.length - 1]
+
+  const categories = await getCategoriesList()
+  const category = categories.find((cat) => cat.slug === slug) ?? null
+
+  if (!category) {
+    notFound()
+  }
+
+  return (
+    <CategoryClientPage initialCategory={category} initialCategories={categories} />
+  )
 }
