@@ -1428,7 +1428,7 @@ a .bg-card {
   font-family: var(--font-poppins), sans-serif;
   color: color-mix(in srgb, var(--foreground) 90%, transparent);
   /* text-neutral-200 */
-  line-height: 1.8;
+  line-height: 1.4;
   font-size: 1rem;
 }
 
