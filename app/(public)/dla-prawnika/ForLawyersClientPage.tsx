@@ -749,7 +749,7 @@ export default function ForLawyersClientPage() {
                         <div className="container consultations-layout">
                             <div className="consultations-left animate-on-scroll">
                                 <span className="section-label">SPOTKANIA ONLINE</span>
-                                <h2 className="section-title-light mb-2">
+                                <h2 className="section-title-light mb-4">
                                     Rozmowę umawiasz raz,<br />bez dzwonienia w tę i z powrotem
                                 </h2>
                                 <p className="section-subtitle-left">
