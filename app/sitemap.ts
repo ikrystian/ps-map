@@ -8,10 +8,15 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: ChangeFr
   { path: "/kategorie", priority: 0.8, changeFrequency: "daily" },
   { path: "/blog", priority: 0.7, changeFrequency: "daily" },
   { path: "/szukaj-prawnika", priority: 0.8, changeFrequency: "daily" },
+  { path: "/dodaj-sprawe", priority: 0.8, changeFrequency: "monthly" },
   { path: "/ranking", priority: 0.6, changeFrequency: "weekly" },
   { path: "/jak-to-dziala", priority: 0.5, changeFrequency: "monthly" },
   { path: "/dla-prawnika", priority: 0.5, changeFrequency: "monthly" },
   { path: "/pomoc", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/rejestracja", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/rejestracja/klient", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/rejestracja/ekspert", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/logowanie", priority: 0.3, changeFrequency: "yearly" },
   { path: "/kontakt", priority: 0.4, changeFrequency: "yearly" },
   { path: "/reklama", priority: 0.3, changeFrequency: "yearly" },
   { path: "/z-nami-wygrywasz", priority: 0.3, changeFrequency: "yearly" },
@@ -26,7 +31,7 @@ const RESERVED_SLUGS = new Set(STATIC_ROUTES.map((route) => route.path.replace(/
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = (process.env.NEXTAUTH_URL || "").replace(/\/$/, "")
 
-  const [categories, lawFirms, blogPosts, pages] = await Promise.all([
+  const [categories, lawFirms, blogPosts, pages, blogCategories] = await Promise.all([
     prisma.category.findMany({
       where: { aktywna: true },
       select: {
@@ -49,6 +54,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
     prisma.page.findMany({
       where: { published: true },
+      select: { slug: true, updatedAt: true },
+    }),
+    prisma.blogCategory.findMany({
+      where: { aktywna: true },
       select: { slug: true, updatedAt: true },
     }),
   ])
@@ -80,6 +89,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }))
 
+  // Listing bloga filtrowany kategorią — te URL-e są linkowane ze stopki
+  const blogCategoryEntries: MetadataRoute.Sitemap = blogCategories.map((category) => ({
+    url: `${baseUrl}/blog?category=${category.slug}`,
+    lastModified: category.updatedAt,
+    changeFrequency: "weekly",
+    priority: 0.4,
+  }))
+
   const pageEntries: MetadataRoute.Sitemap = pages
     .filter((page) => !RESERVED_SLUGS.has(page.slug))
     .map((page) => ({
@@ -89,5 +106,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.4,
     }))
 
-  return [...staticEntries, ...categoryEntries, ...expertEntries, ...blogEntries, ...pageEntries]
+  return [
+    ...staticEntries,
+    ...categoryEntries,
+    ...expertEntries,
+    ...blogEntries,
+    ...blogCategoryEntries,
+    ...pageEntries,
+  ]
 }
