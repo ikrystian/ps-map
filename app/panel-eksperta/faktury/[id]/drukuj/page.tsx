@@ -426,7 +426,7 @@ export default function InvoicePrintPage() {
         {/* Header */}
         <div className="invoice-header">
           <div>
-            <img src="/logo-color.svg" alt="Prosta Sprawa" className="invoice-logo" style={{ filter: "brightness(0) invert(1)" }} />
+            <img src="/logo.svg" alt="Prosta Sprawa" className="invoice-logo" style={{ filter: "brightness(0) invert(1)" }} />
             <div className="invoice-title-block">
               <div className="invoice-title">Faktura VAT</div>
               <div className="invoice-number">{invoice.invoiceNumber}</div>
@@ -440,9 +440,9 @@ export default function InvoicePrintPage() {
           </div>
           <div className="company-info">
             <div className="company-name">Prosta Sprawa</div>
-            <div>ul. Przykładowa 123</div>
-            <div>00-001 Warszawa</div>
-            <div>NIP: 1234567890</div>
+            <div>Generała Mariana Langiewicza 16 lok. 3</div>
+            <div>25-381 Kielce</div>
+            <div>NIP: 6572997948</div>
           </div>
         </div>
 
@@ -453,9 +453,9 @@ export default function InvoicePrintPage() {
               <div className="party-title">Sprzedawca</div>
               <div className="party-details">
                 <div style={{ fontWeight: 700 }}>Prosta Sprawa</div>
-                <div>ul. Przykładowa 123</div>
-                <div>00-001 Warszawa</div>
-                <div>NIP: 1234567890</div>
+                <div>Generała Mariana Langiewicza 16 lok. 3</div>
+            <div>25-381 Kielce</div>
+            <div>NIP: 6572997948</div>
                 <div>Email: kontakt@prostasprawa.pl</div>
                 <div>Tel: +48 123 456 789</div>
               </div>
