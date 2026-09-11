@@ -348,11 +348,11 @@ export default function PublicHeader({
     window.location.href = `/szukaj-prawnika?${params.toString()}`
   }
 
-  // W jasnym motywie pasek musi być prawie kryjący: leży nad stale ciemnymi
-  // sekcjami (hero na zdjęciu, landing /dla-prawnika), a przy 40% ciemne tło
-  // przebijało i ciemny tekst nawigacji stawał się nieczytelny.
+  // Pasek ma zawsze wyglądać jak w motywie ciemnym (niezależnie od wybranego
+  // motywu strony) — stąd klasa `dark` na kontenerze, która spina tokeny
+  // i warianty `dark:` w środku, tak samo jak w Hero/ExpertCTA/stopce.
   return (
-    <header className="fixed left-0 top-0 right-0 z-50 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/10 dark:shadow-black/70 top-bar-public bg-background/90 dark:bg-background/40">
+    <header className="dark fixed left-0 top-0 right-0 z-50 flex-shrink-0 backdrop-blur-md shadow-lg shadow-black/70 top-bar-public bg-background/40">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -1376,9 +1376,9 @@ export default function PublicHeader({
                         <List className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                         <span className="text-sm truncate text-foreground/80">
                           {selectedType === "OSOBA_PRYWATNA"
-                            ? "sprawa prywatna"
+                            ? "Sprawa prywatna"
                             : selectedType === "FIRMA"
-                              ? "sprawa firmowa"
+                              ? "Sprawa firmowa"
                               : "Typ sprawy"}
                         </span>
                       </div>
@@ -1389,8 +1389,8 @@ export default function PublicHeader({
                     <div className="space-y-0.5">
                       {[
                         { value: "all", label: "Wszystkie typy" },
-                        { value: "OSOBA_PRYWATNA", label: "sprawa prywatna" },
-                        { value: "FIRMA", label: "sprawa firmowa" },
+                        { value: "OSOBA_PRYWATNA", label: "Sprawa prywatna" },
+                        { value: "FIRMA", label: "Sprawa firmowa" },
                       ].map((opt) => (
                         <button
                           key={opt.value}

@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "framer-motion"
-import Image from "next/image"
 
 const benefits = [
   {
@@ -69,17 +68,26 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
 }
 
+// Ikony to jednokolorowe SVG (fill stały) — kolorujemy je jako maskę CSS,
+// żeby na hover móc podmienić kolor na `primary` w jasnym motywie, a w
+// ciemnym zachować dotychczasowe rozjaśnienie do bieli.
 const BenefitIcon = ({ src, alt }: { src: string; alt: string }) => {
   return (
-    <div className="transition-transform duration-300 ease-out group-hover:scale-110">
-      <Image
-        src={src}
-        alt={alt}
-        width={100}
-        height={100}
-        className="w-24 h-24 md:w-30 md:h-30 transition-all duration-300 group-hover:brightness-0 group-hover:invert"
-      />
-    </div>
+    <div
+      role="img"
+      aria-label={alt}
+      className="w-24 h-24 md:w-30 md:h-30 bg-[#a6a6a6] transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-primary dark:group-hover:bg-white"
+      style={{
+        maskImage: `url(${src})`,
+        WebkitMaskImage: `url(${src})`,
+        maskRepeat: "no-repeat",
+        WebkitMaskRepeat: "no-repeat",
+        maskSize: "contain",
+        WebkitMaskSize: "contain",
+        maskPosition: "center",
+        WebkitMaskPosition: "center",
+      }}
+    />
   )
 }
 
