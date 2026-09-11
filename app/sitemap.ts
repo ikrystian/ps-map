@@ -10,6 +10,7 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: ChangeFr
   { path: "/szukaj-prawnika", priority: 0.8, changeFrequency: "daily" },
   { path: "/dodaj-sprawe", priority: 0.8, changeFrequency: "monthly" },
   { path: "/ranking", priority: 0.6, changeFrequency: "weekly" },
+  { path: "/mapa", priority: 0.6, changeFrequency: "weekly" },
   { path: "/jak-to-dziala", priority: 0.5, changeFrequency: "monthly" },
   { path: "/dla-prawnika", priority: 0.5, changeFrequency: "monthly" },
   { path: "/pomoc", priority: 0.4, changeFrequency: "monthly" },

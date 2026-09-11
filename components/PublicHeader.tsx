@@ -287,6 +287,7 @@ export default function PublicHeader({
   const isKontaktActive = pathname === "/kontakt"
   const isReklamaActive = pathname === "/reklama"
   const isRankingActive = pathname.startsWith("/ranking")
+  const isMapaActive = pathname.startsWith("/mapa")
 
   // Helpers for nested categories navigation
   const getVisibleCategories = () => {
@@ -621,6 +622,22 @@ export default function PublicHeader({
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/mapa"
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "bg-transparent hover:bg-background flex items-center gap-1.5",
+                        isMapaActive && "text-primary font-semibold"
+                      )}
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Mapa
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>
@@ -945,6 +962,18 @@ export default function PublicHeader({
                         )}
                       >
                         Ranking eksperta
+                      </Link>
+
+                      <Link
+                        href="/mapa"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 py-2 text-base font-medium transition-colors hover:text-primary",
+                          isMapaActive ? "text-primary font-semibold" : "text-foreground"
+                        )}
+                      >
+                        <MapPin className="h-4 w-4" />
+                        Mapa ekspertów
                       </Link>
 
                       <Link
