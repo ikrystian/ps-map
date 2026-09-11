@@ -16,10 +16,21 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import { BlogPost } from '@/types/blog';
+import { AdSenseUnit } from "@/components/AdSenseUnit";
 
+interface AdSenseSettings {
+  enabled: boolean;
+  clientId: string;
+  slotTop: string;
+  slotBottom: string;
+  slotSidebar: string;
+}
 
+interface BlogPostClientPageProps {
+  adsense?: AdSenseSettings;
+}
 
-export default function BlogPostPage() {
+export default function BlogPostPage({ adsense }: BlogPostClientPageProps) {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -384,6 +395,18 @@ export default function BlogPostPage() {
         </div>
       )}
 
+      {/* Reklama AdSense — nad treścią posta */}
+      {adsense?.enabled && (
+        <div className="container mx-auto px-4 pt-8">
+          <AdSenseUnit
+            enabled={adsense.enabled}
+            clientId={adsense.clientId}
+            slot={adsense.slotTop}
+            className="mx-auto max-w-4xl"
+          />
+        </div>
+      )}
+
       {/* Main Grid Container */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -439,6 +462,13 @@ export default function BlogPostPage() {
                 </div>
               </div>
             </article>
+
+            {/* Reklama AdSense — pod treścią posta */}
+            <AdSenseUnit
+              enabled={adsense?.enabled}
+              clientId={adsense?.clientId}
+              slot={adsense?.slotBottom}
+            />
 
             {post.isSponsored && post.sponsoredLawFirm && (
               <div className="relative overflow-hidden bg-gradient-to-br from-[#1f1a0e]/60 to-background border border-amber-500/20 rounded-3xl p-8 shadow-2xl group transition-all duration-300 hover:border-amber-500/30">
@@ -754,6 +784,13 @@ export default function BlogPostPage() {
                 </Link>
               </Button>
             </div>
+
+            {/* Reklama AdSense — panel boczny */}
+            <AdSenseUnit
+              enabled={adsense?.enabled}
+              clientId={adsense?.clientId}
+              slot={adsense?.slotSidebar}
+            />
           </aside>
         </div>
       </div>

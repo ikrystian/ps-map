@@ -59,11 +59,11 @@ function TypedPhrases() {
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-image pt-16">
-      {/* Przesłona nad zdjęciem — w jasnym motywie gęstsza, bo tekst jest ciemny
-          i musi się obronić na ciemnej fotografii. Bez `on-dark`, żeby hero
-          zmieniał się razem z motywem i wygaszenie u dołu wpadało w tło strony. */}
-      <div className="absolute inset-0 bg-background/80 dark:bg-background/60 backdrop-blur-[1px] z-0" />
+    <section className="dark relative min-h-screen flex items-center justify-center overflow-hidden hero-image pt-16">
+      {/* Sekcja ma zawsze wyglądać jak w motywie ciemnym (niezależnie od
+          wybranego motywu strony) — stąd klasa `dark` na kontenerze, która
+          spina tokeny i warianty `dark:` w środku. */}
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] z-0" />
 
       {/* Animated gradient orbs */}
       <div className="absolute top-1/4 -left-1/4 w-[60%] h-[60%] bg-primary/20 rounded-full blur-[160px] animate-pulse z-0" />
@@ -90,7 +90,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl sm:text-7xl md:text-9xl tracking-tight mb-8 font-playfair text-foreground drop-shadow-[0_5px_15px_rgba(255,255,255,0.6)] dark:drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
+            className="text-5xl sm:text-7xl md:text-9xl tracking-tight mb-8 font-playfair text-foreground drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
           >
             Prosta Sprawa
           </motion.h1>

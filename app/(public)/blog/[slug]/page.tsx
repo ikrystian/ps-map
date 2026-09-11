@@ -75,6 +75,40 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default function BlogPostPage() {
-  return <BlogPostClientPage />
+export default async function BlogPostPage() {
+  let adsense = {
+    enabled: false,
+    clientId: "",
+    slotTop: "",
+    slotBottom: "",
+    slotSidebar: "",
+  }
+
+  try {
+    const settings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: [
+            "adsenseEnabled",
+            "adsensePublisherId",
+            "adsenseBlogPostSlotTop",
+            "adsenseBlogPostSlotBottom",
+            "adsenseBlogPostSlotSidebar",
+          ],
+        },
+      },
+    })
+    const map = new Map(settings.map((s) => [s.key, s.value]))
+    adsense = {
+      enabled: map.get("adsenseEnabled") === "true",
+      clientId: map.get("adsensePublisherId") || "",
+      slotTop: map.get("adsenseBlogPostSlotTop") || "",
+      slotBottom: map.get("adsenseBlogPostSlotBottom") || "",
+      slotSidebar: map.get("adsenseBlogPostSlotSidebar") || "",
+    }
+  } catch (error) {
+    console.error("Error reading AdSense settings for blog post:", error)
+  }
+
+  return <BlogPostClientPage adsense={adsense} />
 }

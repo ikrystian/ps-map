@@ -253,6 +253,38 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ---- Google AdSense (widok pojedynczego posta bloga) ----
+    if (!settingsObject.adsenseEnabled) {
+      settingsObject.adsenseEnabled = {
+        value: "false",
+        description: "Czy wyświetlać reklamy Google AdSense na stronie pojedynczego posta bloga",
+      }
+    }
+    if (!settingsObject.adsensePublisherId) {
+      settingsObject.adsensePublisherId = {
+        value: "",
+        description: "Identyfikator wydawcy Google AdSense (np. ca-pub-XXXXXXXXXXXXXXXX)",
+      }
+    }
+    if (!settingsObject.adsenseBlogPostSlotTop) {
+      settingsObject.adsenseBlogPostSlotTop = {
+        value: "",
+        description: "Identyfikator jednostki reklamowej AdSense wyświetlanej nad treścią posta (pusty = wyłączona)",
+      }
+    }
+    if (!settingsObject.adsenseBlogPostSlotBottom) {
+      settingsObject.adsenseBlogPostSlotBottom = {
+        value: "",
+        description: "Identyfikator jednostki reklamowej AdSense wyświetlanej pod treścią posta (pusty = wyłączona)",
+      }
+    }
+    if (!settingsObject.adsenseBlogPostSlotSidebar) {
+      settingsObject.adsenseBlogPostSlotSidebar = {
+        value: "",
+        description: "Identyfikator jednostki reklamowej AdSense wyświetlanej w bocznym panelu posta (pusty = wyłączona)",
+      }
+    }
+
 
     // SMTP settings
     if (!settingsObject.emailServerHost) {

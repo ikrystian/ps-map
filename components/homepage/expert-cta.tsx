@@ -7,21 +7,15 @@ import Link from "next/link";
 export function ExpertCTA() {
   return (
     <section
-      className="relative overflow-hidden w-full bg-background dark:bg-black py-6 md:py-20 xl:py-24"
+      className="dark relative overflow-hidden w-full bg-black py-6 md:py-20 xl:py-24"
       id="expert-cta"
     >
-      {/* Zdjęcie posągu Temidy jest niemal czarne. W jasnym motywie odwracamy
-          jasność, żeby zamiast czarnego pasa dać ciemny posąg na jasnym tle. */}
+      {/* Sekcja ma zawsze wyglądać jak w motywie ciemnym (niezależnie od
+          wybranego motywu strony) — stąd klasa `dark` na kontenerze. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-cover bg-right bg-no-repeat invert contrast-125 dark:invert-0 dark:contrast-100"
+        className="absolute inset-0 bg-cover bg-right bg-no-repeat"
         style={{ backgroundImage: "url('/meet-expert_popr.webp')" }}
-      />
-      {/* Wygaszenie tła pod kolumną z tekstem — tylko w jasnym motywie, ciemny
-          i tak ma wystarczający kontrast. */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent dark:hidden"
       />
 
       <div className="container mx-auto px-6 md:px-8 relative z-10">

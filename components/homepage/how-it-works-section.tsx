@@ -11,7 +11,7 @@ export function HowItWorksSection() {
     const [activeTab, setActiveTab] = useState<"user" | "expert">("user")
 
     return (
-        <section className="bg-background dark:bg-black text-foreground py-8 lg:py-20 xl:py-24 overflow-hidden relative">
+        <section className="dark bg-black text-foreground py-8 lg:py-20 xl:py-24 overflow-hidden relative">
             <div className="container mx-auto px-4 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -83,54 +83,54 @@ export function HowItWorksSection() {
                                 {activeTab === "user" ? (
                                     <>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Dodaj swoją sprawę</span> – opisz problem, a my dopasujemy do Ciebie odpowiednich ekspertów.
+                                                <span className="font-bold text-[#C5A66F]">Dodaj swoją sprawę</span> – opisz problem, a my dopasujemy do Ciebie odpowiednich ekspertów.
                                             </div>
                                         </li>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Otrzymaj oferty</span> – specjaliści zaproponują warunki współpracy, a Ty wybierzesz najlepszą ofertę.
+                                                <span className="font-bold text-[#C5A66F]">Otrzymaj oferty</span> – specjaliści zaproponują warunki współpracy, a Ty wybierzesz najlepszą ofertę.
                                             </div>
                                         </li>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Rozwiąż swoją sprawę</span> – kontaktuj się bezpośrednio z wybranym ekspertem i uzyskaj pomoc.
+                                                <span className="font-bold text-[#C5A66F]">Rozwiąż swoją sprawę</span> – kontaktuj się bezpośrednio z wybranym ekspertem i uzyskaj pomoc.
                                             </div>
                                         </li>
                                     </>
                                 ) : (
                                     <>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Załóż konto eksperta</span> – wypełnij profil i potwierdź swoje kwalifikacje.
+                                                <span className="font-bold text-[#C5A66F]">Załóż konto eksperta</span> – wypełnij profil i potwierdź swoje kwalifikacje.
                                             </div>
                                         </li>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Przeglądaj zlecenia</span> – otrzymuj powiadomienia o nowych sprawach pasujących do Twojej specjalizacji.
+                                                <span className="font-bold text-[#C5A66F]">Przeglądaj zlecenia</span> – otrzymuj powiadomienia o nowych sprawach pasujących do Twojej specjalizacji.
                                             </div>
                                         </li>
                                         <li className="flex gap-3 items-start">
-                                            <div className="mt-1 bg-primary/10 dark:bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
-                                                <CheckCircle2 className="w-4 h-4 text-primary dark:text-[#4ADE80]" />
+                                            <div className="mt-1 bg-[#163300] rounded-full p-1 min-w-[24px] h-[24px] flex items-center justify-center">
+                                                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-secondary dark:text-[#C5A66F]">Zarabiaj i buduj markę</span> – realizuj zlecenia i zbieraj pozytywne opinie od klientów.
+                                                <span className="font-bold text-[#C5A66F]">Zarabiaj i buduj markę</span> – realizuj zlecenia i zbieraj pozytywne opinie od klientów.
                                             </div>
                                         </li>
                                     </>

@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon } from "lucide-react"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -461,6 +461,13 @@ export default function AdminSettingsPage() {
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState("")
   const [googleAnalyticsEnabled, setGoogleAnalyticsEnabled] = useState("false")
 
+  // Google AdSense (widok pojedynczego posta bloga)
+  const [adsenseEnabled, setAdsenseEnabled] = useState("false")
+  const [adsensePublisherId, setAdsensePublisherId] = useState("")
+  const [adsenseBlogPostSlotTop, setAdsenseBlogPostSlotTop] = useState("")
+  const [adsenseBlogPostSlotBottom, setAdsenseBlogPostSlotBottom] = useState("")
+  const [adsenseBlogPostSlotSidebar, setAdsenseBlogPostSlotSidebar] = useState("")
+
   // Coming Soon Mode
   const [comingSoonMode, setComingSoonMode] = useState("false")
 
@@ -534,6 +541,13 @@ export default function AdminSettingsPage() {
         // Google Analytics
         setGoogleAnalyticsId(data.googleAnalyticsId?.value || "")
         setGoogleAnalyticsEnabled(data.googleAnalyticsEnabled?.value || "false")
+
+        // Google AdSense (widok pojedynczego posta bloga)
+        setAdsenseEnabled(data.adsenseEnabled?.value || "false")
+        setAdsensePublisherId(data.adsensePublisherId?.value || "")
+        setAdsenseBlogPostSlotTop(data.adsenseBlogPostSlotTop?.value || "")
+        setAdsenseBlogPostSlotBottom(data.adsenseBlogPostSlotBottom?.value || "")
+        setAdsenseBlogPostSlotSidebar(data.adsenseBlogPostSlotSidebar?.value || "")
 
         // Coming Soon Mode
         setComingSoonMode(data.comingSoonMode?.value || "false")
@@ -957,6 +971,26 @@ export default function AdminSettingsPage() {
             googleAnalyticsEnabled: {
               value: googleAnalyticsEnabled,
               description: "Czy śledzenie Google Analytics jest włączone",
+            },
+            adsenseEnabled: {
+              value: adsenseEnabled,
+              description: "Czy wyświetlać reklamy Google AdSense na stronie pojedynczego posta bloga",
+            },
+            adsensePublisherId: {
+              value: adsensePublisherId,
+              description: "Identyfikator wydawcy Google AdSense (np. ca-pub-XXXXXXXXXXXXXXXX)",
+            },
+            adsenseBlogPostSlotTop: {
+              value: adsenseBlogPostSlotTop,
+              description: "Identyfikator jednostki reklamowej AdSense wyświetlanej nad treścią posta (pusty = wyłączona)",
+            },
+            adsenseBlogPostSlotBottom: {
+              value: adsenseBlogPostSlotBottom,
+              description: "Identyfikator jednostki reklamowej AdSense wyświetlanej pod treścią posta (pusty = wyłączona)",
+            },
+            adsenseBlogPostSlotSidebar: {
+              value: adsenseBlogPostSlotSidebar,
+              description: "Identyfikator jednostki reklamowej AdSense wyświetlanej w bocznym panelu posta (pusty = wyłączona)",
             },
             comingSoonMode: {
               value: comingSoonMode,
@@ -1438,6 +1472,92 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>Śledzenie jest włączone, ale nie podano Identyfikatora pomiaru Google Analytics. Wprowadź poprawny identyfikator G-XXXXXXXXXX i zapisz ustawienia.</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Google AdSense — widok pojedynczego posta bloga */}
+          <Card className="border-orange-500/20 bg-orange-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-orange-600 dark:text-orange-400 flex items-center gap-2">
+                <Megaphone className="h-5 w-5" />
+                Google AdSense — blog
+              </CardTitle>
+              <CardDescription>
+                Skonfiguruj wyświetlanie reklam Google AdSense na stronie pojedynczego posta bloga (nad treścią, pod treścią i w panelu bocznym).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4 bg-background">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Włącz reklamy AdSense na blogu</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Gdy opcja jest włączona, skrypt AdSense jest dołączany na stronach pojedynczych postów, a jednostki reklamowe z uzupełnionym identyfikatorem są wyświetlane.
+                  </p>
+                </div>
+                <Switch
+                  checked={adsenseEnabled === "true"}
+                  onCheckedChange={(checked) => setAdsenseEnabled(checked ? "true" : "false")}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="adsense-publisher-id">Identyfikator wydawcy (Publisher ID)</Label>
+                <Input
+                  id="adsense-publisher-id"
+                  type="text"
+                  value={adsensePublisherId}
+                  onChange={(e) => setAdsensePublisherId(e.target.value)}
+                  placeholder="ca-pub-XXXXXXXXXXXXXXXX"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Identyfikator klienta AdSense widoczny w panelu Google AdSense (zaczyna się od <strong>ca-pub-</strong>).
+                </p>
+              </div>
+
+              <Separator />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="adsense-slot-top">Slot — nad treścią posta</Label>
+                  <Input
+                    id="adsense-slot-top"
+                    type="text"
+                    value={adsenseBlogPostSlotTop}
+                    onChange={(e) => setAdsenseBlogPostSlotTop(e.target.value)}
+                    placeholder="np. 1234567890"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="adsense-slot-bottom">Slot — pod treścią posta</Label>
+                  <Input
+                    id="adsense-slot-bottom"
+                    type="text"
+                    value={adsenseBlogPostSlotBottom}
+                    onChange={(e) => setAdsenseBlogPostSlotBottom(e.target.value)}
+                    placeholder="np. 1234567890"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="adsense-slot-sidebar">Slot — panel boczny</Label>
+                  <Input
+                    id="adsense-slot-sidebar"
+                    type="text"
+                    value={adsenseBlogPostSlotSidebar}
+                    onChange={(e) => setAdsenseBlogPostSlotSidebar(e.target.value)}
+                    placeholder="np. 1234567890"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Puste pole slotu wyłącza daną jednostkę reklamową — wypełnij tylko te miejsca, w których mają pojawiać się reklamy.
+              </p>
+
+              {adsenseEnabled === "true" && !adsensePublisherId.trim() && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>Reklamy są włączone, ale nie podano Identyfikatora wydawcy AdSense. Wprowadź poprawny identyfikator ca-pub-XXXXXXXXXXXXXXXX i zapisz ustawienia.</span>
                 </div>
               )}
             </CardContent>

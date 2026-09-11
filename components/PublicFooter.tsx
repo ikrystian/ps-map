@@ -108,7 +108,7 @@ export default function PublicFooter() {
   ]
 
   return (
-    <footer id="public-footer" className="relative overflow-hidden shadow-lg bg-background text-foreground/80 border-t border-border">
+    <footer id="public-footer" className="dark relative overflow-hidden shadow-lg bg-background text-foreground/80 border-t border-border">
       {/* Labyrinth background pattern overlay */}
       <div className="absolute inset-0 opacity-100 z-10 pointer-events-none" />
 
