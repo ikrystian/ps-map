@@ -950,7 +950,7 @@ export default function PublicHeader({
                           isAktualnosciActive ? "text-primary font-semibold" : "text-foreground"
                         )}
                       >
-                        Aktualności
+                        Pełnoprawnik
                       </Link>
 
                       <Link

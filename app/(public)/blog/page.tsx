@@ -4,7 +4,7 @@ import { getPublicBlogCategories } from "@/lib/blog-categories"
 import { getPublicBlogPosts } from "@/lib/blog-posts"
 
 export const metadata: Metadata = {
-  title: "Blog Prawny - Porady, Artykuły i Analizy",
+  title: "Pełnoprawnik - Porady, Artykuły i Analizy Prawne",
   description: "Baza wiedzy prawnej. Czytaj artykuły, analizy i porady przygotowane przez profesjonalnych ekspertów.",
 }
 

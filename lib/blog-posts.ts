@@ -1,7 +1,14 @@
+import { cache } from "react"
+import { auth } from "@/auth"
 import { getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
 import { prisma } from "@/lib/prisma"
 import { PaginationData } from "@/types/pagination"
 import { BlogPost } from "@/types/blog"
+
+const PUBLISHED_BLOG_POST_WHERE = {
+  opublikowany: true,
+  OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }],
+} as const
 
 interface GetPublicBlogPostsOptions {
   page?: number
@@ -110,3 +117,124 @@ export async function getPublicBlogPosts(
     },
   }
 }
+
+/**
+ * Sloty opublikowanych wpisów bloga — jedno źródło prawdy używane zarówno
+ * przez sitemap.xml, jak i przez generateStaticParams strony /blog/[slug],
+ * żeby obie generacje zawsze obejmowały dokładnie ten sam zestaw URL-i.
+ */
+export async function getPublishedBlogPostSlugs() {
+  return prisma.blogPost.findMany({
+    where: PUBLISHED_BLOG_POST_WHERE,
+    select: { slug: true, updatedAt: true },
+  })
+}
+
+const BLOG_POST_DETAIL_INCLUDE = {
+  category: {
+    include: {
+      parent: {
+        select: {
+          id: true,
+          nazwa: true,
+          slug: true,
+          parent: {
+            select: { id: true, nazwa: true, slug: true },
+          },
+        },
+      },
+    },
+  },
+  lawFirm: {
+    select: {
+      id: true,
+      nazwa: true,
+      logo: true,
+      opis: true,
+      slug: true,
+      user: {
+        select: {
+          miasto: true,
+          voivodeship: { select: { id: true, nazwa: true, slug: true } },
+        },
+      },
+    },
+  },
+  sponsoredLawFirm: {
+    select: {
+      id: true,
+      nazwa: true,
+      logo: true,
+      opis: true,
+      slug: true,
+      user: {
+        select: {
+          miasto: true,
+          voivodeship: { select: { id: true, nazwa: true } },
+        },
+      },
+    },
+  },
+} as const
+
+/**
+ * Pobiera pojedynczy wpis bloga do server-side renderu strony /blog/[slug]
+ * (i jej metadata). Nieopublikowany/zaplanowany wpis jest widoczny tylko dla
+ * autora/admina — `auth()` jest wywoływane wyłącznie w tej gałęzi, dzięki
+ * czemu opublikowane wpisy pozostają w pełni statyczne (ISR), a podgląd
+ * szkicu automatycznie renderuje się dynamicznie i nigdy nie trafia do cache.
+ * Owinięte w `cache()`, żeby generateMetadata i sama strona nie odpytywały
+ * bazy dwukrotnie w ramach tego samego requestu.
+ */
+export const getPublicBlogPostBySlug = cache(async (slug: string) => {
+  const post = await prisma.blogPost.findUnique({
+    where: { slug },
+    include: BLOG_POST_DETAIL_INCLUDE,
+  })
+
+  if (!post) return null
+
+  const isUnpublished = Boolean(
+    !post.opublikowany || (post.dataPublikacji && post.dataPublikacji > new Date())
+  )
+
+  if (isUnpublished) {
+    const session = await auth()
+    let isAuthor = false
+
+    if (session?.user) {
+      if (session.user.role === "ADMIN") {
+        isAuthor = true
+      } else if (session.user.role === "LAW_FIRM") {
+        const lawFirm = await prisma.lawFirm.findUnique({
+          where: { userId: session.user.id },
+          select: { id: true },
+        })
+        if (lawFirm && post.lawFirmId === lawFirm.id) {
+          isAuthor = true
+        }
+      }
+    }
+
+    if (!isAuthor) return null
+  }
+
+  return {
+    ...post,
+    lawFirm: post.lawFirm
+      ? {
+        ...post.lawFirm,
+        miasto: post.lawFirm.user?.miasto ?? "",
+        voivodeship: post.lawFirm.user?.voivodeship ?? null,
+      }
+      : post.lawFirm,
+    sponsoredLawFirm: post.sponsoredLawFirm
+      ? {
+        ...post.sponsoredLawFirm,
+        miasto: post.sponsoredLawFirm.user?.miasto ?? "",
+        voivodeship: post.sponsoredLawFirm.user?.voivodeship ?? null,
+      }
+      : post.sponsoredLawFirm,
+    isUnpublished,
+  } as unknown as BlogPost & { isUnpublished: boolean }
+})

@@ -1432,6 +1432,11 @@ a .bg-card {
   font-size: 1rem;
 }
 
+#post-content figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
 #post-content .prose p {
   margin-top: 0;
   margin-bottom: 1.5rem;
@@ -1461,6 +1466,13 @@ a .bg-card {
 #post-content .prose h3 {
   font-size: 1.45rem;
   margin-top: 2.25rem;
+}
+
+@media (width < 768px) {
+  #post-content .prose h3 {
+    margin-top: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
 }
 
 #post-content .prose h4 {

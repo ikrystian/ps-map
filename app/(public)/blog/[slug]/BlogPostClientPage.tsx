@@ -13,8 +13,7 @@ import {
   Tag
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
 
@@ -27,43 +26,17 @@ interface AdSenseSettings {
 }
 
 interface BlogPostClientPageProps {
+  post: BlogPost & { isUnpublished?: boolean };
   adsense?: AdSenseSettings;
 }
 
-export default function BlogPostPage({ adsense }: BlogPostClientPageProps) {
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const params = useParams();
-  const slug = params.slug as string;
-
+export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps) {
+  // Treść jest już dostarczona server-side (patrz page.tsx) — tu tylko
+  // liczymy realną odsłonę, niezależnie od statycznego/ISR cache'owania strony.
   useEffect(() => {
-    fetchPost();
-  }, [slug]);
-
-  const fetchPost = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/blog/posts/${slug}`);
-
-      if (response.status === 404) {
-        setError("Nie znaleziono artykułu");
-        return;
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-        setPost(data);
-      } else {
-        throw new Error("Błąd pobierania artykułu");
-      }
-    } catch (error) {
-      console.error("Error fetching post:", error);
-      setError("Wystąpił błąd podczas ładowania artykułu");
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (post.isUnpublished) return;
+    fetch(`/api/blog/posts/${post.slug}/view`, { method: "POST", keepalive: true }).catch(() => {});
+  }, [post.slug, post.isUnpublished]);
 
   const formatDate = (dateString?: string | Date | null) => {
     if (!dateString) return "";
@@ -98,44 +71,8 @@ export default function BlogPostPage({ adsense }: BlogPostClientPageProps) {
   const imageY = useTransform(scrollY, [0, 600], [0, 180]);
   const imageScale = useTransform(scrollY, [0, 600], [1, 1.1]);
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg animate-pulse text-muted-foreground">
-            Ładowanie artykułu...
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !post) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center py-16 bg-background-sec border border-border/60 rounded-3xl max-w-xl mx-auto p-8 backdrop-blur-sm shadow-xl">
-          <h2 className="text-2xl font-bold mb-2 font-playfair text-foreground">
-            Artykuł nie znaleziony
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {error || "Nie można znaleźć tego artykułu"}
-          </p>
-          <Button
-            asChild
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6"
-          >
-            <Link href="/blog">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Wróć do bloga
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   // Calculate estimated reading time (assuming 200 words per minute)
-  const estimatedReadingTime = post && post.tresc
+  const estimatedReadingTime = post.tresc
     ? Math.ceil(post.tresc.replace(/<[^>]*>/g, "").split(/\s+/).length / 200)
     : 0;
 
@@ -182,7 +119,7 @@ export default function BlogPostPage({ adsense }: BlogPostClientPageProps) {
     </Fragment>
   ));
 
-  const isUnpublished = Boolean(post && (!post.opublikowany || (post.dataPublikacji && new Date(post.dataPublikacji) > new Date())));
+  const isUnpublished = Boolean(post.isUnpublished);
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">

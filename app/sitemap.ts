@@ -1,3 +1,4 @@
+import { getPublishedBlogPostSlugs } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import type { MetadataRoute } from "next"
 
@@ -46,13 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { aktywna: true, zweryfikowana: true },
       select: { slug: true, updatedAt: true },
     }),
-    prisma.blogPost.findMany({
-      where: {
-        opublikowany: true,
-        OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }],
-      },
-      select: { slug: true, updatedAt: true },
-    }),
+    getPublishedBlogPostSlugs(),
     prisma.page.findMany({
       where: { published: true },
       select: { slug: true, updatedAt: true },

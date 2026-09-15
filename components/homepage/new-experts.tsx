@@ -85,7 +85,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                 <Link
                   href={`/ekspert/${firm.slug}?src=home-new`}
                   key={firm.id}
-                  className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-card rounded-2xl overflow-hidden border border-border/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
+                  className="w-[calc(100%-6px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-card rounded-2xl overflow-hidden border border-border/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
                 >
                   {/* Image Section */}
                   <div className="relative h-[140px] md:h-[290px] w-full overflow-hidden bg-background">

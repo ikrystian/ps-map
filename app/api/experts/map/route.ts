@@ -1,16 +1,15 @@
 import { prisma } from "@/lib/prisma"
+import { buildAddress, geocodeAddress, inPolandBounds } from "@/lib/geocoding"
 import { NextResponse } from "next/server"
 
 /**
  * GET /api/experts/map
  *
- * Zwraca ekspertów z ustalonymi współrzędnymi (User.latitude/longitude)
- * w formie lekkiej listy pod pinezki na mapie. Współrzędne uzupełnia
- * skrypt geokodujący (`bun run db:geocode:experts`).
+ * Zwraca ekspertów, którzy podali adres (User.adres/miasto), w formie
+ * lekkiej listy pod pinezki na mapie. Współrzędne liczone są na żywo
+ * z adresu — User.latitude/longitude działa tu tylko jako cache, żeby
+ * nie geokodować tego samego adresu przy każdym żądaniu.
  */
-
-// Ramka Polski — odsiewa współrzędne wpisane omyłkowo (np. odwrócone lat/lng).
-const POLAND_BOUNDS = { minLat: 48.9, maxLat: 55.0, minLng: 14.0, maxLng: 24.2 }
 
 export const revalidate = 300
 
@@ -20,8 +19,7 @@ export async function GET() {
       where: {
         aktywna: true,
         user: {
-          latitude: { not: null },
-          longitude: { not: null },
+          OR: [{ adres: { not: null } }, { miasto: { not: null } }],
         },
       },
       select: {
@@ -34,6 +32,7 @@ export async function GET() {
         stronaWww: true,
         user: {
           select: {
+            id: true,
             image: true,
             imie: true,
             nazwisko: true,
@@ -55,10 +54,38 @@ export async function GET() {
       },
     })
 
-    const experts = lawFirms
-      .map((firm) => {
-        const lat = firm.user.latitude as number
-        const lng = firm.user.longitude as number
+    const resolved = await Promise.all(
+      lawFirms.map(async (firm) => {
+        let lat = firm.user.latitude
+        let lng = firm.user.longitude
+
+        // Brak zapisanego cache współrzędnych dla tego adresu — dogeokoduj.
+        if (lat === null || lng === null) {
+          const address = buildAddress({
+            adres: firm.user.adres,
+            kodPocztowy: firm.user.kodPocztowy,
+            miasto: firm.user.miasto,
+          })
+
+          try {
+            const coords = await geocodeAddress(address)
+            if (coords && inPolandBounds(coords)) {
+              lat = coords.lat
+              lng = coords.lng
+              // Zapisz jako cache, żeby kolejne żądania nie geokodowały ponownie.
+              await prisma.user.update({
+                where: { id: firm.user.id },
+                data: { latitude: lat, longitude: lng },
+              })
+            }
+          } catch (error) {
+            console.error(`Geokodowanie nieudane dla ${firm.nazwa}:`, error)
+          }
+        }
+
+        if (lat === null || lng === null) return null
+        if (!inPolandBounds({ lat, lng })) return null
+
         const oceny = firm.reviews.map((r) => r.ocenaOgolna)
 
         return {
@@ -84,13 +111,9 @@ export async function GET() {
             : null,
         }
       })
-      .filter(
-        (e) =>
-          e.lat >= POLAND_BOUNDS.minLat &&
-          e.lat <= POLAND_BOUNDS.maxLat &&
-          e.lng >= POLAND_BOUNDS.minLng &&
-          e.lng <= POLAND_BOUNDS.maxLng
-      )
+    )
+
+    const experts = resolved.filter((e): e is NonNullable<typeof e> => e !== null)
 
     return NextResponse.json({ experts, total: experts.length })
   } catch (error) {

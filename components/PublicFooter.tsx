@@ -178,7 +178,7 @@ export default function PublicFooter() {
               <li>
                 <Link href="/blog" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
-                  <span>Artykuły</span>
+                  <span>Pełnoprawnik</span>
                 </Link>
               </li>
               <li>

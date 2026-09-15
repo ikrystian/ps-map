@@ -493,7 +493,7 @@ export default function BlogPageClient({
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
                 <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-                  Baza Wiedzy Prawnej
+                  Pełnoprawnik
                 </span>
               </motion.div>
 
