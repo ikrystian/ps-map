@@ -31,14 +31,14 @@ const PROVIDERS: ProviderConfig[] = [
     iconClassName: "text-foreground",
     iconWrapperClassName: "bg-foreground/10",
   },
-  {
-    id: "facebook",
-    label: "Facebook",
-    statusParam: "fb_link",
-    Icon: FaFacebook,
-    iconClassName: "text-[#1877F2]",
-    iconWrapperClassName: "bg-[#1877F2]/15",
-  },
+  // {
+  //   id: "facebook",
+  //   label: "Facebook",
+  //   statusParam: "fb_link",
+  //   Icon: FaFacebook,
+  //   iconClassName: "text-[#1877F2]",
+  //   iconWrapperClassName: "bg-[#1877F2]/15",
+  // },
   {
     id: "linkedin",
     label: "LinkedIn",
