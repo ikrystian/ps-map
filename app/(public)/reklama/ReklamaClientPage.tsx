@@ -519,7 +519,7 @@ ${formData.tresc}`
                             <span className="w-2 h-2 rounded-full bg-green-500/80" />
                           </div>
                           <div className="bg-background/80 text-[9px] text-muted-foreground/75 px-3 py-0.5 rounded-sm mx-auto w-48 text-center truncate font-mono">
-                            prostawsprawa.pl/wyszukiwarka
+                            ProstaSprawa.pl/wyszukiwarka
                           </div>
                         </div>
                         {/* Browser Window Body */}

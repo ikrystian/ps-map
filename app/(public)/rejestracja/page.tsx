@@ -3,21 +3,52 @@ import { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
+import { prisma } from "@/lib/prisma"
+import { UserRole } from "@prisma/client"
+
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Załóż bezpłatne konto",
   description: "Wybierz rodzaj konta (Klient lub Ekspert) i dołącz do platformy Prosta Sprawa już dziś.",
 }
 
-export default function RegistrationPage() {
+export default async function RegistrationPage() {
+  let expertsCount = 0
+  let usersCount = 0
+  let casesCount = 0
+
+  try {
+    const [experts, users, cases] = await Promise.all([
+      prisma.user.count({
+        where: {
+          role: UserRole.LAW_FIRM,
+          deletedAt: null,
+        },
+      }),
+      prisma.user.count({
+        where: {
+          deletedAt: null,
+        },
+      }),
+      prisma.case.count(),
+    ])
+
+    expertsCount = experts
+    usersCount = users
+    casesCount = cases
+  } catch (error) {
+    console.error("Błąd podczas pobierania statystyk dla strony rejestracji:", error)
+  }
+
   return (
     <AuthLayout
       heroTitle="Dołącz do społeczności ProstaSprawa"
       heroDescription="Niezależnie od tego, czy szukasz pomocy prawnej, czy oferujesz usługi prawne - jesteśmy tu dla Ciebie."
       heroStats={[
-        { value: 2000, unit: "+", label: "Zaufanych prawników" },
-        { value: 15000, unit: "+", label: "Użytkowników" },
-        { value: 99, unit: "%", label: "Pozytywnych opinii" },
+        { value: expertsCount, label: "Zaufanych prawników" },
+        { value: usersCount, label: "Użytkowników" },
+        { value: casesCount, label: "Dodanych spraw" },
       ]}
       containerClassName="max-w-4xl"
     >

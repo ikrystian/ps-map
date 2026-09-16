@@ -1739,19 +1739,12 @@ export default function ForLawyersClientPage() {
                                             <div className="trust-metrics-bar">
                                                 <div className="trust-metric">
                                                     <span className="metric-icon">⚡</span>{" "}
-                                                    <span className="metric-text">Odpowiada zwykle w <strong>24 h</strong></span>
+                                                    <span className="metric-text">Odpowiada w <strong>24 h</strong></span>
                                                 </div>
                                                 <div className="trust-metric">
                                                     <span className="metric-icon">🏆</span>{" "}
                                                     <span className="metric-text">Skuteczność: <strong>98%</strong></span>
                                                 </div>
-                                            </div>
-
-                                            {/* Mini Review Quote */}
-                                            <div className="trust-review-quote">
-                                                <p>„Świetny kontakt, rzeczowe podejście do sprawy rozwodowej. Odpowiedź otrzymałem w
-                                                    niespełna 2 godziny!”</p>
-                                                <span className="quote-author">— Marek K., Klient zweryfikowany</span>
                                             </div>
                                         </div>
                                     </div>

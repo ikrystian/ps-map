@@ -59,14 +59,6 @@ export function AuthLayout({
           {/* Form Content */}
           <div className="space-y-6">{children}</div>
 
-          <div className="pt-8 border-t border-border/50">
-            <p className="text-center text-xs text-muted-foreground">
-              © {new Date().getFullYear()} ProstaSprawa. Profesjonalna platforma
-              prawna.
-              <br />
-              Wszystkie prawa zastrzeżone.
-            </p>
-          </div>
         </motion.div>
       </div>
 
