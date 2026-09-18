@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search")
     const type = searchParams.get("type")
     const expertiseCategoryId = searchParams.get("expertiseCategoryId")
-    const bieglySadowy = searchParams.get("bieglySadowy")
+    const wideoKonsultacje = searchParams.get("wideoKonsultacje")
     const sortBy = searchParams.get("sortBy")
     const limit = parseInt(searchParams.get("limit") || "20")
     const offset = parseInt(searchParams.get("offset") || "0")
@@ -146,8 +146,8 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    if (bieglySadowy === "true") {
-      andConditions.push({ bieglySadowy: true })
+    if (wideoKonsultacje === "true") {
+      andConditions.push({ consultationAvailabilities: { some: {} } })
     }
 
     if (search) {

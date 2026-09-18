@@ -151,6 +151,7 @@ export default function CategoryClientPage({
   const [minRating, setMinRating] = useState<string | null>(null)
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
+  const [wideoKonsultacjeOnly, setWideoKonsultacjeOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
   const [isLoading, setIsLoading] = useState(true)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
@@ -346,6 +347,7 @@ export default function CategoryClientPage({
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
+        if (wideoKonsultacjeOnly) params.append("wideoKonsultacje", "true")
         if (sortBy) params.append("sortBy", sortBy)
         if (selectedExpertiseCategory && selectedExpertiseCategory !== "all") {
           params.append("expertiseCategoryId", selectedExpertiseCategory)
@@ -379,6 +381,7 @@ export default function CategoryClientPage({
     minRating,
     onlineOnly,
     verifiedOnly,
+    wideoKonsultacjeOnly,
     sortBy,
     page,
     limit,
@@ -395,6 +398,7 @@ export default function CategoryClientPage({
     (minRating && minRating !== "all") ||
     onlineOnly ||
     verifiedOnly ||
+    wideoKonsultacjeOnly ||
     (selectedExpertiseCategory && selectedExpertiseCategory !== "all")
   )
 
@@ -423,6 +427,7 @@ export default function CategoryClientPage({
     setMinRating("all")
     setOnlineOnly(false)
     setVerifiedOnly(false)
+    setWideoKonsultacjeOnly(false)
     setSortBy("relevance")
     setSelectedExpertiseCategory("all")
     setPage(1)
@@ -762,6 +767,17 @@ export default function CategoryClientPage({
                     />
                     <Label htmlFor="verifiedOnly" className="cursor-pointer">
                       Tylko zweryfikowane
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="wideoKonsultacjeOnly"
+                      checked={wideoKonsultacjeOnly}
+                      onCheckedChange={(checked) => setWideoKonsultacjeOnly(checked as boolean)}
+                    />
+                    <Label htmlFor="wideoKonsultacjeOnly" className="cursor-pointer">
+                      Wideo Konsultacje
                     </Label>
                   </div>
                 </div>

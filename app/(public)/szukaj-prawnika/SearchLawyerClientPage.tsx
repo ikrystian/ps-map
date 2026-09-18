@@ -102,7 +102,7 @@ export default function SearchLawyerPage() {
   const [minRating, setMinRating] = useState("all")
   const [onlineOnly, setOnlineOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
-  const [bieglySadowyOnly, setBieglySadowyOnly] = useState(false)
+  const [wideoKonsultacjeOnly, setWideoKonsultacjeOnly] = useState(false)
   const [sortBy, setSortBy] = useState("relevance")
 
   // Geographic hierarchy
@@ -206,7 +206,7 @@ export default function SearchLawyerPage() {
         if (minRating && minRating !== "all") params.append("ratingMin", minRating)
         if (onlineOnly) params.append("onlineOnly", "true")
         if (verifiedOnly) params.append("verifiedOnly", "true")
-        if (bieglySadowyOnly) params.append("bieglySadowy", "true")
+        if (wideoKonsultacjeOnly) params.append("wideoKonsultacje", "true")
         if (selectedExpertiseCategory && selectedExpertiseCategory !== "all") {
           params.append("expertiseCategoryId", selectedExpertiseCategory)
         }
@@ -228,7 +228,7 @@ export default function SearchLawyerPage() {
     }
 
     fetchLawFirms()
-  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, bieglySadowyOnly, sortBy, page, limit, selectedExpertiseCategory])
+  }, [searchQuery, selectedCategory, selectedVoivodeship, selectedCity, selectedCounty, geographicHierarchy, selectedType, minRating, onlineOnly, verifiedOnly, wideoKonsultacjeOnly, sortBy, page, limit, selectedExpertiseCategory])
 
   // Dynamic fetch and caching for cities
   useEffect(() => {
@@ -318,6 +318,7 @@ export default function SearchLawyerPage() {
     setMinRating("all")
     setOnlineOnly(false)
     setVerifiedOnly(false)
+    setWideoKonsultacjeOnly(false)
     setSortBy("relevance")
     setSelectedExpertiseCategory("all")
     setPage(1)
@@ -669,12 +670,12 @@ export default function SearchLawyerPage() {
 
                         <div className="flex items-center space-x-2">
                           <Checkbox
-                            id="bieglySadowyOnly"
-                            checked={bieglySadowyOnly}
-                            onCheckedChange={(checked) => setBieglySadowyOnly(checked as boolean)}
+                            id="wideoKonsultacjeOnly"
+                            checked={wideoKonsultacjeOnly}
+                            onCheckedChange={(checked) => setWideoKonsultacjeOnly(checked as boolean)}
                           />
-                          <Label htmlFor="bieglySadowyOnly" className="cursor-pointer text-sm font-normal">
-                            Biegły sądowy
+                          <Label htmlFor="wideoKonsultacjeOnly" className="cursor-pointer text-sm font-normal">
+                            Wideo Konsultacje
                           </Label>
                         </div>
                       </div>
