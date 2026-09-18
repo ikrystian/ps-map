@@ -88,7 +88,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                   className="w-[calc(100%-6px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col bg-card rounded-2xl overflow-hidden border border-border/60 shadow-xl hover:shadow-2xl transition-all duration-300 group relative"
                 >
                   {/* Image Section */}
-                  <div className="relative h-[140px] md:h-[290px] w-full overflow-hidden bg-background">
+                  <div className="relative md:h-[290px] w-full overflow-hidden bg-background">
                     {/* Gold emblem badge top-left */}
                     <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-card/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
                       <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
