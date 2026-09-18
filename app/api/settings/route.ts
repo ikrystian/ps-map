@@ -61,6 +61,9 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.enableUserSelectionOnLogin) {
       settingsObject.enableUserSelectionOnLogin = "true"
     }
+    if (!settingsObject.enableRecaptchaOnLogin) {
+      settingsObject.enableRecaptchaOnLogin = "false"
+    }
     if (!settingsObject.geographicHierarchy) {
       settingsObject.geographicHierarchy = "voivodeships"
     }
@@ -116,6 +119,7 @@ export async function GET(request: NextRequest) {
         enablePaymentPrzelew: "true",
         enablePaymentTpay: "true",
         enableUserSelectionOnLogin: "true",
+        enableRecaptchaOnLogin: "false",
         publicItemsPerPage: "12",
       },
       { status: 200 }

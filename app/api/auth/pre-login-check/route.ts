@@ -8,13 +8,18 @@ export async function POST(request: Request) {
   try {
     const { email, password, recaptchaToken } = await request.json()
 
-    // Weryfikacja reCAPTCHA
-    const recaptchaResult = await verifyRecaptchaToken(recaptchaToken, "login")
-    if (!recaptchaResult.success) {
-      return NextResponse.json(
-        { error: recaptchaResult.error || "Weryfikacja reCAPTCHA nie powiodła się" },
-        { status: 400 }
-      )
+    // Weryfikacja reCAPTCHA — opcja z ustawień panelu administratora
+    const recaptchaSetting = await prisma.settings.findUnique({ where: { key: "enableRecaptchaOnLogin" } })
+    const recaptchaOnLoginEnabled = recaptchaSetting?.value === "true"
+
+    if (recaptchaOnLoginEnabled) {
+      const recaptchaResult = await verifyRecaptchaToken(recaptchaToken, "login")
+      if (!recaptchaResult.success) {
+        return NextResponse.json(
+          { error: recaptchaResult.error || "Weryfikacja reCAPTCHA nie powiodła się" },
+          { status: 400 }
+        )
+      }
     }
 
     if (!email || !password) {

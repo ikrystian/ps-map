@@ -52,6 +52,7 @@ export default function LoginPage() {
   const [devUsers, setDevUsers] = useState<DevUser[]>([])
   const [selectedUser, setSelectedUser] = useState<DevUser | null>(null)
   const [enableUserSelection, setEnableUserSelection] = useState(true)
+  const [enableRecaptcha, setEnableRecaptcha] = useState(false)
   const [comboOpen, setComboOpen] = useState(false)
   const [userSearch, setUserSearch] = useState("")
   const [loadingUsers, setLoadingUsers] = useState(false)
@@ -64,6 +65,7 @@ export default function LoginPage() {
         if (response.ok) {
           const data = await response.json()
           setEnableUserSelection(data.enableUserSelectionOnLogin !== "false")
+          setEnableRecaptcha(data.enableRecaptchaOnLogin === "true")
         }
       } catch (error) {
         console.error("Error fetching settings:", error)
@@ -188,7 +190,7 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const recaptchaToken = await executeRecaptcha("login")
+      const recaptchaToken = enableRecaptcha ? await executeRecaptcha("login") : null
       // 1. Sprawdzenie pre-login
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",
@@ -230,7 +232,7 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const recaptchaToken = await executeRecaptcha("login")
+      const recaptchaToken = enableRecaptcha ? await executeRecaptcha("login") : null
       // 1. Sprawdzenie pre-login w celu pobrania dokładnego błędu w języku polskim
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",

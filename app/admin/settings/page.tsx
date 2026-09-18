@@ -164,6 +164,10 @@ interface Settings {
     value: string
     description: string | null
   }
+  enableRecaptchaOnLogin?: {
+    value: string
+    description: string | null
+  }
   smsMode?: {
     value: string
     description: string | null
@@ -409,6 +413,7 @@ export default function AdminSettingsPage() {
   const [deleteCost2, setDeleteCost2] = useState("300")
   const [deleteCost3, setDeleteCost3] = useState("100")
   const [enableUserSelectionOnLogin, setEnableUserSelectionOnLogin] = useState("true")
+  const [enableRecaptchaOnLogin, setEnableRecaptchaOnLogin] = useState("false")
   const [ksefEnabled, setKsefEnabled] = useState("false")
   const [ksefNip, setKsefNip] = useState("1234567890")
   const [ksefToken, setKsefToken] = useState("")
@@ -509,6 +514,7 @@ export default function AdminSettingsPage() {
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
         setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
         setEnableUserSelectionOnLogin(data.enableUserSelectionOnLogin?.value || "true")
+        setEnableRecaptchaOnLogin(data.enableRecaptchaOnLogin?.value || "false")
         setKsefEnabled(data.ksefEnabled?.value || "false")
         setKsefNip(data.ksefNip?.value || "1234567890")
         setKsefToken(data.ksefToken?.value || "")
@@ -842,6 +848,10 @@ export default function AdminSettingsPage() {
             enableUserSelectionOnLogin: {
               value: enableUserSelectionOnLogin,
               description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
+            },
+            enableRecaptchaOnLogin: {
+              value: enableRecaptchaOnLogin,
+              description: "Czy sprawdzać Google reCAPTCHA przy logowaniu",
             },
             ksefEnabled: {
               value: ksefEnabled,
@@ -1361,6 +1371,21 @@ export default function AdminSettingsPage() {
                   id="enableUserSelectionOnLogin"
                   checked={enableUserSelectionOnLogin === "true"}
                   onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
+                />
+              </div>
+              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors mt-4">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enableRecaptchaOnLogin" className="text-base font-semibold">
+                    Weryfikacja Google reCAPTCHA przy logowaniu
+                  </Label>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Po włączeniu każda próba logowania jest dodatkowo sprawdzana przez Google reCAPTCHA v3, zanim system zweryfikuje dane logowania.
+                  </p>
+                </div>
+                <Switch
+                  id="enableRecaptchaOnLogin"
+                  checked={enableRecaptchaOnLogin === "true"}
+                  onCheckedChange={(checked) => setEnableRecaptchaOnLogin(checked ? "true" : "false")}
                 />
               </div>
             </CardContent>
