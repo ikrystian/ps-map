@@ -37,7 +37,6 @@ import {
   initialCaseDraftData,
 } from "@/components/sprawy/case-draft-types"
 import { getBrowserTelemetry } from "@/lib/rodo-audit"
-import { useRecaptcha } from "@/lib/recaptcha-client"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import {
@@ -114,7 +113,6 @@ export default function DodajSprawaClientPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { data: session, status: sessionStatus } = useSession()
-  const { executeRecaptcha } = useRecaptcha()
 
   const isAuthed = sessionStatus === "authenticated" && session?.user?.role === "CLIENT"
   const totalSteps = isAuthed ? 5 : 6
@@ -659,7 +657,6 @@ export default function DodajSprawaClientPage() {
     setIsSubmittingAccount(true)
 
     try {
-      const recaptchaToken = await executeRecaptcha("register_client")
       const isBusinessCase = caseData.typSprawy !== "OSOBA_PRYWATNA"
 
       const registerResponse = await fetch("/api/auth/register", {
@@ -668,7 +665,6 @@ export default function DodajSprawaClientPage() {
         body: JSON.stringify({
           email: account.email,
           password: account.password,
-          recaptchaToken,
           phoneVerificationToken,
           role: "CLIENT",
           issueCaseCreationTicket: true,

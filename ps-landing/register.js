@@ -942,8 +942,7 @@ async function submitForm(e) {
     }
 
     // Numer telefonu potwierdzamy zanim cokolwiek poleci do API — bez tokenu
-    // endpoint rejestracji odrzuci żądanie. Robimy to przed reCAPTCHA, żeby jej
-    // token nie zdążył wygasnąć, gdy użytkownik przepisuje kod z SMS-a.
+    // endpoint rejestracji odrzuci żądanie.
     const phoneVerificationToken = await verifyPhoneNumber(
         document.getElementById("numerTelefonu").value.trim()
     );
@@ -955,34 +954,9 @@ async function submitForm(e) {
     const voivodeshipId = wojewodztwoSelect.value;
     const categoryId = glownaSpecjalizacjaSelect.value;
 
-    let recaptchaToken = null;
-    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    if (isLocalhost) {
-        recaptchaToken = "localhost_bypass_token";
-    } else {
-        try {
-            if (typeof window.grecaptcha !== "undefined") {
-                recaptchaToken = await new Promise((resolve) => {
-                    window.grecaptcha.ready(async () => {
-                        try {
-                            const token = await window.grecaptcha.execute("6LciQGMtAAAAAJi1UM1J6DMg4a4KOJl4fgKL3R0a", { action: "register_ekspert" });
-                            resolve(token);
-                        } catch (err) {
-                            console.error("reCAPTCHA execute error:", err);
-                            resolve(null);
-                        }
-                    });
-                });
-            }
-        } catch (err) {
-            console.error("reCAPTCHA token error:", err);
-        }
-    }
-
     const payload = {
         email: document.getElementById("email").value.trim(),
         password: passwordInput.value,
-        recaptchaToken,
         phoneVerificationToken,
         expertiseCategoryId: expertiseCategoryIdInput.value || null,
         nazwa: document.getElementById("nazwa").value.trim(),

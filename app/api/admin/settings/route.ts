@@ -174,12 +174,6 @@ export async function GET(request: NextRequest) {
         description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
       }
     }
-    if (!settingsObject.enableRecaptchaOnLogin) {
-      settingsObject.enableRecaptchaOnLogin = {
-        value: "false",
-        description: "Czy sprawdzać Google reCAPTCHA przy logowaniu",
-      }
-    }
     if (!settingsObject.ksefEnabled) {
       settingsObject.ksefEnabled = {
         value: "false",

@@ -40,7 +40,6 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { useRecaptcha } from "@/lib/recaptcha-client"
 
 import { z } from "zod"
 
@@ -120,7 +119,6 @@ export default function LawFirmRegistrationPage() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  const { executeRecaptcha } = useRecaptcha()
 
   // Odczytaj krok z URL lub localStorage
   const [currentStep, setCurrentStep] = useState(1)
@@ -589,8 +587,6 @@ export default function LawFirmRegistrationPage() {
     setIsLoading(true)
 
     try {
-      const recaptchaToken = await executeRecaptcha("register_ekspert")
-
       const response = await fetch("/api/law-firms", {
         method: "POST",
         headers: {
@@ -599,7 +595,6 @@ export default function LawFirmRegistrationPage() {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          recaptchaToken,
           phoneVerificationToken,
           telemetry: getBrowserTelemetry(),
           expertiseCategoryId: formData.expertiseCategoryId || null,

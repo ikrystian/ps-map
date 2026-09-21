@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { toast } from "@/components/ui/sonner"
-import { useRecaptcha } from "@/lib/recaptcha-client"
 import { cn } from "@/lib/utils"
 import { Check, ChevronsUpDown, Eye, EyeOff, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
@@ -35,7 +34,6 @@ interface DevUser {
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { executeRecaptcha } = useRecaptcha()
   const rawCallbackUrl = searchParams.get("callbackUrl")
   // Akceptuj tylko ścieżki względne (ochrona przed open redirect)
   const callbackUrl =
@@ -52,7 +50,6 @@ export default function LoginPage() {
   const [devUsers, setDevUsers] = useState<DevUser[]>([])
   const [selectedUser, setSelectedUser] = useState<DevUser | null>(null)
   const [enableUserSelection, setEnableUserSelection] = useState(true)
-  const [enableRecaptcha, setEnableRecaptcha] = useState(false)
   const [comboOpen, setComboOpen] = useState(false)
   const [userSearch, setUserSearch] = useState("")
   const [loadingUsers, setLoadingUsers] = useState(false)
@@ -65,7 +62,6 @@ export default function LoginPage() {
         if (response.ok) {
           const data = await response.json()
           setEnableUserSelection(data.enableUserSelectionOnLogin !== "false")
-          setEnableRecaptcha(data.enableRecaptchaOnLogin === "true")
         }
       } catch (error) {
         console.error("Error fetching settings:", error)
@@ -190,12 +186,11 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const recaptchaToken = enableRecaptcha ? await executeRecaptcha("login") : null
       // 1. Sprawdzenie pre-login
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email, password: user.password, recaptchaToken }),
+        body: JSON.stringify({ email: user.email, password: user.password }),
       })
 
       if (!checkResponse.ok) {
@@ -232,12 +227,11 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const recaptchaToken = enableRecaptcha ? await executeRecaptcha("login") : null
       // 1. Sprawdzenie pre-login w celu pobrania dokładnego błędu w języku polskim
       const checkResponse = await fetch("/api/auth/pre-login-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, recaptchaToken }),
+        body: JSON.stringify({ email, password }),
       })
 
       if (!checkResponse.ok) {

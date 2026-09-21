@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma"
 import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotions"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { EXPERTISE_CATEGORY_PATH_SELECT, formatExpertisePath } from "@/lib/expertise-category"
-import { verifyRecaptchaToken } from "@/lib/recaptcha"
 import { recordRegistrationAudit } from "@/lib/rodo-audit"
 import { EmailType, UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
@@ -440,16 +439,6 @@ export async function POST(request: NextRequest) {
   let body: any = null
   try {
     body = await request.json()
-
-    if (!body.isSocialRegistration) {
-      const recaptchaResult = await verifyRecaptchaToken(body.recaptchaToken, "register_ekspert")
-      if (!recaptchaResult.success) {
-        return NextResponse.json(
-          { error: recaptchaResult.error || "Weryfikacja reCAPTCHA nie powiodła się" },
-          { status: 400 }
-        )
-      }
-    }
 
     // Pominięcie weryfikacji e-mail (pre-rejestracja z landing page) działa tylko,
     // gdy środowisko jawnie na to pozwala. Na produkcji flaga z payloadu jest

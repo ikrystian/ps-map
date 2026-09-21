@@ -1,26 +1,11 @@
 import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
-import { verifyRecaptchaToken } from "@/lib/recaptcha"
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
-    const { email, password, recaptchaToken } = await request.json()
-
-    // Weryfikacja reCAPTCHA — opcja z ustawień panelu administratora
-    const recaptchaSetting = await prisma.settings.findUnique({ where: { key: "enableRecaptchaOnLogin" } })
-    const recaptchaOnLoginEnabled = recaptchaSetting?.value === "true"
-
-    if (recaptchaOnLoginEnabled) {
-      const recaptchaResult = await verifyRecaptchaToken(recaptchaToken, "login")
-      if (!recaptchaResult.success) {
-        return NextResponse.json(
-          { error: recaptchaResult.error || "Weryfikacja reCAPTCHA nie powiodła się" },
-          { status: 400 }
-        )
-      }
-    }
+    const { email, password } = await request.json()
 
     if (!email || !password) {
       return NextResponse.json(
