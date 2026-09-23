@@ -10,7 +10,7 @@ export async function getCategoriesList(): Promise<Category[]> {
   return getOrSetCached(
     "categories:all",
     async () => {
-      return prisma.category.findMany({
+      const categories = await prisma.category.findMany({
         select: {
           id: true,
           nazwa: true,
@@ -31,6 +31,9 @@ export async function getCategoriesList(): Promise<Category[]> {
           wyswietlajNaGlownejFirmowe: true,
           createdAt: true,
           updatedAt: true,
+          expertiseLinks: {
+            select: { expertiseCategoryId: true },
+          },
           parent: {
             select: {
               id: true,
@@ -64,8 +67,46 @@ export async function getCategoriesList(): Promise<Category[]> {
           { kolejnosc: "asc" },
           { nazwa: "asc" },
         ],
-      }) as unknown as Promise<Category[]>
+      })
+
+      // Powiązania ze specjalizacjami ekspertów wystawiamy jako płaską listę id
+      // — krok „Kategorie” rejestracji filtruje po niej po stronie klienta.
+      return categories.map(({ expertiseLinks, ...category }) => ({
+        ...category,
+        expertiseCategoryIds: expertiseLinks.map((link) => link.expertiseCategoryId),
+      })) as unknown as Category[]
     },
     7200 // Cache categories for 2 hours
   )
+}
+
+export type ExpertiseCategoryIdsResult =
+  | { ok: true; ids: string[] | undefined }
+  | { ok: false; error: string }
+
+/**
+ * Waliduje listę id specjalizacji (ExpertiseCategory) przesłaną z formularza
+ * kategorii. `undefined` oznacza „nie zmieniaj powiązań”; tablica (także pusta)
+ * zastępuje je w całości.
+ */
+export async function parseExpertiseCategoryIds(
+  raw: unknown
+): Promise<ExpertiseCategoryIdsResult> {
+  if (raw === undefined) return { ok: true, ids: undefined }
+
+  if (!Array.isArray(raw) || raw.some((id) => typeof id !== "string")) {
+    return { ok: false, error: "Nieprawidłowa lista specjalizacji" }
+  }
+
+  const ids = Array.from(new Set(raw as string[]))
+  if (ids.length === 0) return { ok: true, ids }
+
+  const existing = await prisma.expertiseCategory.count({
+    where: { id: { in: ids } },
+  })
+  if (existing !== ids.length) {
+    return { ok: false, error: "Wybrana specjalizacja nie istnieje" }
+  }
+
+  return { ok: true, ids }
 }

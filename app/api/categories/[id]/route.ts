@@ -1,4 +1,5 @@
 import { serverCache } from "@/lib/cache"
+import { parseExpertiseCategoryIds } from "@/lib/categories"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
@@ -30,6 +31,9 @@ export async function GET(
             cases: true,
           },
         },
+        expertiseLinks: {
+          select: { expertiseCategoryId: true },
+        },
       },
     })
 
@@ -40,7 +44,11 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(category)
+    const { expertiseLinks, ...rest } = category
+    return NextResponse.json({
+      ...rest,
+      expertiseCategoryIds: expertiseLinks.map((link) => link.expertiseCategoryId),
+    })
   } catch (error) {
     console.error("Error fetching category:", error)
     return NextResponse.json(
@@ -73,6 +81,7 @@ export async function PUT(
       kolejnosc,
       wyswietlajNaGlownejPrywatne,
       wyswietlajNaGlownejFirmowe,
+      expertiseCategoryIds,
     } = body
 
     // Sprawdzenie czy kategoria istnieje
@@ -132,6 +141,11 @@ export async function PUT(
       }
     }
 
+    const expertiseIds = await parseExpertiseCategoryIds(expertiseCategoryIds)
+    if (!expertiseIds.ok) {
+      return NextResponse.json({ error: expertiseIds.error }, { status: 400 })
+    }
+
     const category = await prisma.category.update({
       where: { id },
       data: {
@@ -150,6 +164,14 @@ export async function PUT(
         kolejnosc: kolejnosc !== undefined ? kolejnosc : existingCategory.kolejnosc,
         wyswietlajNaGlownejPrywatne: wyswietlajNaGlownejPrywatne !== undefined ? !!wyswietlajNaGlownejPrywatne : existingCategory.wyswietlajNaGlownejPrywatne,
         wyswietlajNaGlownejFirmowe: wyswietlajNaGlownejFirmowe !== undefined ? !!wyswietlajNaGlownejFirmowe : existingCategory.wyswietlajNaGlownejFirmowe,
+        ...(expertiseIds.ids
+          ? {
+              expertiseLinks: {
+                deleteMany: {},
+                create: expertiseIds.ids.map((expertiseCategoryId) => ({ expertiseCategoryId })),
+              },
+            }
+          : {}),
       },
       include: {
         parent: {

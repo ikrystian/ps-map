@@ -1,5 +1,5 @@
 import { serverCache } from "@/lib/cache"
-import { getCategoriesList } from "@/lib/categories"
+import { getCategoriesList, parseExpertiseCategoryIds } from "@/lib/categories"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       kolejnosc,
       wyswietlajNaGlownejPrywatne,
       wyswietlajNaGlownejFirmowe,
+      expertiseCategoryIds,
     } = body
 
     // Walidacja podstawowych pól
@@ -69,6 +70,11 @@ export async function POST(request: Request) {
       }
     }
 
+    const expertiseIds = await parseExpertiseCategoryIds(expertiseCategoryIds)
+    if (!expertiseIds.ok) {
+      return NextResponse.json({ error: expertiseIds.error }, { status: 400 })
+    }
+
     const category = await prisma.category.create({
       data: {
         nazwa,
@@ -86,6 +92,13 @@ export async function POST(request: Request) {
         kolejnosc: kolejnosc || 0,
         wyswietlajNaGlownejPrywatne: !!wyswietlajNaGlownejPrywatne,
         wyswietlajNaGlownejFirmowe: !!wyswietlajNaGlownejFirmowe,
+        ...(expertiseIds.ids
+          ? {
+              expertiseLinks: {
+                create: expertiseIds.ids.map((expertiseCategoryId) => ({ expertiseCategoryId })),
+              },
+            }
+          : {}),
       },
       include: {
         parent: {

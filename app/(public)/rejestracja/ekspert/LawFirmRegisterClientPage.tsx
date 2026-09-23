@@ -88,6 +88,7 @@ const step4Schema = z.object({
 })
 
 import { Category, Voivodeship } from "@/types"
+import { isInExpertsBranch } from "@/lib/expertise-category"
 
 const steps = [
   { id: 1, title: "Działalność", icon: Briefcase },
@@ -406,6 +407,22 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
+  // Ekspert z gałęzi „Eksperci” widzi w kroku 6 tylko kategorie powiązane z wybraną
+  // specjalizacją; prawnicy — pełną listę (zachowanie bez zmian).
+  const isExpertBranch = isInExpertsBranch(expertiseCategories, formData.expertiseCategoryId)
+  const expertCategories = isExpertBranch
+    ? categories.filter(
+        (cat) => cat.aktywna !== false && cat.expertiseCategoryIds?.includes(formData.expertiseCategoryId)
+      )
+    : []
+
+  // Zmiana specjalizacji (albo dane z localStorage sprzed zmiany powiązań) mogą zostawić
+  // w formData kategorię, której już nie ma na liście — do walidacji i zapisu bierzemy
+  // tylko te, które nadal są dostępne dla wybranej specjalizacji.
+  const selectedCategoryIds = isExpertBranch
+    ? formData.categoriesIds.filter((id) => expertCategories.some((cat) => cat.id === id))
+    : formData.categoriesIds
+
   const validateStep = () => {
     setError("")
     setFieldErrors({})
@@ -419,7 +436,10 @@ export default function LawFirmRegistrationPage() {
         dataToValidate = { expertiseCategoryId: formData.expertiseCategoryId }
         break
       case 6:
+        // Specjalizacja bez powiązanych kategorii: nie ma z czego wybierać, więc nie blokujemy
+        if (isExpertBranch && expertCategories.length === 0) return true
         schema = step6Schema
+        dataToValidate = { categoriesIds: selectedCategoryIds }
         break
       case 4:
         schema = step4Schema
@@ -614,7 +634,7 @@ export default function LawFirmRegistrationPage() {
           zgodaPrzetwarzanie: formData.zgodaPrzetwarzanie,
           calaPolska: formData.calaPolska,
           voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : [],
-          categoriesIds: formData.categoriesIds,
+          categoriesIds: selectedCategoryIds,
           isSocialRegistration: !!session?.user,
           // Dane firmy z CEIDG DataStore (tylko gdy rejestracja "jako firma")
           companyData: formData.rejestracjaJakoFirma ? formData.companyData : null,
@@ -799,8 +819,8 @@ export default function LawFirmRegistrationPage() {
       }
 
       case 6: {
-        const mainCategories = categories
-          .filter((cat) => !cat.parentId)
+        const mainCategories = (isExpertBranch ? expertCategories : categories.filter((cat) => !cat.parentId))
+          .slice()
           .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
         const businessCategories = mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE")
         const privateCategories = mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE")
@@ -859,9 +879,19 @@ export default function LawFirmRegistrationPage() {
                 <span className="text-xs text-muted-foreground">Wybierz jedną główną dziedzinę</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Zaznacz główną dziedzinę prawa, w której się specjalizujesz.
-                Pomoże nam to lepiej dopasować zapytania od klientów.
+                {isExpertBranch
+                  ? "Zaznacz główną kategorię powiązaną z Twoją specjalizacją."
+                  : "Zaznacz główną dziedzinę prawa, w której się specjalizujesz."}
+                {" "}Pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
+              {isExpertBranch && categories.length > 0 && expertCategories.length === 0 && (
+                <div className="bg-muted p-6 rounded-xl text-center text-muted-foreground">
+                  <p className="text-sm">
+                    Dla wybranej specjalizacji nie ma jeszcze przypisanych kategorii.
+                    Możesz przejść dalej — zakres usług uzupełnisz później w panelu eksperta.
+                  </p>
+                </div>
+              )}
               <div className={cn("space-y-6 max-h-[450px] overflow-y-auto p-2", fieldErrors.categoriesIds && "border-2 border-destructive rounded-xl")}>
                 {businessCategories.length > 0 && (
                   <div className="space-y-3">

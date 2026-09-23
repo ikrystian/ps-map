@@ -26,6 +26,8 @@ export interface Category extends CategoryBase {
   opisDodatkowy?: string | null
   aktywna: boolean
   ekspercka?: boolean
+  /** Id specjalizacji ekspertów (ExpertiseCategory) powiązanych z kategorią */
+  expertiseCategoryIds?: string[]
   ikonaUrl?: string | null
   backgroundImageUrl?: string | null
   parentId?: string | null

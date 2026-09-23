@@ -1,3 +1,4 @@
+import { serverCache } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -66,6 +67,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
 
     await prisma.expertiseCategory.delete({ where: { id } })
+    // Powiązania kategorii ze specjalizacją znikają kaskadowo — odśwież cache listy kategorii
+    serverCache.invalidatePattern("categories")
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting expertise category:", error)

@@ -633,6 +633,7 @@ model Category {
   mainCategoryFor LawFirm[] @relation("MainCategory")
   consultationRequests ConsultationRequest[]
   caseReferralLinks CaseReferralCategory[]
+  expertiseLinks CategoryExpertiseCategory[]  // Specjalizacje ekspertów powiązane z kategorią
 
   @@index([slug])
   @@index([parentId])
@@ -659,6 +660,27 @@ model LawFirmCategory {
   @@unique([lawFirmId, categoryId])
   @@index([lawFirmId])
   @@index([categoryId])
+}
+
+// ============================================================================
+// RELACJA: KATEGORIA <-> SPECJALIZACJA EKSPERTA (MANY-TO-MANY)
+// Krok „Kategorie” rejestracji eksperta z gałęzi „Eksperci” pokazuje wyłącznie
+// kategorie powiązane ze specjalizacją wybraną w kroku „Działalność”.
+// Dla gałęzi „Prawnicy” powiązania nie są używane.
+// ============================================================================
+
+model CategoryExpertiseCategory {
+  id                  String            @id @default(uuid())
+  categoryId          String
+  category            Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  expertiseCategoryId String
+  expertiseCategory   ExpertiseCategory @relation(fields: [expertiseCategoryId], references: [id], onDelete: Cascade)
+
+  createdAt           DateTime          @default(now())
+
+  @@unique([categoryId, expertiseCategoryId])
+  @@index([categoryId])
+  @@index([expertiseCategoryId])
 }
 
 // ============================================================================
@@ -2827,6 +2849,7 @@ model ExpertiseCategory {
   updatedAt DateTime @updatedAt
 
   lawFirms  LawFirm[]
+  categoryLinks CategoryExpertiseCategory[]  // Kategorie dostępne dla tej specjalizacji w rejestracji
 
   @@index([parentId])
   @@index([aktywna])
