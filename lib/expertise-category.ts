@@ -80,6 +80,42 @@ export function isExpertsBranch(
   return root.nazwa === EXPERTS_ROOT_NAME;
 }
 
+interface LinkableCategory {
+  id: string;
+  parentId?: string | null;
+  expertiseCategoryIds?: string[];
+}
+
+/**
+ * Zawęża drzewo kategorii do powiązanych ze specjalizacją eksperta — ta sama
+ * reguła co w kroku „Kategorie” rejestracji, ale z zachowaniem struktury drzewa:
+ * powiązania wiszą głównie na podkategoriach, więc do wyniku trafiają też ich
+ * przodkowie (bez nich drzewo by się spłaszczyło).
+ *
+ * Lista wejściowa powinna zawierać już tylko aktywne kategorie.
+ */
+export function filterCategoriesByExpertise<T extends LinkableCategory>(
+  categories: T[],
+  expertiseCategoryId: string
+): T[] {
+  const byId = new Map(categories.map((category) => [category.id, category]));
+  const visibleIds = new Set(
+    categories
+      .filter((category) => category.expertiseCategoryIds?.includes(expertiseCategoryId))
+      .map((category) => category.id)
+  );
+
+  for (const id of [...visibleIds]) {
+    let parentId = byId.get(id)?.parentId;
+    while (parentId && !visibleIds.has(parentId)) {
+      visibleIds.add(parentId);
+      parentId = byId.get(parentId)?.parentId;
+    }
+  }
+
+  return categories.filter((category) => visibleIds.has(category.id));
+}
+
 interface ExpertiseTreeNode {
   id: string;
   nazwa: string;

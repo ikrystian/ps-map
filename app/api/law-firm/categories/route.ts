@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { EXPERTISE_CATEGORY_PATH_SELECT, isExpertsBranch } from "@/lib/expertise-category"
 import { hasActivePackage, getLawFirmPermissions } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
@@ -63,6 +64,8 @@ export async function GET() {
         dataPakietuOd: true,
         dataPakietuDo: true,
         autoRenewal: true,
+        expertiseCategoryId: true,
+        expertiseCategory: EXPERTISE_CATEGORY_PATH_SELECT,
       },
     })
 
@@ -103,6 +106,11 @@ export async function GET() {
       mainCategoryId: lawFirm.mainCategoryId,
       maxCategories,
       skillLawFocusActive,
+      // Specjalizacja z gałęzi „Eksperci” (null dla prawników i przy braku wyboru) —
+      // zakres usług zawęża po niej listę kategorii tak jak rejestracja.
+      expertiseCategoryId: isExpertsBranch(lawFirm.expertiseCategory)
+        ? lawFirm.expertiseCategoryId
+        : null,
     })
   } catch (error) {
     console.error("Error fetching law firm categories:", error)
