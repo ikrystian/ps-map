@@ -24,14 +24,17 @@ import {
 } from "@/components/ui/select"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { PhoneVerificationDialog } from "@/components/auth"
+import { CaseSpecialistTypeStep } from "@/components/sprawy/steps/CaseSpecialistTypeStep"
 import { CaseTypeStep } from "@/components/sprawy/steps/CaseTypeStep"
 import { CaseDescriptionStep } from "@/components/sprawy/steps/CaseDescriptionStep"
 import { CaseCategoryLocationStep } from "@/components/sprawy/steps/CaseCategoryLocationStep"
 import { CaseScheduleBudgetStep } from "@/components/sprawy/steps/CaseScheduleBudgetStep"
+import { createSpecialistTypeFilter } from "@/components/sprawy/CategoryPicker"
 import {
   type CaseDraftData,
   type CaseType,
   type FileAttachment,
+  type SpecialistType,
   caseDraftStepFieldOrder,
   getCaseDraftStepErrors,
   initialCaseDraftData,
@@ -101,7 +104,10 @@ const initialAccount: AccountState = {
 }
 
 const DRAFT_DATA_KEY = "dodaj_sprawe_draft_data"
-const DRAFT_STEP_KEY = "dodaj_sprawe_draft_step"
+const DRAFT_STEP_KEY = "dodaj_sprawe_draft_step_v2"
+// Numer kroku zapisany przed dodaniem kroku „Prawnik czy ekspert” (wszystkie kroki były
+// wtedy o jeden niżej) — czytamy go tylko po to, żeby wznowić draft na właściwym kroku.
+const LEGACY_DRAFT_STEP_KEY = "dodaj_sprawe_draft_step"
 
 const stepContainerVariants = {
   hidden: { opacity: 0, x: 15 },
@@ -115,7 +121,9 @@ export default function DodajSprawaClientPage() {
   const { data: session, status: sessionStatus } = useSession()
 
   const isAuthed = sessionStatus === "authenticated" && session?.user?.role === "CLIENT"
-  const totalSteps = isAuthed ? 5 : 6
+  // Kroki: 1 Prawnik/ekspert, 2 Typ, 3 Opis, 4 Kategoria i lokalizacja, 5 Termin i budżet,
+  // 6 Kontakt, 7 Załóż konto (tylko bez sesji)
+  const totalSteps = isAuthed ? 6 : 7
 
   const [ignoreReferral, setIgnoreReferral] = useState(false)
   const referralTokenParam = searchParams.get("referral")
@@ -196,7 +204,7 @@ export default function DodajSprawaClientPage() {
     updateAccountField("kodPocztowy", formatted)
   }
 
-  // --- Podpowiedź miasta na podstawie kodu pocztowego wpisanego w Kroku 6 ---
+  // --- Podpowiedź miasta na podstawie kodu pocztowego wpisanego w Kroku 7 ---
   useEffect(() => {
     const kod = account.kodPocztowy
     if (!/^\d{2}-\d{3}$/.test(kod)) {
@@ -225,6 +233,23 @@ export default function DodajSprawaClientPage() {
     return () => controller.abort()
   }, [account.kodPocztowy])
 
+  const handleSelectSpecialistType = (value: SpecialistType) => {
+    clearError("typSpecjalisty")
+    if (caseData.typSpecjalisty === value) return
+
+    const matchesSpecialistType = createSpecialistTypeFilter(categories, value)
+    setCaseData((prev) => ({
+      ...prev,
+      typSpecjalisty: value,
+      // Zostają tylko kategorie z wybranej grupy (np. podpowiedziane z linku polecającego)
+      categoryIds: prev.categoryIds.filter((id) => {
+        const category = categories.find((cat) => cat.id === id)
+        return !!category && matchesSpecialistType(category)
+      }),
+    }))
+    setAiSuggestion(null)
+  }
+
   const handleSelectCaseType = (value: CaseType) => {
     setCaseData((prev) => ({ ...prev, typSprawy: value, categoryIds: [] }))
     setAiSuggestion(null)
@@ -235,6 +260,7 @@ export default function DodajSprawaClientPage() {
   useEffect(() => {
     const stepParam = searchParams.get("step")
     const savedStep = localStorage.getItem(DRAFT_STEP_KEY)
+    const legacySavedStep = localStorage.getItem(LEGACY_DRAFT_STEP_KEY)
     const savedData = localStorage.getItem(DRAFT_DATA_KEY)
 
     if (savedData) {
@@ -252,10 +278,17 @@ export default function DodajSprawaClientPage() {
       }
     }
 
-    const initialStep = stepParam ? parseInt(stepParam, 10) : savedStep ? parseInt(savedStep, 10) : 1
+    const initialStep = stepParam
+      ? parseInt(stepParam, 10)
+      : savedStep
+        ? parseInt(savedStep, 10)
+        : legacySavedStep
+          ? parseInt(legacySavedStep, 10) + 1
+          : 1
     if (!Number.isNaN(initialStep) && initialStep >= 1) {
       setCurrentStep(initialStep)
     }
+    localStorage.removeItem(LEGACY_DRAFT_STEP_KEY)
 
     setIsInitialized(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -297,14 +330,14 @@ export default function DodajSprawaClientPage() {
     setCurrentStep(1)
   }
 
-  // Jeśli okaże się, że wchodzimy tu z aktywną sesją CLIENT i zapisanym krokiem 6
+  // Jeśli okaże się, że wchodzimy tu z aktywną sesją CLIENT i zapisanym krokiem 7
   // ("Załóż konto"), pomijamy go — tylko raz, przy pierwszym rozstrzygnięciu sesji,
   // żeby nie cofać użytkownika w trakcie dalszej pracy z formularzem.
   useEffect(() => {
     if (sessionStatus === "loading" || hasAppliedSessionClamp.current) return
     hasAppliedSessionClamp.current = true
     if (isAuthed) {
-      setCurrentStep((prev) => Math.min(prev, 5))
+      setCurrentStep((prev) => Math.min(prev, 6))
     }
   }, [sessionStatus, isAuthed])
 
@@ -414,18 +447,18 @@ export default function DodajSprawaClientPage() {
 
   const stepFieldOrder: Record<number, string[]> = {
     ...caseDraftStepFieldOrder,
-    5: isAuthed
+    6: isAuthed
       ? ["imieNazwiskoSession", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"]
       : ["imie", "nazwisko", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"],
-    6: ["email", "adres", "kodPocztowy", "accountMiasto", "password", "confirmPassword", "zgodaRegulamin"],
+    7: ["email", "adres", "kodPocztowy", "accountMiasto", "password", "confirmPassword", "zgodaRegulamin"],
   }
 
   const getStepErrors = (step: number): Record<string, string> => {
-    if (step >= 1 && step <= 4) {
-      return getCaseDraftStepErrors(step as 1 | 2 | 3 | 4, caseData)
+    if (step >= 1 && step <= 5) {
+      return getCaseDraftStepErrors(step as 1 | 2 | 3 | 4 | 5, caseData)
     }
 
-    if (step === 5) {
+    if (step === 6) {
       const stepErrors: Record<string, string> = {}
       if (isAuthed) {
         if (!contact.imieNazwiskoSession.trim()) {
@@ -447,7 +480,7 @@ export default function DodajSprawaClientPage() {
       return stepErrors
     }
 
-    // Krok 6 — tylko gałąź anonimowa
+    // Krok 7 — tylko gałąź anonimowa
     const stepErrors: Record<string, string> = {}
     if (!account.email.trim()) {
       stepErrors.email = "Adres email jest wymagany"
@@ -515,7 +548,7 @@ export default function DodajSprawaClientPage() {
     setCurrentStep((prev) => Math.max(prev - 1, 1))
   }
 
-  // --- Upload załączników (krok 2) — zawsze przez endpoint bez wymogu sesji, żeby
+  // --- Upload załączników (krok 3) — zawsze przez endpoint bez wymogu sesji, żeby
   // wizard zachowywał się identycznie niezależnie od tego, czy user jest zalogowany ---
   const handleFilesSelected = async (files: FileList) => {
     if (uploadedFiles.length + files.length > 5) {
@@ -554,7 +587,7 @@ export default function DodajSprawaClientPage() {
     updateCaseField("zalaczniki", next.map((f) => f.url))
   }
 
-  // --- AI dobór kategorii (krok 3) ---
+  // --- AI dobór kategorii (krok 4) ---
   const handleSuggestCategories = async () => {
     setIsSuggestingCategories(true)
     try {
@@ -565,6 +598,7 @@ export default function DodajSprawaClientPage() {
           opisSprawy: caseData.opisSprawy,
           nazwaSprawy: caseData.nazwaSprawy,
           typSprawy: caseData.typSprawy,
+          typSpecjalisty: caseData.typSpecjalisty,
         }),
       })
       const data = await response.json()
@@ -647,7 +681,7 @@ export default function DodajSprawaClientPage() {
     }
   }
 
-  // --- Krok 6 (anonimowo): rejestracja → utworzenie sprawy biletem z rejestracji,
+  // --- Krok 7 (anonimowo): rejestracja → utworzenie sprawy biletem z rejestracji,
   // bez dodatkowej interakcji użytkownika. Konto NIE loguje się tutaj — dopóki
   // klient nie potwierdzi e-maila, logowanie jest zablokowane (auth.ts), więc
   // sprawa powstaje przy pomocy jednorazowego biletu (caseCreationToken). ---
@@ -786,12 +820,13 @@ export default function DodajSprawaClientPage() {
   }
 
   const stepTitles: Record<number, string> = {
-    1: "Krok 1: Typ sprawy",
-    2: "Krok 2: Opis i szczegóły",
-    3: "Krok 3: Kategoria i lokalizacja",
-    4: "Krok 4: Harmonogram i budżet",
-    5: "Krok 5: Kontakt",
-    6: "Krok 6: Załóż konto",
+    1: "Krok 1: Prawnik czy ekspert",
+    2: "Krok 2: Typ sprawy",
+    3: "Krok 3: Opis i szczegóły",
+    4: "Krok 4: Kategoria i lokalizacja",
+    5: "Krok 5: Harmonogram i budżet",
+    6: "Krok 6: Kontakt",
+    7: "Krok 7: Załóż konto",
   }
 
   const renderStepIndicator = () => (
@@ -1248,7 +1283,7 @@ export default function DodajSprawaClientPage() {
   const isBusy = isSubmitting || isSubmittingAccount
 
   // Krótki moment, zanim useSession() rozstrzygnie, czy mamy sesję CLIENT — unika
-  // migotania 6 kroków, które zaraz zamieniłyby się w 5.
+  // migotania 7 kroków, które zaraz zamieniłyby się w 6.
   if (sessionStatus === "loading") {
     return (
       <div className="container max-w-3xl mx-auto px-4 py-20 flex justify-center">
@@ -1321,9 +1356,16 @@ export default function DodajSprawaClientPage() {
                 <AnimatePresence mode="wait">
                   <motion.div key={currentStep} variants={stepContainerVariants} initial="hidden" animate="show" exit="exit">
                     {currentStep === 1 && (
-                      <CaseTypeStep value={caseData.typSprawy} error={errors.typSprawy} onSelect={handleSelectCaseType} />
+                      <CaseSpecialistTypeStep
+                        value={caseData.typSpecjalisty}
+                        error={errors.typSpecjalisty}
+                        onSelect={handleSelectSpecialistType}
+                      />
                     )}
                     {currentStep === 2 && (
+                      <CaseTypeStep value={caseData.typSprawy} error={errors.typSprawy} onSelect={handleSelectCaseType} />
+                    )}
+                    {currentStep === 3 && (
                       <CaseDescriptionStep
                         nazwaSprawy={caseData.nazwaSprawy}
                         opisSprawy={caseData.opisSprawy}
@@ -1336,11 +1378,12 @@ export default function DodajSprawaClientPage() {
                         onRemoveFile={handleRemoveFile}
                       />
                     )}
-                    {currentStep === 3 && (
+                    {currentStep === 4 && (
                       <CaseCategoryLocationStep
                         categories={categories}
                         isLoadingCategories={isLoadingCategories}
                         typSprawy={caseData.typSprawy}
+                        typSpecjalisty={caseData.typSpecjalisty}
                         categoryIds={caseData.categoryIds}
                         onCategoryIdsChange={(ids) => updateCaseField("categoryIds", ids)}
                         categoryError={errors.categoryIds}
@@ -1357,7 +1400,7 @@ export default function DodajSprawaClientPage() {
                         aiSuggestion={aiSuggestion}
                       />
                     )}
-                    {currentStep === 4 && (
+                    {currentStep === 5 && (
                       <CaseScheduleBudgetStep
                         oczekiwanyTerminRealizacji={caseData.oczekiwanyTerminRealizacji}
                         trybPilny={caseData.trybPilny}
@@ -1367,8 +1410,8 @@ export default function DodajSprawaClientPage() {
                         onChange={(field, value) => updateCaseField(field, value as never)}
                       />
                     )}
-                    {currentStep === 5 && renderContactStep()}
-                    {currentStep === 6 && !isAuthed && renderAccountStep()}
+                    {currentStep === 6 && renderContactStep()}
+                    {currentStep === 7 && !isAuthed && renderAccountStep()}
                   </motion.div>
                 </AnimatePresence>
               </div>

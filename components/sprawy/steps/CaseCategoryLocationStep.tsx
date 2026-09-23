@@ -5,12 +5,13 @@ import { CategoryPicker } from "@/components/sprawy/CategoryPicker"
 import { CityCombobox } from "@/components/sprawy/CityCombobox"
 import { cn } from "@/lib/utils"
 import { Loader2, Sparkles } from "lucide-react"
-import type { CaseType } from "@/components/sprawy/case-draft-types"
+import type { CaseType, SpecialistType } from "@/components/sprawy/case-draft-types"
 
 interface CaseCategoryLocationStepProps {
   categories: any[]
   isLoadingCategories: boolean
   typSprawy: CaseType | ""
+  typSpecjalisty: SpecialistType | ""
   categoryIds: string[]
   onCategoryIdsChange: (categoryIds: string[]) => void
   categoryError?: string
@@ -27,6 +28,7 @@ export function CaseCategoryLocationStep({
   categories,
   isLoadingCategories,
   typSprawy,
+  typSpecjalisty,
   categoryIds,
   onCategoryIdsChange,
   categoryError,
@@ -53,6 +55,7 @@ export function CaseCategoryLocationStep({
           categories={categories}
           isLoadingCategories={isLoadingCategories}
           typSprawy={typSprawy}
+          typSpecjalisty={typSpecjalisty}
           value={categoryIds}
           onChange={onCategoryIdsChange}
           hasError={!!categoryError}
@@ -64,7 +67,7 @@ export function CaseCategoryLocationStep({
           </p>
         )}
 
-        {/* Automatyczny dobór kategorii przez AI na podstawie opisu z kroku 2 */}
+        {/* Automatyczny dobór kategorii przez AI na podstawie opisu z kroku 3 */}
         <button
           type="button"
           onClick={onSuggestCategories}
