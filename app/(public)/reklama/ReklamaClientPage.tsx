@@ -99,6 +99,40 @@ const FAQ_ITEMS = [
   }
 ]
 
+// Media / Baza wiedzy logotypy
+const MEDIA_LOGOS = [
+  {
+    name: "Dziennik Gazeta Prawna",
+    mono: "/images/logos/dgp_mono.webp",
+    alt: "Dziennik Gazeta Prawna",
+    className: "h-11 md:h-13",
+  },
+  {
+    name: "Rzeczpospolita",
+    mono: "/images/logos/rzeczpospolita_mono.webp",
+    alt: "Rzeczpospolita",
+    className: "h-13 md:h-15",
+  },
+  {
+    name: "Prawo.pl",
+    mono: "/images/logos/prawo_pl_mono.webp",
+    alt: "Prawo.pl",
+    className: "h-11 md:h-13",
+  },
+  {
+    name: "ISAP",
+    mono: "/images/logos/isap_mono.webp",
+    alt: "Internetowy System Aktów Prawnych (ISAP)",
+    className: "h-7 md:h-8",
+  },
+  {
+    name: "Portal Informacyjny Sądów Powszechnych",
+    mono: "/images/logos/portal_inf_mono.webp",
+    alt: "Portal Informacyjny Sądów Powszechnych",
+    className: "h-11 md:h-13",
+  },
+]
+
 function LayoutIcon(props: any) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
@@ -413,29 +447,23 @@ ${formData.tresc}`
       <section className="relative z-10 py-10 border-b border-border/30 bg-muted/10 select-none">
         <div className="container mx-auto px-4 max-w-7xl">
           <p className="text-center text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground/80 mb-8">
-            Zaufali nam liderzy branży prawnej i biznesowej
+            Czytamy to codziennie, żebyś Ty nie musiał
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-20 opacity-40 dark:opacity-30">
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Building2 className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">LEX PARTNERS</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Award className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">KOWALSKI & CO.</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <ShieldCheck className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">SECURE TAX</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Users className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">ADWOKACI 24</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <TrendingUp className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">BIZNES HUB</span>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-12 md:gap-x-16">
+            {MEDIA_LOGOS.map((logo) => (
+              <div
+                key={logo.name}
+                title={logo.name}
+                className="flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logo.mono}
+                  alt={logo.alt}
+                  className={`${logo.className} w-auto object-contain dark:brightness-200 dark:contrast-125 transition-all`}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>

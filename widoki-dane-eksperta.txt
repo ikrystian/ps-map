@@ -1,0 +1,398 @@
+================================================================================
+ZESTAWIENIE WIDOKÓW I KOMPONENTÓW WYŚWIETLAJĄCYCH DANE EKSPERTA
+W CELU ROZRÓŻNIENIA: EKSPERT PRAWNIK vs EKSPERT (BRANŻOWY / INNY)
+================================================================================
+Data przygotowania: 2026-09-23
+Baza danych / model główny: LawFirm (oraz powiązany User z danymi osobowymi)
+Drzewo specjalizacji: ExpertiseCategory (gałąź "Prawnicy" vs "Eksperci")
+================================================================================
+
+SPIS TREŚCI:
+1. WIDOKI PUBLICZNE (PORTAL / GOŚĆ)
+2. KOMPONENTY KART I LIST (REUSABLE COMPONENTS)
+3. WIDOKI W PANELU KLIENTA (/panel-klienta)
+4. WIDOKI W PANELU EKSPERTA (/panel-eksperta)
+5. WIDOKI W PANELU ADMINISTRATORA (/admin)
+6. PROCES REJESTRACJI I ONBOARDINGU (/rejestracja/ekspert)
+7. GŁÓWNE RÓŻNICE DO UWZGLĘDNIENIA PRZY WDROŻENIU ROZRÓŻNIENIA
+
+
+================================================================================
+1. WIDOKI PUBLICZNE (PORTAL / GOŚĆ)
+================================================================================
+
+1.1. Profil publiczny eksperta
+- Plik strony: app/(public)/ekspert/[slug]/page.tsx
+- Komponent główny: app/(public)/ekspert/[slug]/ExpertProfileClientPage.tsx
+- Komponenty składowe:
+  * components/ekspert/AboutTab.tsx (opis, zakres usług, edukacja, certyfikaty, galeria)
+  * components/ekspert/ServicesTab.tsx (cennik usług)
+  * components/ekspert/BlogTab.tsx (artykuły eksperta)
+  * components/ekspert/ConsultationBooking.tsx (rezerwacja konsultacji)
+  * components/ekspert/ReviewsSection.tsx (opinie i odpowiedzi eksperta)
+  * components/ekspert/SimilarExperts.tsx (sekcja "Podobni eksperci")
+  * components/ekspert/ExpertCityLinks.tsx oraz ExpertVoivodeshipLinks.tsx
+- Co jest wyświetlane:
+  * Nagłówek: nazwa, logo, banner, odznaka weryfikacji ("Zweryfikowany ekspert"), etykieta specjalizacji (lawFirm.expertiseCategory.nazwa).
+  * Karta "Wpisy do rejestrów zawodowych" (linie 1206-1259 w ExpertProfileClientPage.tsx):
+    - OIRP (Radca Prawny, miasto izby, numer wpisu).
+    - ORA (Adwokat, miasto rady, numer wpisu).
+    UWAGA: Dla eksperta nie-prawnika ta karta nie powinna sugerować wyłącznie OIRP/ORA, lub powinna być ukryta / zastąpiona uprawnieniami branżowymi.
+  * Odznaka biegłego sądowego (lawFirm.bieglySadowy, nazwa sądu).
+  * O ekspercie / edukacja / certyfikaty (AboutTab.tsx).
+- Gdzie dodać rozróżnienie:
+  * Tytuł/rola pod nazwiskiem (Prawnik / Adwokat / Radca prawny vs Ekspert / Doradca / Rzeczoznawca).
+  * Sekcja rejestrów izbowych (tylko dla prawników OIRP/ORA; dla innych ekspertów inne uprawnienia lub brak tej sekcji).
+  * Etykiety i nagłówki (np. "O ekspercie" vs "O prawniku").
+
+1.2. Wyszukiwarka i katalog ekspertów
+- Plik strony: app/(public)/szukaj-prawnika/page.tsx
+- Komponent widoku: app/(public)/szukaj-prawnika/SearchLawyerClientPage.tsx
+- Co jest wyświetlane:
+  * Nagłówek "Szukaj prawnika" oraz licznik "Znaleziono X ekspertów".
+  * Filtry specjalizacji: picker kategorii i drzewa ExpertiseCategory.
+  * Widok siatki kafelków (Grid view): avatar, nazwisko/nazwa, kategoria, miasto, gwiazdki, biegły sądowy.
+  * Widok listy (List view): używa komponentu components/law-firm-list-item.tsx.
+- Gdzie dodać rozróżnienie:
+  * Nazwa strony, breadcrumbs i nagłówki (obecnie twarde "Szukaj prawnika").
+  * Filtr typu specjalisty (przełącznik: Wszyscy / Prawnicy / Eksperci branżowi).
+  * Etykieta zawodu na kafelkach (prawnik vs specjalizacja ekspercka).
+
+1.3. Strona główna (Homepage)
+- Plik strony: app/page.tsx
+- Komponent klienta: components/homepage/home-page-client.tsx
+- Podsekcje wyświetlające ekspertów:
+  * components/homepage/recommended-lawyers.tsx ("Polecani prawnicy i adwokaci"):
+    - Wyświetla kafelki ekspertów w podziale na kategorie.
+    - Tytuł sekcji sugeruje wyłącznie prawników ("Polecani prawnicy i adwokaci").
+  * components/homepage/experts-showcase.tsx (Horyzontalna galeria ekspertów):
+    - Wyświetla: nazwa, avatar/zdjęcie, miasto, specjalizacja (profession = firm.expertiseCategory?.nazwa || firm.categories?.[0]?.nazwa).
+  * components/homepage/new-experts.tsx ("Nowi eksperci już dostępni"):
+    - Slider z nowo zarejestrowanymi ekspertami.
+  * components/homepage/most-consulted-categories.tsx ("Najczęściej konsultowane kategorie"):
+    - Kafelki ekspertów oferujących konsultacje w danych kategoriach.
+  * components/TeamExpertsSection.tsx (Baner losowych ekspertów platformy).
+- Gdzie dodać rozróżnienie:
+  * Rozdzielenie lub dopasowanie etykiet: "Polecani prawnicy" vs "Polecani eksperci".
+  * Wyświetlanie właściwego tytułu zawodowego na kartach.
+
+1.4. Mapa ekspertów
+- Plik strony: app/(public)/mapa/page.tsx
+- Komponent widoku: app/(public)/mapa/MapClientPage.tsx
+- Co jest wyświetlane:
+  * Pinezki na mapie z awatarami ekspertów.
+  * Karta podglądu eksperta (ExpertDetails): avatar, nazwa, opis, biegły sądowy, kategorie, telefon, adres, link do profilu.
+- Gdzie dodać rozróżnienie:
+  * Filtr na mapie (Pokaż: Wszystkich / Prawników / Ekspertów).
+  * Etykieta tytułu zawodowego w drawerze szczegółów pinezki.
+
+1.5. Ranking ekspertów
+- Plik strony: app/(public)/ranking/page.tsx
+- Komponent widoku: app/(public)/ranking/RankingClientPage.tsx
+- Co jest wyświetlane:
+  * Tabela/karty pozycji rankingowych ekspertów: pozycja, avatar, nazwa, kategorie, oceny, punkty, odznaka pakietu.
+- Gdzie dodać rozróżnienie:
+  * Zakładki lub filtr rankingu: Ranking ogólny / Ranking prawników / Ranking ekspertów branżowych.
+  * Tytuł zawodowy przy nazwisku.
+
+1.6. Podstrony kategorii i specjalizacji (Landing pages SEO)
+- Plik strony: app/(public)/kategorie/[...slug]/page.tsx
+- Komponent widoku: app/(public)/kategorie/[...slug]/CategoryClientPage.tsx
+- Komponent składowy: components/category/CategoryPromotedExpertsSlider.tsx
+- Co jest wyświetlane:
+  * Lista ekspertów przypisanych do danej kategorii (LawFirmListItem lub kafelki).
+  * Slider "Promowani eksperci w kategorii: {nazwa}".
+  * Licznik ekspertów w kategorii.
+- Gdzie dodać rozróżnienie:
+  * Kontekstowe nazewnictwo w zależności od kategorii (np. w kategoriach ściśle prawnych: "Prawnicy", w kategoriach technicznych/finansowych: "Eksperci").
+
+1.7. Blog i artykuły (Autor publikacji)
+- Plik strony artykułu: app/(public)/blog/[slug]/page.tsx
+- Komponent widoku: app/(public)/blog/[slug]/BlogPostClientPage.tsx
+- Co jest wyświetlane:
+  * Karta autora: logo/zdjęcie eksperta, nazwa firmy/autora, link do profilu (/ekspert/[slug]).
+  * Baner artykułu sponsorowanego: wizytówka eksperta, miasto, bio, przycisk "Skonsultuj się z ekspertem".
+  * Stopka artykułu: CTA z linkiem do profilu autora.
+- Plik listy artykułów: app/(public)/blog/BlogPageClient.tsx:
+  * Wizytówka autora na kafelkach wpisów (AuthorAvatar, post.lawFirm.nazwa).
+- Gdzie dodać rozróżnienie:
+  * Etykieta autora: "Autor: Radca prawny / Adwokat" vs "Autor: Ekspert [dziedzina]".
+  * CTA: "Skonsultuj się z prawnikiem" vs "Skonsultuj się z ekspertem".
+
+1.8. Strona polecenia sprawy przez eksperta
+- Plik strony: app/(public)/polecenie/[token]/page.tsx
+- Komponent widoku: app/(public)/polecenie/[token]/ReferralLandingClientPage.tsx
+- Co jest wyświetlane:
+  * Karta polecającego eksperta: logo, nazwa, link do profilu, komunikat "Polecenie od eksperta".
+- Gdzie dodać rozróżnienie:
+  * Etykieta: "Twój prawnik polecił..." vs "Twój ekspert polecił...".
+
+
+================================================================================
+2. KOMPONENTY KART I LIST (REUSABLE COMPONENTS)
+================================================================================
+
+2.1. components/law-firm-list-item.tsx (KLUCZOWY KOMPONENT LISTY)
+- Wykorzystywany w: Wyszukiwarce (/szukaj-prawnika) oraz na stronach kategorii (/kategorie/[...slug]).
+- Co jest wyświetlane:
+  * Tytuł zawodowy (linie 287-291):
+    OBECNY KOD:
+    lawFirm.oraStatus ? "Adwokat" : lawFirm.oirpStatus ? "Radca prawny" : lawFirm.expertiseCategory?.nazwa || "Adwokat"
+    (Problem: jeśli brak statusu ORA/OIRP, fallbackiem wciąż bywa "Adwokat"!)
+  * Przynależność do izby (linie 292-297):
+    OBECNY KOD:
+    lawFirm.oraStatus ? ORA ... : lawFirm.oirpStatus ? OIRP ... : "ORA Kielce"
+    (Problem: twardy fallback "ORA Kielce" pojawia się nawet dla nie-prawników!)
+  * Ikona ORA / OIRP / Waga sprawiedliwości.
+- Gdzie dodać rozróżnienie:
+  * Dynamiczne rozpoznawanie gałęzi drzewa (isExpertsBranch):
+    - Dla Prawnika: odznaka ORA/OIRP, tytuł adwokat/radca prawny, ikona prawnicza.
+    - Dla Eksperta: nazwa specjalizacji (np. "Rzeczoznawca majątkowy"), brak wymuszenia ORA/OIRP, neutralna ikona specjalisty.
+
+2.2. components/PromotedLawFirmCard.tsx
+- Wykorzystywany w: Promowanych sekcjach i bocznych paskach.
+- Wyświetla: Logo, nazwa, weryfikacja, miasto, ocena, kategorie, opis, przycisk "Zobacz profil".
+
+2.3. components/category/CategoryPromotedExpertsSlider.tsx
+- Wykorzystywany w: /kategorie/[...slug].
+- Wyświetla: Karty promowanych ekspertów z odznaką "Promowany", gwiazdkami, miastem i opisem.
+
+2.4. components/TeamExpertsSection.tsx
+- Wykorzystywany w: app/(public)/layout.tsx i components/homepage/home-page-client.tsx.
+- Wyświetla: Siatkę 24 losowych ekspertów z bazy (avatar, nazwisko, kategoria główna, miasto).
+
+
+================================================================================
+3. WIDOKI W PANELU KLIENTA (/panel-klienta)
+================================================================================
+
+3.1. Zapisani / Ulubieni eksperci
+- Plik widoku: app/panel-klienta/eksperci/page.tsx
+- Co jest wyświetlane:
+  * Lista zapisanych kancelarii/ekspertów klienta: logo, nazwa, weryfikacja, miasto, województwo, telefon, strona www, ocena, tagi kategorii, link do profilu (/ekspert/[slug]).
+- Gdzie dodać rozróżnienie:
+  * Etykieta roli (Prawnik vs Ekspert branżowy).
+  * Filtr w panelu (np. Ulubieni prawnicy / Ulubieni eksperci).
+
+3.2. Szczegóły sprawy klienta i oferty
+- Plik widoku: app/panel-klienta/sprawy/[id]/page.tsx
+- Co jest wyświetlane:
+  * Sekcja "Zaakceptowana oferta / Przydzielony wykonawca" (linie 460-500):
+    - Nazwa eksperta, telefon, telefon2, adres, kod pocztowy, miasto, link do profilu.
+  * Sekcja "Otrzymane oferty od ekspertów ({liczba})" (linie 520-610):
+    - Karta każdej oferty: avatar eksperta, nazwa, weryfikacja, kategoria główna, miasto, oceny (Star, avgRating, reviewCount), krótki opis bio, przycisk "Zobacz profil".
+  * Sidebar: "Polecenie od eksperta" (referral.lawFirm).
+- Gdzie dodać rozróżnienie:
+  * Nagłówki: "Oferty od prawników" vs "Oferty od ekspertów".
+  * Odznaka typu specjalisty na karcie oferty (np. [PRAWNIK] / [EKSPERT BUDOWLANY]).
+
+3.3. Lista spraw klienta
+- Plik widoku: app/panel-klienta/sprawy/page.tsx
+- Co jest wyświetlane:
+  * Awatary ekspertów, którzy złożyli oferty do danej sprawy (AvatarGroup z logo ekspertów).
+  * Odznaka "Z polecenia" (referral.lawFirm.nazwa).
+
+3.4. Lista ofert klienta
+- Plik widoku: app/panel-klienta/oferty/page.tsx
+- Plik pojedynczej oferty: app/panel-klienta/oferty/[id]/page.tsx
+- Co jest wyświetlane:
+  * Karta oferty: logo eksperta, nazwa, miasto, województwo, kwota brutto, przycisk "Zobacz profil eksperta".
+  * Modal szczegółów oferty: pełne dane eksperta składającego ofertę.
+
+3.5. Dashboard klienta (Pulpit)
+- Plik widoku: app/panel-klienta/page.tsx
+- Co jest wyświetlane:
+  * Sekcja "Otrzymane oferty": podgląd najnowszych ofert z logo i nazwą eksperta.
+  * Sekcja poradników: autor wpisu (lawFirm.nazwa).
+
+3.6. Konsultacje klienta
+- Lista konsultacji: app/panel-klienta/konsultacje/page.tsx
+  * Rezerwacje: karta eksperta (avatar, nazwa, miasto, link "Przejdź do strony eksperta").
+- Zapytania o konsultacje: app/panel-klienta/konsultacje/zapytania/[id]/page.tsx
+  * Zgłoszenia ekspertów chętnych przeprowadzić konsultację (interest.lawFirm.nazwa, logo, proponowany termin, cena).
+- Formularz zapytania: app/panel-klienta/konsultacje/zapytaj/page.tsx
+  * Informacja: "Twoje zapytanie trafi do ekspertów...".
+
+3.7. Wiadomości i czat (Komunikator)
+- Strona czatu: app/panel-klienta/wiadomosci/page.tsx oraz [id]/page.tsx
+- Komponenty:
+  * components/messages/EnhancedChatArea.tsx (okno rozmowy):
+    - Nagłówek czatu: avatar eksperta, nazwa firmy (lawFirm.nazwa), status online/offline.
+    - Sekcja "O ekspercie" (lawFirm.opis).
+  * components/messages/EnhancedConversationList.tsx (lista wątków):
+    - Awatary i nazwy ekspertów prowadzących konwersację.
+  * components/messages/UserInfoDialog.tsx (informacje o rozmówcy):
+    - Nazwa, avatar, rola (LAW_FIRM), NIP, miasto, województwo, bio.
+- Gdzie dodać rozróżnienie:
+  * Tytuł rozmówcy: "Rozmowa z prawnikiem: [Imię / Kancelaria]" vs "Rozmowa z ekspertem: [Imię / Firma]".
+
+
+================================================================================
+4. WIDOKI W PANELU EKSPERTA (/panel-eksperta)
+================================================================================
+
+4.1. Edycja i podgląd profilu eksperta
+- Plik strony: app/panel-eksperta/profil/page.tsx
+- Komponenty zakładek:
+  * components/panel-eksperta/profil/BasicTab.tsx:
+    - Wybór specjalizacji z drzewa (ExpertiseCategory: Prawnicy vs Eksperci).
+    - Sekcja rejestrów:
+      * Checkbox i pola: "Radca Prawny (OIRP)" - miasto, numer wpisu.
+      * Checkbox i pola: "Adwokat (ORA)" - miasto, numer wpisu.
+      UWAGA: Pola OIRP/ORA są obecnie widoczne dla każdego użytkownika konta LAW_FIRM, nawet jeśli wybrał specjalizację np. "Księgowy" lub "Geodeta"!
+  * components/panel-eksperta/profil/SpecializationTab.tsx:
+    - Status biegłego sądowego (lawFirm.bieglySadowy, nazwa sądu).
+    - Kategorie spraw, słowa kluczowe.
+  * components/panel-eksperta/profil/ProfileScoreCard.tsx (Kalkulator wypełnienia profilu):
+    - Punktuje wpis OIRP/ORA (linie 145-146, 201):
+      "Potwierdzenie wpisu OIRP (radca prawny) lub ORA (adwokat)..."
+      UWAGA: Ekspert nie-prawnik nie może osiągnąć 100% punktacji, jeśli wymaga się od niego wpisu OIRP/ORA!
+- Gdzie dodać rozróżnienie:
+  * Warunkowe ukrywanie sekcji OIRP/ORA, gdy ekspert należy do gałęzi "Eksperci" (isExpertsBranch).
+  * Dynamiczne dopasowanie kryteriów ProfileScoreCard w zależności od gałęzi.
+
+4.2. Pozycja w rankingu i symulator pozycji
+- Plik widoku: app/panel-eksperta/pozycja-ogloszenia/page.tsx
+- Co jest wyświetlane:
+  * Podgląd pozycji własnego profilu w rankingu, porównanie z konkurentami w kategorii.
+- Gdzie dodać rozróżnienie:
+  * Kontekst kategorii (prawnicza vs ekspercka).
+
+4.3. Pulpit główny panelu eksperta (Dashboard)
+- Plik widoku: app/panel-eksperta/page.tsx
+- Co jest wyświetlane:
+  * Powitanie, podsumowanie profilu, odznaka pakietu, status weryfikacji.
+  * Statystyki wyświetleń profilu, złożonych ofert, opinii.
+
+4.4. Układ panelu i menu użytkownika
+- Plik layoutu: app/panel-eksperta/layout.tsx
+- Komponent menu: components/UserMenu.tsx
+- Co jest wyświetlane:
+  * Tytuł "Panel Eksperta" (lub docelowo "Panel Prawnika" / "Panel Eksperta").
+  * UserMenu: Inicjały "EK" (Ekspert), avatar, saldo punktów, rola LAW_FIRM.
+
+
+================================================================================
+5. WIDOKI W PANELU ADMINISTRATORA (/admin)
+================================================================================
+
+5.1. Lista wszystkich ekspertów / kancelarii
+- Plik widoku: app/admin/law-firms/page.tsx
+- Co jest wyświetlane:
+  * Tabela ekspertów: logo, nazwa, ścieżka specjalizacji (formatExpertisePath), pakiet, status weryfikacji, status aktywności, akcje.
+- Gdzie dodać rozróżnienie:
+  * Kolumna lub filtr: Typ (Prawnik / Ekspert branżowy).
+  * Odznaka przynależności do gałęzi (Prawnicy vs Eksperci).
+
+5.2. Formularz edycji eksperta w panelu admina
+- Plik widoku: app/admin/law-firms/[id]/edit/page.tsx
+- Komponenty składowe w folderze components/ (AdminReadOnlyCards.tsx, InteractiveEditors.tsx, RelationEditors.tsx)
+- Co jest wyświetlane:
+  * Sekcja "Przynależność do izb i samorządów - Uprawnienia zawodowe adwokata / radcy prawnego" (linie 1875-1985):
+    - Pola oirpStatus, oirpMiasto, oirpWpis, oraStatus, oraMiasto, oraWpis.
+  * Sekcja "Biegły sądowy" (bieglySadowy, bieglySadowyNazwaSadu).
+  * Wybór kategorii i specjalizacji z drzewa ExpertiseCategory.
+- Gdzie dodać rozróżnienie:
+  * Pokazywanie sekcji samorządów prawniczych tylko dla gałęzi Prawnicy.
+  * Możliwość dodania certyfikatów / uprawnień branżowych dla innych ekspertów.
+
+5.3. Formularz dodawania nowego eksperta przez admina
+- Plik widoku: app/admin/law-firms/new/page.tsx
+- Co jest wyświetlane:
+  * Formularz z polami OIRP i ORA (linie 1004-1105).
+- Gdzie dodać rozróżnienie:
+  * Warunkowe włączanie pól rejestrów izbowych w zależności od wybranej specjalizacji.
+
+5.4. Zarządzanie drzewem specjalizacji
+- Plik widoku: app/admin/expertise-categories/page.tsx
+- Co jest wyświetlane:
+  * Drzewo kategorii i podkategorii (korzeń: "Prawnicy" oraz "Eksperci").
+  * Ustalanie powiązań między specjalizacjami a kategoriami spraw (CategoryExpertiseCategory).
+
+5.5. Szczegóły sprawy i moderacja ofert
+- Plik widoku: app/admin/cases/[id]/page.tsx
+- Co jest wyświetlane:
+  * Karta "Oferty od ekspertów prawnych": nazwy firm, kwoty, statusy.
+  * Karta "Przydzielony wykonawca / Przydzielona ekspert": dane wybranego eksperta.
+
+5.6. Moderacja opinii
+- Pliki widoku: app/admin/reviews/page.tsx oraz app/admin/reviews/[id]/page.tsx
+- Co jest wyświetlane:
+  * Opinie wystawione ekspertom, nazwa eksperta, odpowiedź eksperta.
+
+5.7. Ręczne pozycjonowanie w rankingach
+- Plik widoku: app/admin/pozycjonowanie/page.tsx
+- Co jest wyświetlane:
+  * Nadpisywanie pozycji w wyszukiwarce (SEARCH) oraz sekcjach strony głównej (HOMEPAGE_RECOMMENDED = "Polecani prawnicy i adwokaci", HOMEPAGE_TOP, HOMEPAGE_FEATURED).
+
+5.8. Wiadomości kontaktowe z profili
+- Plik widoku: app/admin/kontakt/page.tsx
+- Co jest wyświetlane:
+  * Zakładka "Do ekspertów": wiadomości wysłane z formularzy na profilach /ekspert/[slug], z podglądem danych adresata.
+
+5.9. Opiekunowie ekspertów
+- Plik widoku: app/admin/opiekunowie/page.tsx
+- Co jest wyświetlane:
+  * Lista opiekunów i lista przypisanych ekspertów/kancelarii (firm.nazwa).
+
+5.10. Klub partnerski
+- Plik widoku: app/admin/klub-partnerski/page.tsx
+- Co jest wyświetlane:
+  * Lista członków programu partnerskiego (lawFirmName, lawFirmEmail, pakiet, saldo punktów).
+
+5.11. Zgłoszenia błędów
+- Plik widoku: app/admin/bug-reports/page.tsx
+- Co jest wyświetlane:
+  * Zgłoszenia od użytkowników o roli LAW_FIRM (report.user.lawFirm.nazwa).
+
+5.12. Użytkownicy w systemie
+- Pliki widoku: app/admin/users/page.tsx oraz app/admin/users/[id]/edit/page.tsx
+- Co jest wyświetlane:
+  * Tabela użytkowników z rolą LAW_FIRM ("Ekspert"), powiązana kancelaria/firma.
+
+
+================================================================================
+6. PROCES REJESTRACJI I ONBOARDINGU (/rejestracja/ekspert)
+================================================================================
+
+6.1. Kreator rejestracji eksperta
+- Plik widoku: app/(public)/rejestracja/ekspert/LawFirmRegisterClientPage.tsx
+- Co jest wyświetlane:
+  * Krok 1 (Działalność):
+    - Wybór z drzewa ExpertiseCategory:
+      Gałąź "Prawnicy" (Adwokat, Radca prawny, Notariusz, Doradca podatkowy itp.)
+      vs
+      Gałąź "Eksperci" (Finanse, Budownictwo, Motoryzacja, RODO, BHP itp.).
+  * Krok 2 (Kategorie spraw):
+    - Zastosowanie funkcji isInExpertsBranch():
+      Prawnicy mają dostęp do wszystkich kategorii spraw, natomiast Eksperci mają widok przefiltrowany tylko do kategorii powiązanych z ich specjalizacją (tabela CategoryExpertiseCategory).
+- Gdzie dodać rozróżnienie:
+  * Już na starcie formularza wyraźny wybór ścieżki: "Rejestruję się jako Prawnik" vs "Rejestruję się jako Ekspert branżowy".
+  * Dostosowanie dalszych kroków (np. pobieranie numeru wpisu ORA/OIRP tylko dla prawników).
+
+
+================================================================================
+7. GŁÓWNE RÓŻNICE DO UWZGLĘDNIENIA PRZY WDROŻENIU ROZRÓŻNIENIA
+================================================================================
+
+1. SPOSÓB ROZPOZNAWANIA W KODZIE:
+   - W bazie danych istnieje pole `LawFirm.expertiseCategoryId` wskazujące na liść drzewa `ExpertiseCategory`.
+   - Moduł `lib/expertise-category.ts` posiada funkcje:
+     * `isExpertsBranch(category)` - sprawdza, czy dany rekord należy do gałęzi "Eksperci".
+     * Jeśli `isExpertsBranch` zwraca `false` (i root to "Prawnicy"), użytkownik jest prawnikiem.
+   - Warto stworzyć pomocniczą funkcję `isLawyer(lawFirm)` bazującą na ścieżce lub obecności wpisów OIRP/ORA.
+
+2. NAZEWNICTWO I WARSTWA TEKSTOWA:
+   - "Szukaj prawnika" (/szukaj-prawnika) -> możliwość przełączenia na szukanie ekspertów lub podział na zakładki.
+   - "Polecani prawnicy i adwokaci" na stronie głównej -> sekcja obecnie ignoruje ekspertów nie-prawników lub wyświetla ich pod mylącym nagłówkiem.
+   - Etykiety CTA: "Skonsultuj się z prawnikiem" vs "Skonsultuj się ze specjalistą/ekspertem".
+
+3. REJESTRY I CERTYFIKATY:
+   - Prawnicy: Weryfikacja OIRP (Krajowa Izba Radców Prawnych), ORA (Naczelna Rada Adwokacka).
+   - Inni eksperci: Rejestry rzeczoznawców (np. MRiT), uprawnienia budowlane (PIIB), certyfikaty księgowe (MF), biegli rewidenci (PIBR), biegli sądowi przy sądach okręgowych.
+
+4. KARTA WYNIKÓW PROFILU (ProfileScoreCard):
+   - Obecnie wymaga OIRP/ORA, co uniemożliwia ekspertom branżowym osiągnięcie 100% jakości profilu. Należy to uzależnić od `isExpertsBranch`.
+
+5. FALLBACKI W KODZIE:
+   - Wyeliminować twardy fallback "Adwokat" oraz "ORA Kielce" w `components/law-firm-list-item.tsx`.
