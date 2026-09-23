@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   TrendingUp,
@@ -30,6 +31,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/components/ui/sonner"
 import { NumberTicker } from "@/components/ui/number-ticker"
 import "./reklama.css"
+
+// Logotypy partnerow / mediow
+const TRUSTED_LOGOS = [
+  { name: "Rzeczpospolita", slug: "rzeczpospolita", width: 2078, height: 800, sizeClass: "h-7 md:h-16" },
+  { name: "Dziennik Gazeta Prawna", slug: "dgp", width: 2078, height: 800, sizeClass: "h-7 md:h-16" },
+  { name: "Prawo.pl", slug: "prawo_pl", width: 2078, height: 800, sizeClass: "h-7 md:h-16" },
+  { name: "Portal Informacyjny", slug: "portal_inf", width: 2078, height: 800, sizeClass: "h-7 md:h-16" },
+  { name: "ISAP", slug: "isap", width: 863, height: 1028, sizeClass: "h-11 md:h-18" }
+]
 
 // Formaty reklamowe dane
 const AD_FORMATS = [
@@ -356,7 +366,7 @@ ${formData.tresc}`
                 <div className="absolute -inset-1.5 bg-gradient-to-r from-primary to-emerald-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition duration-1000" />
                 <div className="relative bg-card border border-border/80 rounded-3xl p-3 shadow-2xl overflow-hidden glass-panel">
                   <img
-                    src="/images/reklama_hero.png"
+                    src="/images/prosta_reklama.webp"
                     alt="Statystyki i Prawo Reklama"
                     className="w-full h-auto object-cover rounded-2xl animate-float"
                   />
@@ -415,27 +425,29 @@ ${formData.tresc}`
           <p className="text-center text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground/80 mb-8">
             Zaufali nam liderzy branży prawnej i biznesowej
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-20 opacity-40 dark:opacity-30">
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Building2 className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">LEX PARTNERS</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Award className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">KOWALSKI & CO.</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <ShieldCheck className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">SECURE TAX</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <Users className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">ADWOKACI 24</span>
-            </div>
-            <div className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-all duration-300">
-              <TrendingUp className="h-4.5 w-4.5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="font-semibold text-xs tracking-wider font-playfair group-hover:text-primary transition-colors">BIZNES HUB</span>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-16">
+            {TRUSTED_LOGOS.map((logo) => (
+              <div
+                key={logo.slug}
+                className={`group relative cursor-pointer ${logo.sizeClass}`}
+              >
+                <Image
+                  src={`/images/logotypu/${logo.slug}_mono.webp`}
+                  alt={logo.name}
+                  width={logo.width}
+                  height={logo.height}
+                  className="h-full w-auto object-contain opacity-40 dark:opacity-30 dark:invert transition-opacity duration-300 group-hover:opacity-0"
+                />
+                <Image
+                  src={`/images/logotypu/${logo.slug}_oryginal.webp`}
+                  alt=""
+                  aria-hidden="true"
+                  width={logo.width}
+                  height={logo.height}
+                  className="absolute inset-0 h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
