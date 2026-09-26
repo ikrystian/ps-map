@@ -1407,6 +1407,7 @@ enum PointTransactionType {
   PARTNER_BONUS            // Bonus partnerski
   ADMIN_ADJUSTMENT         // Korekta admina
   REFUND                   // Zwrot punktów
+  PROMOTION_REFUND         // Zwrot za anulowaną promocję (pomniejsza „wydano na promocje” w rankingu)
   SUBSCRIPTION_BONUS       // Bonus za pakiet
   REVIEW_DELETE            // Usunięcie opinii przez eksperta za punkty
   SURVEY_REWARD            // Nagroda za wypełnienie ankiety

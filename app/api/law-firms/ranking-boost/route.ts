@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { PROMOTION_SPEND_TRANSACTION_TYPES } from "@/lib/points-ledger"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { NextResponse } from "next/server"
 
@@ -67,7 +68,7 @@ export async function GET() {
         select: { typPromocji: true },
       },
       pointTransactions: {
-        where: { type: "PROMOTION_PURCHASE" as const },
+        where: { type: { in: PROMOTION_SPEND_TRANSACTION_TYPES } },
         select: { amount: true },
       },
     }

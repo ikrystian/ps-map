@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
       prisma.client.count(),
       prisma.lawFirm.count(),
       prisma.case.count(),
-      prisma.order.count(),
+      // Bez zamówień płaconych punktami — spójnie z przychodem i listą /admin/transakcje
+      prisma.order.count({ where: { metodaPlatnosci: { not: 'POINTS' } } }),
       prisma.blogPost.count(),
       prisma.review.count(),
       prisma.user.count({ where: { status: 'ACTIVE' } }),
@@ -48,9 +49,13 @@ export async function GET(request: NextRequest) {
     })
 
     // Get revenue statistics
+    // Zamówienia opłacone punktami nie są przychodem — punkty zostały już
+    // spieniężone przy ich zakupie (inaczej ta sama wartość liczyłaby się dwa razy
+    // i przychód rozjeżdżałby się z sumą na /admin/transakcje).
     const completedOrders = await prisma.order.findMany({
       where: {
         statusPlatnosci: 'ZAPLACONE',
+        metodaPlatnosci: { not: 'POINTS' },
       },
       select: {
         kwota: true,
@@ -69,6 +74,7 @@ export async function GET(request: NextRequest) {
         SUM(kwota) as revenue
       FROM "Order"
       WHERE "statusPlatnosci" = 'ZAPLACONE'
+        AND "metodaPlatnosci" != 'POINTS'
         AND "createdAt" >= ${sixMonthsAgo}
       GROUP BY month
       ORDER BY month ASC

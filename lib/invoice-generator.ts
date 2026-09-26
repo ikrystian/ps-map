@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { sendInvoiceToKsef } from "@/lib/ksef"
+import { claimOrderPayment, creditPointsForOrder } from "@/lib/points-ledger"
 
 /**
  * Rozbija pełny adres z Białej listy MF (np. "UL. PRZYKŁADOWA 1, 00-000 WARSZAWA")
@@ -233,30 +234,22 @@ export async function markOrderAsPaidAndGenerateInvoice(
   transactionId?: string
 ) {
   try {
-    // Update order status to ZAPLACONE
-    const order = await prisma.order.update({
-      where: { id: orderId },
-      data: {
-        statusPlatnosci: "ZAPLACONE",
-        zaplaconoData: new Date(),
-        ...(transactionId && { transactionId }),
-      },
-      include: {
-        invoice: true,
-      },
-    })
-
-    // If it's a points order, add points to law firm
-    if (order.orderType === "POINTS" && order.liczbaPunktow) {
-      await prisma.lawFirm.update({
-        where: { id: order.lawFirmId },
-        data: {
-          punktySaldo: {
-            increment: order.liczbaPunktow,
-          },
-        },
+    // Oznacz zamówienie jako opłacone i uznaj punkty (z wpisem w historii) w jednej
+    // transakcji. Ponowne wywołanie dla opłaconego już zamówienia niczego nie dolicza.
+    const order = await prisma.$transaction(async (tx) => {
+      const claimed = await claimOrderPayment(tx, orderId, transactionId ? { transactionId } : {})
+      const order = await tx.order.findUniqueOrThrow({
+        where: { id: orderId },
+        include: { invoice: true },
       })
-    }
+
+      // If it's a points order, add points to law firm
+      if (claimed && order.orderType === "POINTS") {
+        await creditPointsForOrder(tx, order)
+      }
+
+      return order
+    })
 
     // Generate invoice if it doesn't exist
     if (!order.invoice) {

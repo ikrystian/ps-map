@@ -43,8 +43,11 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
-
-const POINTS_PER_PLN = 2
+import {
+  DEFAULT_POINTS_TO_PLN_RATIO,
+  parsePointsToPlnRatio,
+  plnToPoints,
+} from "@/lib/points-pricing"
 
 interface SubscriptionPlan {
   id: string
@@ -192,6 +195,11 @@ export default function LawFirmPackagePage() {
   const [activatedUntil, setActivatedUntil] = useState<string | null>(null)
   const [showActivatedModal, setShowActivatedModal] = useState(false)
   const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
+  // 1 pkt = X zł — ten sam przelicznik z ustawień co w sklepie punktów i w API zakupu (F-015)
+  const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(DEFAULT_POINTS_TO_PLN_RATIO)
+
+  /** Koszt pakietu w punktach dla ceny w zł. */
+  const toPoints = (pln: number) => plnToPoints(pln, pointsToPlnRatio)
 
   const isSubscriptionActive = !!lawFirm?.pakietSubskrypcji &&
     (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
@@ -240,6 +248,7 @@ export default function LawFirmPackagePage() {
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json()
         setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")
+        setPointsToPlnRatio(parsePointsToPlnRatio(settingsData.pointsToPlnRatio))
       }
 
       setLawFirm(firmData)
@@ -275,7 +284,7 @@ export default function LawFirmPackagePage() {
     if (price === 0 && plan.typ !== "FREE") return "-"
     if (plan.typ === "FREE") return "Darmowy"
 
-    const pointsCost = Math.round(price * POINTS_PER_PLN)
+    const pointsCost = toPoints(price)
     return `${pointsCost} pkt`
   }
 
@@ -649,7 +658,7 @@ export default function LawFirmPackagePage() {
             const isDowngrade = targetPlanRank < currentPlanRank
 
             const priceVal = getPriceValue(plan, selectedPeriod)
-            const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
+            const pointsCost = toPoints(priceVal)
             const canAfford = (lawFirm.punktySaldo || 0) >= pointsCost
 
             const periodMonths = parseInt(selectedPeriod)
@@ -974,7 +983,7 @@ export default function LawFirmPackagePage() {
                       const isPopular = plan.typ.toUpperCase() === "PREMIUM"
                       const isBestVal = plan.typ.toUpperCase() === "BIZNES"
                       const priceVal = getPriceValue(plan, selectedPeriod)
-                      const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
+                      const pointsCost = toPoints(priceVal)
 
                       return (
                         <td
@@ -1029,7 +1038,7 @@ export default function LawFirmPackagePage() {
                   }
 
                   const price = getPriceValue(selectedPlan, selectedPeriod)
-                  const pointsCost = Math.round(price * POINTS_PER_PLN)
+                  const pointsCost = toPoints(price)
                   const canAfford = lawFirm ? (lawFirm.punktySaldo || 0) >= pointsCost : false
 
                   return (
@@ -1102,7 +1111,7 @@ export default function LawFirmPackagePage() {
             <AlertDialogCancel className="border-border rounded-xl">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
-              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && (lawFirm.punktySaldo || 0) < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
+              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && (lawFirm.punktySaldo || 0) < toPoints(getPriceValue(selectedPlan, selectedPeriod)))}
               className="bg-primary hover:bg-primary-hover text-white font-semibold rounded-xl"
             >
               {purchasing ? (

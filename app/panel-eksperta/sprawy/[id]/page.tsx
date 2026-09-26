@@ -38,6 +38,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { OFFER_HIGHLIGHT_POINTS } from "@/lib/points-pricing"
 
 interface Case {
   id: string
@@ -681,7 +682,7 @@ export default function LawFirmCaseDetailsPage() {
                         id="wyroznienie"
                         checked={offerForm.wyroznienie}
                         onCheckedChange={(checked) => handleOfferFormChange("wyroznienie", checked)}
-                        disabled={lawFirmPoints !== null && lawFirmPoints < 50}
+                        disabled={lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS}
                         className="data-[state=checked]:bg-secondary"
                       />
                       <div className="flex-grow min-w-0">
@@ -689,15 +690,15 @@ export default function LawFirmCaseDetailsPage() {
                           htmlFor="wyroznienie"
                           className={cn(
                             "cursor-pointer text-sm font-bold text-foreground flex items-center gap-1.5",
-                            lawFirmPoints !== null && lawFirmPoints < 50 && "opacity-50 cursor-not-allowed"
+                            lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS && "opacity-50 cursor-not-allowed"
                           )}
                         >
-                          Wyróżnij tę ofertę (koszt: 50 punktów)
+                          Wyróżnij tę ofertę (koszt: {OFFER_HIGHLIGHT_POINTS} punktów)
                         </Label>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Twoja oferta zostanie podświetlona na złoty kolor i zaprezentowana na samej górze skrzynki klienta.
                         </p>
-                        {lawFirmPoints !== null && lawFirmPoints < 50 && (
+                        {lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS && (
                           <p className="text-xs text-rose-400 mt-2 font-medium">
                             Niewystarczające saldo punktów (masz: {lawFirmPoints} pkt).{" "}
                             <Link href="/panel-eksperta/punkty" className="underline text-secondary hover:text-secondary/85">

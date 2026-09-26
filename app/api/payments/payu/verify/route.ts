@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { payuClient } from "@/lib/payu"
+import { claimOrderPayment, creditPointsForOrder, creditSubscriptionBonus } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -57,26 +58,15 @@ export async function POST(request: NextRequest) {
 
         if (status === 'COMPLETED') {
             // Update Order and LawFirm
-            await prisma.$transaction(async (tx) => {
-                // Update Order
-                await tx.order.update({
-                    where: { id: order.id },
-                    data: {
-                        statusPlatnosci: 'ZAPLACONE',
-                        zaplaconoData: new Date()
-                    }
-                })
+            const settled = await prisma.$transaction(async (tx) => {
+                // Zajmij zamówienie warunkowo — powiadomienie PayU (notify) przychodzi
+                // niemal równocześnie z powrotem użytkownika; punkty i pakiet tylko raz.
+                const claimed = await claimOrderPayment(tx, order.id)
+                if (!claimed) return false
 
                 // Handle Points
                 if (order.orderType === 'POINTS') {
-                    await tx.lawFirm.update({
-                        where: { id: order.lawFirmId },
-                        data: {
-                            punktySaldo: {
-                                increment: order.liczbaPunktow || 0
-                            }
-                        }
-                    })
+                    await creditPointsForOrder(tx, order)
                 }
 
                 // Handle Subscription
@@ -97,11 +87,10 @@ export async function POST(request: NextRequest) {
                             pakietSubskrypcji: order.subscriptionPlan.typ,
                             dataPakietuOd: startDate,
                             dataPakietuDo: endDate,
-                            punktySaldo: {
-                                increment: order.subscriptionPlan.punktyGratis || 0
-                            }
                         }
                     })
+
+                    await creditSubscriptionBonus(tx, order.lawFirmId, order.subscriptionPlan)
                 }
 
                 // Create Notification
@@ -116,9 +105,14 @@ export async function POST(request: NextRequest) {
                         linkUrl: order.orderType === 'POINTS' ? "/panel-eksperta/punkty" : "/panel-eksperta/pakiet"
                     }
                 })
+
+                return true
             })
 
-            return Response.json({ status: "COMPLETED", message: "Order updated successfully" })
+            return Response.json({
+                status: "COMPLETED",
+                message: settled ? "Order updated successfully" : "Order already paid",
+            })
         } else if (status === 'CANCELED') {
             await prisma.order.update({
                 where: { id: order.id },

@@ -90,7 +90,9 @@ export default function AdminSubscriptionPlansPage() {
   const formatPrice = (price: number | null) => {
     if (price === null) return "-"
     if (price === 0) return "Darmowy"
-    return `${price} pkt`
+    // Ceny pakietów są w złotych (tak je zapisuje formularz i tak je rozlicza faktura);
+    // punkty to osobna waluta, której koszt liczy się z `pointsToPlnRatio` (F-042).
+    return `${price.toLocaleString("pl-PL", { maximumFractionDigits: 2 })} zł`
   }
 
   if (loading) {

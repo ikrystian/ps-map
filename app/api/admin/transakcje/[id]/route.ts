@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { creditPointsForOrder } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -121,46 +122,62 @@ export async function PUT(
       updateData.externalOrderId = externalOrderId
     }
 
-    const updatedOrder = await prisma.order.update({
-      where: { id },
-      data: updateData,
-      include: {
-        lawFirm: {
-          select: {
-            id: true,
-            nazwa: true,
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+      const before = await tx.order.findUnique({
+        where: { id },
+        select: { statusPlatnosci: true, zaplaconoData: true },
+      })
+      if (!before) return null
+
+      const updated = await tx.order.update({
+        where: { id },
+        data: updateData,
+        include: {
+          lawFirm: {
+            select: {
+              id: true,
+              nazwa: true,
+            },
+          },
+          subscriptionPlan: {
+            select: {
+              id: true,
+              nazwa: true,
+            },
+          },
+          invoice: {
+            select: {
+              id: true,
+              invoiceNumber: true,
+              status: true,
+            },
           },
         },
-        subscriptionPlan: {
-          select: {
-            id: true,
-            nazwa: true,
-          },
-        },
-        invoice: {
-          select: {
-            id: true,
-            invoiceNumber: true,
-            status: true,
-          },
-        },
-      },
+      })
+
+      // Punkty z zamówienia uznajemy tylko raz: przy pierwszym przejściu na ZAPLACONE.
+      // Ponowne zapisanie tego statusu (albo powrót z ZWROT/OCZEKUJE, gdy zamówienie
+      // było już opłacone — `zaplaconoData` zostaje) nie może doliczyć punktów drugi raz.
+      const firstPayment =
+        statusPlatnosci === "ZAPLACONE" &&
+        before.statusPlatnosci !== "ZAPLACONE" &&
+        !before.zaplaconoData
+      if (firstPayment && updated.orderType === "POINTS") {
+        await creditPointsForOrder(tx, updated)
+      }
+
+      return updated
     })
+
+    if (!updatedOrder) {
+      return NextResponse.json(
+        { error: "Nie znaleziono transakcji" },
+        { status: 404 }
+      )
+    }
 
     // If order was marked as paid, perform post-payment actions
     if (statusPlatnosci === "ZAPLACONE") {
-      // If it's a points order, add points to law firm
-      if (updatedOrder.orderType === "POINTS" && updatedOrder.liczbaPunktow) {
-        await prisma.lawFirm.update({
-          where: { id: updatedOrder.lawFirmId },
-          data: {
-            punktySaldo: {
-              increment: updatedOrder.liczbaPunktow,
-            },
-          },
-        })
-      }
-
       // Generate invoice if it doesn't exist yet (skip for points)
       if (updatedOrder.metodaPlatnosci !== "POINTS") {
         if (!updatedOrder.invoice) {

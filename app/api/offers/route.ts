@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth"
 import { sendEmailWithTemplate } from "@/lib/email"
+import { applyPointsChange, InsufficientPointsError } from "@/lib/points-ledger"
+import { OFFER_HIGHLIGHT_POINTS } from "@/lib/points-pricing"
 import { prisma } from "@/lib/prisma"
 import { EmailType } from "@prisma/client"
 import { NextRequest } from "next/server"
@@ -251,7 +253,7 @@ export async function POST(request: NextRequest) {
     // Oblicz koszt wyróżnienia
     let punktyWyroznienia = null
     if (wyroznienie) {
-      punktyWyroznienia = 50 // Koszt wyróżnienia oferty
+      punktyWyroznienia = OFFER_HIGHLIGHT_POINTS // Koszt wyróżnienia oferty
 
       // Sprawdź czy ekspert ma wystarczającą ilość punktów
       if (lawFirm.punktySaldo < punktyWyroznienia) {
@@ -305,9 +307,19 @@ export async function POST(request: NextRequest) {
         where: { id: lawFirm.id },
         data: {
           zlozoneOferty: { increment: 1 },
-          punktySaldo: wyroznienie ? { decrement: punktyWyroznienia! } : undefined
         }
       })
+
+      // Wyróżnienie kosztuje punkty — obciążenie idzie razem z wpisem w historii
+      if (wyroznienie) {
+        await applyPointsChange(
+          tx,
+          lawFirm.id,
+          -punktyWyroznienia!,
+          "OFFER_HIGHLIGHT",
+          `Wyróżnienie oferty w sprawie „${newOffer.case.nazwaSprawy}”`
+        )
+      }
 
       // Get current date info for stats
       const now = new Date()
@@ -444,6 +456,12 @@ export async function POST(request: NextRequest) {
 
     return Response.json(offer, { status: 201 })
   } catch (error) {
+    if (error instanceof InsufficientPointsError) {
+      return Response.json(
+        { error: "Niewystarczająca liczba punktów" },
+        { status: 400 }
+      )
+    }
     console.error("Error creating offer:", error)
     return Response.json(
       { error: "Błąd podczas tworzenia oferty" },

@@ -53,6 +53,9 @@ export const DEFAULT_POINT_PACKAGES: PointPackage[] = [
   { id: "1000_pkt", label: "Business", points: 1000, bonusPoints: 100, price: 700, highlight: false, active: true },
 ]
 
+/** Koszt wyróżnienia oferty w punktach — jedno źródło dla API i UI. */
+export const OFFER_HIGHLIGHT_POINTS = 50
+
 /** Prefiks identyfikatora zamówienia na własną liczbę punktów. */
 export const CUSTOM_POINTS_ORDER_PREFIX = "custom_"
 
@@ -155,6 +158,14 @@ export const parsePointsToPlnRatio = (raw?: string | null): number => {
   if (parsed === null || parsed <= 0) return DEFAULT_POINTS_TO_PLN_RATIO
   return parsed
 }
+
+/**
+ * Koszt w punktach dla kwoty w zł według bazowego przelicznika `pointsToPlnRatio`
+ * (1 pkt = `ratio` zł). Używane tam, gdzie płacimy punktami za coś wycenionego w zł
+ * (np. pakiet subskrypcji), żeby wszędzie obowiązywał ten sam przelicznik (F-015).
+ */
+export const plnToPoints = (pln: number, ratio: number) =>
+  Math.round(pln / (ratio > 0 ? ratio : DEFAULT_POINTS_TO_PLN_RATIO))
 
 /** Przedział obowiązujący dla podanej liczby punktów (null = brak dopasowania). */
 export const findPointPriceTier = (

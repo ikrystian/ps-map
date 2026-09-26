@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getPointTransactionLabel } from "@/lib/point-transaction-labels"
 import {
   buildCustomPointsOrderId,
   buildPointsPricingConfig,
@@ -117,11 +118,28 @@ interface OrdersResponse {
   }
 }
 
+/** Wpis w historii punktów (operacja na saldzie). */
+interface PointEntry {
+  id: string
+  amount: number
+  balanceAfter: number
+  type: string
+  description: string
+  createdAt: string
+}
+
+interface PointEntriesResponse {
+  transactions: PointEntry[]
+  pagination: OrdersResponse["pagination"]
+}
+
 interface LawFirm {
   id: string
   punktySaldo: number
   nazwa: string
 }
+
+const formatPoints = (value: number) => value.toLocaleString("pl-PL")
 
 // Style kart pakietów — przypisywane cyklicznie wg kolejności z ustawień admina
 const PACKAGE_STYLES = [
@@ -162,6 +180,10 @@ export default function LawFirmPointsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [pointEntries, setPointEntries] = useState<PointEntry[]>([])
+  const [pointEntriesPagination, setPointEntriesPagination] = useState<PointEntriesResponse["pagination"] | null>(null)
+  const [pointEntriesPage, setPointEntriesPage] = useState(1)
+  const [pointEntriesError, setPointEntriesError] = useState<string | null>(null)
   const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(DEFAULT_POINTS_TO_PLN_RATIO)
   const [priceTiers, setPriceTiers] = useState<PointPriceTier[]>(DEFAULT_POINT_PRICE_TIERS)
   const [minCustomPoints, setMinCustomPoints] = useState<number>(DEFAULT_MIN_CUSTOM_POINTS)
@@ -198,6 +220,28 @@ export default function LawFirmPointsPage() {
     fetchData()
   }, [session, currentPage, statusFilter])
 
+  // Historia punktów (księga operacji na saldzie): zakupy, wydatki na promocje/wyróżnienia,
+  // zwroty, bonusy — dzięki niej saldo da się prześledzić operacja po operacji (F-059).
+  const fetchPointEntries = async () => {
+    if (!session?.user?.id) return
+
+    try {
+      const response = await fetch(`/api/law-firms/me/point-transactions?page=${pointEntriesPage}&limit=10`)
+      if (!response.ok) throw new Error("Nie udało się pobrać historii punktów")
+
+      const data: PointEntriesResponse = await response.json()
+      setPointEntries(data.transactions)
+      setPointEntriesPagination(data.pagination)
+      setPointEntriesError(null)
+    } catch (err) {
+      setPointEntriesError(err instanceof Error ? err.message : "Wystąpił błąd")
+    }
+  }
+
+  useEffect(() => {
+    fetchPointEntries()
+  }, [session, pointEntriesPage])
+
   const fetchData = async () => {
     if (!session?.user?.id) return
 
@@ -221,7 +265,9 @@ export default function LawFirmPointsPage() {
       const lawFirmData = await lawFirmResponse.json()
       setLawFirm(lawFirmData)
 
-      const params = new URLSearchParams({ page: currentPage.toString(), limit: "10" })
+      // Tabela „Historia transakcji” dotyczy zakupów punktów — zamówienia subskrypcji
+      // nie mają liczby punktów ani pakietu punktów i wyświetlały się jako puste wiersze
+      const params = new URLSearchParams({ page: currentPage.toString(), limit: "10", orderType: "POINTS" })
       if (statusFilter !== "all") params.append("status", statusFilter)
 
       const ordersResponse = await fetch(`/api/orders?${params}`)
@@ -315,6 +361,7 @@ export default function LawFirmPointsPage() {
       case "PAYPAL": return "PayPal"
       case "BACS": return "BACS"
       case "TEST": return "Płatność testowa"
+      case "POINTS": return "Punkty"
       default: return method
     }
   }
@@ -500,6 +547,103 @@ export default function LawFirmPointsPage() {
             Wpisz własną kwotę
           </button>
         </p>
+      </div>
+
+      <Separator />
+
+      {/* Historia punktów */}
+      <div id="punkty-ledger">
+        <div className="flex items-center gap-2 mb-5">
+          <Coins className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Historia punktów</h2>
+        </div>
+
+        {pointEntriesError ? (
+          <Card className="border-destructive/50 bg-destructive/5">
+            <CardContent className="pt-4 pb-4 flex items-center gap-2 text-destructive text-sm">
+              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+              {pointEntriesError}
+            </CardContent>
+          </Card>
+        ) : pointEntries.length === 0 ? (
+          <Card className="border-dashed bg-card/25 backdrop-blur-md">
+            <CardContent className="py-10 flex flex-col items-center gap-2">
+              <p className="text-muted-foreground text-sm text-center">
+                Nie ma jeszcze żadnych operacji na punktach
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card variant="glass" className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-border/20 hover:bg-transparent">
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Data</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Operacja</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider">Opis</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Punkty</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right">Saldo po operacji</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pointEntries.map((entry) => (
+                    <TableRow key={entry.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-foreground/80 transition-colors">
+                      <TableCell className="py-4 px-6 text-sm text-muted-foreground whitespace-nowrap">
+                        {formatDate(entry.createdAt)}
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-sm font-medium whitespace-nowrap">
+                        {getPointTransactionLabel(entry.type)}
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-sm text-muted-foreground">
+                        {entry.description}
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right whitespace-nowrap">
+                        <span className={cn(
+                          "text-sm font-semibold",
+                          entry.amount >= 0 ? "text-emerald-400" : "text-rose-400"
+                        )}>
+                          {entry.amount >= 0 ? "+" : "−"}{formatPoints(Math.abs(entry.amount))} pkt
+                        </span>
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right text-sm font-semibold whitespace-nowrap">
+                        {formatPoints(entry.balanceAfter)} pkt
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        )}
+
+        {pointEntriesPagination && pointEntriesPagination.totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4">
+            <p className="text-sm text-muted-foreground">
+              Strona {pointEntriesPage} z {pointEntriesPagination.totalPages} · {pointEntriesPagination.total} operacji
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pointEntriesPage === 1}
+                onClick={() => setPointEntriesPage((prev) => prev - 1)}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pointEntriesPage === pointEntriesPagination.totalPages}
+                onClick={() => setPointEntriesPage((prev) => prev + 1)}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Separator />

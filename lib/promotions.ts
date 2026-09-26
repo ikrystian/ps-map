@@ -11,6 +11,7 @@ import {
   sendEmail,
 } from "@/lib/email"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
+import { applyPointsChange } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
 
 // ============================================================================
@@ -18,6 +19,17 @@ import { prisma } from "@/lib/prisma"
 // ============================================================================
 
 export type PromotionTypeUnion = "PODBICIE_OGLOSZENIA" | "WYROZNIENIE" | "TOP_LISTA" | "STRONA_GLOWNA" | "POLECANI_PRAWNICY" | "NAJCZESCIEJ_KONSULTOWANE" | "PROMOCJA_KATEGORII"
+
+/** Nazwy promocji w powiadomieniach, e-mailach i historii punktów. */
+export const PROMOTION_LABELS: Record<PromotionTypeUnion, string> = {
+  PODBICIE_OGLOSZENIA: "Podbicie ogłoszenia",
+  WYROZNIENIE: "Wyróżnienie profilu",
+  TOP_LISTA: "Top Lista",
+  STRONA_GLOWNA: "Strona Główna Premium",
+  POLECANI_PRAWNICY: "Polecani prawnicy i adwokaci",
+  NAJCZESCIEJ_KONSULTOWANE: "Najczęściej konsultowane kategorie",
+  PROMOCJA_KATEGORII: "Promocja w kategorii",
+}
 
 export interface ActivePromotion {
   id: string
@@ -461,14 +473,7 @@ export async function renewExpiredPromotions() {
           reason: "Niewystarczająca liczba punktów",
         })
 
-        // Get promotion label
-        const promotionLabels = {
-          PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
-          WYROZNIENIE: 'Wyróżnienie profilu',
-          TOP_LISTA: 'Top Lista',
-          STRONA_GLOWNA: 'Strona Główna Premium',
-        }
-        const promotionLabel = promotionLabels[promotion.typPromocji as keyof typeof promotionLabels]
+        const promotionLabel = PROMOTION_LABELS[promotion.typPromocji as PromotionTypeUnion]
 
         // Create in-app notification
         await prisma.notification.create({
@@ -514,9 +519,11 @@ export async function renewExpiredPromotions() {
       const newEnd = new Date(newStart)
       newEnd.setDate(newEnd.getDate() + promotion.czasTrwaniaDni)
 
-      // Utwórz nową promocję i odejmij punkty
-      await prisma.$transaction([
-        prisma.promotion.create({
+      const promotionLabel = PROMOTION_LABELS[promotion.typPromocji as PromotionTypeUnion]
+
+      // Utwórz nową promocję i odejmij punkty (wraz z wpisem w historii) w jednej transakcji
+      await prisma.$transaction(async (tx) => {
+        await tx.promotion.create({
           data: {
             lawFirmId: promotion.lawFirmId,
             typPromocji: promotion.typPromocji,
@@ -529,38 +536,30 @@ export async function renewExpiredPromotions() {
             automatyczneOdnowienie: true,
             aktywna: true,
           },
-        }),
-        prisma.lawFirm.update({
-          where: { id: promotion.lawFirmId },
-          data: {
-            punktySaldo: {
-              decrement: promotion.kosztPunktow,
-            },
-          },
-        }),
+        })
+
+        await applyPointsChange(
+          tx,
+          promotion.lawFirmId,
+          -promotion.kosztPunktow,
+          "PROMOTION_PURCHASE",
+          `Automatyczne odnowienie promocji „${promotionLabel}” (${promotion.czasTrwaniaDni} dni)`
+        )
+
         // Dezaktywuj starą promocję
-        prisma.promotion.update({
+        await tx.promotion.update({
           where: { id: promotion.id },
           data: {
             aktywna: false,
           },
-        }),
-      ])
+        })
+      })
 
       results.renewed.push(promotion.id)
 
       if (promotion.typPromocji === "PROMOCJA_KATEGORII" && promotion.kategoriaPromocji) {
         serverCache.delete(`category:${promotion.kategoriaPromocji}:promoted-experts`)
       }
-
-      // Get promotion label
-      const promotionLabels = {
-        PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
-        WYROZNIENIE: 'Wyróżnienie profilu',
-        TOP_LISTA: 'Top Lista',
-        STRONA_GLOWNA: 'Strona Główna Premium',
-      }
-      const promotionLabel = promotionLabels[promotion.typPromocji as keyof typeof promotionLabels]
 
       // Get updated law firm balance
       const updatedLawFirm = await prisma.lawFirm.findUnique({

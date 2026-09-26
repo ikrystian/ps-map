@@ -6,6 +6,7 @@ import { calculatePromotionBoost, getLawFirmHighlightType } from "@/lib/promotio
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
 import { EXPERTISE_CATEGORY_PATH_SELECT, formatExpertisePath } from "@/lib/expertise-category"
 import { recordRegistrationAudit } from "@/lib/rodo-audit"
+import { PROMOTION_SPEND_TRANSACTION_TYPES } from "@/lib/points-ledger"
 import { EmailType, UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
@@ -219,7 +220,7 @@ export async function GET(request: NextRequest) {
             },
           },
           pointTransactions: {
-            where: { type: "PROMOTION_PURCHASE" },
+            where: { type: { in: PROMOTION_SPEND_TRANSACTION_TYPES } },
             select: { amount: true },
           },
         },
