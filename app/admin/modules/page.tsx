@@ -70,7 +70,7 @@ interface Module {
   createdAt: string
   updatedAt: string
   _count?: {
-    pages: number
+    pageModules: number
   }
 }
 
@@ -351,7 +351,7 @@ export default function AdminModulesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {module._count?.pages || 0} stron
+                        {module._count?.pageModules || 0} stron
                       </TableCell>
                       <TableCell>
                         {new Date(module.createdAt).toLocaleDateString("pl-PL")}
@@ -379,7 +379,7 @@ export default function AdminModulesPage() {
                             size="icon"
                             onClick={() => openDeleteDialog(module)}
                             title="Usuń"
-                            disabled={!!module._count?.pages && module._count.pages > 0}
+                            disabled={!!module._count?.pageModules && module._count.pageModules > 0}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -577,9 +577,9 @@ export default function AdminModulesPage() {
             <AlertDialogTitle>Czy na pewno chcesz usunąć ten moduł?</AlertDialogTitle>
             <AlertDialogDescription>
               Ta operacja jest nieodwracalna. Moduł zostanie trwale usunięty.
-              {selectedModule?._count?.pages && selectedModule._count.pages > 0 && (
+              {selectedModule?._count?.pageModules && selectedModule._count.pageModules > 0 && (
                 <div className="mt-2 text-red-600 font-semibold">
-                  Nie można usunąć modułu, który jest używany w {selectedModule._count.pages} stronach.
+                  Nie można usunąć modułu, który jest używany w {selectedModule._count.pageModules} stronach.
                 </div>
               )}
             </AlertDialogDescription>

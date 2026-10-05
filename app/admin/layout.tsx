@@ -157,7 +157,7 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Opinie", href: "/admin/reviews", icon: Star },
       { name: "Opinie główne", href: "/admin/testimonials", icon: MessageSquare },
-      { name: "Ordery", href: "/admin/badges", icon: Star },
+      { name: "Odznaki", href: "/admin/badges", icon: Star },
     ],
   },
   {

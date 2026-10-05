@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { emitNewNotification } from "@/lib/socket"
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
     const avgRating = await prisma.review.aggregate({
       where: {
         lawFirmId,
-        aktywna: true,
+        ...PUBLIC_REVIEW_WHERE,
       },
       _avg: {
         ocenaOgolna: true,
@@ -170,9 +171,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Walidacja długości treści opinii
-    if (trescOpinii.length < 50) {
+    // Minimalna długość z ustawień admina (`minReviewLength`), domyślnie 50 (F-058)
+    const minLengthSetting = await prisma.settings.findUnique({ where: { key: "minReviewLength" } })
+    const minReviewLength = parseInt(minLengthSetting?.value ?? "", 10) || 50
+    if (trescOpinii.length < minReviewLength) {
       return Response.json(
-        { error: "Treść opinii musi mieć minimum 50 znaków" },
+        { error: `Treść opinii musi mieć minimum ${minReviewLength} znaków` },
         { status: 400 }
       )
     }

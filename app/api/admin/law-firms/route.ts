@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
       const nipRegex = /^\d{10}$/
       if (!nipRegex.test(nip.replace(/[-\s]/g, ""))) {
         return NextResponse.json(
-          { error: "NIP must be 10 digits" },
+          { error: "NIP musi składać się z 10 cyfr" },
           { status: 400 }
         )
       }

@@ -78,7 +78,7 @@ export function SurveySection({ isExpert }: { isExpert: boolean }) {
       setDone(true)
       toast.success(
         survey.nagrodaPunktow > 0
-          ? `Dziękujemy! Otrzymałeś ${survey.nagrodaPunktow} punktów.`
+          ? `Dziękujemy! Przyznano ${survey.nagrodaPunktow} punktów.`
           : "Dziękujemy za wypełnienie ankiety!"
       )
     } catch {

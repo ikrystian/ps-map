@@ -1,5 +1,6 @@
 "use client"
 
+import { plural } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -427,7 +428,7 @@ export default function AdminBlogCategoriesPage() {
                     <TableCell className="text-right">
                       <div className="flex items-center gap-2 justify-end">
                         <span className="text-sm text-muted-foreground">
-                          {category._count?.blogPosts || 0} wpisów
+                          {category._count?.blogPosts || 0} {plural(category._count?.blogPosts || 0, "wpis", "wpisy", "wpisów")} (opublikowanych: {(category as any).publishedCount ?? 0})
                         </span>
                         <Button
                           variant="outline"

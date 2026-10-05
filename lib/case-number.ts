@@ -39,15 +39,24 @@ export async function generateCaseNumber(categoryId: string): Promise<string> {
   const root = category.parent ?? category
   const categoryLetters = toInitials(root.nazwa)
   const subcategoryLetters = toInitials(category.nazwa)
+  // Gdy wybrana kategoria jest korzeniem drzewa, oba człony są takie same — pokazujemy jeden
+  const prefix = categoryLetters === subcategoryLetters ? categoryLetters : `${categoryLetters}/${subcategoryLetters}`
 
   const year = new Date().getFullYear()
   const startOfYear = new Date(year, 0, 1)
   const startOfNextYear = new Date(year + 1, 0, 1)
 
-  const count = await prisma.case.count({
-    where: { createdAt: { gte: startOfYear, lt: startOfNextYear } },
+  // Kolejny numer = największy numer w roku + 1 (nie count(): count dublował numery po usunięciu sprawy).
+  // Kolizję przy równoległym dodaniu łapie unikalny indeks `numerSprawy` — wywołujący może ponowić.
+  const inYear = await prisma.case.findMany({
+    where: { createdAt: { gte: startOfYear, lt: startOfNextYear }, numerSprawy: { not: null } },
+    select: { numerSprawy: true },
   })
+  const maxSeq = inYear.reduce((max, c) => {
+    const seq = parseInt(c.numerSprawy?.split("/").pop() ?? "", 10)
+    return Number.isFinite(seq) && seq > max ? seq : max
+  }, 0)
 
-  const sequence = String(count + 1).padStart(4, "0")
-  return `${categoryLetters}/${subcategoryLetters}/${year}/${sequence}`
+  const sequence = String(maxSeq + 1).padStart(4, "0")
+  return `${prefix}/${year}/${sequence}`
 }

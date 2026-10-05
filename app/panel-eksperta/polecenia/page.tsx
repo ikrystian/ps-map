@@ -236,7 +236,7 @@ export default function ExpertReferralsPage() {
                     Brak polecenia
                   </Heading>
                   <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
-                    Nie wysłałeś jeszcze żadnego polecenia. Wybierz zakres sprawy i miasto, a my
+                    Nie wysłano jeszcze żadnego polecenia. Wybierz zakres sprawy i miasto, a my
                     wyślemy klientowi gotowy link.
                   </p>
                 </div>

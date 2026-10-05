@@ -222,7 +222,7 @@ export const getPromotionSuccessDetails = (
     case "TOP_LISTA":
       return {
         gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Eksperci'.",
-        jak: "Twoja ekspert zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
+        jak: "Twój profil zostanie umieszczony w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
         kiedy:
           "Twój profil będzie stale wyświetlany w tej karuzeli/liście przez cały opłacony czas trwania promocji.",
       }

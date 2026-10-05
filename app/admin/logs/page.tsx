@@ -61,6 +61,7 @@ const levelLabels = {
 
 export default function AdminLogsPage() {
   const [logs, setLogs] = useState<SystemLog[]>([])
+  const [levelCounts, setLevelCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -102,6 +103,7 @@ export default function AdminLogsPage() {
 
       const data = await response.json()
       setLogs(data.logs)
+      setLevelCounts(data.levelCounts || {})
       setPagination(data.pagination)
     } catch (error) {
       console.error("Error fetching logs:", error)
@@ -214,7 +216,7 @@ export default function AdminLogsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{levelLabels[level as keyof typeof levelLabels]}</p>
-                  <p className="text-2xl font-bold">-</p>
+                  <p className="text-2xl font-bold">{levelCounts[level] ?? 0}</p>
                 </div>
                 <Icon className={`h-8 w-8 opacity-50`} />
               </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { plural } from "@/lib/format"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -194,7 +195,7 @@ export default function AdminCategoriesPage() {
           <TableCell className="text-right">
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm text-muted-foreground">
-                {category._count?.lawFirms || 0} ekspertów
+                {category._count?.lawFirms || 0} {plural(category._count?.lawFirms || 0, "ekspert", "ekspertów", "ekspertów")}
               </span>
               <Button
 

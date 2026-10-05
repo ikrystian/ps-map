@@ -403,7 +403,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                       {/* Location text */}
                       <p className="text-xs text-[#C5A66F] flex items-center justify-center gap-1.5 mb-4">
                         <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                        {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ", Świętokrzyskie"}
+                        {firm.miasto}{firm.voivodeship?.nazwa ? `, ${firm.voivodeship.nazwa}` : ""}
                       </p>
                     </div>
 
@@ -411,24 +411,28 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                     <div className="flex justify-center items-center w-full pt-4 border-t border-border/80">
                       <div className="flex gap-3">
                         {/* Circular Phone Action */}
-                        <ContactButton
-                          icon={Phone}
-                          href={firm.numerTelefonu ? `tel:${firm.numerTelefonu}` : "tel:+48123456789"}
-                          title="Zadzwoń do ekspercie"
-                        />
+                        {firm.numerTelefonu && (
+                          <ContactButton
+                            icon={Phone}
+                            href={`tel:${firm.numerTelefonu}`}
+                            title="Zadzwoń do eksperta"
+                          />
+                        )}
 
                         {/* Circular Email Action */}
-                        <ContactButton
-                          icon={Mail}
-                          href={firm.user?.email ? `mailto:${firm.user.email}` : "mailto:kontakt@prostasprawa.pl"}
-                          title="Wyślij e-mail"
-                        />
+                        {firm.user?.email && (
+                          <ContactButton
+                            icon={Mail}
+                            href={`mailto:${firm.user.email}`}
+                            title="Wyślij e-mail"
+                          />
+                        )}
 
                         {/* Circular Website Action (conditionally rendered if website exists) */}
-                        {(firm.stronaWww || firm.id.charCodeAt(0) % 2 === 0) && (
+                        {firm.stronaWww && (
                           <ContactButton
                             icon={Globe}
-                            href={firm.stronaWww || "https://prostasprawa.pl"}
+                            href={firm.stronaWww}
                             title="Odwiedź stronę www"
                           />
                         )}

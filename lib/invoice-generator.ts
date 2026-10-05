@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { sendInvoiceToKsef } from "@/lib/ksef"
+import { createInvoiceWithNumber } from "@/lib/invoice-number"
 import { claimOrderPayment, creditPointsForOrder } from "@/lib/points-ledger"
 
 /**
@@ -155,25 +156,9 @@ export async function generateInvoiceForOrder(orderId: string) {
       return null
     }
 
-    // Generate invoice number (format: FV/YYYY/MM/XXXXX)
     const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
 
-    // Get the count of invoices in this month
-    const startOfMonth = new Date(year, now.getMonth(), 1)
-    const endOfMonth = new Date(year, now.getMonth() + 1, 0, 23, 59, 59)
-
-    const invoiceCount = await prisma.invoice.count({
-      where: {
-        createdAt: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-      },
-    })
-
-    const invoiceNumber = `FV/${year}/${month}/${String(invoiceCount + 1).padStart(5, '0')}`
+    // Numer FV/RRRR/MM/NNNNN nadaje createInvoiceWithNumber (jedna seria, F-047)
 
     // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
     // razie z profilu kancelarii/użytkownika.
@@ -186,9 +171,8 @@ export async function generateInvoiceForOrder(orderId: string) {
     const vatAmount = grossAmount - netAmount
 
     // Create the invoice
-    const invoice = await prisma.invoice.create({
-      data: {
-        invoiceNumber,
+    const invoice = await createInvoiceWithNumber(
+      {
         orderId: order.id,
         lawFirmId: order.lawFirmId,
         buyerName: buyer.buyerName,
@@ -207,9 +191,10 @@ export async function generateInvoiceForOrder(orderId: string) {
         paymentDate: order.zaplaconoData || now,
         dueDate: order.zaplaconoData || now, // Already paid
       },
-    })
+      now
+    )
 
-    console.log(`Invoice ${invoiceNumber} generated for order ${orderId}`)
+    console.log(`Invoice ${invoice.invoiceNumber} generated for order ${orderId}`)
 
     // Send the invoice to KSeF 2.0 in the background
     sendInvoiceToKsef(invoice.id).catch((err) => {

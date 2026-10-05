@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -254,6 +255,7 @@ export default function LawFirmOffersPage() {
       ZAAKCEPTOWANA: offers.filter(o => o.status === "ZAAKCEPTOWANA").length,
       ODRZUCONA: offers.filter(o => o.status === "ODRZUCONA").length,
       NEGOCJACJE: offers.filter(o => o.status === "NEGOCJACJE").length,
+      WYGASLA: offers.filter(o => o.status === "WYGASLA").length,
     }
   }
 
@@ -338,6 +340,15 @@ export default function LawFirmOffersPage() {
       labelColor: "text-indigo-400",
       iconContainerClass: "bg-indigo-500/10 border-indigo-500/20 text-indigo-400"
     },
+    {
+      id: "WYGASLA",
+      label: "Wygasłe",
+      count: statusCounts.WYGASLA,
+      icon: Clock,
+      activeClass: "bg-gradient-to-br from-zinc-500/15 to-transparent border-zinc-500/20 text-white shadow-lg shadow-zinc-500/5",
+      labelColor: "text-zinc-400",
+      iconContainerClass: "bg-zinc-500/10 border-zinc-500/20 text-zinc-400"
+    },
   ]
 
   return (
@@ -353,7 +364,7 @@ export default function LawFirmOffersPage() {
       />
 
       {/* Grid Stats Redesigned for Premium Look */}
-      <div id="tour-oferty-stats offer-stats-boxes" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
+      <div id="tour-oferty-stats offer-stats-boxes" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 relative z-10">
         {filterCards.map((card) => {
           const isSelected = statusFilter === card.id
           const Icon = card.icon
@@ -380,7 +391,8 @@ export default function LawFirmOffersPage() {
                 card.id === "ZLOZONA" && "bg-amber-500",
                 card.id === "ZAAKCEPTOWANA" && "bg-emerald-500",
                 card.id === "ODRZUCONA" && "bg-rose-500",
-                card.id === "NEGOCJACJE" && "bg-indigo-500"
+                card.id === "NEGOCJACJE" && "bg-indigo-500",
+                card.id === "WYGASLA" && "bg-zinc-500"
               )} />
 
               {/* Top indicator line */}
@@ -391,7 +403,8 @@ export default function LawFirmOffersPage() {
                   card.id === "ZLOZONA" && "bg-amber-500",
                   card.id === "ZAAKCEPTOWANA" && "bg-emerald-500",
                   card.id === "ODRZUCONA" && "bg-rose-500",
-                  card.id === "NEGOCJACJE" && "bg-indigo-500"
+                  card.id === "NEGOCJACJE" && "bg-indigo-500",
+                  card.id === "WYGASLA" && "bg-zinc-500"
                 )} />
               )}
 
@@ -592,7 +605,7 @@ export default function LawFirmOffersPage() {
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Termin realizacji</span>
                                 <span className="font-medium text-foreground text-sm leading-none">
-                                  {offer.terminRealizacjiDni} dni
+                                  {formatBusinessDays(offer.terminRealizacjiDni)}
                                 </span>
                               </div>
                             </div>

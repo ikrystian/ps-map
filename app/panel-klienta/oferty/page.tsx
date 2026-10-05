@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays } from "@/lib/format"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
@@ -310,7 +311,7 @@ export default function ClientOffersPage() {
                     <p className="text-sm text-muted-foreground mb-1">Termin realizacji</p>
                     <p className="text-lg font-semibold flex items-center gap-2 text-foreground">
                       <Clock className="h-4 w-4 text-primary" />
-                      {offer.terminRealizacjiDni} dni roboczych
+                      {formatBusinessDays(offer.terminRealizacjiDni)}
                     </p>
                   </div>
 
@@ -492,7 +493,7 @@ export default function ClientOffersPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold mb-2 text-foreground/80 text-sm">Termin realizacji</h3>
-                  <p className="text-2xl font-bold text-foreground">{selectedOffer.terminRealizacjiDni} dni roboczych</p>
+                  <p className="text-2xl font-bold text-foreground">{formatBusinessDays(selectedOffer.terminRealizacjiDni)}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2 text-foreground/80 text-sm">Warunki płatności</h3>
@@ -582,7 +583,7 @@ export default function ClientOffersPage() {
                 {formatCurrency(selectedOffer.kwotaBrutto)}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                Termin: {selectedOffer.terminRealizacjiDni} dni roboczych
+                Termin: {formatBusinessDays(selectedOffer.terminRealizacjiDni)}
               </p>
             </div>
           )}

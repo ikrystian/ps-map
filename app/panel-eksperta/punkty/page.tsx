@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -323,7 +324,7 @@ export default function LawFirmPointsPage() {
         return (
           <Badge variant="outline" className="gap-1 bg-success/15 text-success border border-success/30 hover:bg-success/20">
             <CheckCircle2 className="h-3 w-3" />
-            Opłacone
+            Zapłacone
           </Badge>
         )
       case "OCZEKUJE":
@@ -451,7 +452,7 @@ export default function LawFirmPointsPage() {
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-xl font-semibold">Pakiety punktów</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Wybierz pakiet pakiet bądź </p>
+            <p className="text-sm text-muted-foreground mt-0.5">Wybierz pakiet punktów, który najlepiej odpowiada Twoim potrzebom.</p>
           </div>
           <Badge variant="outline" className="gap-1 border-primary/30 text-primary text-xs">
             <Info className="h-3 w-3" />
@@ -519,7 +520,7 @@ export default function LawFirmPointsPage() {
                       <span className="text-3xl font-bold">{formatCurrency(pkg.price)}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mb-5">
-                      {pkg.pricePerPoint.toFixed(2)} zł / punkt
+                      {formatNumber(pkg.pricePerPoint, 2)} zł / punkt
                     </p>
 
                     {/* CTA Button */}
@@ -662,7 +663,7 @@ export default function LawFirmPointsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Wszystkie</SelectItem>
-                <SelectItem value="ZAPLACONE">Opłacone</SelectItem>
+                <SelectItem value="ZAPLACONE">Zapłacone</SelectItem>
                 <SelectItem value="OCZEKUJE">Oczekujące</SelectItem>
                 <SelectItem value="ANULOWANE">Anulowane</SelectItem>
                 <SelectItem value="ZWROT">Zwroty</SelectItem>

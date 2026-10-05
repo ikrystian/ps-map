@@ -1,5 +1,6 @@
 "use client"
 
+import { plural } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -228,7 +229,7 @@ export default function AdminPagesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {page.modules?.length || 0} modułów
+                        {page.modules?.length || 0} {plural(page.modules?.length || 0, "moduł", "moduły", "modułów")}
                       </TableCell>
                       <TableCell>
                         {new Date(page.createdAt).toLocaleDateString("pl-PL")}

@@ -36,13 +36,13 @@ const clientCategories = [
       {
         pytanie: "Czy mogę edytować dodaną sprawę?",
         slug: "czy-moge-edytowac-dodana-sprawe",
-        odpowiedz: "Nie, opublikowanej sprawy nie da się edytować. Jeśli po publikacji chcesz coś doprecyzować, zrobisz to w rozmowie ze specjalistami, którzy odpowiedzą na Twoją sprawę.",
+        odpowiedz: "Tak. W panelu klienta (Sprawy → Edytuj sprawę) możesz zmienić nazwę, opis, termin, budżet i dane kontaktowe oraz zamknąć sprawę. Doprecyzowania możesz też przekazać w rozmowie ze specjalistami, którzy odpowiedzą na Twoją sprawę.",
         kolejnosc: 4,
       },
       {
         pytanie: "Kto zobaczy moją sprawę?",
         slug: "kto-zobaczy-moja-sprawe",
-        odpowiedz: "Twoja sprawa nie wisi publicznie w internetu. Trafia tylko do specjalistów dopasowanych do jej kategorii i lokalizacji, czyli do osób, które realnie mogą Ci pomóc.",
+        odpowiedz: "Twoja sprawa nie wisi publicznie w internetu. Trafia do specjalistów dopasowanych do jej kategorii i lokalizacji, czyli do osób, które realnie mogą Ci pomóc. Specjaliści, którzy nie określili jeszcze swojego zakresu usług, mogą widzieć wszystkie sprawy. Dane kontaktowe (imię, nazwisko, telefon) specjalista zobaczy dopiero po zaakceptowaniu jego oferty.",
         kolejnosc: 5,
       },
       {
@@ -163,7 +163,7 @@ const expertCategories = [
       {
         pytanie: "Jak przebiega weryfikacja profilu?",
         slug: "jak-przebiega-weryfikacja-profilu",
-        odpowiedz: "Każdy profil specjalisty weryfikuje administrator platformy. Sprawdzamy dokumenty zawodowe, zanim zaczniesz odpowiadać na sprawy. Dzięki temu klienci mają pewność, że po drugiej stronie jest realny specjalista z uprawnieniami.",
+        odpowiedz: "Każdy profil specjalisty weryfikuje administrator platformy: sprawdzamy dokumenty zawodowe. Do czasu zakończenia weryfikacji profil może być widoczny w katalogu jako niezweryfikowany. Dzięki weryfikacji klienci mają pewność, że po drugiej stronie jest realny specjalista z uprawnieniami.",
         kolejnosc: 2,
       },
       {
@@ -231,7 +231,7 @@ const expertCategories = [
       {
         pytanie: "Jakie pakiety są dostępne i czym się różnią?",
         slug: "jakie-pakiety-sa-dostepne-i-czym-sie-roznia",
-        odpowiedz: "<p>Do wyboru masz cztery pakiety. Rozliczasz je punktami (1 pkt = 1 zł), a przy każdej aktywacji dostajesz punkty gratis:</p><p><strong>Podstawowy</strong>: 440 pkt / rok (równowartość 440 zł, ok. 37 zł miesięcznie) + 20 pkt gratis</p><ul><li>dostęp do 10 spraw miesięcznie w 2 kategoriach,</li><li>zasięg: 1 województwo i 15 miast,</li><li>powiadomienia o 3 sprawach miesięcznie,</li><li>podstawowe oznaczenie profilu, priorytet w wyszukiwaniu i cover baner,</li><li>osobisty opiekun klienta.</li></ul><p><strong>Standard</strong>: 880 pkt / rok (880 zł, ok. 73 zł miesięcznie) + 30 pkt gratis</p><ul><li>dostęp do 20 spraw miesięcznie w 5 kategoriach,</li><li>zasięg: 2 województwa i 15 miast,</li><li>powiadomienia o 4 sprawach miesięcznie,</li><li>rozszerzone oznaczenie profilu i wyświetlanie reklam w profilu,</li><li>większy limit tagów (4).</li></ul><p><strong>Premium</strong>: 1320 pkt / rok (1320 zł, ok. 110 zł miesięcznie) + 50 pkt gratis</p><ul><li>dostęp do spraw bez limitu, 15 kategorii,</li><li>zasięg: 3 województwa i 25 miast,</li><li>powiadomienia o 10 sprawach miesięcznie,</li><li>promowanie profilu na stronie głównej, wyróżnienie Skill Law Focus,</li><li>artykuły sponsorowane, własny blog, pełne statystyki profilu,</li><li>wsparcie marketingowe, załączniki w wiadomościach, 10 tagów,</li><li>dedykowany opiekun klienta.</li></ul><p><strong>Biznes</strong> (rekomendowany, VIP): 1980 pkt / rok (1980 zł, ok. 165 zł miesięcznie) + 100 pkt gratis</p><ul><li>wszystko z Premium, w maksymalnym wymiarze:</li><li>dostęp i kategorie bez limitu (30 kategorii),</li><li>zasięg: 6 województw i 35 miast,</li><li>powiadomienia o 12 sprawach miesięcznie, 12 tagów,</li><li>opiekun VIP (dedykowany).</li></ul>",
+        odpowiedz: "<p>Do wyboru masz cztery pakiety. Rozliczasz je punktami (1 pkt = 1 zł), a przy każdej aktywacji dostajesz punkty gratis:</p><p><strong>Podstawowy</strong>: 440 pkt / rok (równowartość 440 zł, ok. 37 zł miesięcznie) + 20 pkt gratis</p><ul><li>dostęp do 10 spraw miesięcznie w 2 kategoriach,</li><li>zasięg: 1 województwo i 15 miast,</li><li>powiadomienia o 3 sprawach miesięcznie,</li><li>podstawowe oznaczenie profilu i priorytet w wyszukiwaniu,</li><li>osobisty opiekun klienta.</li></ul><p><strong>Standard</strong>: 880 pkt / rok (880 zł, ok. 73 zł miesięcznie) + 30 pkt gratis</p><ul><li>dostęp do 20 spraw miesięcznie w 5 kategoriach,</li><li>zasięg: 2 województwa i 15 miast,</li><li>powiadomienia o 4 sprawach miesięcznie,</li><li>rozszerzone oznaczenie profilu, cover baner i wyświetlanie reklam w profilu,</li><li>większy limit tagów (4).</li></ul><p><strong>Premium</strong>: 1320 pkt / rok (1320 zł, ok. 110 zł miesięcznie) + 50 pkt gratis</p><ul><li>dostęp do spraw bez limitu, 10 kategorii,</li><li>zasięg: 3 województwa i 25 miast,</li><li>powiadomienia o 10 sprawach miesięcznie,</li><li>promowanie profilu na stronie głównej, wyróżnienie Skill Law Focus,</li><li>artykuły sponsorowane, własny blog, pełne statystyki profilu,</li><li>wsparcie marketingowe, załączniki w wiadomościach, 10 tagów,</li><li>dedykowany opiekun klienta.</li></ul><p><strong>Biznes</strong> (rekomendowany, VIP): 1980 pkt / rok (1980 zł, ok. 165 zł miesięcznie) + 100 pkt gratis</p><ul><li>wszystko z Premium, w maksymalnym wymiarze:</li><li>dostęp i kategorie bez limitu,</li><li>zasięg: 6 województw i 35 miast,</li><li>powiadomienia o 12 sprawach miesięcznie, 12 tagów,</li><li>opiekun VIP (dedykowany).</li></ul>",
         kolejnosc: 0,
       },
       {

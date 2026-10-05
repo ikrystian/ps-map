@@ -449,7 +449,7 @@ export default function AdminPozycjonowaniePage() {
                       Gdzie **Mnożnik Promocji** to najwyższy mnożnik z aktywnych wykupionych promocji:
                     </p>
                     <ul className="list-disc pl-5 space-y-1 mt-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4">
-                      <li>Podbienie ogłoszenia: <span className="text-primary">1.5x</span></li>
+                      <li>Podbicie ogłoszenia: <span className="text-primary">1.5x</span></li>
                       <li>Wyróżnienie profilu: <span className="text-primary">2.0x</span></li>
                       <li>Top Lista: <span className="text-primary">3.0x</span></li>
                       <li>Strona Główna Premium: <span className="text-primary">5.0x</span></li>

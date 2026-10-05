@@ -288,13 +288,13 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     ? "Adwokat"
     : lawFirm.oirpStatus
       ? "Radca prawny"
-      : lawFirm.expertiseCategory?.nazwa || lawFirm.categories[0]?.nazwa || "Adwokat";
+      : lawFirm.expertiseCategory?.nazwa || lawFirm.categories[0]?.nazwa || "Ekspert";
   const chamberText =
     lawFirm.oraStatus && lawFirm.oraMiasto
       ? `ORA ${lawFirm.oraMiasto}`
       : lawFirm.oirpStatus && lawFirm.oirpMiasto
         ? `OIRP ${lawFirm.oirpMiasto}`
-        : "ORA Kielce";
+        : null;
 
   const [isCardHovered, setIsCardHovered] = useState(true);
 
@@ -410,9 +410,9 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                   <div className="flex items-center text-[#0db19f]">
                     <MapPin className="w-4 h-4 mr-1.5 flex-shrink-0" />
                     <span className="text-sm text-muted-foreground font-light truncate">
-                      {lawFirm.adres
-                        ? `${lawFirm.adres}, ${lawFirm.kodPocztowy} ${lawFirm.miasto}`
-                        : `${lawFirm.miasto}, ${lawFirm.voivodeship?.nazwa}`}
+                      {/* Ulica nie jest pokazywana w listingu (F-028) — pełny adres tylko na profilu */}
+                      {[lawFirm.kodPocztowy, lawFirm.miasto].filter(Boolean).join(" ")}
+                      {lawFirm.voivodeship?.nazwa ? `, ${lawFirm.voivodeship.nazwa}` : ""}
                     </span>
                   </div>
                 </div>
@@ -435,13 +435,15 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                   {professionalTitle}
                 </div>
 
-                {/* Teal badge (Regional Chamber) */}
+                {/* Teal badge (Regional Chamber) — tylko gdy ekspert ma wpis ORA/OIRP */}
+                {chamberText && (
                 <div className="flex items-center gap-1.5 md:gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-1.5 pr-2.5 md:pl-2 md:pr-4 py-1 md:py-1.5 rounded-lg text-xs md:text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
                   <div className="bg-primary-dark p-1 md:p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
                     <OraIcon />
                   </div>
                   <span className="text-foreground">{chamberText}</span>
                 </div>
+                )}
               </div>
             </div>
 

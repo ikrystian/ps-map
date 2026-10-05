@@ -1,23 +1,24 @@
+import { phoneSchema, nipSchema } from "@/lib/validation"
 import * as z from "zod"
 
 export const lawFirmSchema = z.object({
   // User credentials
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków").optional().or(z.literal("")),
   userStatus: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   emailVerified: z.boolean(),
 
   expertiseCategoryId: z.string().optional(),
   nazwa: z.string().min(1, "Name is required"),
   slug: z.string().optional(),
-  nip: z.string().regex(/^\d{10}$/, "NIP must be 10 digits").or(z.literal("")),
+  nip: nipSchema.or(z.literal("")),
   regon: z.string().optional(),
   krs: z.string().optional(),
 
   // Contact
   imieKontakt: z.string().min(1, "Contact first name is required"),
   nazwiskoKontakt: z.string().min(1, "Contact last name is required"),
-  numerTelefonu: z.string().min(1, "Phone number is required"),
+  numerTelefonu: phoneSchema,
   numerTelefonu2: z.string().optional(),
 
   // Address

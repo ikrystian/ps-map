@@ -214,7 +214,7 @@ export default function AdminProfilPage() {
                   variant={profile.status === "ACTIVE" ? "default" : "secondary"}
                   className={profile.status === "ACTIVE" ? "bg-green-600" : ""}
                 >
-                  {profile.status === "ACTIVE" ? "Aktywny" : profile.status}
+                  {{ ACTIVE: "Aktywny", PENDING: "Oczekujący", INACTIVE: "Nieaktywny", SUSPENDED: "Zawieszony", BLOCKED: "Zablokowany" }[profile.status as string] ?? profile.status}
                 </Badge>
               </div>
             </div>

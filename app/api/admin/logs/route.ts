@@ -54,8 +54,13 @@ export async function GET(request: NextRequest) {
       db.systemLog.count({ where }),
     ])
 
+    // Liczniki poziomów (bez filtra poziomu) dla kafelków
+    const levelGroups = await db.systemLog.groupBy({ by: ["level"], _count: { id: true } })
+    const levelCounts = Object.fromEntries(levelGroups.map((g: any) => [g.level, g._count.id]))
+
     return NextResponse.json({
       logs,
+      levelCounts,
       pagination: {
         page,
         limit,

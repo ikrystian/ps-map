@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { prisma } from "@/lib/prisma"
 import { PROMOTION_SPEND_TRANSACTION_TYPES } from "@/lib/points-ledger"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
@@ -58,7 +59,7 @@ export async function GET() {
     const now = new Date()
     const scoreInclude = {
       pakietSubskrypcji: true,
-      reviews: { select: { ocenaOgolna: true } },
+      reviews: { where: PUBLIC_REVIEW_WHERE, select: { ocenaOgolna: true } },
       promotions: {
         where: {
           aktywna: true,
@@ -159,7 +160,7 @@ export async function POST(request: Request) {
 
     const lawFirm = await prisma.lawFirm.findUnique({
       where: { userId: session.user.id },
-      select: { id: true, punktySaldo: true, pozycjaRanking: true },
+      select: { id: true, punktySaldo: true },
     })
 
     if (!lawFirm) {
@@ -170,14 +171,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Insufficient points" }, { status: 400 })
     }
 
-    const newPozycjaRanking = (lawFirm.pozycjaRanking ?? 0) + points
     const newPunktySaldo = lawFirm.punktySaldo - points
 
     const updatedLawFirm = await prisma.$transaction(async (tx) => {
       const updated = await tx.lawFirm.update({
         where: { id: lawFirm.id },
         data: {
-          pozycjaRanking: newPozycjaRanking,
           punktySaldo: newPunktySaldo,
         },
       })

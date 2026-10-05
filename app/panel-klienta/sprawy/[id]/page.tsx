@@ -1,5 +1,7 @@
 "use client"
 
+import { formatBudgetRange, formatDateLong, formatNumber } from "@/lib/format"
+import { formatBusinessDays } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -144,7 +146,7 @@ interface Case {
 const statusLabels: Record<string, { label: string; className: string }> = {
   NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
   OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-primary/10 text-primary border border-primary/30" },
+  W_TRAKCIE: { label: "W toku", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
   ZAKONCZONA: { label: "Zakończona", className: "bg-success/10 text-success border border-success/30" },
   ANULOWANA: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30" },
 }
@@ -162,8 +164,8 @@ const contactTypeLabels: Record<string, string> = {
 }
 
 const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  ZLOZONA: { label: "Złożona", variant: "default" },
-  ZAAKCEPTOWANA: { label: "Zaakceptowana", variant: "secondary" },
+  ZLOZONA: { label: "Złożona", variant: "secondary" },
+  ZAAKCEPTOWANA: { label: "Zaakceptowana", variant: "default" },
   ODRZUCONA: { label: "Odrzucona", variant: "destructive" },
   NEGOCJACJE: { label: "Negocjacje", variant: "outline" },
   WYGASLA: { label: "Wygasła", variant: "outline" },
@@ -437,7 +439,7 @@ export default function ClientCaseDetailsPage() {
                   <Separator orientation="vertical" className="h-8" />
                   <div>
                     <span className="text-sm text-muted-foreground block uppercase font-medium">Czas realizacji</span>
-                    <span className="text-lg font-bold text-foreground">{acceptedOffer.terminRealizacjiDni} dni</span>
+                    <span className="text-lg font-bold text-foreground">{formatBusinessDays(acceptedOffer.terminRealizacjiDni)}</span>
                   </div>
                 </div>
               </div>
@@ -566,7 +568,7 @@ export default function ClientCaseDetailsPage() {
                                   {offer.lawFirm.reviewCount > 0 && (
                                     <span className="flex items-center gap-1">
                                       <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
-                                      <span className="font-semibold text-foreground">{offer.lawFirm.avgRating.toFixed(1)}</span>
+                                      <span className="font-semibold text-foreground">{formatNumber(offer.lawFirm.avgRating, 1)}</span>
                                       <span>({offer.lawFirm.reviewCount})</span>
                                     </span>
                                   )}
@@ -615,7 +617,7 @@ export default function ClientCaseDetailsPage() {
                             </div>
                             <div>
                               <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Termin realizacji</span>
-                              <span className="text-2xl font-bold text-foreground">{offer.terminRealizacjiDni} dni</span>
+                              <span className="text-2xl font-bold text-foreground">{formatBusinessDays(offer.terminRealizacjiDni)}</span>
                             </div>
                           </div>
 
@@ -826,7 +828,7 @@ export default function ClientCaseDetailsPage() {
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Oczekiwany termin</span>
                   <span className="font-medium text-foreground">
                     {caseData.oczekiwanyTerminRealizacji
-                      ? new Date(caseData.oczekiwanyTerminRealizacji).toLocaleDateString("pl-PL")
+                      ? formatDateLong(caseData.oczekiwanyTerminRealizacji)
                       : "Elastyczny (do ustaleń)"}
                   </span>
                 </div>
@@ -837,10 +839,9 @@ export default function ClientCaseDetailsPage() {
                 <div>
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Szacowany budżet</span>
                   <span className="font-medium text-foreground">
-                    {caseData.budzetOd || caseData.budzetDo
-                      ? `${caseData.budzetOd ? `Od ${formatCurrency(caseData.budzetOd)}` : ""} ${caseData.budzetDo ? `Do ${formatCurrency(caseData.budzetDo)}` : ""}`
-                      : "Do negocjacji"}
-                    {caseData.doNegocjacji && " (do negocjacji)"}
+                    {caseData.doNegocjacji
+                      ? "Do negocjacji"
+                      : formatBudgetRange(caseData.budzetOd, caseData.budzetDo) ?? "Do negocjacji"}
                   </span>
                 </div>
               </div>

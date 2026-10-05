@@ -1,4 +1,7 @@
+import { getOfferStats } from "@/lib/offer-stats"
 import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
+import { computeLiveRanking, positionWithin } from "@/lib/ranking-positions"
 import { auth } from "@/lib/auth"
 import { buildLawFirmCaseWhereInput } from "@/lib/cases"
 import { prisma } from "@/lib/prisma"
@@ -114,6 +117,7 @@ export async function GET(request: NextRequest) {
 
     // Statystyki tego miesiąca w zakresie eksperta
     const casesThisMonthWhere = buildLawFirmCaseWhereInput(lawFirm, {
+      status: { notIn: ["ANULOWANA"] },
       createdAt: {
         gte: startOfMonth,
       },
@@ -136,7 +140,7 @@ export async function GET(request: NextRequest) {
     const reviewStats = await prisma.review.aggregate({
       where: {
         lawFirmId: updatedLawFirm.id,
-        aktywna: true,
+        ...PUBLIC_REVIEW_WHERE,
       },
       _avg: { ocenaOgolna: true },
       _count: { id: true },
@@ -162,55 +166,23 @@ export async function GET(request: NextRequest) {
     const viewsThisMonth = currentMonthStats?.profileViews || 0
 
     // Oblicz rzeczywistą pozycję w rankingu (w kategorii jeśli wybrano, lub ogólną)
-    let calculatedRankingPosition: number | null = null
-    const currentRanking = lawFirm.pozycjaRanking
-    const currentViews = lawFirm.wyswietleniaProfilu
+    const offerStats = await getOfferStats(lawFirm.id)
+    const liveRanking = await computeLiveRanking()
+    const calculatedRankingPosition = lawFirm.mainCategoryId
+      ? positionWithin(liveRanking, lawFirm.id, (f) => f.mainCategoryId === lawFirm.mainCategoryId).position
+      : (liveRanking.find((f) => f.id === lawFirm.id)?.position ?? null)
 
-    const baseWhere = lawFirm.mainCategoryId ? { mainCategoryId: lawFirm.mainCategoryId } : {}
-
-    if (currentRanking !== null && currentRanking !== undefined) {
-      const higherRankedCount = await prisma.lawFirm.count({
-        where: {
-          ...baseWhere,
-          OR: [
-            { pozycjaRanking: { gt: currentRanking } },
-            {
-              pozycjaRanking: currentRanking,
-              wyswietleniaProfilu: { gt: currentViews },
-            },
-            {
-              pozycjaRanking: currentRanking,
-              wyswietleniaProfilu: currentViews,
-              id: { lt: lawFirm.id }, // Tie-breaker
-            }
-          ],
-        },
-      })
-      calculatedRankingPosition = higherRankedCount + 1
-    } else {
-       const higherRankedCount = await prisma.lawFirm.count({
-        where: {
-          ...baseWhere,
-          OR: [
-            { pozycjaRanking: { not: null } },
-            {
-              pozycjaRanking: null,
-              wyswietleniaProfilu: { gt: currentViews },
-            },
-            {
-              pozycjaRanking: null,
-              wyswietleniaProfilu: currentViews,
-              id: { lt: lawFirm.id }, // Tie-breaker
-            }
-          ],
-        },
-      })
-      calculatedRankingPosition = higherRankedCount + 1
-    }
+    const weekdayRows = await prisma.lawFirmWeekdayStats.findMany({
+      where: { lawFirmId: lawFirm.id },
+      select: { dayOfWeek: true, profileViews: true },
+    })
+    // 0 = niedziela … 6 = sobota (jak w LawFirmWeekdayStats)
+    const weekdayViews = Array.from({ length: 7 }, (_, d) => weekdayRows.find((r) => r.dayOfWeek === d)?.profileViews ?? 0)
 
     return Response.json({
       lawFirm: {
         ...lawFirm,
+        ...offerStats,
         pakietSubskrypcji: updatedLawFirm.pakietSubskrypcji,
         dataPakietuOd: updatedLawFirm.dataPakietuOd,
         dataPakietuDo: updatedLawFirm.dataPakietuDo,
@@ -223,6 +195,7 @@ export async function GET(request: NextRequest) {
         casesThisMonth,
         offersThisMonth,
         viewsThisMonth,
+        weekdayViews,
         averageRating,
         reviewsCount,
       },

@@ -77,8 +77,8 @@ interface Invoice {
 
 const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
   DRAFT: { label: "Szkic", className: "bg-muted/60 text-muted-foreground border border-border/50", icon: Clock },
-  ISSUED: { label: "Wystawiona", className: "bg-blue-500/10 text-blue-400 border border-blue-500/20", icon: FileText },
-  SENT: { label: "Wysłana", className: "bg-primary/10 text-primary border border-primary/20", icon: CheckCircle2 },
+  ISSUED: { label: "Wystawiona", className: "bg-sky-500/10 text-sky-400 border border-sky-500/20", icon: FileText },
+  SENT: { label: "Wysłana", className: "bg-blue-500/10 text-blue-400 border border-blue-500/20", icon: CheckCircle2 },
   PAID: { label: "Opłacona", className: "bg-success/10 text-success border border-success/20", icon: CheckCircle2 },
   CANCELLED: { label: "Anulowana", className: "bg-error/10 text-error border border-error/20", icon: XCircle },
 }
@@ -87,7 +87,7 @@ const orderStatusConfig: Record<string, { label: string; className: string; icon
   OCZEKUJE: { label: "Oczekuje", className: "bg-warning/10 text-warning border border-warning/20", icon: Clock },
   ZAPLACONE: { label: "Zapłacone", className: "bg-success/10 text-success border border-success/20", icon: CheckCircle2 },
   ANULOWANE: { label: "Anulowane", className: "bg-error/10 text-error border border-error/20", icon: XCircle },
-  ZWROT: { label: "Zwrócone", className: "bg-muted/60 text-muted-foreground border border-border/50", icon: XCircle },
+  ZWROT: { label: "Zwrot", className: "bg-muted/60 text-muted-foreground border border-border/50", icon: XCircle },
 }
 
 const containerVariants = {
@@ -120,6 +120,7 @@ export default function SubscriptionsAndPaymentsPage() {
   const [lawFirm, setLawFirm] = useState<LawFirm | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [plans, setPlans] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -138,6 +139,13 @@ export default function SubscriptionsAndPaymentsPage() {
       if (!firmResponse.ok) throw new Error("Nie udało się pobrać danych eksperta")
       const firmData = await firmResponse.json()
       setLawFirm(firmData)
+
+      // Plany z bazy — cechy pakietu pokazujemy z konfiguracji, nie z tekstów na sztywno
+      const plansResponse = await fetch("/api/subscription-plans")
+      if (plansResponse.ok) {
+        const plansData = await plansResponse.json()
+        setPlans(Array.isArray(plansData) ? plansData : plansData.plans || [])
+      }
 
       // Pobieranie ostatnich zamówień
       const ordersResponse = await fetch("/api/orders?limit=5")
@@ -227,13 +235,27 @@ export default function SubscriptionsAndPaymentsPage() {
   const subscriptionActive = !!lawFirm?.pakietSubskrypcji &&
     (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
 
-  const currentPlan = subscriptionActive ? lawFirm?.pakietSubskrypcji || "FREE" : "FREE"
+  // Brak (lub wygasły) pakiet to „Brak pakietu” — nie „Darmowy” (F-032/F-033/F-062)
+  const currentPlan = subscriptionActive ? lawFirm?.pakietSubskrypcji || "NONE" : "NONE"
+
+  const buildPlanFeatures = (typ: string): string[] | null => {
+    const plan = plans.find((p) => p.typ === typ)
+    if (!plan) return null
+    return [
+      plan.dostepDoSpraw === null ? "Dostęp do spraw bez limitu" : `Dostęp do spraw: ${plan.dostepDoSpraw} miesięcznie`,
+      plan.kategorieSpraw === null ? "Kategorie specjalizacji bez limitu" : `Kategorie specjalizacji: ${plan.kategorieSpraw}`,
+      plan.wojewodztwa != null ? `Zasięg: ${plan.wojewodztwa} woj.` : null,
+      plan.miasta ? `Miasta: ${plan.miasta}` : null,
+      plan.powiadomieniaSprawy ? `Powiadomienia o sprawach: ${plan.powiadomieniaSprawy} miesięcznie` : null,
+      plan.punktyGratis ? `${plan.punktyGratis} punktów gratis` : null,
+    ].filter((x): x is string => !!x)
+  }
 
   const getPlanDetails = (plan: string) => {
     switch (plan.toUpperCase()) {
       case "BIZNES":
         return {
-          name: "Biznes VIP",
+          name: "Biznes",
           color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
           icon: Zap,
           features: [
@@ -270,22 +292,29 @@ export default function SubscriptionsAndPaymentsPage() {
             "Wyświetlanie reklam w profilu"
           ]
         }
+      case "PODSTAWOWY":
+        return {
+          name: "Podstawowy",
+          color: "text-muted-foreground bg-muted/40 border-border/50",
+          icon: Package,
+          features: buildPlanFeatures("PODSTAWOWY") ?? ["Pakiet Podstawowy"]
+        }
       default:
         return {
-          name: "Darmowy",
+          name: "Brak pakietu",
           color: "text-muted-foreground bg-muted/40 border-border/50",
           icon: Package,
           features: [
-            "Podstawowa obecność w katalogu",
-            "Dostęp do 10 spraw miesięcznie",
-            "Zasięg w 1 województwie i 15 miastach",
-            "Podstawowe oznaczenie profilu"
+            "Profil widoczny w katalogu",
+            "Wybierz pakiet, aby odpowiadać na sprawy i rozszerzyć zasięg"
           ]
         }
     }
   }
 
-  const planDetails = getPlanDetails(currentPlan)
+  const basePlanDetails = getPlanDetails(currentPlan)
+  // Cechy z konfiguracji planu w bazie mają pierwszeństwo przed tekstami zaszytymi w UI
+  const planDetails = { ...basePlanDetails, features: buildPlanFeatures(currentPlan.toUpperCase()) ?? basePlanDetails.features }
   const PlanIcon = planDetails.icon
 
   return (

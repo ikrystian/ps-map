@@ -1,3 +1,4 @@
+import { cleanCityName } from './city-name'
 /**
  * Geokodowanie adresów eksperckich (adres, kod pocztowy, miasto -> lat/lng).
  *
@@ -32,7 +33,7 @@ export function buildAddress(parts: {
 }) {
   return [
     parts.adres,
-    [parts.kodPocztowy, parts.miasto].filter(Boolean).join(' '),
+    [parts.kodPocztowy, cleanCityName(parts.miasto)].filter(Boolean).join(' '),
     'Polska',
   ]
     .filter(Boolean)

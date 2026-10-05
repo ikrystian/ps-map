@@ -55,7 +55,7 @@ export async function POST(
       to: user.email,
       templateType: EmailType.POTWIERDZENIE_EMAIL,
       variables: {
-        "{imie}": user.name || user.email,
+        "{imie}": user.name || "w Prostej Sprawie",
         "{email}": user.email,
         "{linkPotwierdzenia}": verificationUrl,
         "{kod}": verificationCode,

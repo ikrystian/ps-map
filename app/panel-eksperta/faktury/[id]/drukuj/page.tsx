@@ -1,6 +1,7 @@
 "use client"
 
 import { Loader2 } from "lucide-react"
+import { COMPANY } from "@/lib/company"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -439,10 +440,10 @@ export default function InvoicePrintPage() {
             )}
           </div>
           <div className="company-info">
-            <div className="company-name">Prosta Sprawa</div>
-            <div>Generała Mariana Langiewicza 16 lok. 3</div>
-            <div>25-381 Kielce</div>
-            <div>NIP: 6572997948</div>
+            <div className="company-name">{COMPANY.name}</div>
+            <div>{COMPANY.street}</div>
+            <div>{COMPANY.postalCode} {COMPANY.city}</div>
+            <div>NIP: {COMPANY.nip}</div>
           </div>
         </div>
 
@@ -452,12 +453,11 @@ export default function InvoicePrintPage() {
             <div className="party">
               <div className="party-title">Sprzedawca</div>
               <div className="party-details">
-                <div style={{ fontWeight: 700 }}>Prosta Sprawa</div>
-                <div>Generała Mariana Langiewicza 16 lok. 3</div>
-            <div>25-381 Kielce</div>
-            <div>NIP: 6572997948</div>
-                <div>Email: kontakt@prostasprawa.pl</div>
-                <div>Tel: +48 123 456 789</div>
+                <div style={{ fontWeight: 700 }}>{COMPANY.name}</div>
+                <div>{COMPANY.street}</div>
+                <div>{COMPANY.postalCode} {COMPANY.city}</div>
+                <div>NIP: {COMPANY.nip}</div>
+                <div>Email: {COMPANY.email}</div>
               </div>
             </div>
             <div className="party">
@@ -548,8 +548,7 @@ export default function InvoicePrintPage() {
           {/* Payment Info */}
           <div className="payment-info">
             <div className="payment-title">Informacje o płatności</div>
-            <div>Sposób płatności: Przelew bankowy</div>
-            <div>Nr konta: 12 3456 7890 1234 5678 9012 3456</div>
+            <div>Sposób płatności: Płatność online</div>
             {invoice.paymentDate && (
               <div style={{ marginTop: "0.5rem", color: "#10b981", fontWeight: 700 }}>
                 Faktura opłacona dnia: {formatDate(invoice.paymentDate)}
@@ -563,13 +562,13 @@ export default function InvoicePrintPage() {
           <div className="footer-top">
             <img src="/logo-color.svg" alt="Prosta Sprawa" className="footer-logo" style={{ filter: "brightness(0) invert(1)" }} />
             <div className="footer-contact">
-              kontakt@prostasprawa.pl<br />
-              +48 123 456 789
+              {COMPANY.email}<br />
+              {COMPANY.phone}
             </div>
           </div>
           <div className="footer-note">
             Faktura wystawiona automatycznie przez system Prosta Sprawa.
-            W przypadku pytań prosimy o kontakt: kontakt@prostasprawa.pl
+            W przypadku pytań prosimy o kontakt: {COMPANY.email}
           </div>
         </div>
       </div>

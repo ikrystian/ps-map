@@ -25,8 +25,9 @@ export async function GET() {
       }
 
       const [casesCount, consultationsCount] = await Promise.all([
+        // Aktywne sprawy klienta: bez anulowanych i zarchiwizowanych (jak pulpit)
         prisma.case.count({
-          where: { clientId: client.id }
+          where: { clientId: client.id, isArchived: false, status: { notIn: ["ANULOWANA", "ZAKONCZONA"] } }
         }),
         prisma.consultationBooking.count({
           where: { clientId: client.id }

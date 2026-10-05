@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/format"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Coins, ChevronRight, TrendingUp, Sparkles, MapPin, Layers } from "lucide-react"
@@ -77,7 +78,7 @@ export function PromotionWallet({ lawFirm }: PromotionWalletProps) {
                   Pakiet <strong className="text-white font-medium">{lawFirm?.pakietSubskrypcji}</strong> podnosi Twój wynik
                   w wyszukiwarce o <strong className="text-cyan-300 font-medium">{packageBonusPercent}%</strong> — każdy punkt
                   wydany na promowanie liczy się w rankingu jak{" "}
-                  <strong className="text-cyan-300 font-medium">{packageMultiplier.toFixed(2)} pkt</strong>.
+                  <strong className="text-cyan-300 font-medium">{formatNumber(packageMultiplier, 2)} pkt</strong>.
                 </>
               ) : (
                 <>

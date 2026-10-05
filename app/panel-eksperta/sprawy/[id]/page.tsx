@@ -153,6 +153,7 @@ export default function LawFirmCaseDetailsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showOfferForm, setShowOfferForm] = useState(false)
   const [hasExistingOffer, setHasExistingOffer] = useState(false)
+  const [ownOfferStatus, setOwnOfferStatus] = useState<string | null>(null)
   const [lawFirmPoints, setLawFirmPoints] = useState<number | null>(null)
 
   // Dane formularza oferty
@@ -197,6 +198,7 @@ export default function LawFirmCaseDetailsPage() {
         if (offersResponse.ok) {
           const offersData = await offersResponse.json()
           setHasExistingOffer(offersData.offers.length > 0)
+          setOwnOfferStatus(offersData.offers[0]?.status ?? null)
         }
       }
     } catch (err) {
@@ -492,29 +494,11 @@ export default function LawFirmCaseDetailsPage() {
                     <span>Dane kontaktowe</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Imie Nazwisko */}
-                  <div className="flex items-center text-sm text-muted-foreground bg-muted/10 px-3.5 py-3 rounded-xl border border-border/20">
-                    <User className="h-4.5 w-4.5 mr-3 text-muted-foreground flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
-                      <span className="font-semibold text-foreground text-xs leading-none truncate">
-                        {caseData.imieNazwisko}
-                      </span>
-                    </div>
-                  </div>
-
-
-                  {/* Telefon */}
-                  <div className="flex items-center text-sm text-muted-foreground bg-muted/10 px-3.5 py-3 rounded-xl border border-border/20">
-                    <Phone className="h-4.5 w-4.5 mr-3 text-muted-foreground flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
-                      <span className="font-semibold text-foreground text-xs leading-none truncate">
-                        {caseData.telefonKontakt}
-                      </span>
-                    </div>
-                  </div>
+                <CardContent className="p-6">
+                  <p className="text-sm text-muted-foreground font-light">
+                    Dane kontaktowe klienta (imię, nazwisko i numer telefonu) zobaczysz po zaakceptowaniu Twojej oferty.
+                    Do tego czasu kontaktuj się z klientem przez wiadomości w serwisie.
+                  </p>
                 </CardContent>
               </Card>
             )
@@ -744,8 +728,14 @@ export default function LawFirmCaseDetailsPage() {
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-foreground font-playfair">Złożyłeś już ofertę do tej sprawy</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">Twoja oferta czeka na rozpatrzenie przez klienta.</p>
+                    <h4 className="text-base font-bold text-foreground font-playfair">Oferta została już złożona do tej sprawy</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{{
+                      ZLOZONA: "Twoja oferta czeka na rozpatrzenie przez klienta.",
+                      NEGOCJACJE: "Oferta jest w trakcie negocjacji z klientem.",
+                      ZAAKCEPTOWANA: "Klient zaakceptował Twoją ofertę.",
+                      ODRZUCONA: "Klient odrzucił Twoją ofertę.",
+                      WYGASLA: "Twoja oferta wygasła.",
+                    }[ownOfferStatus ?? "ZLOZONA"] ?? "Twoja oferta czeka na rozpatrzenie przez klienta."}</p>
                   </div>
                 </div>
                 <Link href="/panel-eksperta/oferty">

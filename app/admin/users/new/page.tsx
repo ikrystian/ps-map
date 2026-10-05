@@ -30,7 +30,7 @@ import * as z from "zod"
 const createUserSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
   role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   image: z.string().optional(),

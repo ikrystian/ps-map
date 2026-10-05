@@ -428,7 +428,7 @@ ${formData.tresc}`
                 <NumberTicker value={48} decimalPlaces={1} />
                 <span>%</span>
               </div>
-              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Średni CTR Banerów</p>
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Szacunkowy CTR banerów (przykładowy)</p>
             </div>
 
             <div className="text-center space-y-1.5">

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { prisma } from "@/lib/prisma"
 import { PROMOTION_SPEND_TRANSACTION_TYPES } from "@/lib/points-ledger"
 import { computeRankingScore, sumPromotionSpentPoints } from "@/lib/ranking-score"
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest) {
           },
         },
         reviews: {
+          where: PUBLIC_REVIEW_WHERE,
           select: {
             ocenaOgolna: true,
           },

@@ -519,8 +519,8 @@ export default function ConsultationsPage() {
 
                     <path d="M300 220 l-10 80 h15 l10 -80 Z" fill="#27272a" />
                     <path d="M325 220 l5 80 h15 l-5 -80 Z" fill="#27272a" />
-                    <path d="M280 300 h25 r4 v-8 Z" fill="#18181b" />
-                    <path d="M335 300 h25 r4 v-8 Z" fill="#18181b" />
+                    <path d="M280 300 h25 v-8 Z" fill="#18181b" />
+                    <path d="M335 300 h25 v-8 Z" fill="#18181b" />
                     <path d="M280 140 h60 l-10 90 h-40 Z" fill="var(--primary)" opacity="0.9" />
                     <path d="M305 125 h10 v20 h-10 Z" fill="#3f3f46" />
                     <circle cx="310" cy="115" r="22" fill="#52525b" />

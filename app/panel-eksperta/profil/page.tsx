@@ -616,7 +616,7 @@ function LawFirmProfilePageContent() {
 
       <PageHeader
         title="Profil Eksperta"
-        subtitle="Edytuj dane prezentacyjne swojej eksperta widoczne dla klientów w wyszukiwarce."
+        subtitle="Edytuj dane prezentacyjne swojego profilu widoczne dla klientów w wyszukiwarce."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">

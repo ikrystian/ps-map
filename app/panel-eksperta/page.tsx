@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { LimitIndicator, PackageBadge } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
@@ -80,6 +81,7 @@ interface DashboardData {
     casesThisMonth: number
     offersThisMonth: number
     viewsThisMonth: number
+    weekdayViews?: number[]
     averageRating: number
     reviewsCount: number
   }
@@ -156,8 +158,10 @@ const getSubscriptionBadge = (pkg: string) => {
       return <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Premium</Badge>
     case "STANDARD":
       return <Badge className="bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Standard</Badge>
-    default:
+    case "PODSTAWOWY":
       return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Podstawowy</Badge>
+    default:
+      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2.5 py-0.5 rounded-md font-medium text-xs">Brak pakietu</Badge>
   }
 }
 
@@ -183,11 +187,13 @@ const getCaseStatusBadge = (status: string) => {
     case "NOWA":
       return <Badge className="bg-primary/10 text-primary border border-primary/20 px-2 py-0">Nowa</Badge>
     case "OFERTY_OTRZYMANE":
-      return <Badge className="bg-warning/10 text-warning border border-warning/20 px-2 py-0">Oferty otrzymane</Badge>
+      return <Badge className="bg-secondary/15 text-secondary border border-secondary/30 px-2 py-0">Oferty otrzymane</Badge>
     case "W_TRAKCIE":
       return <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0">W toku</Badge>
     case "ZAKONCZONA":
       return <Badge className="bg-success/10 text-success border border-success/20 px-2 py-0">Zakończona</Badge>
+    case "ANULOWANA":
+      return <Badge className="bg-error/10 text-error border border-error/20 px-2 py-0">Anulowana</Badge>
     default:
       return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2 py-0">{status}</Badge>
   }
@@ -236,13 +242,21 @@ const getBannerStyles = (packageType: string | null) => {
         titleColor: "text-primary font-bold text-xl md:text-2xl",
         desc: "Pakiet Standard - Profesjonalny profil, większe limity i dostęp do spraw."
       }
-    default:
+    case "PODSTAWOWY":
       return {
         bg: "bg-gradient-to-r from-muted/40 via-muted/20 to-muted/40 border-b border-border/30",
         glow: "",
         iconColor: "text-muted-foreground/5",
         titleColor: "text-muted-foreground text-xl md:text-2xl",
         desc: "Pakiet Podstawowy - Podstawowy profil w katalogu i standardowy kontakt z klientami."
+      }
+    default:
+      return {
+        bg: "bg-gradient-to-r from-muted/40 via-muted/20 to-muted/40 border-b border-border/30",
+        glow: "",
+        iconColor: "text-muted-foreground/5",
+        titleColor: "text-muted-foreground text-xl md:text-2xl",
+        desc: "Nie masz aktywnego pakietu. Wybierz pakiet, aby odpowiadać na sprawy i rozszerzyć zasięg."
       }
   }
 }
@@ -509,7 +523,7 @@ export default function LawFirmDashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="pt-2">
-              <div className="text-3xl font-bold tracking-tight text-foreground">{(lawFirm.konwersja ?? 0).toFixed(1)}%</div>
+              <div className="text-3xl font-bold tracking-tight text-foreground">{formatNumber(lawFirm.konwersja ?? 0, 1)}%</div>
               <p className="text-sm text-muted-foreground mt-1 font-light">
                 <span className="text-foreground font-medium">{lawFirm.wygraneOferty}</span> wygranych z <span className="text-foreground font-medium">{lawFirm.zlozoneOferty}</span> ofert
               </p>
@@ -674,11 +688,11 @@ export default function LawFirmDashboardPage() {
               <div className="relative z-10 space-y-2 max-w-2xl">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className={bannerStyle.titleColor}>
-                    {packageName || "Pakiet Podstawowy"}
+                    {packageName ? `Pakiet ${getSubscriptionLabel(packageName)}` : "Brak pakietu"}
                   </h3>
                   {packageExpired && packageName ? (
                     <Badge variant="destructive" className="animate-pulse bg-error/10 text-error border border-error/30">Wygasł!</Badge>
-                  ) : (
+                  ) : !packageName ? null : (
                     <Badge className="bg-primary/10 text-primary border border-primary/20">
                       Aktywny
                     </Badge>
@@ -956,7 +970,7 @@ export default function LawFirmDashboardPage() {
                 <div className="space-y-1">
                   <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">Pozycja rankingu</h3>
                   <p className="text-sm text-muted-foreground leading-normal font-light">
-                    Monitoruj widoczność swojej eksperta
+                    Monitoruj widoczność swojego profilu
                   </p>
                 </div>
               </CardContent>
@@ -1000,7 +1014,7 @@ export default function LawFirmDashboardPage() {
                 </div>
                 <div>
                   <CardTitle className="text-base text-foreground">Statystyki wyświetleń</CardTitle>
-                  <CardDescription className="text-sm text-muted-foreground">Ostatnie 7 dni</CardDescription>
+                  <CardDescription className="text-sm text-muted-foreground">Łącznie wg dnia tygodnia</CardDescription>
                 </div>
               </div>
               <div className="text-right">
@@ -1013,29 +1027,12 @@ export default function LawFirmDashboardPage() {
             <div className="space-y-4">
               <div className="space-y-3.5">
                 {(() => {
-                  const avgDailyViews = stats.viewsThisMonth > 0 ? Math.max(1, Math.floor(stats.viewsThisMonth / 30)) : 0
-                  const days = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"]
-                  const weekData = days.map((day, index) => {
-                    const isWeekend = index >= 5
-                    const baseFactor = isWeekend ? 0.5 : 1.2
-                    const randomFactor = 0.7 + Math.random() * 0.6 // 0.7 to 1.3
-                    const views = avgDailyViews > 0
-                      ? Math.max(1, Math.floor(avgDailyViews * baseFactor * randomFactor))
-                      : 0
-
-                    return { day, views }
-                  })
-
-                  const maxDailyViews = Math.max(...weekData.map(d => d.views), 1)
-
-                  return weekData.map((item, index) => {
-                    const percentage = (item.views / maxDailyViews) * 100
-                    const prevViews = index > 0 ? weekData[index - 1].views : item.views
-                    const change = prevViews > 0 ? ((item.views - prevViews) / prevViews) * 100 : 0
-                    const trend = change > 0 ? `+${change.toFixed(0)}%` : `${change.toFixed(0)}%`
-
-                    return { ...item, percentage, trend }
-                  })
+                  // Prawdziwe dane: łączna liczba wyświetleń profilu wg dnia tygodnia (LawFirmWeekdayStats)
+                  const labels = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"]
+                  const raw = stats.weekdayViews ?? [0, 0, 0, 0, 0, 0, 0]
+                  const weekData = labels.map((day, i) => ({ day, views: raw[(i + 1) % 7] ?? 0 }))
+                  const maxDailyViews = Math.max(...weekData.map((d) => d.views), 1)
+                  return weekData.map((item) => ({ ...item, percentage: (item.views / maxDailyViews) * 100 }))
                 })().map((item, index) => (
                   <div key={item.day} className="group">
                     <div className="flex items-center gap-3">
@@ -1049,16 +1046,8 @@ export default function LawFirmDashboardPage() {
                           }}
                         />
                       </div>
-                      <div className="w-20 text-right flex items-center justify-end gap-1.5">
+                      <div className="w-20 text-right">
                         <span className="text-xs font-semibold text-foreground">{item.views}</span>
-                        {item.views > 0 && (
-                          <span className={cn(
-                            "text-sm font-medium px-1.5 py-0.5 rounded-md",
-                            item.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                          )}>
-                            {item.trend}
-                          </span>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1071,7 +1060,7 @@ export default function LawFirmDashboardPage() {
                     Średnio dziennie
                   </span>
                   <span className="font-bold text-primary">
-                    {Math.max(1, Math.floor(stats.viewsThisMonth / 30))} wyświetleń
+                    {stats.viewsThisMonth > 0 ? Math.max(1, Math.round(stats.viewsThisMonth / new Date().getDate())) : 0} wyświetleń
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground font-light">
@@ -1132,7 +1121,7 @@ export default function LawFirmDashboardPage() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <span className="text-3xl font-bold text-primary tracking-tight">{(lawFirm.konwersja ?? 0).toFixed(0)}%</span>
+                    <span className="text-3xl font-bold text-primary tracking-tight">{formatNumber(lawFirm.konwersja ?? 0, 0)}%</span>
                     <span className="text-sm text-muted-foreground font-medium uppercase tracking-wider mt-0.5">sukces</span>
                   </div>
                 </div>
@@ -1302,7 +1291,7 @@ export default function LawFirmDashboardPage() {
                 <div>
                   <p className="font-semibold text-sm text-foreground">Wyróżnienie profilu</p>
                   <p className="text-sm text-muted-foreground font-light mt-0.5">
-                    Twoja ekspert będzie wyświetlana nad innymi bezpłatnymi kontami.
+                    Twój profil będzie wyświetlany nad innymi bezpłatnymi kontami.
                   </p>
                 </div>
               </div>
@@ -1322,9 +1311,9 @@ export default function LawFirmDashboardPage() {
                   <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-foreground">Nawet do 3x więcej wejść</p>
+                  <p className="font-semibold text-sm text-foreground">Więcej wejść na profil</p>
                   <p className="text-sm text-muted-foreground font-light mt-0.5">
-                    Statystycznie promowane profile notują potrójny wzrost ruchu na stronie.
+                    Promowany profil jest wyświetlany wyżej, więc częściej trafia do klientów.
                   </p>
                 </div>
               </div>
@@ -1354,72 +1343,6 @@ export default function LawFirmDashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Box Partnerski */}
-        <Card className="border border-secondary/30 bg-gradient-to-br from-secondary/5 via-background/20 to-secondary/10 backdrop-blur-md rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
-          <CardHeader className="py-5 px-6 border-b border-border/20 bg-background/15">
-            <CardTitle className="flex items-center gap-2 text-foreground font-playfair text-lg">
-              <Crown className="h-5 w-5 text-secondary" />
-              Program Partnerski
-            </CardTitle>
-            <CardDescription className="text-muted-foreground text-xs">
-              Zyskaj oficjalny status Partnera Premium i buduj zaufanie klientów
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
-            <div className="space-y-3.5">
-              <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
-                  <Star className="h-3.5 w-3.5 fill-secondary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-foreground">Złoty certyfikowany status</p>
-                  <p className="text-sm text-muted-foreground font-light mt-0.5">
-                    Zdobądź specjalną ikonę "Partner Premium" przy swojej wizytówce w wyszukiwarce.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
-                  <Star className="h-3.5 w-3.5 fill-secondary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-foreground">Dedykowane wsparcie</p>
-                  <p className="text-sm text-muted-foreground font-light mt-0.5">
-                    Pomoc osobistego konsultanta w konfiguracji profilu i kampanii punktowych.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="mt-1 h-4.5 w-4.5 bg-secondary/10 rounded border border-secondary/30 flex items-center justify-center text-secondary">
-                  <Star className="h-3.5 w-3.5 fill-secondary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm text-foreground">Priorytet w poleceniach</p>
-                  <p className="text-sm text-muted-foreground font-light mt-0.5">
-                    Ekspert będzie rekomendowana w automatycznych powiadomieniach dla klientów.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/10">
-              <div className="mb-4 p-3 bg-background/40 border border-border/10 rounded-xl flex items-center justify-between">
-                <span className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Koszt aktywacji</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-secondary">299 punktów</span>
-                  <span className="text-sm text-muted-foreground font-light">/miesiąc</span>
-                </div>
-              </div>
-              <Link href="/panel-eksperta/pakiet">
-                <Button className="w-full h-10 bg-gradient-to-r from-secondary to-secondary-hover/90 hover:from-secondary-hover hover:to-secondary text-white font-semibold rounded-xl text-xs shadow-md border-t border-border group gap-1.5 transition-all">
-                  <Crown className="h-4 w-4" />
-                  Zostań Partnerem Premium
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
       </motion.div>
 
       {/* Klub Partnerski Info */}
@@ -1445,34 +1368,18 @@ export default function LawFirmDashboardPage() {
                 Program dla ekspertów partnerskich. Umieszczając logotyp, odnośnik lub krótki widget na swojej firmowej witrynie, aktywujesz dodatkowe pakiety punktów i ułatwiasz klientom kontakt.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                <div className="p-4 bg-background/25 border border-border/10 rounded-xl space-y-3">
-                  <p className="font-semibold text-xs text-primary uppercase tracking-wider">Dla pakietów płatnych (Standard/Premium/Biznes):</p>
-                  <ul className="space-y-2 text-xs ml-1">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Co miesiąc otrzymasz gratis 20 punktów (wartość 20 zł) dodawanych bezpośrednio do salda.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Dostęp do dodatkowych pakietów promocyjnych z rabatem do -30%.</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="p-4 bg-background/25 border border-border/10 rounded-xl space-y-3">
-                  <p className="font-semibold text-xs text-secondary uppercase tracking-wider">Dla pakietu bezpłatnego (Podstawowego):</p>
-                  <ul className="space-y-2 text-xs ml-1">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
-                      <span>Możliwość trwałego odsłonięcia bezpośredniego numeru kontaktowego.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
-                      <span>Darmowa opcja odpowiadania na zapytania w wiadomościach prywatnych.</span>
-                    </li>
-                  </ul>
-                </div>
+              <div className="mt-4 p-4 bg-background/25 border border-border/10 rounded-xl space-y-3">
+                <p className="font-semibold text-xs text-primary uppercase tracking-wider">Korzyści dla wszystkich pakietów:</p>
+                <ul className="space-y-2 text-xs ml-1">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Co miesiąc otrzymujesz gratis 100 punktów (wartość 100 zł) dodawanych bezpośrednio do salda.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Warunek: adres Twojej strony www w profilu i widget platformy osadzony na tej stronie.</span>
+                  </li>
+                </ul>
               </div>
 
               <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-xl">
@@ -1585,7 +1492,7 @@ export default function LawFirmDashboardPage() {
             <div className="flex items-center gap-6">
               <div>
                 <div className="text-4xl font-bold text-foreground tracking-tight">
-                  {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "0.0"}
+                  {formatNumber(stats.averageRating, 1)}
                 </div>
                 <div className="flex items-center gap-1 text-secondary mt-1.5">
                   {[...Array(5)].map((_, i) => (
@@ -1598,7 +1505,7 @@ export default function LawFirmDashboardPage() {
                 </div>
               </div>
               <div className="text-xs text-muted-foreground font-light space-y-1">
-                <p>Ekspert otrzymała łącznie <span className="text-foreground font-semibold">{stats.reviewsCount}</span> {stats.reviewsCount === 1 ? "opinię" : "opinii"}.</p>
+                <p>Liczba opinii o Twoim profilu: <span className="text-foreground font-semibold">{stats.reviewsCount}</span>.</p>
                 <Link href="/panel-eksperta/opinie">
                   <Button variant="link" className="p-0 h-auto text-xs text-primary hover:text-primary-hover font-semibold">
                     Czytaj opinie klientów &rarr;

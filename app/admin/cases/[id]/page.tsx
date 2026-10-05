@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -189,6 +190,10 @@ export default function CaseDetailsPage() {
     })
   }
 
+  // Termin to doba kalendarzowa (północ UTC) — formatowanie w UTC, bez godziny (F-046)
+  const formatDateOnly = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("pl-PL", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("pl-PL", {
       style: "currency",
@@ -322,7 +327,7 @@ export default function CaseDetailsPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">Oczekiwany termin realizacji</p>
                   {caseData.oczekiwanyTerminRealizacji ? (
-                    <p className="font-medium">{formatDate(caseData.oczekiwanyTerminRealizacji)}</p>
+                    <p className="font-medium">{formatDateOnly(caseData.oczekiwanyTerminRealizacji)}</p>
                   ) : (
                     <p className="text-muted-foreground">Nie określono</p>
                   )}
@@ -359,12 +364,12 @@ export default function CaseDetailsPage() {
                             <p className="text-sm text-muted-foreground">Cena</p>
                             <p className="font-semibold text-lg">{formatCurrency(offer.kwotaBrutto)}</p>
                             <p className="text-xs text-muted-foreground">
-                              Netto: {formatCurrency(offer.kwotaNetto)} (VAT {offer.vat}%)
+                              Netto: {formatCurrency(offer.kwotaNetto)} ({offer.vat === -1 ? "VAT zwolniony" : `VAT ${offer.vat}%`})
                             </p>
                           </div>
                           <div>
                             <p className="text-sm text-muted-foreground">Termin realizacji</p>
-                            <p className="font-medium">{offer.terminRealizacjiDni} dni roboczych</p>
+                            <p className="font-medium">{formatBusinessDays(offer.terminRealizacjiDni)}</p>
                           </div>
                         </div>
                         <Separator className="my-4" />

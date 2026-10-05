@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { computeLiveRanking, positionWithin } from "@/lib/ranking-positions"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
@@ -36,32 +37,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
-    // Znajdź pozycję aktualnej eksperta w rankingu ogólnym
-    const higherRankedCount = await prisma.lawFirm.count({
-      where: {
-        user: { deletedAt: null },
-        zweryfikowana: true,
-        punktySaldo: { gt: lawFirm.punktySaldo },
-      },
-    })
-
-    // Obsługa remisów po ID
-    const tieBreakCount = await prisma.lawFirm.count({
-      where: {
-        user: { deletedAt: null },
-        zweryfikowana: true,
-        punktySaldo: lawFirm.punktySaldo,
-        id: { lt: lawFirm.id }
-      }
-    })
-
-    const overallPosition = higherRankedCount + tieBreakCount + 1
-    const totalLawFirms = await prisma.lawFirm.count({
-      where: {
-        user: { deletedAt: null },
-        zweryfikowana: true,
-      },
-    })
+    // Pozycja wg jedynej definicji rankingu (wynik z lib/ranking-score.ts)
+    const liveRanking = await computeLiveRanking()
+    const totalLawFirms = liveRanking.length
+    const overallPosition = liveRanking.find((f) => f.id === lawFirm.id)?.position ?? null
 
     // Oblicz statystyki ofert
     const totalOffers = lawFirm.offers.length
@@ -132,63 +111,15 @@ export async function GET(request: NextRequest) {
 
     // Ranking w kategoriach
     const categoryRankings = []
-    const categoryIds = lawFirm.categories.map(lc => lc.categoryId)
-
-    // Pobierz dane rankingowe dla wszystkich kategorii naraz, aby uniknąć N+1
-    const [categoryTotals, categoryHigherRanked, categoryTieBreaks] = await Promise.all([
-      prisma.lawFirmCategory.groupBy({
-        by: ['categoryId'],
-        where: {
-          categoryId: { in: categoryIds },
-          lawFirm: {
-            user: { deletedAt: null },
-            zweryfikowana: true,
-          },
-        },
-        _count: {
-          lawFirmId: true,
-        },
-      }),
-      prisma.lawFirmCategory.groupBy({
-        by: ['categoryId'],
-        where: {
-          categoryId: { in: categoryIds },
-          lawFirm: {
-            user: { deletedAt: null },
-            zweryfikowana: true,
-            punktySaldo: { gt: lawFirm.punktySaldo },
-          },
-        },
-        _count: {
-          lawFirmId: true,
-        },
-      }),
-      prisma.lawFirmCategory.groupBy({
-        by: ['categoryId'],
-        where: {
-          categoryId: { in: categoryIds },
-          lawFirm: {
-            user: { deletedAt: null },
-            zweryfikowana: true,
-            punktySaldo: lawFirm.punktySaldo,
-            id: { lt: lawFirm.id },
-          },
-        },
-        _count: {
-          lawFirmId: true,
-        },
-      }),
-    ])
-
     for (const lawFirmCategory of lawFirm.categories) {
       const categoryId = lawFirmCategory.categoryId
-
-      const higherRankedCategoryCount = categoryHigherRanked.find(c => c.categoryId === categoryId)?._count.lawFirmId || 0
-      const tieBreakCategoryCount = categoryTieBreaks.find(c => c.categoryId === categoryId)?._count.lawFirmId || 0
-      const categoryTotal = categoryTotals.find(c => c.categoryId === categoryId)?._count.lawFirmId || 0
-
-      const categoryPosition = higherRankedCategoryCount + tieBreakCategoryCount + 1
-      const percentile = categoryTotal > 0 ? (categoryPosition / categoryTotal) * 100 : 0
+      const { position: categoryPosition, total: categoryTotal } = positionWithin(
+        liveRanking,
+        lawFirm.id,
+        (f) => f.categoryIds.includes(categoryId)
+      )
+      const percentile =
+        categoryTotal > 0 && categoryPosition ? (categoryPosition / categoryTotal) * 100 : 0
 
       categoryRankings.push({
         categoryId: lawFirmCategory.category.id,
@@ -210,12 +141,12 @@ export async function GET(request: NextRequest) {
 
     if (!lawFirm.opis || lawFirm.opis.length < 200) {
       improvementTips.push(
-        "Dodaj szczegółowy opis swojej eksperta - profile z pełnym opisem są częściej wybierane przez klientów."
+        "Dodaj szczegółowy opis swojego profilu - profile z pełnym opisem są częściej wybierane przez klientów."
       )
     }
 
     if (!lawFirm.logo) {
-      improvementTips.push("Dodaj logo swojej eksperta, aby zwiększyć rozpoznawalność i profesjonalizm profilu.")
+      improvementTips.push("Dodaj logo swojego profilu, aby zwiększyć rozpoznawalność i profesjonalizm profilu.")
     }
 
     if (lawFirm.categories.length < 3) {

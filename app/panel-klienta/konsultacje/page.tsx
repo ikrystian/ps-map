@@ -1,5 +1,6 @@
 "use client"
 
+import { formatCurrency } from "@/lib/format"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -89,8 +90,8 @@ function ConsultationTimer({ targetDate }: { targetDate: string }) {
       <span>Do konsultacji:</span>
       <span className="font-bold font-mono">
         {timeLeft.days > 0 && `${timeLeft.days}d `}
-        {timeLeft.hours.toString().padStart(2, "0")}h:
-        {timeLeft.minutes.toString().padStart(2, "0")}m:
+        {timeLeft.hours.toString().padStart(2, "0")}h{" "}
+        {timeLeft.minutes.toString().padStart(2, "0")}m{" "}
         {timeLeft.seconds.toString().padStart(2, "0")}s
       </span>
     </Badge>
@@ -167,8 +168,10 @@ export default function ClientConsultationsPage() {
   }
 
   const now = new Date()
-  const upcomingBookings = bookings.filter((b: any) => new Date(b.consultationDate) >= now)
-  const pastBookings = bookings.filter((b: any) => new Date(b.consultationDate) < now)
+  // Zakładka wynika ze statusu i daty: odrzucone/anulowane/zakończone są „Minione” niezależnie od daty (F-069)
+  const isClosedBooking = (b: any) => ["REJECTED", "CANCELLED", "COMPLETED"].includes(b.status)
+  const upcomingBookings = bookings.filter((b: any) => !isClosedBooking(b) && new Date(b.consultationDate) >= now)
+  const pastBookings = bookings.filter((b: any) => isClosedBooking(b) || new Date(b.consultationDate) < now)
 
   upcomingBookings.sort((a: any, b: any) => new Date(a.consultationDate).getTime() - new Date(b.consultationDate).getTime())
   pastBookings.sort((a: any, b: any) => new Date(b.consultationDate).getTime() - new Date(a.consultationDate).getTime())
@@ -237,7 +240,7 @@ export default function ClientConsultationsPage() {
                     </Badge>
                     <Badge className="bg-secondary/10 text-secondary border border-secondary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-bold text-sm">
                       <CreditCard className="h-3 w-3" />
-                      {booking.price.toFixed(2)} zł
+                      {formatCurrency(booking.price)}
                     </Badge>
                   </div>
 
@@ -252,6 +255,10 @@ export default function ClientConsultationsPage() {
 
                     {booking.paymentStatus === 'ZAPLACONE' ? (
                       <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm py-0 px-2 rounded-md">Zapłacona</Badge>
+                    ) : booking.paymentStatus === 'ZWROT' ? (
+                      <Badge className="bg-sky-500/10 text-sky-400 border border-sky-500/30 text-sm py-0 px-2 rounded-md">Zwrócona</Badge>
+                    ) : booking.paymentStatus === 'ANULOWANE' ? (
+                      <Badge className="bg-rose-500/10 text-rose-400 border border-rose-500/30 text-sm py-0 px-2 rounded-md">Anulowana</Badge>
                     ) : (
                       <Badge className="bg-zinc-500/10 text-muted-foreground border border-zinc-500/30 text-sm py-0 px-2 rounded-md">Nieopłacona</Badge>
                     )}

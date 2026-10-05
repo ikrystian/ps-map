@@ -1624,7 +1624,7 @@ export default function EditLawFirmPage() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="none">Brak pakietu (Darmowy)</SelectItem>
+                                      <SelectItem value="none">Brak pakietu</SelectItem>
                                       <SelectItem value="PODSTAWOWY">Podstawowy</SelectItem>
                                       <SelectItem value="STANDARD">Standard</SelectItem>
                                       <SelectItem value="PREMIUM">Premium</SelectItem>

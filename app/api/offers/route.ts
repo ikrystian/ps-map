@@ -1,3 +1,5 @@
+import { syncStoredOfferCounters } from "@/lib/offer-stats"
+import { formatBusinessDays, formatCurrency } from "@/lib/format"
 import { auth } from "@/lib/auth"
 import { sendEmailWithTemplate } from "@/lib/email"
 import { applyPointsChange, InsufficientPointsError } from "@/lib/points-ledger"
@@ -224,7 +226,7 @@ export async function POST(request: NextRequest) {
       where: { id: caseId }
     })
 
-    if (!caseExists) {
+    if (!caseExists || caseExists.isArchived) {
       return Response.json(
         { error: "Nie znaleziono sprawy" },
         { status: 404 }
@@ -241,14 +243,14 @@ export async function POST(request: NextRequest) {
 
     if (existingOffer) {
       return Response.json(
-        { error: "Złożyłeś już ofertę do tej sprawy" },
+        { error: "Oferta do tej sprawy została już złożona" },
         { status: 400 }
       )
     }
 
     // Oblicz kwotę brutto
     const vatMultiplier = vat === -1 ? 0 : vat / 100
-    const kwotaBrutto = kwotaNetto + (kwotaNetto * vatMultiplier)
+    const kwotaBrutto = Math.round((kwotaNetto + kwotaNetto * vatMultiplier) * 100) / 100
 
     // Oblicz koszt wyróżnienia
     let punktyWyroznienia = null
@@ -303,12 +305,7 @@ export async function POST(request: NextRequest) {
       })
 
       // Aktualizuj licznik ofert eksperta
-      await tx.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          zlozoneOferty: { increment: 1 },
-        }
-      })
+      await syncStoredOfferCounters(lawFirm.id, tx)
 
       // Wyróżnienie kosztuje punkty — obciążenie idzie razem z wpisem w historii
       if (wyroznienie) {
@@ -405,8 +402,8 @@ export async function POST(request: NextRequest) {
           data: {
             userId: caseData.client.userId,
             typ: "NOWA_OFERTA",
-            tytul: "Otrzymałeś nową ofertę",
-            tresc: `Ekspert ${lawFirm.nazwa} złożyła ofertę do sprawy "${caseData.nazwaSprawy}"`,
+            tytul: "Masz nową ofertę",
+            tresc: `${lawFirm.nazwa} złożył(a) ofertę do sprawy "${caseData.nazwaSprawy}"`,
             linkUrl: `/panel-klienta/sprawy/${caseId}`
           }
         })
@@ -434,8 +431,8 @@ export async function POST(request: NextRequest) {
       })
 
       if (caseWithClient?.client?.user?.email) {
-        const formattedKwota = `${offer.kwotaBrutto.toFixed(2)} PLN`
-        const formattedTermin = `${offer.terminRealizacjiDni} dni`
+        const formattedKwota = formatCurrency(offer.kwotaBrutto)
+        const formattedTermin = formatBusinessDays(offer.terminRealizacjiDni)
 
         await sendEmailWithTemplate({
           to: caseWithClient.client.user.email,

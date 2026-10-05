@@ -17,13 +17,16 @@ export async function GET() {
     const userRole = session.user.role
 
     // Znajdź wszystkie konwersacje użytkownika
+    // Tylko aktywne rozmowy — bez zarchiwizowanych i usuniętych przez użytkownika (F-074)
+    const clientActive = { clientUserId: userId, isArchivedByClient: false, isDeletedByClient: false }
+    const lawFirmActive = { lawFirmUserId: userId, isArchivedByLawFirm: false, isDeletedByLawFirm: false }
     const conversations = await prisma.conversation.findMany({
       where:
         userRole === "CLIENT"
-          ? { clientUserId: userId }
+          ? clientActive
           : userRole === "LAW_FIRM"
-          ? { lawFirmUserId: userId }
-          : { OR: [{ clientUserId: userId }, { lawFirmUserId: userId }] },
+          ? lawFirmActive
+          : { OR: [clientActive, lawFirmActive] },
       select: {
         id: true,
       },

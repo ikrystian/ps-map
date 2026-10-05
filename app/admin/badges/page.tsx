@@ -33,13 +33,13 @@ export default async function BadgesPage() {
 
     return (
         <div className="space-y-6">
-            <AdminHeaderSetter title="Ordery" subtitle="Zarządzaj orderami i odznakami w systemie" />
+            <AdminHeaderSetter title="Odznaki" subtitle="Zarządzaj odznakami w systemie" />
             <div className="flex items-center justify-between">
                 <div />
                 <Link href="/admin/badges/create">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />
-                        Dodaj nowy order
+                        Dodaj nową odznakę
                     </Button>
                 </Link>
             </div>
@@ -59,7 +59,7 @@ export default async function BadgesPage() {
                         {badges.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                                    Brak zdefiniowanych orderów.
+                                    Brak zdefiniowanych odznak.
                                 </TableCell>
                             </TableRow>
                         )}

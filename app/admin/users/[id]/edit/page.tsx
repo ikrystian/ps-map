@@ -38,7 +38,7 @@ import * as z from "zod"
 const userSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").or(z.literal("")).optional(),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków").or(z.literal("")).optional(),
   role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
   status: z.enum(["ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   image: z.string().optional(),
@@ -904,7 +904,7 @@ export default function EditUserPage() {
                         Ustawienia powiadomień e-mail
                       </CardTitle>
                       <CardDescription>
-                        Dostosuj preferencje powiadomień e-mail wysyłanych do ekspercie
+                        Dostosuj preferencje powiadomień e-mail wysyłanych do eksperta
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -1310,7 +1310,7 @@ export default function EditUserPage() {
                                     Automatyczne prośby o opinie
                                   </FormLabel>
                                   <FormDescription className="text-xs">
-                                    Automatyczne wysyłanie próśb do ekspercie o wystawienie opinii po zakończeniu sprawy.
+                                    Automatyczne wysyłanie próśb do eksperta o wystawienie opinii po zakończeniu sprawy.
                                   </FormDescription>
                                 </div>
                                 <FormControl>

@@ -116,7 +116,7 @@ export default function ClientConsultationRequestsPage() {
                     Brak zapytań
                   </Heading>
                   <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
-                    Nie wysłałeś jeszcze żadnego zapytania o konsultację. Opisz swoją sprawę, a eksperci sami
+                    Nie wysłano jeszcze żadnego zapytania o konsultację. Opisz swoją sprawę, a eksperci sami
                     zaproponują termin i cenę.
                   </p>
                 </div>

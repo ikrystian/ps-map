@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/prisma"
+import { computeLiveRanking } from "@/lib/ranking-positions"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch top 100 law firms by points
+    // Kolejność = jedyna definicja rankingu (wynik z lib/ranking-score.ts), nie saldo punktów
+    const live = await computeLiveRanking()
+    const scoreById = new Map(live.map((f) => [f.id, f.score]))
+
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         user: {
@@ -17,7 +21,6 @@ export async function GET(request: NextRequest) {
         nazwa: true,
         logo: true,
         opis: true,
-        punktySaldo: true,
         zweryfikowana: true,
         user: {
           select: {
@@ -50,11 +53,12 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: {
-        punktySaldo: "desc",
-      },
-      take: 100,
     })
+
+    lawFirms.sort(
+      (a: any, b: any) => (scoreById.get(b.id) ?? 0) - (scoreById.get(a.id) ?? 0) || a.id.localeCompare(b.id)
+    )
+    lawFirms.length = Math.min(lawFirms.length, 100)
 
     // Calculate ratings and add rank
     const rankedLawFirms = lawFirms.map((firm: any, index: number) => {
@@ -70,7 +74,7 @@ export async function GET(request: NextRequest) {
         logo: firm.logo,
         opis: firm.opis,
         miasto: firm.user?.miasto || "",
-        punktySaldo: firm.punktySaldo,
+        rankingScore: Math.round(scoreById.get(firm.id) ?? 0),
         zweryfikowana: firm.zweryfikowana,
         subscriptionType: firm.pakietSubskrypcji || null,
         voivodeship: firm.user?.voivodeship || null,

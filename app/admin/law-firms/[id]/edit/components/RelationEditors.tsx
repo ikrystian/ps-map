@@ -1,6 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { cityOptionLabel } from "@/lib/city-name"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
@@ -206,7 +207,8 @@ export function CoverageAreaSelector({
           .flat()
           .map((city: any) => ({
             id: city.id,
-            nazwa: city.nazwa,
+            // etykieta z powiatem rozróżnia miejscowości o tej samej nazwie
+            nazwa: cityOptionLabel(city),
             voivodeshipId: city.voivodeshipId,
           }))
         setCityResults(merged)

@@ -1,4 +1,6 @@
+import { getOfferStatsMap } from "@/lib/offer-stats"
 import { pickCompanyDataFields } from "@/lib/biala-lista"
+import { cleanCityName } from "@/lib/city-name"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
 import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/lib/phone-verification"
 import { prisma } from "@/lib/prisma"
@@ -225,12 +227,7 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy:
-          sortBy === "ranking"
-            ? [
-              { pozycjaRanking: { sort: "desc", nulls: "last" } },
-              { wyswietleniaProfilu: "desc" },
-            ]
-            : sortBy === "newest"
+          sortBy === "newest"
               ? [{ createdAt: "desc" }]
               : sortBy === "experience"
                 // "Doświadczenie" = realny dorobek: najwięcej wygranych spraw,
@@ -289,6 +286,8 @@ export async function GET(request: NextRequest) {
         },
       })
       : []
+
+    const offerStatsMap = await getOfferStatsMap(lawFirmIds)
 
     // Calculate ratings, boosts, and highlight types for each law firm
     const lawFirmsWithData = await Promise.all(
@@ -350,8 +349,8 @@ export async function GET(request: NextRequest) {
           avgRating: parseFloat(avgRating.toFixed(1)),
           reviewCount: firm.reviews.length,
           wyswietleniaProfilu: firm.wyswietleniaProfilu,
-          zlozoneOferty: firm.zlozoneOferty,
-          wygraneOferty: firm.wygraneOferty,
+          zlozoneOferty: offerStatsMap.get(firm.id)?.zlozoneOferty ?? 0,
+          wygraneOferty: offerStatsMap.get(firm.id)?.wygraneOferty ?? 0,
           pakietSubskrypcji: firm.pakietSubskrypcji,
           pakietObrazek: firm.pakietSubskrypcji ? (planImageMap.get(firm.pakietSubskrypcji) ?? null) : null,
           // Promotion data
@@ -366,11 +365,12 @@ export async function GET(request: NextRequest) {
     )
 
     // Apply final ordering, then overrides.
-    // - ranking/newest/experience: already ordered by the DB query, keep as-is
+    // - newest/experience: already ordered by the DB query, keep as-is
+    // - ranking (and default relevance): the single ranking score (lib/ranking-score.ts)
     // - rating: sort by computed average (then review count, then score)
     // - relevance (default): boost-aware score
     let sortedLawFirms =
-      sortBy === "ranking" || sortBy === "newest" || sortBy === "experience"
+      sortBy === "newest" || sortBy === "experience"
         ? lawFirmsWithData
         : sortBy === "rating"
           ? lawFirmsWithData.sort(
@@ -609,7 +609,7 @@ export async function POST(request: NextRequest) {
             numerTelefonu2: body.numerTelefonu2 || null,
             adres: body.adres,
             kodPocztowy: body.kodPocztowy,
-            miasto: body.miasto,
+            miasto: cleanCityName(body.miasto) || body.miasto,
             voivodeshipId: body.voivodeshipId,
           },
         })
@@ -628,7 +628,7 @@ export async function POST(request: NextRequest) {
             numerTelefonu2: body.numerTelefonu2 || null,
             adres: body.adres,
             kodPocztowy: body.kodPocztowy,
-            miasto: body.miasto,
+            miasto: cleanCityName(body.miasto) || body.miasto,
             voivodeshipId: body.voivodeshipId,
             // Pre-rejestracja z landing page (ps-landing): konto ma status PENDING i czeka
             // na ręczne wysłanie maila aktywacyjnego przez admina (panel admin/users).

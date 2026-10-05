@@ -90,6 +90,9 @@ export function buildLawFirmCaseWhereInput(
   // dopóki klient nie potwierdzi adresu e-mail (patrz Case.czekaNaAktywacjeEmail).
   scopeConditions.push({ czekaNaAktywacjeEmail: false })
 
+  // Sprawa zarchiwizowana przez admina nie jest widoczna ani otwarta na oferty (F-025/F-066)
+  scopeConditions.push({ isArchived: false })
+
   if (additionalWhere) {
     scopeConditions.push(additionalWhere)
   }

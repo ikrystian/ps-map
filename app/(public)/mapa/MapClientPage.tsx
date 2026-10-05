@@ -4,6 +4,9 @@ import "mapbox-gl/dist/mapbox-gl.css"
 
 import {
   Award,
+  Check,
+  ChevronDown,
+  Filter,
   Globe,
   Loader2,
   MapPin,
@@ -23,6 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export interface MapExpert {
   id: string
@@ -41,8 +45,51 @@ export interface MapExpert {
   lng: number
   mainCategory: string | null
   categories: string[]
+  /** Id specjalizacji (ExpertiseCategory) eksperta, np. „Adwokat” lub „Doradca podatkowy”. */
+  expertiseCategoryId: string | null
+  /** Id-y od korzenia do liścia — pozwala dopasować eksperta do filtra z dowolnego poziomu drzewa. */
+  expertiseCategoryIds: string[]
+  expertiseCategoryPath: string | null
   liczbaOpinii: number
   sredniaOcen: number | null
+}
+
+/** Węzeł drzewa kategorii/specjalizacji z `/api/expertise-categories`, używany do budowy przycisków filtra pod mapą. */
+interface ExpertiseFilterNode {
+  id: string
+  nazwa: string
+  children?: ExpertiseFilterNode[]
+}
+
+/** Przycisk-filtr (kategoria, podkategoria lub specjalizacja) pod mapą. */
+function FilterChip({
+  label,
+  active,
+  onClick,
+  emphasized,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+  emphasized?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors cursor-pointer",
+        emphasized ? "font-semibold" : "font-medium",
+        active
+          ? "bg-primary text-primary-foreground border-primary"
+          : "bg-muted/40 text-foreground/80 border-border hover:bg-muted hover:text-foreground"
+      )}
+    >
+      {active && <Check className="h-3 w-3 shrink-0" />}
+      {label}
+    </button>
+  )
 }
 
 // Środek kraju i zoom obejmujący całą Polskę.
@@ -301,6 +348,12 @@ export default function MapClientPage() {
   const [error, setError] = useState<string | null>(null)
   const [selected, setSelected] = useState<MapExpert | null>(null)
 
+  // Drzewo kategorii/specjalizacji (Prawnicy > role; Eksperci > podkategoria > specjalizacja)
+  // pod przyciski filtra poniżej mapy — to samo źródło co krok wyboru specjalizacji w rejestracji.
+  const [expertiseTree, setExpertiseTree] = useState<ExpertiseFilterNode[]>([])
+  const [activeFilterIds, setActiveFilterIds] = useState<Set<string>>(new Set())
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set())
+
   const mapRef = useRef<MapRef>(null)
   const { resolvedTheme } = useTheme()
 
@@ -333,15 +386,69 @@ export default function MapClientPage() {
     }
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+
+    fetch("/api/expertise-categories")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: ExpertiseFilterNode[]) => {
+        if (!cancelled) setExpertiseTree(Array.isArray(data) ? data : [])
+      })
+      .catch(() => {
+        // Brak drzewa kategorii nie blokuje mapy — po prostu nie pokażemy filtrów.
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const toggleFilter = useCallback((id: string) => {
+    setActiveFilterIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
+
+  const clearFilters = useCallback(() => setActiveFilterIds(new Set()), [])
+
+  const toggleExpandedGroup = useCallback((id: string) => {
+    setExpandedGroupIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
+
+  // Ekspert pasuje do filtra, gdy dowolny id z jego łańcucha (kategoria > podkategoria >
+  // specjalizacja) jest zaznaczony — dzięki temu zaznaczenie kategorii nadrzędnej
+  // (np. całego „Eksperci”) obejmuje też jej podkategorie i specjalizacje.
+  const filteredExperts = useMemo(() => {
+    if (activeFilterIds.size === 0) return experts
+    return experts.filter((expert) =>
+      expert.expertiseCategoryIds.some((id) => activeFilterIds.has(id))
+    )
+  }, [experts, activeFilterIds])
+
+  // Gdy filtr ukryje aktualnie otwartego eksperta, zamknij panel szczegółów.
+  useEffect(() => {
+    if (selected && !filteredExperts.some((expert) => expert.id === selected.id)) {
+      setSelected(null)
+    }
+  }, [filteredExperts, selected])
+
   const expertsById = useMemo(
-    () => new Map(experts.map((expert) => [expert.id, expert])),
-    [experts]
+    () => new Map(filteredExperts.map((expert) => [expert.id, expert])),
+    [filteredExperts]
   )
 
   const clusterIndex = useMemo(() => {
     const index = new Supercluster<PointProps>({ radius: 60, maxZoom: 14 })
     index.load(
-      experts.map((expert) => ({
+      filteredExperts.map((expert) => ({
         type: "Feature" as const,
         properties: { expertId: expert.id },
         geometry: {
@@ -351,7 +458,7 @@ export default function MapClientPage() {
       }))
     )
     return index
-  }, [experts])
+  }, [filteredExperts])
 
   const clusters = useMemo(
     () => clusterIndex.getClusters(viewport.bbox, Math.round(viewport.zoom)),
@@ -397,10 +504,14 @@ export default function MapClientPage() {
     if (loading) return "Wczytywanie ekspertów…"
     if (error) return error
     if (experts.length === 0) return "Brak ekspertów z ustaloną lokalizacją."
-    return `${experts.length} ${
-      experts.length === 1 ? "ekspert" : "ekspertów"
-    } na mapie — kliknij avatar, aby zobaczyć szczegóły.`
-  }, [loading, error, experts.length])
+    if (filteredExperts.length === 0) return "Brak ekspertów spełniających wybrane filtry."
+    const label = filteredExperts.length === 1 ? "ekspert" : "ekspertów"
+    const outOfTotal =
+      activeFilterIds.size > 0 && filteredExperts.length !== experts.length
+        ? ` (z ${experts.length})`
+        : ""
+    return `${filteredExperts.length}${outOfTotal} ${label} na mapie — kliknij avatar, aby zobaczyć szczegóły.`
+  }, [loading, error, experts.length, filteredExperts.length, activeFilterIds.size])
 
   return (
     <div className="flex flex-col">
@@ -500,6 +611,87 @@ export default function MapClientPage() {
             </>
           )}
         </div>
+
+        {expertiseTree.length > 0 && (
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <Filter className="h-4 w-4 text-primary" />
+                Filtruj ekspertów na mapie
+              </h2>
+              {activeFilterIds.size > 0 && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+                >
+                  Wyczyść filtry ({activeFilterIds.size})
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              {expertiseTree.map((root) => (
+                <div key={root.id} className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <FilterChip
+                      label={root.nazwa}
+                      active={activeFilterIds.has(root.id)}
+                      onClick={() => toggleFilter(root.id)}
+                      emphasized
+                    />
+                    {(root.children ?? []).map((child) => {
+                      const hasSpecializations = (child.children?.length ?? 0) > 0
+                      return (
+                        <span key={child.id} className="inline-flex items-center gap-1">
+                          <FilterChip
+                            label={child.nazwa}
+                            active={activeFilterIds.has(child.id)}
+                            onClick={() => toggleFilter(child.id)}
+                          />
+                          {hasSpecializations && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpandedGroup(child.id)}
+                              aria-label={`Pokaż specjalizacje: ${child.nazwa}`}
+                              aria-expanded={expandedGroupIds.has(child.id)}
+                              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                            >
+                              <ChevronDown
+                                className={cn(
+                                  "h-3.5 w-3.5 transition-transform",
+                                  expandedGroupIds.has(child.id) && "rotate-180"
+                                )}
+                              />
+                            </button>
+                          )}
+                        </span>
+                      )
+                    })}
+                  </div>
+
+                  {(root.children ?? [])
+                    .filter((child) => expandedGroupIds.has(child.id) && (child.children?.length ?? 0) > 0)
+                    .map((child) => (
+                      <div
+                        key={child.id}
+                        className="flex flex-wrap items-center gap-2 pl-4 ml-1 border-l border-border/60"
+                      >
+                        {child.children!.map((leaf) => (
+                          <FilterChip
+                            key={leaf.id}
+                            label={leaf.nazwa}
+                            active={activeFilterIds.has(leaf.id)}
+                            onClick={() => toggleFilter(leaf.id)}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

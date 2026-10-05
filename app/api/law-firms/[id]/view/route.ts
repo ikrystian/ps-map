@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -7,6 +8,14 @@ export async function POST(
 ) {
   try {
     const { id } = await params
+
+    // Własne wejścia (właściciel profilu, admin) nie zawyżają licznika (F-030)
+    const session = await auth()
+    if (session?.user) {
+      if (session.user.role === "ADMIN") return Response.json({ success: true, counted: false })
+      const own = await prisma.lawFirm.findFirst({ where: { id, userId: session.user.id }, select: { id: true } })
+      if (own) return Response.json({ success: true, counted: false })
+    }
 
     // Get current date info
     const now = new Date()

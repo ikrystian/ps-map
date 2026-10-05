@@ -1,3 +1,4 @@
+import { cleanCityName } from "@/lib/city-name"
 import {
   AccountAlreadyAnonymizedError,
   AccountAnonymizationForbiddenError,
@@ -218,7 +219,7 @@ export async function PUT(
       updateData.numerTelefonu = clientData.telefon
       updateData.adres = clientData.adres
       updateData.kodPocztowy = clientData.kodPocztowy
-      updateData.miasto = clientData.miasto
+      updateData.miasto = cleanCityName(clientData.miasto) || clientData.miasto
       updateData.voivodeshipId = clientData.voivodeshipId || null
 
       updateData.client = {

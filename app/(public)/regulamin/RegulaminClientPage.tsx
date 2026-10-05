@@ -345,7 +345,7 @@ Miejscowość, Data: `
                   <h3 className="font-semibold text-lg text-foreground">Dla Wykonawców</h3>
                   <ul className="space-y-2.5 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
                     <li><strong className="text-foreground">Płatny profil</strong> – korzystanie z serwisu wymaga uiszczenia Abonamentu.</li>
-                    <li><strong className="text-foreground">Pakiet Testowy</strong> – po rejestracji otrzymujesz 30 dni za darmo (do 3 razy max).</li>
+                    <li><strong className="text-foreground">Okres próbny</strong> – zasady bezpłatnego okresu próbnego określa aktualny Cennik lub komunikat w Serwisie.</li>
                     <li><strong className="text-foreground">System Punktowy</strong> – możesz kupować punkty do pozycjonowania (1 pkt = 1 PLN).</li>
                     <li><strong className="text-foreground">Weryfikacja</strong> – musisz posiadać uprawnienia zawodowe (adwokat, radca itp.).</li>
                   </ul>
@@ -370,7 +370,7 @@ Miejscowość, Data: `
                     <li><strong className="text-foreground">14 dni na zwrot</strong> – prawo do odstąpienia od umowy bez podania przyczyny.</li>
                     <li><strong className="text-foreground">Wyłączenie prawa</strong> – nie dotyczy zapytań, które wykonawca już zaczął realizować.</li>
                     <li><strong className="text-foreground">Darmowe reklamacje</strong> – zgłaszasz usterki techniczne e-mailem lub pocztą.</li>
-                    <li><strong className="text-foreground">30 dni na decyzję</strong> – Administrator odpowie w ciągu 30 dni roboczych.</li>
+                    <li><strong className="text-foreground">30 dni na decyzję</strong> – Administrator odpowie w ciągu 30 dni.</li>
                   </ul>
                 </div>
                 <button 

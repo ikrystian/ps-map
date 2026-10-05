@@ -15,7 +15,12 @@ export async function GET() {
       take: 20, // Limit to 20 most recent notifications
     })
 
-    return NextResponse.json(notifications)
+    // Licznik nieprzeczytanych dotyczy wszystkich powiadomień, nie tylko okna 20 ostatnich (F-070)
+    const unreadTotal = await prisma.notification.count({
+      where: { userId: session.user.id, przeczytane: false },
+    })
+
+    return NextResponse.json(notifications, { headers: { "X-Unread-Count": String(unreadTotal) } })
   } catch (error) {
     console.error("Error fetching notifications:", error)
     return NextResponse.json(

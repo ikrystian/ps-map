@@ -1,3 +1,4 @@
+import { decryptSecret } from "@/lib/secret-settings"
 /**
  * Klient SMSAPI (https://www.smsapi.pl/docs/).
  *
@@ -82,7 +83,7 @@ export async function getSmsConfig(): Promise<SmsConfig> {
     console.error("[SMSAPI] Nie udało się odczytać ustawień z bazy — używam ENV:", error)
   }
 
-  const settingsToken = (values.get("smsapiToken") || "").trim()
+  const settingsToken = decryptSecret(values.get("smsapiToken")).trim()
   const envToken = (process.env.SMSAPI_TOKEN || "").trim()
   const token = settingsToken || envToken
 

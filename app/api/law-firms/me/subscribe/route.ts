@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { createInvoiceWithNumber } from "@/lib/invoice-number"
+import { sendInvoiceToKsef } from "@/lib/ksef"
 import {
   applyPointsChange,
   creditSubscriptionBonus,
@@ -89,6 +91,11 @@ export async function POST(request: NextRequest) {
 
     // Oblicz cenę w zależności od okresu
     let price = 0
+    // Brak ceny dla okresu (NULL) = okres wyłączony, a nie „darmowy pakiet” (F-072)
+    const periodPrice = period === 1 ? plan.cena1Miesiac : period === 6 ? plan.cena6Miesiecy : period === 12 ? plan.cena12Miesiecy : undefined
+    if ((period === 1 || period === 6 || period === 12) && (periodPrice === null || periodPrice === undefined)) {
+      return Response.json({ error: "Ten okres rozliczeniowy nie jest dostępny dla wybranego pakietu" }, { status: 400 })
+    }
     switch (period) {
       case 1:
         price = plan.cena1Miesiac ?? 0
@@ -457,9 +464,6 @@ export async function POST(request: NextRequest) {
     let invoice: { id: string; invoiceNumber: string } | null = null
 
     if (!isPointPayment) {
-      // Generuj numer faktury
-      const invoiceNumber = `FV/${new Date().getFullYear()}/${String(Date.now()).slice(-6)}`
-
       // Oblicz kwoty VAT na podstawie finalnej ceny
       const vatRate = 23.0
       const netAmount = finalPrice / (1 + vatRate / 100)
@@ -475,9 +479,7 @@ export async function POST(request: NextRequest) {
       const buyer = resolveInvoiceBuyer(lawFirm)
 
       // Utwórz fakturę
-      invoice = await prisma.invoice.create({
-        data: {
-          invoiceNumber,
+      invoice = await createInvoiceWithNumber({
           orderId: order.id,
           lawFirmId: lawFirm.id,
           buyerName: buyer.buyerName,
@@ -492,8 +494,14 @@ export async function POST(request: NextRequest) {
           status: isPendingPayment ? "ISSUED" : "PAID",
           dueDate,
           paymentDate: isPendingPayment ? null : new Date(),
-        },
       })
+
+      // Jak w generateInvoiceForOrder: opłacona faktura od razu idzie do KSeF (F-061)
+      if (!isPendingPayment) {
+        sendInvoiceToKsef(invoice.id).catch((err) => {
+          console.error(`Failed to send invoice ${invoice?.id} to KSeF:`, err)
+        })
+      }
     }
 
     return Response.json({

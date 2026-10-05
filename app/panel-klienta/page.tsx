@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays, formatOffersCount } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -165,7 +166,10 @@ export default function ClientDashboardPage() {
   // Statistics counters
   const totalCasesCount = cases.length
   const activeCasesCount = cases.filter((c) => ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"].includes(c.status)).length
-  const totalOffersCount = cases.reduce((acc, c) => acc + (c.offers?.length || 0), 0)
+  // Oferty do rozpatrzenia: złożone/negocjowane w aktywnych sprawach (nie odrzucone, nie wygasłe)
+  const totalOffersCount = cases
+    .filter((c) => ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"].includes(c.status))
+    .reduce((acc, c) => acc + (c.offers?.filter((o: any) => ["ZLOZONA", "NEGOCJACJE"].includes(o.status)).length || 0), 0)
 
   const recentCases = cases.slice(0, 3)
 
@@ -246,15 +250,15 @@ export default function ClientDashboardPage() {
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Otrzymane oferty</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Oferty do rozpatrzenia</span>
             <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
               <MessageSquare className="h-4 w-4 text-secondary" />
             </div>
           </div>
           <div className="text-4xl font-bold tracking-tight mt-auto leading-none text-foreground font-playfair flex items-baseline gap-2">
             <span>{totalOffersCount}</span>
-            {totalOffersCount > 0 && activeCasesCount > 0 && (
-              <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground">Nowe</span>
+            {totalOffersCount > 0 && (
+              <span className="text-sm font-bold px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground">Do decyzji</span>
             )}
           </div>
         </motion.div>
@@ -353,7 +357,7 @@ export default function ClientDashboardPage() {
                           <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                             {caseItem.offers.length > 0 && (
                               <Badge variant="secondary" className="bg-secondary/10 text-secondary border border-secondary/20 text-xs font-semibold">
-                                {caseItem.offers.length} {caseItem.offers.length === 1 ? "oferta" : "oferty"}
+                                {formatOffersCount(caseItem.offers.length)}
                               </Badge>
                             )}
                             <Badge
@@ -406,7 +410,7 @@ export default function ClientDashboardPage() {
                                     <div className="min-w-0 flex-1">
                                       <p className="text-xs font-medium text-foreground truncate">{offer.lawFirm.nazwa}</p>
                                       <p className="text-xs text-muted-foreground">
-                                        {formatCurrency(offer.kwotaBrutto)} • {offer.terminRealizacjiDni} dni
+                                        {formatCurrency(offer.kwotaBrutto)} • {formatBusinessDays(offer.terminRealizacjiDni)}
                                       </p>
                                     </div>
                                     <Badge variant="outline" className={cn("text-xs font-medium shrink-0", offerStatus.className)}>

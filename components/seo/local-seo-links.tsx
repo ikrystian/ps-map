@@ -128,7 +128,7 @@ export function LocalSeoLinks({
       try {
         const [catsRes, voivRes, citiesRes] = await Promise.all([
           fetch("/api/categories"),
-          fetch("/api/voivodeships"),
+          fetch("/api/voivodeships?hasExperts=true"),
           fetch("/api/cities?hasExperts=true"),
         ]);
 
@@ -202,7 +202,7 @@ export function LocalSeoLinks({
     const empty = {
       groups: [] as SeoGroup[],
       flatLinks: [] as SeoLink[],
-      headingTitle: title ?? "Popularne wyszukiwania",
+      headingTitle: title ?? "Eksperci według kategorii i lokalizacji",
       headingSubtitle: subtitle ?? "Eksperci prawni dostępni w całej Polsce",
     };
 
@@ -210,7 +210,8 @@ export function LocalSeoLinks({
       return empty;
     }
 
-    const shuffledLocations = seededShuffle(locationPool, `${seed}-loc`);
+    // Stała kolejność (alfabetyczna), taka sama na każdej stronie i odsłonie — bez losowania (F-055)
+    const shuffledLocations = [...locationPool].sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"));
     const shuffledCategories = seededShuffle(activeCategories, `${seed}-cat`);
 
     // --- Tryb 1: ustalona kategoria (np. /kategorie/[slug]) → kategoria × lokalizacje ---
@@ -299,7 +300,7 @@ export function LocalSeoLinks({
     return {
       groups: builtGroups,
       flatLinks: [],
-      headingTitle: title ?? "Popularne wyszukiwania w Twojej okolicy",
+      headingTitle: title ?? "Eksperci według kategorii i lokalizacji",
       headingSubtitle: subtitle ?? "Eksperci prawni dostępni w całej Polsce",
     };
   }, [

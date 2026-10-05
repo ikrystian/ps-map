@@ -279,6 +279,18 @@ export default function LawFirmPackagePage() {
     }
   }
 
+  // Największa realna zniżka okresu względem płacenia co miesiąc (z cen w bazie)
+  const getMaxDiscountPercent = (period: "6" | "12"): number => {
+    const months = Number(period)
+    const discounts = plans.map((plan) => {
+      const monthly = plan.cena1Miesiac ?? 0
+      const price = getPriceValue(plan, period)
+      if (monthly <= 0 || price <= 0) return 0
+      return Math.round((1 - price / (monthly * months)) * 100)
+    })
+    return Math.max(0, ...discounts)
+  }
+
   const getPrice = (plan: SubscriptionPlan, period: string) => {
     const price = getPriceValue(plan, period)
     if (price === 0 && plan.typ !== "FREE") return "-"
@@ -513,7 +525,7 @@ export default function LawFirmPackagePage() {
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 self-start">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Wzmocnij pozycję swojej eksperta</span>
+          <span>Wzmocnij pozycję swojego profilu</span>
         </div>
       </PageHeader>
 
@@ -627,9 +639,11 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Półrocznie
-              <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
-                Zniżka do 72%
-              </span>
+              {getMaxDiscountPercent("6") > 0 && (
+                <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
+                  Zniżka do {getMaxDiscountPercent("6")}%
+                </span>
+              )}
             </button>
             <button
               type="button"
@@ -640,9 +654,11 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Rocznie
-              <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
-                Zaoszczędź 12%
-              </span>
+              {getMaxDiscountPercent("12") > 0 && (
+                <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
+                  Zniżka do {getMaxDiscountPercent("12")}%
+                </span>
+              )}
             </button>
           </div>
         </div>

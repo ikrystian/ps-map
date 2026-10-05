@@ -298,7 +298,7 @@ export default function LawFirmProfilePage() {
         throw new Error(errorData.error || "Nie udało się wysłać wiadomości")
       }
 
-      toast.success("Twoja wiadomość została wysłana do ekspercie")
+      toast.success("Twoja wiadomość została wysłana do eksperta")
       setShowContactForm(false)
 
       // Reset formularza
@@ -1273,7 +1273,7 @@ export default function LawFirmProfilePage() {
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
                     <p className="text-sm font-bold text-foreground">{lawFirm.wyswietleniaProfilu}</p>
-                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wyświetlenia</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wyświetlenia (łącznie)</p>
                   </div>
                   <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
                     <p className="text-sm font-bold text-foreground">{lawFirm.zlozoneOferty}</p>

@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { FeatureLockedCard } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
@@ -404,7 +405,7 @@ export default function LawFirmStatsPage() {
             <CardContent className="p-5 flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground font-light tracking-wide">Skuteczność (Konwersja)</p>
-                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{lawFirm.konwersja.toFixed(1)}%</h3>
+                <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">{formatNumber(lawFirm.konwersja, 1)}%</h3>
                 <p className="text-sm text-muted-foreground font-light">{lawFirm.wygraneOferty} wygranych z {lawFirm.zlozoneOferty}</p>
               </div>
               <div className="h-12 w-12 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform duration-300">
@@ -421,7 +422,7 @@ export default function LawFirmStatsPage() {
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground font-light tracking-wide">Średnia ocena</p>
                 <h3 className="text-3xl font-playfair font-semibold text-foreground tracking-tight">
-                  {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "0.0"}
+                  {formatNumber(stats.averageRating, 1)}
                 </h3>
                 <div className="flex items-center gap-1 mt-1">
                   {renderStars(Math.round(stats.averageRating))}
@@ -643,7 +644,7 @@ export default function LawFirmStatsPage() {
                       {(() => {
                         const totalOffers = monthlyOffers.reduce((sum, m) => sum + m.total, 0)
                         const acceptedOffers = monthlyOffers.reduce((sum, m) => sum + m.accepted, 0)
-                        return totalOffers > 0 ? ((acceptedOffers / totalOffers) * 100).toFixed(1) : '0.0'
+                        return formatNumber(totalOffers > 0 ? (acceptedOffers / totalOffers) * 100 : 0, 1)
                       })()}%
                     </div>
                     <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mt-1">
@@ -729,7 +730,7 @@ export default function LawFirmStatsPage() {
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-xs text-foreground truncate">{item.category}</div>
                               <div className="text-sm text-muted-foreground font-light mt-0.5">
-                                {rate.toFixed(0)}% skuteczności
+                                {formatNumber(rate, 0)}% skuteczności
                               </div>
                             </div>
                             <Trophy className={cn("h-5 w-5 shrink-0 opacity-80",

@@ -62,6 +62,26 @@ export function expertisePathSegments(
 }
 
 /**
+ * Id-y od korzenia do liścia (np. [rootId, subId, leafId]) — pozwala
+ * dopasować eksperta do przycisku filtra niezależnie od poziomu drzewa,
+ * na którym przycisk operuje (kategoria, podkategoria lub specjalizacja).
+ */
+export function expertiseCategoryIdChain(
+  category?: ExpertiseCategoryWithPath | null
+): string[] {
+  if (!category) return [];
+
+  const ids: string[] = [];
+  const grandParent = category.parent?.parent;
+
+  if (grandParent) ids.push(grandParent.id);
+  if (category.parent) ids.push(category.parent.id);
+  ids.push(category.id);
+
+  return ids;
+}
+
+/**
  * Nazwa korzenia drzewa ExpertiseCategory, którego specjalizacje mają
  * kategorie powiązane przez CategoryExpertiseCategory (gałąź „Prawnicy”
  * zachowuje pełną, niefiltrowaną listę kategorii).

@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { EmailLogStatus } from "@prisma/client"
 import Link from "next/link"
@@ -28,6 +29,12 @@ export default async function MailDetailPage({
 }) {
   const nodeEnv = process.env.NODE_ENV as string
   const isDev = nodeEnv !== "production" && nodeEnv !== "stage"
+
+  // Na produkcji/stage podgląd e-maili tylko dla admina (F-072)
+  if (!isDev) {
+    const session = await auth()
+    if (session?.user?.role !== "ADMIN") notFound()
+  }
 
   const setting = await prisma.settings.findUnique({
     where: { key: "emailLogToMails" },

@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBudgetRange } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -28,7 +29,6 @@ import {
   Calendar,
   CheckCircle,
   Euro,
-  Eye,
   Heart,
   Loader2,
   MapPin,
@@ -427,10 +427,7 @@ const SprawyPage = () => {
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {
     if (doNegocjacji) return "Do negocjacji"
-    if (od && do_) return `${od} - ${do_} PLN`
-    if (od) return `Od ${od} PLN`
-    if (do_) return `Do ${do_} PLN`
-    return "Nie określono"
+    return formatBudgetRange(od || null, do_ || null) ?? "Nie określono"
   }
 
   const getStatusCounts = () => {
@@ -520,7 +517,7 @@ const SprawyPage = () => {
 
       <PageHeader
         title="Wszystkie Sprawy"
-        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta are wyróżnione na górze listy."
+        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta są wyróżnione na górze listy."
       />
 
 
@@ -808,14 +805,6 @@ const SprawyPage = () => {
 
                       {/* Views count and actions */}
                       <div className="flex items-center gap-2 sm:gap-3.5">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 bg-muted/30 px-2.5 py-1 rounded-lg border border-border/30">
-                          <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                          </span>
-                          <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span title="Liczba ekspertów przeglądających sprawę">{(Math.random() * 15 + 1).toFixed(0)}</span>
-                        </div>
 
                         {/* Favorite button */}
                         <Button

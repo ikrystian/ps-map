@@ -1,3 +1,4 @@
+import { SECRET_SETTING_KEYS, decryptSecret, encryptSecret } from "@/lib/secret-settings"
 import { auth } from "@/lib/auth"
 import {
   DEFAULT_MIN_CUSTOM_POINTS,
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Konwertuj na obiekt klucz-wartość
     const settingsObject = settings.reduce((acc: any, setting: any) => {
       acc[setting.key] = {
-        value: setting.value,
+        value: SECRET_SETTING_KEYS.has(setting.key) ? decryptSecret(setting.value) : setting.value,
         description: setting.description,
       }
       return acc
@@ -402,7 +403,8 @@ export async function PUT(request: NextRequest) {
     const updatePromises = Object.entries(settings)
       .filter(([key]) => !READ_ONLY_KEYS.has(key))
       .map(([key, data]) => {
-        const { value, description } = data as { value: string; description?: string }
+        const { value: rawValue, description } = data as { value: string; description?: string }
+        const value = SECRET_SETTING_KEYS.has(key) ? encryptSecret(rawValue) : rawValue
 
         return prisma.settings.upsert({
           where: { key },

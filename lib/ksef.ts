@@ -1,4 +1,6 @@
+import { decryptSecret } from "@/lib/secret-settings"
 import { prisma } from "@/lib/prisma"
+import { COMPANY } from "@/lib/company"
 import * as crypto from "crypto"
 
 export interface KsefConfig {
@@ -92,10 +94,10 @@ export async function getKsefConfig(): Promise<KsefConfig> {
 
   return {
     enabled: settings.find(s => s.key === "ksefEnabled")?.value === "true",
-    nip: (settings.find(s => s.key === "ksefNip")?.value || "1234567890").trim(),
+    nip: (settings.find(s => s.key === "ksefNip")?.value || COMPANY.nip).trim(),
     // Trim chroni przed spacją/nową linią z kopiowania — KSeF odrzuca wtedy
     // token z błędem "Nieprawidłowe kodowanie tokenu".
-    token: (settings.find(s => s.key === "ksefToken")?.value || "").trim(),
+    token: decryptSecret(settings.find(s => s.key === "ksefToken")?.value).trim(),
     env: (settings.find(s => s.key === "ksefEnv")?.value as "test" | "prod") || "test"
   }
 }
@@ -148,10 +150,10 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
 
   // NIP sprzedawcy musi być zgodny z NIP-em uwierzytelnionego kontekstu KSeF,
   // inaczej KSeF odrzuci fakturę.
-  const sellerNip = sellerNipOverride?.replace(/\D/g, "") || "1234567890"
-  const sellerName = "Prosta Sprawa Sp. z o.o."
-  const sellerPostalCode = "00-001"
-  const sellerCity = "Warszawa"
+  const sellerNip = sellerNipOverride?.replace(/\D/g, "") || COMPANY.nip
+  const sellerName = COMPANY.name
+  const sellerPostalCode = COMPANY.postalCode
+  const sellerCity = COMPANY.city
 
   const buyerNip = invoice.buyerNIP ? invoice.buyerNIP.replace(/\D/g, "") : null
   const buyerAddressL1 = invoice.buyerAddress || ""
@@ -185,7 +187,7 @@ export function generateInvoiceXml(invoice: any, sellerNipOverride?: string): st
     </DaneIdentyfikacyjne>
     <Adres>
       <KodKraju>PL</KodKraju>
-      <AdresL1>${escapeXml("ul. Przykładowa 123")}</AdresL1>
+      <AdresL1>${escapeXml(COMPANY.street)}</AdresL1>
       <AdresL2>${escapeXml(sellerPostalCode + " " + sellerCity)}</AdresL2>
     </Adres>
   </Podmiot1>

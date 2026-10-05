@@ -1,5 +1,6 @@
 "use client"
 
+import { formatNumber } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -271,7 +272,7 @@ export default function ClientFavoritesPage() {
                             <div className="flex items-center gap-2.5 flex-wrap">
                               {renderStars(lawFirm.avgRating)}
                               <span className="text-xs font-bold text-foreground mt-0.5">
-                                {lawFirm.avgRating.toFixed(1)}
+                                {formatNumber(lawFirm.avgRating, 1)}
                               </span>
                               <span className="text-xs text-muted-foreground font-light mt-0.5">
                                 ({lawFirm.reviewCount}{" "}

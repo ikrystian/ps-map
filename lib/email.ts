@@ -9,6 +9,7 @@
  * EMAIL_FROM=noreply@prostasprawa.pl
  */
 
+import { decryptSecret } from "@/lib/secret-settings"
 import { EmailLogStatus, EmailType } from '@prisma/client'
 import fs from 'fs'
 import path from 'path'
@@ -128,7 +129,7 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     const host = settingsMap.get('emailServerHost') || process.env.EMAIL_SERVER_HOST
     const portStr = settingsMap.get('emailServerPort') || process.env.EMAIL_SERVER_PORT || '587'
     const user = settingsMap.get('emailServerUser') || process.env.EMAIL_SERVER_USER
-    const pass = settingsMap.get('emailServerPassword') || process.env.EMAIL_SERVER_PASSWORD
+    const pass = decryptSecret(settingsMap.get('emailServerPassword')) || process.env.EMAIL_SERVER_PASSWORD
     const fromAddress = settingsMap.get('emailFrom') || process.env.EMAIL_FROM
     const fromName = settingsMap.get('emailFromName') || process.env.EMAIL_FROM_NAME || ''
     const from = fromAddress
@@ -255,7 +256,7 @@ export function getBrandEmailLayout(
       finalHtml = finalHtml.replace('src="', `src="${domainUrl}`)
       // Podmień ikony w stopce na poprawne odnośniki
       finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${domainUrl}" class="footer-icon" aria-label="Website"`)
-      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:kontakt@prostasprawa.pl" class="footer-icon" aria-label="Email"`)
+      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:bok@prostasprawa.pl" class="footer-icon" aria-label="Email"`)
 
       // Dodaj preheader jeśli jest podany
       if (preheaderText) {
@@ -416,7 +417,7 @@ export function getBrandEmailLayout(
                               </td>
                               <!-- Envelope icon -->
                               <td style="padding: 0 10px;">
-                                <a href="mailto:kontakt@prostasprawa.pl" style="color: #a3a3a3; text-decoration: none;">
+                                <a href="mailto:bok@prostasprawa.pl" style="color: #a3a3a3; text-decoration: none;">
                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                     <polyline points="22,6 12,13 2,6"></polyline>
@@ -558,6 +559,7 @@ export function generatePromotionActivatedEmail(
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'Europe/Warsaw',
     })
   }
 
@@ -653,6 +655,7 @@ export function generatePromotionRenewedEmail(
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'Europe/Warsaw',
     })
   }
 
@@ -836,7 +839,7 @@ export function generateEmailVerificationEmail(
     
     ${isLawFirm ? `
       <ul style="margin: 0 0 24px 0; padding-left: 20px; color: #535146; line-height: 1.6;">
-        <li style="margin-bottom: 8px;">Uzupełnić profil swojej eksperta prawnej.</li>
+        <li style="margin-bottom: 8px;">Uzupełnić swój profil eksperta.</li>
         <li style="margin-bottom: 8px;">Przeglądać dostępne zapytania i sprawy od klientów.</li>
         <li style="margin-bottom: 8px;">Składać profesjonalne oferty pomocy prawnej.</li>
         <li style="margin-bottom: 0;">Aktywować promocje zwiększające widoczność Twojego profilu.</li>
@@ -875,7 +878,7 @@ WAŻNE:
 ${isLawFirm ? `
 Co dalej?
 Po potwierdzeniu emaila będziesz mógł:
-- Uzupełnić profil swojej eksperta
+- Uzupełnić swój profil eksperta
 - Przeglądać dostępne sprawy
 - Składać oferty klientom
 - Aktywować promocje swojego profilu
@@ -949,7 +952,7 @@ export function generateContactFormEmail(
   const contentHtml = `
     <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #3d3929; margin-top: 0; margin-bottom: 16px;">Nowa wiadomość kontaktowa</h2>
     <p style="margin: 0 0 16px 0;">Witaj ${lawFirmName},</p>
-    <p style="margin: 0 0 20px 0;">Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu w serwisie ProstaSprawa:</p>
+    <p style="margin: 0 0 20px 0;">Masz nową wiadomość przez formularz kontaktowy na swoim profilu w serwisie ProstaSprawa:</p>
 
     <div style="background-color: #faf9f5; border: 1px solid #dad9d4; border-radius: 8px; padding: 20px; margin: 24px 0;">
       <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: #3d3929; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #dad9d4; padding-bottom: 8px;">Dane kontaktowe nadawcy:</h3>
@@ -985,14 +988,14 @@ export function generateContactFormEmail(
     </div>
   `
 
-  const html = getBrandEmailLayout(contentHtml, `Otrzymałeś nową wiadomość od ${senderName} w ProstaSprawa.`)
+  const html = getBrandEmailLayout(contentHtml, `Masz nową wiadomość od ${senderName} w ProstaSprawa.`)
 
   const text = `
 Nowa wiadomość z formularza kontaktowego
 
 Witaj ${lawFirmName}!
 
-Otrzymałeś nową wiadomość przez formularz kontaktowy na swoim profilu:
+Masz nową wiadomość przez formularz kontaktowy na swoim profilu:
 
 Od: ${senderName}
 Email: ${senderEmail}
@@ -1050,6 +1053,7 @@ export function generateContactFormBokEmail({
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'Europe/Warsaw',
   })
 
   const row = (label: string, value: string, first = false) => `

@@ -18,6 +18,9 @@ export interface SendNotificationOptions {
   emailTemplateType?: EmailType
   emailVariables?: Record<string, string>
 
+  // Tylko powiadomienie in-app — bez e-maila (gdy e-mail idzie osobnym szablonem, np. potwierdzenie dodania sprawy)
+  skipEmail?: boolean
+
   // Wymuś wysłanie pomimo ustawień (np. powiadomienia kluczowe/systemowe)
   force?: boolean
 }
@@ -120,6 +123,8 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
 
   // 2. Wysłanie E-mail
   let emailSent = false
+  if (options.skipEmail) shouldSendEmail = false
+
   if (shouldSendEmail && user.email) {
     try {
       if (emailTemplateType) {

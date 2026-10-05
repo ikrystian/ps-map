@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { COMPANY } from "@/lib/company"
 import { getKsefConfig, generateInvoiceXml, KsefConfig } from "@/lib/ksef"
 import * as crypto from "crypto"
 import { mkdir, readFile, writeFile } from "fs/promises"
@@ -28,14 +29,13 @@ const BRAND = {
   greenDark: rgb(0x0c / 255, 0x45 / 255, 0x39 / 255),
 }
 
-/** Dane sprzedawcy prezentowane na fakturze (zgodne z XML FA(3) w lib/ksef.ts). */
+/** Dane sprzedawcy prezentowane na fakturze — lib/company.ts (to samo co wydruk i XML KSeF). */
 const SELLER = {
-  name: "Prosta Sprawa Sp. z o.o.",
-  address: "ul. Przykładowa 123",
-  postalCity: "00-001 Warszawa",
-  email: "kontakt@prostasprawa.pl",
-  phone: "+48 123 456 789",
-  bankAccount: "12 3456 7890 1234 5678 9012 3456",
+  name: COMPANY.name,
+  address: COMPANY.street,
+  postalCity: `${COMPANY.postalCode} ${COMPANY.city}`,
+  nip: COMPANY.nip,
+  email: COMPANY.email,
 }
 
 /**
@@ -88,6 +88,7 @@ const formatDatePl = (d: Date | string) =>
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
+    timeZone: "Europe/Warsaw",
   })
 
 /**
@@ -269,7 +270,6 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
     SELLER.postalCity,
     `NIP: ${config.nip}`,
     `Email: ${SELLER.email}`,
-    `Tel: ${SELLER.phone}`,
   ]
   const buyerLines = [
     invoice.buyerName,
@@ -447,9 +447,7 @@ export async function generateInvoicePdf(invoiceId: string): Promise<string> {
   let payY = qrTop - 16
   drawText("Informacje o płatności:", margin + 10, payY, 9, fontBold, BRAND.greenDark)
   payY -= 15
-  drawText("Sposób płatności: Przelew bankowy", margin + 10, payY, 8)
-  payY -= 12
-  drawText(`Nr konta: ${SELLER.bankAccount}`, margin + 10, payY, 8)
+  drawText("Sposób płatności: Płatność online", margin + 10, payY, 8)
   if (invoice.paymentDate) {
     payY -= 15
     drawText(

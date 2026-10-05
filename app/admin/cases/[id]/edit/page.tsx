@@ -1,5 +1,6 @@
 "use client"
 
+import { phoneSchema, nipSchema } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -33,14 +34,14 @@ const caseSchema = z.object({
   wybranaSpecyfikacja: z.string().optional(),
   specjalizacja: z.string().optional(),
   nazwaSprawy: z.string().min(1, "Case name is required"),
-  opisSprawy: z.string().min(100, "Description must be at least 100 characters"),
+  opisSprawy: z.string().min(50, "Opis musi zawierać co najmniej 50 znaków"),
   oczekiwanyTerminRealizacji: z.string().optional(),
   trybPilny: z.boolean(),
   budzetOd: z.number().optional(),
   budzetDo: z.number().optional(),
   doNegocjacji: z.boolean(),
   imieNazwisko: z.string().min(1, "Name is required"),
-  telefonKontakt: z.string().min(1, "Phone is required"),
+  telefonKontakt: phoneSchema,
   preferowanyKontakt: z.enum(["EMAIL", "TELEFON", "OBA"]),
   voivodeshipId: z.string().min(1, "Voivodeship is required"),
   status: z.enum(["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE", "ZAKONCZONA", "ANULOWANA"]),
@@ -288,13 +289,13 @@ export default function EditCasePage() {
                     <FormLabel>Opis sprawy</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Szczegółowy opis sprawy (minimum 100 znaków)"
+                        placeholder="Szczegółowy opis sprawy (minimum 50 znaków)"
                         rows={6}
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      {field.value.length}/100 znaków
+                      {field.value.length} znaków (minimum 50)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

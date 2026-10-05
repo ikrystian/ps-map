@@ -246,11 +246,11 @@ export default function AdminUsersPage() {
   // Format status display
   const formatStatus = (status: string) => {
     const statusMap: { [key: string]: string } = {
-      ACTIVE: "Active",
-      PENDING: "Pending",
-      INACTIVE: "Inactive",
-      SUSPENDED: "Suspended",
-      BLOCKED: "Blocked",
+      ACTIVE: "Aktywny",
+      PENDING: "Oczekujący",
+      INACTIVE: "Nieaktywny",
+      SUSPENDED: "Zawieszony",
+      BLOCKED: "Zablokowany",
     }
     return statusMap[status] || status
   }
@@ -372,13 +372,13 @@ export default function AdminUsersPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Avatar</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Awatar</TableHead>
+                <TableHead>Imię i nazwisko</TableHead>
+                <TableHead>E-mail</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Profile</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Profil</TableHead>
+                <TableHead>Utworzono</TableHead>
+                <TableHead className="text-right">Akcje</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -440,7 +440,7 @@ export default function AdminUsersPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleToggleBlock(user)}
-                            title={user.status === "BLOCKED" ? "Unlock user" : "Block user"}
+                            title={user.status === "BLOCKED" ? "Odblokuj użytkownika" : "Zablokuj użytkownika"}
                             className={user.status === "BLOCKED" ? "text-green-600 hover:text-green-700 hover:bg-green-50" : "text-amber-600 hover:text-amber-700 hover:bg-amber-50"}
                           >
                             {user.status === "BLOCKED" ? (

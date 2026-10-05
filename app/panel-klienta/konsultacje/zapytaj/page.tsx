@@ -16,7 +16,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-const MIN_OPIS_LENGTH = 100
+const MIN_OPIS_LENGTH = 50
 
 interface Category {
   id: string

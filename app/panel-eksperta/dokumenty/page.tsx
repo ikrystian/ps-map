@@ -459,7 +459,7 @@ export default function DocumentsPage() {
                   Dodaj nowy dokument
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground text-xs">
-                  Prześlij plik do biblioteki dokumentów swojej eksperta, aby mieć do niego szybki dostęp i móc go udostępniać.
+                  Prześlij plik do biblioteki dokumentów swojego profilu, aby mieć do niego szybki dostęp i móc go udostępniać.
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>

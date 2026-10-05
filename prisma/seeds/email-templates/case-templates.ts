@@ -62,10 +62,10 @@ Zespół Prosta Sprawa`,
   {
     typ: EmailType.NOWA_OFERTA,
     nazwa: 'Nowa oferta - powiadomienie dla klienta',
-    temat: 'Otrzymałeś nową ofertę na sprawę: {nazwaSprawi}',
+    temat: 'Masz nową ofertę na sprawę: {nazwaSprawi}',
     tresc: `Witaj {klient},
 
-Dobra wiadomość! Ekspert {ekspert} przesłała Ci ofertę dotyczącą sprawy "{nazwaSprawi}".
+Dobra wiadomość! Ekspert {ekspert} przesłał(a) Ci ofertę dotyczącą sprawy "{nazwaSprawi}".
 
 Szczegóły oferty:
 - Ekspert: {ekspert}
@@ -77,7 +77,7 @@ Zaloguj się do swojego panelu, aby przejrzeć pełną ofertę i podjąć decyzj
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {klient},</h2>
-<p style="margin: 0 0 16px 0;"><strong>Świetne wieści!</strong> Ekspert {ekspert} przesłała nową ofertę dla Twojej sprawy "<strong>{nazwaSprawi}</strong>".</p>
+<p style="margin: 0 0 16px 0;"><strong>Świetne wieści!</strong> Ekspert {ekspert} przesłał(a) nową ofertę dla Twojej sprawy "<strong>{nazwaSprawi}</strong>".</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
   <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 16px; border-bottom: 1px solid #222222; padding-bottom: 8px;">Szczegóły oferty:</h3>
@@ -221,7 +221,7 @@ Szczegóły sprawy:
 - Kategoria: {kategoria}
 - Budżet: {budzet}
 
-Nasi zweryfikowani prawnicy zostali powiadomieni i wkrótce mogą zacząć składać oferty pomocy. O każdej nowej ofercie poinformujemy Cię e-mailem.
+Eksperci z naszej platformy zostali powiadomieni i wkrótce mogą zacząć składać oferty pomocy. O każdej nowej ofercie poinformujemy Cię e-mailem.
 
 Status swojej sprawy możesz śledzić w panelu klienta.
 
@@ -252,7 +252,7 @@ Zespół Prosta Sprawa`,
   </table>
 </div>
 
-<p style="margin: 0 0 24px 0;">Nasi zweryfikowani prawnicy zostali już powiadomieni o Twojej sprawie i wkrótce zaczną przesyłać oferty pomocy. O każdej nowej ofercie poinformujemy Cię natychmiast drogą e-mailową.</p>
+<p style="margin: 0 0 24px 0;">Eksperci z naszej platformy zostali już powiadomieni o Twojej sprawie i wkrótce zaczną przesyłać oferty pomocy. O każdej nowej ofercie poinformujemy Cię natychmiast drogą e-mailową.</p>
 
 <div style="text-align: center; margin: 30px 0;">
   <a href="{linkDoSprawy}" class="btn" style="display: inline-block; background-color: #00b49e; color: #021a17 !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 180, 158, 0.3); text-align: center; letter-spacing: 0.5px;">Śledź swoją sprawę</a>

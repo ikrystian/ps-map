@@ -343,7 +343,7 @@ export default function RankingBoostPage() {
                   Wyprzedź konkurencję i bądź pierwszy!
                 </h2>
                 <p className="text-muted-foreground text-sm md:text-base font-light leading-relaxed">
-                  Profil na szczycie rankingu w kategorii <strong className="text-foreground font-medium">{lawFirm.mainCategoryName}</strong> zyskuje średnio o <strong>300% więcej zapytań</strong> od klientów. Przeznacz wolne punkty na boost pozycji i ciesz się większym zainteresowaniem.
+                  Profil na szczycie rankingu w kategorii <strong className="text-foreground font-medium">{lawFirm.mainCategoryName}</strong> jest wyświetlany wyżej w wynikach, więc częściej trafia do klientów. Przeznacz wolne punkty na boost pozycji i ciesz się większym zainteresowaniem.
                 </p>
               </div>
               <div className="flex-1 w-full md:max-w-[40%] flex justify-center">

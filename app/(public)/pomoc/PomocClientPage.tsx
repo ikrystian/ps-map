@@ -253,7 +253,7 @@ export default function PomocClientPage({ categories }: PomocClientPageProps) {
                     <div className="space-y-1">
                       <h4 className="font-semibold text-foreground text-sm group-hover:text-secondary transition-colors">Wyślij e-mail</h4>
                       <p className="text-muted-foreground text-xs leading-relaxed font-light">
-                        Napisz wiadomość e-mail. Pomożemy w ciągu kilku godzin.
+                        Napisz wiadomość e-mail. Odpowiadamy zwykle w ciągu 24 h.
                       </p>
                     </div>
                     <Button variant="link" className="text-secondary hover:text-secondary-hover text-xs font-semibold gap-1 mt-4 p-0">

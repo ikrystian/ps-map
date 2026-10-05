@@ -1,5 +1,6 @@
 "use client"
 
+import { phoneSchema, nipSchema } from "@/lib/validation"
 import {
   AlertCircle,
   Briefcase,
@@ -67,7 +68,7 @@ const step4Schema = z.object({
   // Dane kontaktowe
   imieKontakt: z.string().min(2, "Imię jest wymagane"),
   nazwiskoKontakt: z.string().min(2, "Nazwisko jest wymagane"),
-  numerTelefonu: z.string().min(9, "Podaj poprawny numer telefonu"),
+  numerTelefonu: phoneSchema,
   numerTelefonu2: z.string().optional(),
 
   // Adres

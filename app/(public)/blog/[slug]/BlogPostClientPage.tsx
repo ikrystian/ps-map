@@ -707,7 +707,7 @@ export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps)
               </h4>
               <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
                 {post.lawFirm
-                  ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do ekspercie."
+                  ? "Masz dodatkowe pytania? Wyślij wiadomość bezpośrednio do eksperta."
                   : "Masz dodatkowe pytania? Wyślij wiadomość do redakcji portalu."
                 }
               </p>

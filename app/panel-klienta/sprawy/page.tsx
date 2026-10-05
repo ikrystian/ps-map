@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBudgetRange, formatDateLong } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -188,21 +189,11 @@ export default function ClientCasesPage() {
     initData()
   }, [])
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
+  const formatDate = formatDateLong
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {
     if (doNegocjacji) return "Do negocjacji"
-    if (od && do_) return `${od} - ${do_} PLN`
-    if (od) return `Od ${od} PLN`
-    if (do_) return `Do ${do_} PLN`
-    return "Nie określono"
+    return formatBudgetRange(od || null, do_ || null) ?? "Nie określono"
   }
 
   const filteredCases = cases.filter((caseItem) => {
@@ -220,7 +211,10 @@ export default function ClientCasesPage() {
 
   // Statistics counters
   const activeCasesCount = cases.filter((c) => ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"].includes(c.status)).length
-  const totalOffersCount = cases.reduce((acc, c) => acc + (c.offers?.length || 0), 0)
+  // Oferty do rozpatrzenia: złożone/negocjowane w aktywnych sprawach (nie odrzucone, nie wygasłe)
+  const totalOffersCount = cases
+    .filter((c) => ["NOWA", "OFERTY_OTRZYMANE", "W_TRAKCIE"].includes(c.status))
+    .reduce((acc, c) => acc + (c.offers?.filter((o: any) => ["ZLOZONA", "NEGOCJACJE"].includes(o.status)).length || 0), 0)
   const completedCasesCount = cases.filter((c) => c.status === "ZAKONCZONA").length
   const totalCasesCount = cases.length
 
@@ -313,7 +307,7 @@ export default function ClientCasesPage() {
         >
           <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Otrzymane oferty</span>
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Oferty do rozpatrzenia</span>
             <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
               <MessageSquare className="h-4 w-4 text-secondary" />
             </div>

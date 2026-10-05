@@ -133,6 +133,7 @@ export default function LawFirmSettingsPage() {
 
   // Informacje o koncie
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null)
+  const [profileStatus, setProfileStatus] = useState<{ zweryfikowana: boolean; aktywna: boolean } | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -152,6 +153,13 @@ export default function LawFirmSettingsPage() {
         if (settingsRes.ok) {
           const settingsData = await settingsRes.json()
           setNotificationSettings(settingsData)
+        }
+
+        // Status profilu (weryfikacja/aktywność) do sekcji „Status konta”
+        const firmRes = await fetch("/api/law-firms/me")
+        if (firmRes.ok) {
+          const firmData = await firmRes.json()
+          setProfileStatus({ zweryfikowana: !!firmData.zweryfikowana, aktywna: firmData.aktywna !== false })
         }
 
         // Pobierz informacje o koncie
@@ -367,13 +375,35 @@ export default function LawFirmSettingsPage() {
               <div className="space-y-2.5">
                 <Label className="text-xs font-semibold text-foreground/80">Status konta</Label>
                 <div className="flex items-center gap-2.5">
-                  <Badge className="bg-success/10 text-success border border-success/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
-                    <CheckCircle2 className="h-3 w-3" />
-                    W pełni aktywne
-                  </Badge>
-                  <p className="text-xs text-muted-foreground font-light">
-                    Ekspert jest zweryfikowana i widoczna w katalogu.
-                  </p>
+                  {profileStatus && !profileStatus.aktywna ? (
+                    <>
+                      <Badge className="bg-error/10 text-error border border-error/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
+                        Nieaktywne
+                      </Badge>
+                      <p className="text-xs text-muted-foreground font-light">
+                        Profil jest ukryty w katalogu.
+                      </p>
+                    </>
+                  ) : profileStatus && !profileStatus.zweryfikowana ? (
+                    <>
+                      <Badge className="bg-warning/10 text-warning border border-warning/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
+                        Oczekuje na weryfikację
+                      </Badge>
+                      <p className="text-xs text-muted-foreground font-light">
+                        Profil jest widoczny w katalogu, ale nie został jeszcze zweryfikowany.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Badge className="bg-success/10 text-success border border-success/20 px-3 py-1 flex items-center gap-1 text-sm font-semibold tracking-wide">
+                        <CheckCircle2 className="h-3 w-3" />
+                        W pełni aktywne
+                      </Badge>
+                      <p className="text-xs text-muted-foreground font-light">
+                        Profil jest zweryfikowany i widoczny w katalogu.
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
 
