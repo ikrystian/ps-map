@@ -32,6 +32,7 @@ import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { PaginatedResponse } from '@/types/pagination';
 import { userAvatar } from "@/lib/client-avatar"
+import { formatDateTime } from "@/lib/format"
 
 interface User {
   id: string
@@ -266,17 +267,6 @@ export default function AdminUsersPage() {
     return { label: formatStatus(user.status), variant: getStatusBadgeVariant(user.status) }
   }
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
   // Get user initials for avatar fallback
   const getUserInitials = (user: User) => {
     if (user.name) {
@@ -422,7 +412,7 @@ export default function AdminUsersPage() {
                       {!user.client && !user.lawFirm && "—"}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(user.createdAt)}
+                      {formatDateTime(user.createdAt)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center gap-2 justify-end">

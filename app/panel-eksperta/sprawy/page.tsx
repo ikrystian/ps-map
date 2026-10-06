@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBudgetRange } from "@/lib/format"
+import { formatBudgetRange, formatDate } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -413,16 +413,6 @@ const SprawyPage = () => {
       default:
         return status
     }
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    const date = new Date(dateString)
-    return date.toLocaleDateString("pl-PL", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
   }
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {

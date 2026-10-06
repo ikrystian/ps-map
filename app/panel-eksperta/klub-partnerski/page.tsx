@@ -37,27 +37,7 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { BorderBeam } from "@/components/ui/border-beam"
-
-// Format date helper
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
-
-const formatDateTime = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
+import { formatDate, formatDateTime } from "@/lib/format"
 
 interface PointsHistory {
   id: string

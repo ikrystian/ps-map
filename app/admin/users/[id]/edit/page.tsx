@@ -100,6 +100,7 @@ const userSchema = z.object({
 type UserFormValues = z.infer<typeof userSchema>
 
 import type { Voivodeship } from "@/types"
+import { formatDate } from "@/lib/format"
 
 interface UserData {
   id: string
@@ -672,7 +673,7 @@ export default function EditUserPage() {
                       {userData?.emailVerified ? (
                         <Badge variant="default">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Potwierdzony ({new Date(userData.emailVerified).toLocaleDateString("pl-PL")})
+                          Potwierdzony ({formatDate(userData.emailVerified)})
                         </Badge>
                       ) : (
                         <>

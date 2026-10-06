@@ -37,6 +37,7 @@ import {
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/format"
 
 interface LawFirm {
   id: string
@@ -166,32 +167,6 @@ export default function SubscriptionsAndPaymentsPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
   }
 
   const handleDownloadInvoice = (invoice: Invoice) => {

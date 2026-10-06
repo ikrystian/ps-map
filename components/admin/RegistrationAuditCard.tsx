@@ -10,6 +10,7 @@ import {
   Megaphone,
   FileJson,
 } from "lucide-react"
+import { formatDateTime } from "@/lib/format"
 
 // Odzwierciedla model RegistrationAuditLog (art. 5 ust. 2 RODO — rozliczalność).
 // Wszystkie pola opcjonalne: rekord powstaje przy rejestracji, a starsze konta
@@ -65,9 +66,6 @@ export interface RegistrationAudit {
   rawMetadata?: string | null
   createdAt?: string | Date | null
 }
-
-const formatDate = (value?: string | Date | null) =>
-  value ? new Date(value).toLocaleString("pl-PL") : "—"
 
 // null/undefined ≠ false: brak zapisanej wartości to nie to samo co brak zgody,
 // więc rozróżniamy je wizualnie zamiast pokazywać wszędzie "Nie".
@@ -138,7 +136,7 @@ export function RegistrationAuditCard({ audit }: { audit: RegistrationAudit | nu
               </Badge>
               <Badge variant="outline" className="px-2.5 py-1 text-xs font-normal">
                 Data rejestracji:{" "}
-                <span className="ml-1 font-semibold">{formatDate(audit.createdAt)}</span>
+                <span className="ml-1 font-semibold">{formatDateTime(audit.createdAt)}</span>
               </Badge>
             </div>
 

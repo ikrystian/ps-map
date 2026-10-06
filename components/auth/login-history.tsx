@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/components/ui/sonner"
 import { Laptop, Loader2, MapPin, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react"
 import { useEffect, useState } from "react"
+import { formatDateTimeSeconds } from "@/lib/format"
 
 interface LoginRecord {
   id: string
@@ -37,18 +38,6 @@ function parseUserAgent(ua: string | null): string {
   else if (ua.includes("Opera/") || ua.includes("OPR/")) browser = "Opera"
 
   return `${browser} (${os})`
-}
-
-function formatDateTime(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  })
 }
 
 export function LoginHistory({ noCard = false }: { noCard?: boolean }) {
@@ -118,7 +107,7 @@ export function LoginHistory({ noCard = false }: { noCard?: boolean }) {
               <div key={record.id} className="p-4 rounded-lg border border-border bg-muted/10 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground font-medium">
-                    {formatDateTime(record.createdAt)}
+                    {formatDateTimeSeconds(record.createdAt)}
                   </span>
                   {record.success ? (
                     <Badge
@@ -183,7 +172,7 @@ export function LoginHistory({ noCard = false }: { noCard?: boolean }) {
                     className="hover:bg-muted/30 transition-colors duration-150"
                   >
                     <td className="px-4 py-3.5 font-medium whitespace-nowrap">
-                      {formatDateTime(record.createdAt)}
+                      {formatDateTimeSeconds(record.createdAt)}
                     </td>
                     <td className="px-4 py-3.5 whitespace-nowrap">
                       {record.success ? (

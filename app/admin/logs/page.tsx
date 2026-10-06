@@ -14,12 +14,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
 import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Pagination } from '@/types/pagination';
+import { formatDateTimeSeconds } from "@/lib/format"
 
 interface SystemLog {
   id: string
@@ -120,10 +119,6 @@ export default function AdminLogsPage() {
 
   const handlePageChange = (newPage: number) => {
     setPagination({ ...pagination, page: newPage })
-  }
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd.MM.yyyy HH:mm:ss", { locale: pl })
   }
 
   const parseMetadata = (metadata: string | null) => {
@@ -262,7 +257,7 @@ export default function AdminLogsPage() {
                       return (
                         <TableRow key={log.id} className="hover:bg-muted/50">
                           <TableCell className="text-sm">
-                            {formatDate(log.createdAt)}
+                            {formatDateTimeSeconds(log.createdAt)}
                           </TableCell>
                           <TableCell>
                             <Badge className={levelColors[log.level]}>

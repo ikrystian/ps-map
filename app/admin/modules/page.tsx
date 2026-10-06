@@ -50,6 +50,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { PaginatedResponse } from '@/types/pagination';
+import { formatDate } from "@/lib/format"
 
 const moduleSchema = z.object({
   name: z.string().min(1, "Nazwa jest wymagana"),
@@ -354,7 +355,7 @@ export default function AdminModulesPage() {
                         {module._count?.pageModules || 0} stron
                       </TableCell>
                       <TableCell>
-                        {new Date(module.createdAt).toLocaleDateString("pl-PL")}
+                        {formatDate(module.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">

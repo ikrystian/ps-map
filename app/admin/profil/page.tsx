@@ -17,12 +17,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
 import { Calendar, KeyRound, Loader2, Mail, Save, Shield, User } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatDateTime } from "@/lib/format"
 
 interface AdminProfile {
   id: string
@@ -153,11 +152,6 @@ export default function AdminProfilPage() {
     }
   }
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return format(new Date(dateString), "dd.MM.yyyy HH:mm", { locale: pl })
-  }
-
   const getInitials = (name: string | null) => {
     if (!name) return "A"
     return name
@@ -227,21 +221,21 @@ export default function AdminProfilPage() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Konto utworzono</p>
-                <p className="text-sm text-muted-foreground">{formatDate(profile.createdAt)}</p>
+                <p className="text-sm text-muted-foreground">{formatDateTime(profile.createdAt)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Ostatnia aktualizacja</p>
-                <p className="text-sm text-muted-foreground">{formatDate(profile.updatedAt)}</p>
+                <p className="text-sm text-muted-foreground">{formatDateTime(profile.updatedAt)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Ostatnie logowanie</p>
-                <p className="text-sm text-muted-foreground">{formatDate(profile.lastLogin)}</p>
+                <p className="text-sm text-muted-foreground">{formatDateTime(profile.lastLogin)}</p>
               </div>
             </div>
           </div>

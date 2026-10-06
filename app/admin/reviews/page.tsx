@@ -36,6 +36,7 @@ import { useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { Review } from "@/types"
 import { PaginationData } from '@/types/pagination';
+import { formatDate } from "@/lib/format"
 
 
 const reasonLabels: Record<string, string> = {
@@ -157,15 +158,6 @@ export default function AdminReviewsPage() {
   const openDeleteDialog = (review: Review) => {
     setSelectedReview(review)
     setIsDeleteDialogOpen(true)
-  }
-
-  const formatDate = (date: string | Date | undefined) => {
-    if (!date) return ""
-    return new Date(date).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
   }
 
   const renderStars = (rating: number) => {

@@ -43,6 +43,16 @@ export function formatDateTime(value: DateInput): string {
   }).format(d)
 }
 
+/** 24.09.2026, 04:01:33 — logi i historia zdarzeń, gdzie liczą się sekundy */
+export function formatDateTimeSeconds(value: DateInput): string {
+  const d = toDate(value)
+  if (!d) return EMPTY_PLACEHOLDER
+  return new Intl.DateTimeFormat("pl-PL", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: APP_TIME_ZONE,
+  }).format(d)
+}
+
 /** 15 375,00 zł */
 export function formatCurrency(amount: number | null | undefined): string {
   if (amount === null || amount === undefined || Number.isNaN(Number(amount))) return EMPTY_PLACEHOLDER

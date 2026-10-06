@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Fragment, useEffect } from "react";
 import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
+import { formatDate } from "@/lib/format"
 
 interface AdSenseSettings {
   enabled: boolean;
@@ -37,15 +38,6 @@ export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps)
     if (post.isUnpublished) return;
     fetch(`/api/blog/posts/${post.slug}/view`, { method: "POST", keepalive: true }).catch(() => {});
   }, [post.slug, post.isUnpublished]);
-
-  const formatDate = (dateString?: string | Date | null) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const formatViews = (views?: number): string => {
     if (!views || views === 1) return views === 1 ? "1 wyświetlenie" : "0 wyświetleń";

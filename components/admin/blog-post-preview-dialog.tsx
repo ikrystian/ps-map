@@ -9,13 +9,10 @@ import {
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import {
   Building2,
   Calendar,
   Eye,
-  MapPin,
-  Tag,
   BookOpen
 } from "lucide-react"
 import type { BlogCategory } from "@/types"
@@ -75,7 +72,7 @@ export function BlogPostPreviewDialog({
   }, [tresc])
 
   const currentDateFormatted = React.useMemo(() => {
-    return new Date().toLocaleDateString("pl-PL", {
+    return new Date().toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
       year: "numeric",
       month: "long",
       day: "numeric",

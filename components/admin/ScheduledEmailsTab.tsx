@@ -23,8 +23,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
 import {
   AlertCircle,
   Calendar,
@@ -44,6 +42,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Pagination } from '@/types/pagination';
+import { formatDateTimeSeconds } from "@/lib/format"
 
 interface ScheduledEmail {
   id: string
@@ -131,10 +130,6 @@ export default function ScheduledEmailsTab() {
 
   const handlePageChange = (newPage: number) => {
     setPagination({ ...pagination, page: newPage })
-  }
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd.MM.yyyy HH:mm:ss", { locale: pl })
   }
 
   const handleShowDetails = (email: ScheduledEmail) => {
@@ -322,7 +317,7 @@ export default function ScheduledEmailsTab() {
                     {emails.map((email) => (
                       <TableRow key={email.id} className="hover:bg-muted/40 transition-colors border-b border-border">
                         <TableCell className="text-sm text-muted-foreground font-medium">
-                          {formatDate(email.scheduledAt)}
+                          {formatDateTimeSeconds(email.scheduledAt)}
                         </TableCell>
                         <TableCell>
                           {getStatusBadge(email.status)}
@@ -474,7 +469,7 @@ export default function ScheduledEmailsTab() {
                     )}
                     <div className="flex justify-between items-center text-sm pt-1">
                       <span className="text-muted-foreground">Utworzono:</span>
-                      <span className="text-muted-foreground text-xs">{formatDate(selectedEmail.createdAt)}</span>
+                      <span className="text-muted-foreground text-xs">{formatDateTimeSeconds(selectedEmail.createdAt)}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -490,7 +485,7 @@ export default function ScheduledEmailsTab() {
                           <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                           Planowany czas:
                         </span>
-                        <span className="font-semibold text-indigo-600">{formatDate(selectedEmail.scheduledAt)}</span>
+                        <span className="font-semibold text-indigo-600">{formatDateTimeSeconds(selectedEmail.scheduledAt)}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm border-b border-border pb-2">
                         <span className="text-muted-foreground flex items-center gap-1">
@@ -498,12 +493,12 @@ export default function ScheduledEmailsTab() {
                           Rzeczywisty czas:
                         </span>
                         <span className="text-foreground font-medium">
-                          {selectedEmail.sentAt ? formatDate(selectedEmail.sentAt) : <span className="text-muted-foreground italic">Nie wysłano</span>}
+                          {selectedEmail.sentAt ? formatDateTimeSeconds(selectedEmail.sentAt) : <span className="text-muted-foreground italic">Nie wysłano</span>}
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-sm pt-1">
                         <span className="text-muted-foreground">Ostatnia edycja:</span>
-                        <span className="text-muted-foreground text-xs">{formatDate(selectedEmail.updatedAt)}</span>
+                        <span className="text-muted-foreground text-xs">{formatDateTimeSeconds(selectedEmail.updatedAt)}</span>
                       </div>
                     </CardContent>
                   </Card>

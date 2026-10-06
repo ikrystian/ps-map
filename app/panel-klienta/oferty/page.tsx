@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBusinessDays } from "@/lib/format"
+import { formatBusinessDays, formatCurrency, formatDate } from "@/lib/format"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
@@ -39,21 +39,6 @@ import { useEffect, useState } from "react"
 import { expertAvatar } from "@/lib/expert-avatar"
 
 type Offer = OfferWithCase
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
 
 const getStatusBadge = (status: string) => {
   switch (status) {

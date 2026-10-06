@@ -61,6 +61,7 @@ import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { BlogPost } from '@/types/blog';
 import { PaginationData } from '@/types/pagination';
+import { formatDate } from "@/lib/format"
 
 
 
@@ -256,15 +257,6 @@ export default function AdminBlogPage() {
 
   const openPreviewDialog = (post: BlogPost) => {
     window.open(`/blog/${post.slug}?preview=true`, "_blank")
-  }
-
-  const formatDate = (dateString?: string | Date | null) => {
-    if (!dateString) return ""
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
   }
 
   const renderTags = (tagsString: string | null) => {

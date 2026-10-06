@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBusinessDays } from "@/lib/format"
+import { formatBusinessDays, formatCurrency, formatDateTime } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -180,26 +180,9 @@ export default function CaseDetailsPage() {
     setIsDeleteDialogOpen(true)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
   // Termin to doba kalendarzowa (północ UTC) — formatowanie w UTC, bez godziny (F-046)
   const formatDateOnly = (dateString: string) =>
     new Date(dateString).toLocaleDateString("pl-PL", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
-  }
 
   if (loading) {
     return (
@@ -382,7 +365,7 @@ export default function CaseDetailsPage() {
                           <p className="text-sm">{offer.zakresUslug}</p>
                         </div>
                         <p className="text-xs text-muted-foreground mt-4">
-                          Złożona: {formatDate(offer.createdAt)}
+                          Złożona: {formatDateTime(offer.createdAt)}
                         </p>
                       </CardContent>
                     </Card>
@@ -422,7 +405,7 @@ export default function CaseDetailsPage() {
                         </div>
                         <p className="text-sm mt-3 whitespace-pre-wrap">{message.tresc}</p>
                         <p className="text-xs text-muted-foreground mt-3">
-                          {formatDate(message.createdAt)}
+                          {formatDateTime(message.createdAt)}
                         </p>
                       </CardContent>
                     </Card>
@@ -557,19 +540,19 @@ export default function CaseDetailsPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground">Utworzona</p>
-                <p className="font-medium">{formatDate(caseData.createdAt)}</p>
+                <p className="font-medium">{formatDateTime(caseData.createdAt)}</p>
               </div>
               <Separator />
               <div>
                 <p className="text-sm text-muted-foreground">Ostatnia aktualizacja</p>
-                <p className="font-medium">{formatDate(caseData.updatedAt)}</p>
+                <p className="font-medium">{formatDateTime(caseData.updatedAt)}</p>
               </div>
               {caseData.zamknieto && (
                 <>
                   <Separator />
                   <div>
                     <p className="text-sm text-muted-foreground">Zamknięta</p>
-                    <p className="font-medium">{formatDate(caseData.zamknieto)}</p>
+                    <p className="font-medium">{formatDateTime(caseData.zamknieto)}</p>
                   </div>
                 </>
               )}
@@ -578,7 +561,7 @@ export default function CaseDetailsPage() {
                   <Separator />
                   <div>
                     <p className="text-sm text-muted-foreground">Zarchiwizowana</p>
-                    <p className="font-medium">{formatDate(caseData.archivedAt)}</p>
+                    <p className="font-medium">{formatDateTime(caseData.archivedAt)}</p>
                   </div>
                 </>
               )}

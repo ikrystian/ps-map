@@ -204,7 +204,7 @@ export function UserInfoDialog({
                 <Calendar className="h-4 w-4 flex-shrink-0" />
                 <span>
                   Dołączył:{" "}
-                  {new Date(userInfo.createdAt).toLocaleDateString("pl-PL", {
+                  {new Date(userInfo.createdAt).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
                     year: "numeric",
                     month: "long",
                     day: "numeric",

@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Coins, AlertCircle, Loader2 } from "lucide-react"
 import { LawFirm, Category, Voivodeship } from "../types"
-import { getPromotionTypeLabel, formatDate } from "../utils"
+import { getPromotionTypeLabel } from "../utils"
+import { formatDateTime } from "@/lib/format"
 
 interface ConfirmPromotionDialogProps {
   open: boolean
@@ -86,13 +87,13 @@ export function ConfirmPromotionDialog({
                 {selectedType === "POLECANI_PRAWNICY" ||
                   selectedType === "NAJCZESCIEJ_KONSULTOWANE"
                   ? startDate
-                    ? new Date(startDate).toLocaleDateString("pl-PL", {
+                    ? new Date(startDate).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
                       month: "long",
                       year: "numeric",
                     })
                     : "-"
                   : startDate
-                    ? formatDate(new Date(startDate))
+                    ? formatDateTime(new Date(startDate))
                     : "-"}
               </span>
             </div>

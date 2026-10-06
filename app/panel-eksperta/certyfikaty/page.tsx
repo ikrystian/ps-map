@@ -17,10 +17,11 @@ import {
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { Award, Download, Edit, Plus, Trash2, Loader2, Calendar, Clock, ShieldAlert } from "lucide-react"
+import { Award, Download, Edit, Plus, Trash2, Loader2, Calendar, Clock } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { formatDate } from "@/lib/format"
 
 interface Certificate {
   id: string
@@ -118,14 +119,6 @@ export default function LawFirmCertificatesPage() {
   const openDeleteDialog = (certificate: Certificate) => {
     setSelectedCertificate(certificate)
     setIsDeleteDialogOpen(true)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
   }
 
   const isExpired = (dateString: string | null) => {

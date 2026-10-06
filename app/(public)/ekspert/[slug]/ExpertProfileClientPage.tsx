@@ -72,6 +72,7 @@ import { NewExperts } from "@/components/homepage/new-experts"
 import { BlogPostsSlider } from "@/components/ekspert/BlogPostsSlider"
 import { ExpertCityLinks } from "@/components/ekspert/ExpertCityLinks"
 import type { BlogPost } from "@/types/blog"
+import { formatDate } from "@/lib/format"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -317,21 +318,6 @@ export default function LawFirmProfilePage() {
     } finally {
       setSendingContact(false)
     }
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
   }
 
   const handleToggleFavorite = async () => {

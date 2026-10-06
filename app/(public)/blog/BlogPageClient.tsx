@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconArticle,
-  IconFileText,
   IconGavel,
   IconScale,
   IconBriefcase,
@@ -43,6 +42,7 @@ import {
   getCategoryPath,
   type BlogCategoryNode,
 } from "@/lib/blog-category-tree";
+import { formatDate } from "@/lib/format"
 
 /* -------------------------------------------------------------------------- */
 /*                                  Helpers                                   */
@@ -58,22 +58,6 @@ const plural = (count: number, forms: [string, string, string]) => {
   return forms[2];
 };
 
-const formatDate = (dateString?: string | Date | null) => {
-  if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
-
-const formatShortDate = (dateString?: string | Date | null) => {
-  if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "short",
-  });
-};
 
 const formatViews = (views?: number): string => {
   const value = views ?? 0;
@@ -1068,7 +1052,7 @@ export default function BlogPageClient({
                                 <Eye className="h-3 w-3" />
                                 {post.wyswietlenia ?? 0}
                               </span>
-                              <span>{formatShortDate(post.dataPublikacji)}</span>
+                              <span>{formatDate(post.dataPublikacji)}</span>
                             </div>
                           </div>
                         </div>

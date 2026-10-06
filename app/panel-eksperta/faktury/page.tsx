@@ -27,6 +27,7 @@ import {
   ShieldCheck
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 interface Invoice {
   id: string
@@ -103,21 +104,6 @@ export default function InvoicesPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
   }
 
   // Finalny PDF (z numerem KSeF i kodem QR) istnieje dopiero po zaakceptowaniu

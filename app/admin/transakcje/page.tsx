@@ -45,6 +45,7 @@ import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { LawFirm } from "@/types"
 import { PaginationData } from '@/types/pagination';
+import { formatCurrency, formatDateTime } from "@/lib/format"
 
 interface SubscriptionPlan {
   id: string
@@ -232,24 +233,6 @@ export default function AdminTransakcjePage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować transakcji")
     }
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
   }
 
   if (loading && orders.length === 0) {
@@ -449,8 +432,8 @@ export default function AdminTransakcjePage() {
                         {statusLabels[order.statusPlatnosci]?.label || order.statusPlatnosci}
                       </Badge>
                     </TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                    <TableCell>{formatDate(order.zaplaconoData)}</TableCell>
+                    <TableCell>{formatDateTime(order.createdAt)}</TableCell>
+                    <TableCell>{formatDateTime(order.zaplaconoData)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Link href={`/admin/transakcje/${order.id}`}>

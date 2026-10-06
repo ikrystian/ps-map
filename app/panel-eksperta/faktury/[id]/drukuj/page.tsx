@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react"
 import { COMPANY } from "@/lib/company"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 interface Invoice {
   id: string
@@ -69,23 +70,6 @@ export default function InvoicePrintPage() {
 
     fetchInvoice()
   }, [params.id])
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount)
-  }
 
   if (loading) {
     return (

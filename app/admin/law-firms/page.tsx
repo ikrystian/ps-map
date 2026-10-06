@@ -144,15 +144,6 @@ export default function AdminLawFirmsPage() {
     }
   }
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
   if (loading && lawFirms.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">

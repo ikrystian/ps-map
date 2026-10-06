@@ -31,14 +31,14 @@ export function ConversationList({
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString("pl-PL", {
+      return date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
         hour: "2-digit",
         minute: "2-digit",
       })
     } else if (diffInHours < 168) {
-      return date.toLocaleDateString("pl-PL", { weekday: "short" })
+      return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw", weekday: "short" })
     } else {
-      return date.toLocaleDateString("pl-PL", {
+      return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
         day: "numeric",
         month: "short",
       })

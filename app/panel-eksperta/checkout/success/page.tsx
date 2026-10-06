@@ -18,26 +18,7 @@ import {
 } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-
-// Format currency
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
-
-// Format date
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
+import { formatCurrency, formatDateTime } from "@/lib/format"
 
 // Animated Counter for Points
 const AnimatedCounter = ({ value }: { value: number }) => {
@@ -414,7 +395,7 @@ export default function CheckoutSuccessPage() {
                     <div className="flex items-center justify-between border-b border-border/40 pb-2">
                       <span className="text-muted-foreground">Data płatności:</span>
                       <span className="font-medium text-foreground">
-                        {formatDate(order.createdAt)}
+                        {formatDateTime(order.createdAt)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between border-b border-border/40 pb-2">

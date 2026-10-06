@@ -46,13 +46,13 @@ interface Client {
 
 import { Category, Voivodeship } from "@/types"
 import { PaginationData } from '@/types/pagination';
+import { formatDate } from "@/lib/format"
 
 interface Offer {
   id: string
   status: string
   lawFirm: {
     id: string
-    nazwa: string
     nazwa: string
   }
 }
@@ -170,14 +170,6 @@ export default function AdminCasesPage() {
     setSelectedCase(caseItem)
     setDeleteType(type)
     setIsDeleteDialogOpen(true)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
   }
 
   const getAcceptedOffer = (offers: Offer[]) => {

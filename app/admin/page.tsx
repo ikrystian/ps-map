@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 interface DashboardStats {
   statistics: {
@@ -110,21 +111,6 @@ export default function AdminDashboardPage() {
   }
 
   const { statistics, charts, recentActivity } = data
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pl-PL', {
-      style: 'currency',
-      currency: 'PLN',
-    }).format(amount)
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pl-PL', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  }
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {

@@ -22,11 +22,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
 import { AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Eye, Filter, Loader2, Mail, Search, Terminal } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Pagination } from '@/types/pagination';
+import { formatDateTimeSeconds } from "@/lib/format"
 
 interface EmailLog {
   id: string
@@ -107,10 +106,6 @@ export default function EmailLogsTab() {
 
   const handlePageChange = (newPage: number) => {
     setPagination({ ...pagination, page: newPage })
-  }
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd.MM.yyyy HH:mm:ss", { locale: pl })
   }
 
   const handleShowDetails = (log: EmailLog) => {
@@ -205,7 +200,7 @@ export default function EmailLogsTab() {
                     {logs.map((log) => (
                       <TableRow key={log.id} className="hover:bg-muted/50">
                         <TableCell className="text-sm">
-                          {formatDate(log.sentAt)}
+                          {formatDateTimeSeconds(log.sentAt)}
                         </TableCell>
                         <TableCell>
                           {log.status === "SUCCESS" ? (
@@ -289,7 +284,7 @@ export default function EmailLogsTab() {
           <DialogHeader>
             <DialogTitle>Szczegóły wysyłki emaila</DialogTitle>
             <DialogDescription>
-              {selectedLog && formatDate(selectedLog.sentAt)} - {selectedLog?.to}
+              {selectedLog && formatDateTimeSeconds(selectedLog.sentAt)} - {selectedLog?.to}
             </DialogDescription>
           </DialogHeader>
 

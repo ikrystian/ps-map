@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { EmailLogStatus } from "@prisma/client"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { formatDateTimeSeconds } from "@/lib/format"
 
 // Strona deweloperska – zawsze renderowana dynamicznie, bez cache'owania.
 export const dynamic = "force-dynamic"
@@ -10,17 +11,6 @@ export const dynamic = "force-dynamic"
 export const metadata = {
   title: "Podgląd maili (DEV/STAGE)",
   robots: { index: false, follow: false },
-}
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("pl-PL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(date)
 }
 
 export default async function MailsPage() {
@@ -98,7 +88,7 @@ export default async function MailsPage() {
                         {log.subject || "(bez tematu)"}
                       </p>
                       <time className="shrink-0 font-mono text-xs text-muted-foreground">
-                        {formatDate(log.sentAt)}
+                        {formatDateTimeSeconds(log.sentAt)}
                       </time>
                     </div>
                     <p className="mt-0.5 truncate text-sm text-muted-foreground">

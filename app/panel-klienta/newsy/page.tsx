@@ -2,12 +2,10 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
-import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import {
-  ArrowRight,
   Calendar,
   Clock,
   Eye,
@@ -28,6 +26,7 @@ import { PaginationData } from "@/types/pagination"
 import { buildCategoryTree, pruneEmptyCategoryTree, type BlogCategoryNode } from "@/lib/blog-category-tree"
 import { cn } from "@/lib/utils"
 import { expertAvatar } from "@/lib/expert-avatar"
+import { formatDate } from "@/lib/format"
 
 export default function ClientNewsCenterPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -114,16 +113,6 @@ export default function ClientNewsCenterPage() {
     setDebouncedSearch("")
     setSelectedCategory(null)
     setPagination((prev) => ({ ...prev, page: 1 }))
-  }
-
-  // Formatting date
-  const formatDate = (dateString?: string | Date | null) => {
-    if (!dateString) return ""
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
   }
 
   // Reading time calculator
@@ -460,7 +449,7 @@ export default function ClientNewsCenterPage() {
                         </span>
                         <span>•</span>
                         <span>
-                          {post.dataPublikacji && new Date(post.dataPublikacji).toLocaleDateString("pl-PL", {
+                          {post.dataPublikacji && new Date(post.dataPublikacji).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
                             day: "numeric",
                             month: "short",
                           })}

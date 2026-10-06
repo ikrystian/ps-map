@@ -44,6 +44,7 @@ import {
   RANKING_PACKAGE_ORDER,
   RANKING_VERIFIED_SCORE,
 } from "@/lib/ranking-score"
+import { formatDate, formatDateTime } from "@/lib/format"
 
 interface ActivePromotion {
   id: string
@@ -560,7 +561,7 @@ export default function AdminPozycjonowaniePage() {
                           {ov.notes || <span className="text-zinc-600">— brak notatki —</span>}
                         </td>
                         <td className="px-6 py-4 text-xs text-muted-foreground">
-                          {new Date(ov.createdAt).toLocaleString("pl-PL")}
+                          {formatDateTime(ov.createdAt)}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <Button
@@ -889,7 +890,7 @@ export default function AdminPozycjonowaniePage() {
                                       className={`text-sm px-1.5 py-0.5 flex items-center gap-1 ${getPromoBadgeColor(
                                         p.typPromocji
                                       )}`}
-                                      title={`Koszt: ${p.kosztPunktow} pkt | Do: ${new Date(p.koniecPromocji).toLocaleDateString()}`}
+                                      title={`Koszt: ${p.kosztPunktow} pkt | Do: ${formatDate(p.koniecPromocji)}`}
                                     >
                                       {getPromoLabel(p.typPromocji)}
                                       <span className="opacity-60 text-sm">({p.kosztPunktow}p)</span>

@@ -40,6 +40,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { formatDate } from "@/lib/format"
 
 interface PackageActivatedModalProps {
   open: boolean;
@@ -235,13 +236,6 @@ const PACKAGE_CONTENT: Record<string, PackageContent> = {
       "bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-zinc-950 shadow-amber-500/10 hover:shadow-amber-500/20",
   },
 };
-
-const formatDate = (date: string | Date) =>
-  new Date(date).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
 export function PackageActivatedModal({
   open,

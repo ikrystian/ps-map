@@ -1,6 +1,6 @@
 "use client"
 
-import { formatNumber } from "@/lib/format"
+import { formatDate, formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -54,17 +54,6 @@ import { useEffect, useMemo, useState } from "react"
 import type { LawFirm, Review } from "@/types"
 import { expertAvatar } from "@/lib/expert-avatar"
 import { clientAvatar } from "@/lib/client-avatar"
-
-
-// Format date helper
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
 
 
 

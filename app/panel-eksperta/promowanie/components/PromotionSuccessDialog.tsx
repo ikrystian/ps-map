@@ -192,17 +192,19 @@ export function PromotionSuccessDialog({
                               <span className="text-primary font-semibold">
                                 {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
                                   "pl-PL",
-                                  { month: "long", year: "numeric" }
+                                  { timeZone: "Europe/Warsaw", month: "long", year: "numeric" }
                                 )}
                               </span>
                             ) : (
                               <span className="text-primary font-semibold">
                                 {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
-                                  "pl-PL"
+                                  "pl-PL",
+                                  { timeZone: "Europe/Warsaw" }
                                 )}{" "}
                                 -{" "}
                                 {new Date(purchasedPromotion.koniecPromocji).toLocaleDateString(
-                                  "pl-PL"
+                                  "pl-PL",
+                                  { timeZone: "Europe/Warsaw" }
                                 )}{" "}
                                 ({purchasedPromotion.czasTrwaniaDni} dni)
                               </span>

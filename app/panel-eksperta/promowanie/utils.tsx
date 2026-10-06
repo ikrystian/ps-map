@@ -111,16 +111,6 @@ export const getIconComponent = (iconName: string | null) => {
   return ICON_MAP[iconName] || TrendingUp
 }
 
-export const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
 
 export const getPromotionTypeLabel = (type: string, promotionTypes: any[]) => {
   const promo = promotionTypes.find((p) => p.type === type)

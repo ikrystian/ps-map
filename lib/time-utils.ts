@@ -31,7 +31,7 @@ export function formatSmartTimestamp(dateString: string | Date): string {
 
   // Less than 24 hours (today) - show hour
   if (diffInHours < 24 && date.getDate() === now.getDate()) {
-    return date.toLocaleTimeString("pl-PL", {
+    return date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -41,7 +41,7 @@ export function formatSmartTimestamp(dateString: string | Date): string {
   const yesterday = new Date(now)
   yesterday.setDate(yesterday.getDate() - 1)
   if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth()) {
-    const time = date.toLocaleTimeString("pl-PL", {
+    const time = date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -63,7 +63,7 @@ export function formatSmartTimestamp(dateString: string | Date): string {
   }
 
   // Older - full date
-  return date.toLocaleDateString("pl-PL", {
+  return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
     day: "numeric",
     month: "long",
     year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
@@ -80,7 +80,7 @@ export function formatMessageTimestamp(dateString: string | Date): string {
 
   // Today - show time only
   if (date.toDateString() === now.toDateString()) {
-    return date.toLocaleTimeString("pl-PL", {
+    return date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -95,14 +95,14 @@ export function formatMessageTimestamp(dateString: string | Date): string {
 
   // This year - show date without year
   if (date.getFullYear() === now.getFullYear()) {
-    return date.toLocaleDateString("pl-PL", {
+    return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
       day: "numeric",
       month: "short",
     })
   }
 
   // Older - show full date
-  return date.toLocaleDateString("pl-PL", {
+  return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -145,7 +145,7 @@ export function formatMessageDateHeader(dateString: string | Date): string {
   }
 
   // Older - full date
-  return date.toLocaleDateString("pl-PL", {
+  return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
     day: "numeric",
     month: "long",
     year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
@@ -183,7 +183,7 @@ export function formatLastSeen(dateString: string | Date): string {
     return `${diffInDays} dni temu`
   }
 
-  return date.toLocaleDateString("pl-PL", {
+  return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
     day: "numeric",
     month: "long",
   })

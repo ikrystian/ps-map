@@ -1,6 +1,6 @@
 "use client"
 
-import { formatNumber } from "@/lib/format"
+import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { LimitIndicator, PackageBadge } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
@@ -110,28 +110,12 @@ const itemVariants = {
   },
 }
 
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
-
 const formatDotDate = (date: Date | string) => {
   const d = new Date(date)
   const day = String(d.getDate()).padStart(2, '0')
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const year = d.getFullYear()
   return `${day}.${month}.${year}`
-}
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
 }
 
 const getSubscriptionLabel = (pkg: string) => {

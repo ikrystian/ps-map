@@ -14,6 +14,7 @@ import { EmailLogStatus, EmailType } from '@prisma/client'
 import fs from 'fs'
 import path from 'path'
 import { sendSMTPEmail } from './smtp'
+import { formatDateTime } from "@/lib/format"
 
 interface SendEmailParams {
   to: string
@@ -552,17 +553,6 @@ export function generatePromotionActivatedEmail(
 ): { subject: string; html: string; text: string } {
   const subject = `Twoja promocja ${promotionLabel} została aktywowana!`
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pl-PL', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/Warsaw',
-    })
-  }
-
   const contentHtml = `
     <div style="margin-bottom: 24px;">
       <span style="background-color: #e6f4ea; color: #137333; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">✓ Promocja aktywna</span>
@@ -581,11 +571,11 @@ export function generatePromotionActivatedEmail(
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Rozpoczęcie:</td>
-          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDate(startDate)}</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDateTime(startDate)}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Zakończenie:</td>
-          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDate(endDate)}</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600; border-top: 1px solid #ede9de;">${formatDateTime(endDate)}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Koszt:</td>
@@ -617,8 +607,8 @@ Twoja promocja ${promotionLabel} została właśnie aktywowana i jest już widoc
 
 Szczegóły:
 - Typ promocji: ${promotionLabel}
-- Data rozpoczęcia: ${formatDate(startDate)}
-- Data zakończenia: ${formatDate(endDate)}
+- Data rozpoczęcia: ${formatDateTime(startDate)}
+- Data zakończenia: ${formatDateTime(endDate)}
 - Koszt: ${cost} punktów
 
 Co dalej?
@@ -648,17 +638,6 @@ export function generatePromotionRenewedEmail(
 ): { subject: string; html: string; text: string } {
   const subject = `Twoja promocja ${promotionLabel} została odnowiona`
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pl-PL', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/Warsaw',
-    })
-  }
-
   const contentHtml = `
     <div style="margin-bottom: 24px;">
       <span style="background-color: #e6f4ea; color: #137333; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">✓ Promocja odnowiona</span>
@@ -673,7 +652,7 @@ export function generatePromotionRenewedEmail(
       <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
           <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500;" width="45%">Nowa data zakończenia:</td>
-          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="55%">${formatDate(newEndDate)}</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #3d3929; font-weight: 600;" width="55%">${formatDateTime(newEndDate)}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 14px; color: #83827d; font-weight: 500; border-top: 1px solid #ede9de;">Koszt odnowienia:</td>
@@ -703,7 +682,7 @@ Witaj ${lawFirmName},
 Twoja promocja ${promotionLabel} została automatycznie odnowiona zgodnie z ustawieniami.
 
 Szczegóły odnowienia:
-- Nowa data zakończenia: ${formatDate(newEndDate)}
+- Nowa data zakończenia: ${formatDateTime(newEndDate)}
 - Koszt odnowienia: ${cost} punktów
 - Pozostałe punkty: ${remainingPoints} punktów
 

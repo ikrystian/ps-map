@@ -1,6 +1,6 @@
 "use client"
 
-import { plural } from "@/lib/format"
+import { formatDate, plural } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -232,7 +232,7 @@ export default function AdminPagesPage() {
                         {page.modules?.length || 0} {plural(page.modules?.length || 0, "moduł", "moduły", "modułów")}
                       </TableCell>
                       <TableCell>
-                        {new Date(page.createdAt).toLocaleDateString("pl-PL")}
+                        {formatDate(page.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">

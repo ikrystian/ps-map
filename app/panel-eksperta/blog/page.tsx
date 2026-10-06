@@ -2,7 +2,6 @@
 
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BlogUpgradePromo } from "@/components/panel-eksperta/BlogUpgradePromo"
-import { FeatureLockedCard } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { Badge } from "@/components/ui/badge"
@@ -19,12 +18,13 @@ import {
 } from "@/components/ui/table"
 import { usePermissions } from "@/hooks/usePermissions"
 import { motion } from "framer-motion"
-import { BookOpen, Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar, ShieldAlert } from "lucide-react"
+import { Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PaginationData } from '@/types/pagination';
 import { BlogPost } from '@/types/blog';
+import { formatDateTime } from "@/lib/format"
 
 
 
@@ -127,17 +127,6 @@ export default function LawFirmBlogPage() {
   const openDeleteDialog = (post: BlogPost) => {
     setSelectedPost(post)
     setIsDeleteDialogOpen(true)
-  }
-
-  const formatDate = (dateString: string | Date | undefined) => {
-    if (!dateString) return ""
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   if (loading || permissionsLoading) {
@@ -257,7 +246,7 @@ export default function LawFirmBlogPage() {
                           <TableCell className="py-4 px-6 text-xs font-light text-muted-foreground">
                             <div className="flex items-center gap-1.5">
                               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                              {formatDate(post.createdAt)}
+                              {formatDateTime(post.createdAt)}
                             </div>
                           </TableCell>
                           <TableCell className="py-4 px-6 text-xs">
@@ -336,7 +325,7 @@ export default function LawFirmBlogPage() {
                       <div className="flex justify-between items-center border-t border-border/5 pt-2 text-sm">
                         <div>
                           <span className="text-muted-foreground block font-light">Utworzono</span>
-                          <span className="text-foreground/80 font-medium">{formatDate(post.createdAt)}</span>
+                          <span className="text-foreground/80 font-medium">{formatDateTime(post.createdAt)}</span>
                         </div>
                         <div className="text-right">
                           <span className="text-muted-foreground block font-light">Wyświetlenia</span>

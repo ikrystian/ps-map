@@ -48,6 +48,7 @@ import {
   parsePointsToPlnRatio,
   plnToPoints,
 } from "@/lib/points-pricing"
+import { formatDate } from "@/lib/format"
 
 interface SubscriptionPlan {
   id: string
@@ -77,14 +78,6 @@ interface SubscriptionPlan {
   punktyGratis: number
   skillLawFocus: boolean
   kolor: string | null
-}
-
-const formatDate = (dateString: string | Date) => {
-  return new Date(dateString).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
 }
 
 // Dodaje kanał alfa do 6-znakowego koloru hex (kolor pakietu z panelu admina)

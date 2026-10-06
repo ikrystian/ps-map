@@ -1,6 +1,6 @@
 "use client"
 
-import { formatNumber } from "@/lib/format"
+import { formatDate, formatNumber } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,6 @@ import {
   CheckCircle2,
   Globe,
   Heart,
-  Mail,
   MapPin,
   Phone,
   Star,
@@ -127,14 +126,6 @@ export default function ClientFavoritesPage() {
         ))}
       </div>
     )
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
   }
 
   if (isLoading) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBusinessDays, formatOffersCount } from "@/lib/format"
+import { formatBusinessDays, formatCurrency, formatDate, formatOffersCount } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -91,9 +91,6 @@ const offerStatusStyles: Record<string, { label: string; className: string }> = 
   NEGOCJACJE: { label: "Negocjacje", className: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
   WYGASLA: { label: "Wygasła", className: "bg-muted text-muted-foreground border-border/50" },
 }
-
-const formatCurrency = (amount: number) =>
-  new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(amount)
 
 
 export default function ClientDashboardPage() {
@@ -493,7 +490,7 @@ export default function ClientDashboardPage() {
                         </h4>
                         <div className="flex items-center justify-between text-sm text-muted-foreground pt-2">
                           <span className="truncate max-w-[90px]">{post.lawFirm?.nazwa || "Portal"}</span>
-                          <span>{new Date(post.dataPublikacji || post.createdAt || "").toLocaleDateString("pl-PL")}</span>
+                          <span>{formatDate(post.dataPublikacji || post.createdAt || "")}</span>
                         </div>
                       </div>
                     </Link>

@@ -35,6 +35,7 @@ import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { POINT_TRANSACTION_LABELS } from "@/lib/point-transaction-labels"
 import type { LawFirm } from "@/types"
 import { PaginationData } from '@/types/pagination';
+import { formatDateTime } from "@/lib/format"
 
 interface PointTransaction {
   id: string
@@ -116,17 +117,6 @@ export default function AdminTransakcjePunktyPage() {
   const openDetailsDialog = (tx: PointTransaction) => {
     setSelectedTx(tx)
     setIsDetailsOpen(true)
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   // Calculate statistics for the current page
@@ -272,7 +262,7 @@ export default function AdminTransakcjePunktyPage() {
                   return (
                     <TableRow key={tx.id}>
                       <TableCell className="font-medium whitespace-nowrap">
-                        {formatDate(tx.createdAt)}
+                        {formatDateTime(tx.createdAt)}
                       </TableCell>
                       <TableCell>
                         <div>
@@ -375,7 +365,7 @@ export default function AdminTransakcjePunktyPage() {
                 </div>
                 <div>
                   <span className="text-xs uppercase font-semibold text-muted-foreground block mb-1">Data i godzina</span>
-                  <span className="font-semibold text-sm">{formatDate(selectedTx.createdAt)}</span>
+                  <span className="font-semibold text-sm">{formatDateTime(selectedTx.createdAt)}</span>
                 </div>
               </div>
 

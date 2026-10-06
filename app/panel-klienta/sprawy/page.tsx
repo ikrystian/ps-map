@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBudgetRange, formatDateLong } from "@/lib/format"
+import { formatBudgetRange, formatDate } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -188,8 +188,6 @@ export default function ClientCasesPage() {
 
     initData()
   }, [])
-
-  const formatDate = formatDateLong
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {
     if (doNegocjacji) return "Do negocjacji"

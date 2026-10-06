@@ -24,6 +24,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import type { Review } from "@/types"
+import { formatDateTime } from "@/lib/format"
 
 
 
@@ -151,17 +152,6 @@ export default function ReviewDetailsPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się usunąć opinii")
     }
-  }
-
-  const formatDate = (date: string | Date | undefined) => {
-    if (!date) return ""
-    return new Date(date).toLocaleString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   const renderStars = (rating: number) => {
@@ -419,7 +409,7 @@ export default function ReviewDetailsPage() {
               <CardTitle>Odpowiedź eksperta</CardTitle>
               <CardDescription>
                 {review.dataOdpowiedzi
-                  ? `Odpowiedź dodana: ${formatDate(review.dataOdpowiedzi)}`
+                  ? `Odpowiedź dodana: ${formatDateTime(review.dataOdpowiedzi)}`
                   : "Brak odpowiedzi"}
               </CardDescription>
             </CardHeader>
@@ -591,11 +581,11 @@ export default function ReviewDetailsPage() {
             <CardContent className="space-y-2">
               <div>
                 <Label className="text-muted-foreground">Utworzono</Label>
-                <p className="text-sm">{formatDate(review.createdAt)}</p>
+                <p className="text-sm">{formatDateTime(review.createdAt)}</p>
               </div>
               <div>
                 <Label className="text-muted-foreground">Zaktualizowano</Label>
-                <p className="text-sm">{formatDate(review.updatedAt)}</p>
+                <p className="text-sm">{formatDateTime(review.updatedAt)}</p>
               </div>
             </CardContent>
           </Card>

@@ -1,6 +1,6 @@
 "use client"
 
-import { formatNumber } from "@/lib/format"
+import { formatCurrency, formatDateTime, formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -72,26 +72,6 @@ import {
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-
-// Format date helper
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
-
-// Format currency
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
 
 interface Order {
   id: string
@@ -591,7 +571,7 @@ export default function LawFirmPointsPage() {
                   {pointEntries.map((entry) => (
                     <TableRow key={entry.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-foreground/80 transition-colors">
                       <TableCell className="py-4 px-6 text-sm text-muted-foreground whitespace-nowrap">
-                        {formatDate(entry.createdAt)}
+                        {formatDateTime(entry.createdAt)}
                       </TableCell>
                       <TableCell className="py-4 px-6 text-sm font-medium whitespace-nowrap">
                         {getPointTransactionLabel(entry.type)}
@@ -708,7 +688,7 @@ export default function LawFirmPointsPage() {
                   {orders.map((order) => (
                     <TableRow key={order.id} className="border-b border-border/10 hover:bg-white/[0.02] text-sm text-foreground/80 transition-colors">
                       <TableCell className="py-4 px-6 text-sm text-muted-foreground whitespace-nowrap">
-                        {formatDate(order.createdAt)}
+                        {formatDateTime(order.createdAt)}
                       </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
                         <div className="flex flex-col gap-1">

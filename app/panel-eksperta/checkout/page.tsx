@@ -20,14 +20,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
-
-// Format currency
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
+import { formatCurrency } from "@/lib/format"
 
 interface OrderData {
   type?: string // "POINTS" or "PACKAGE"

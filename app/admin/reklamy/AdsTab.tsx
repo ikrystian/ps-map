@@ -4,8 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,6 +22,7 @@ import {
 import { useState } from "react"
 import type { AdClient, Advertisement } from "./types"
 import { AD_LOCATIONS } from "./types"
+import { formatDate } from "@/lib/format"
 
 interface AdsTabProps {
   ads: Advertisement[]
@@ -257,8 +257,8 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
                         <td className="py-3 px-4 text-xs text-muted-foreground">{locLabel}</td>
                         <td className="py-3 px-4">
                           <div className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Od: {ad.startDate ? new Date(ad.startDate).toLocaleDateString("pl-PL") : "zawsze"}</span>
-                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Do: {ad.endDate ? new Date(ad.endDate).toLocaleDateString("pl-PL") : "zawsze"}</span>
+                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Od: {ad.startDate ? formatDate(ad.startDate) : "zawsze"}</span>
+                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Do: {ad.endDate ? formatDate(ad.endDate) : "zawsze"}</span>
                           </div>
                         </td>
                         <td className="py-3 px-4 text-center font-semibold">{ad.impressions.toLocaleString()}</td>

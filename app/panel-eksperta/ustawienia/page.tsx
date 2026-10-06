@@ -28,17 +28,7 @@ import {
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
-
-const formatDateTime = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
+import { formatDateTime } from "@/lib/format"
 
 interface UserData {
   id: string

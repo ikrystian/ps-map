@@ -20,7 +20,6 @@ import {
   ExternalLink,
   FileText,
   Loader2,
-  Mail,
   MapPin,
   Paperclip,
   Phone,
@@ -39,6 +38,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { OFFER_HIGHLIGHT_POINTS } from "@/lib/points-pricing"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 interface Case {
   id: string
@@ -96,21 +96,6 @@ interface Case {
   _count: {
     offers: number
   }
-}
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
 }
 
 const getCaseTypeLabel = (type: string) => {

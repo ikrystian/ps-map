@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBudgetRange, formatDateLong, formatNumber } from "@/lib/format"
+import { formatBudgetRange, formatCurrency, formatDate, formatDateTime, formatNumber } from "@/lib/format"
 import { formatBusinessDays } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -305,23 +305,6 @@ export default function ClientCaseDetailsPage() {
     )
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
-  }
-
   return (
     <div className="relative space-y-8">
       {/* Ambient Background Glows */}
@@ -574,7 +557,7 @@ export default function ClientCaseDetailsPage() {
                                   )}
                                 </div>
                                 <CardDescription className="text-muted-foreground text-xs">
-                                  Złożono {formatDate(offer.createdAt)}
+                                  Złożono {formatDateTime(offer.createdAt)}
                                 </CardDescription>
                               </div>
                             </div>
@@ -687,7 +670,7 @@ export default function ClientCaseDetailsPage() {
                         <div>
                           <CardTitle className="text-sm font-semibold text-foreground">{message.temat}</CardTitle>
                           <CardDescription className="text-sm text-muted-foreground mt-0.5">
-                            Nadawca: {message.sender.name || message.sender.email} • {formatDate(message.createdAt)}
+                            Nadawca: {message.sender.name || message.sender.email} • {formatDateTime(message.createdAt)}
                           </CardDescription>
                         </div>
                         {!message.przeczytana && (
@@ -736,7 +719,7 @@ export default function ClientCaseDetailsPage() {
                       {caseData.referral.lawFirm.nazwa}
                     </span>
                     <span className="text-xs text-amber-200/70 font-light">
-                      Zaproszenie z {formatDate(caseData.referral.createdAt)}
+                      Zaproszenie z {formatDateTime(caseData.referral.createdAt)}
                     </span>
                   </div>
                 </Link>
@@ -810,7 +793,7 @@ export default function ClientCaseDetailsPage() {
                 <Clock className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <div>
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Dodano dnia</span>
-                  <span className="font-medium text-foreground">{formatDate(caseData.createdAt)}</span>
+                  <span className="font-medium text-foreground">{formatDateTime(caseData.createdAt)}</span>
                 </div>
               </div>
             </CardContent>
@@ -828,7 +811,7 @@ export default function ClientCaseDetailsPage() {
                   <span className="text-sm text-muted-foreground/70 block uppercase font-semibold">Oczekiwany termin</span>
                   <span className="font-medium text-foreground">
                     {caseData.oczekiwanyTerminRealizacji
-                      ? formatDateLong(caseData.oczekiwanyTerminRealizacji)
+                      ? formatDate(caseData.oczekiwanyTerminRealizacji)
                       : "Elastyczny (do ustaleń)"}
                   </span>
                 </div>

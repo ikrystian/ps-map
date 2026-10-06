@@ -42,6 +42,7 @@ import { useEffect, useState, useRef } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
+import { formatDateTime } from "@/lib/format"
 
 // Schema walidacji formularza
 const documentSchema = z.object({
@@ -89,17 +90,6 @@ const formatFileSize = (bytes: number): string => {
   const sizes = ["B", "KB", "MB", "GB"]
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
-}
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
 }
 
 const getExtensionStyles = (ext: string) => {
@@ -841,7 +831,7 @@ export default function DocumentsPage() {
                             <TableCell className="py-4 px-4 font-light text-xs text-muted-foreground">
                               <div className="flex items-center gap-1.5">
                                 <Clock className="h-3 w-3 text-muted-foreground" />
-                                {formatDate(document.createdAt)}
+                                {formatDateTime(document.createdAt)}
                               </div>
                             </TableCell>
                             <TableCell className="py-4 px-4">
@@ -999,7 +989,7 @@ export default function DocumentsPage() {
                             )}
                             <span className="text-sm text-muted-foreground ml-auto flex items-center gap-1 font-light">
                               <Clock className="h-3 w-3 text-zinc-600" />
-                              {formatDate(document.createdAt)}
+                              {formatDateTime(document.createdAt)}
                             </span>
                           </div>
                         </motion.div>
@@ -1058,7 +1048,7 @@ export default function DocumentsPage() {
                   <span className="text-zinc-600 hidden sm:inline">•</span>
                   <span className="hidden sm:inline-flex items-center gap-1">
                     <Clock className="h-3 w-3 text-muted-foreground" />
-                    {selectedDocument && formatDate(selectedDocument.createdAt)}
+                    {selectedDocument && formatDateTime(selectedDocument.createdAt)}
                   </span>
                 </DialogDescription>
               </div>

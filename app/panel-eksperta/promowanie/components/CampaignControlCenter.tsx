@@ -29,8 +29,8 @@ import { Promotion } from "../types"
 import {
   getPromotionTypeLabel,
   getPromotionStatusBadge,
-  formatDate,
 } from "../utils"
+import { formatDateTime } from "@/lib/format"
 
 interface CampaignControlCenterProps {
   activePromotions: Promotion[]
@@ -124,8 +124,8 @@ export function CampaignControlCenter({
                         <TableCell className="text-xs text-[#b7b5a9]">
                           {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Cały serwis"}
                         </TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.startPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.koniecPromocji)}</TableCell>
                         <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
@@ -182,11 +182,11 @@ export function CampaignControlCenter({
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.startPromocji)}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.koniecPromocji)}</span>
                       </div>
                     </div>
 
@@ -271,8 +271,8 @@ export function CampaignControlCenter({
                         <TableCell className="text-xs text-[#b7b5a9]">
                           {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Cały serwis"}
                         </TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.startPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.koniecPromocji)}</TableCell>
                         <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
@@ -329,11 +329,11 @@ export function CampaignControlCenter({
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.startPromocji)}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.koniecPromocji)}</span>
                       </div>
                     </div>
 
@@ -417,8 +417,8 @@ export function CampaignControlCenter({
                         <TableCell className="text-xs text-[#b7b5a9]">
                           {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Cały serwis"}
                         </TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.startPromocji)}</TableCell>
-                        <TableCell className="text-xs text-[#b7b5a9]">{formatDate(promo.koniecPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.startPromocji)}</TableCell>
+                        <TableCell className="text-xs text-[#b7b5a9]">{formatDateTime(promo.koniecPromocji)}</TableCell>
                         <TableCell className="text-right font-semibold text-sm text-secondary py-4">
                           {promo.kosztPunktow} pkt
                         </TableCell>
@@ -448,11 +448,11 @@ export function CampaignControlCenter({
                     <div className="grid grid-cols-2 gap-2 text-[11px] py-2.5 border-y border-border/40">
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Start</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.startPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.startPromocji)}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground block text-sm uppercase font-semibold">Koniec</span>
-                        <span className="text-[#faf9f5] font-medium">{formatDate(promo.koniecPromocji)}</span>
+                        <span className="text-[#faf9f5] font-medium">{formatDateTime(promo.koniecPromocji)}</span>
                       </div>
                     </div>
 

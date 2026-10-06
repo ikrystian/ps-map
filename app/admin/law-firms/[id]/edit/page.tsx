@@ -94,6 +94,7 @@ import {
   EducationEditor
 } from "./components/InteractiveEditors"
 import { CategoriesSelector, CoverageAreaSelector } from "./components/RelationEditors"
+import { formatDate } from "@/lib/format"
 
 export default function EditLawFirmPage() {
   const params = useParams()
@@ -1578,7 +1579,7 @@ export default function EditLawFirmPage() {
                               {accountMeta.telefonZweryfikowany ? (
                                 <Badge variant="default">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  Potwierdzony kodem SMS ({new Date(accountMeta.telefonZweryfikowany).toLocaleDateString("pl-PL")})
+                                  Potwierdzony kodem SMS ({formatDate(accountMeta.telefonZweryfikowany)})
                                 </Badge>
                               ) : (
                                 <Badge variant="outline">

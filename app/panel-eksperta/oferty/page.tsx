@@ -1,6 +1,6 @@
 "use client"
 
-import { formatBusinessDays } from "@/lib/format"
+import { formatBusinessDays, formatCurrency, formatDate } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -137,21 +137,6 @@ const cardVariants = {
     filter: "blur(4px)",
     transition: { duration: 0.25 }
   }
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
-}
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
 }
 
 const getTypeLabel = (type: string) => {

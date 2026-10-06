@@ -3,23 +3,13 @@ import { prisma } from "@/lib/prisma"
 import { EmailLogStatus } from "@prisma/client"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { formatDateTimeSeconds } from "@/lib/format"
 
 export const dynamic = "force-dynamic"
 
 export const metadata = {
   title: "Podgląd maila (DEV/STAGE)",
   robots: { index: false, follow: false },
-}
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("pl-PL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(date)
 }
 
 export default async function MailDetailPage({
@@ -95,7 +85,7 @@ export default async function MailDetailPage({
               <dd className="text-foreground">{log.to}</dd>
               <dt className="text-muted-foreground">Wysłano:</dt>
               <dd className="font-mono text-foreground/80">
-                {formatDate(log.sentAt)}
+                {formatDateTimeSeconds(log.sentAt)}
               </dd>
               {log.templateType ? (
                 <>
