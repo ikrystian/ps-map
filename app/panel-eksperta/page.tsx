@@ -38,6 +38,8 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
 import { BlogPost } from '@/types/blog';
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
+import { caseStatusClass } from "@/lib/status-style"
 
 interface Case {
   id: string
@@ -149,39 +151,11 @@ const getSubscriptionBadge = (pkg: string) => {
   }
 }
 
-const getCaseStatusLabel = (status: string) => {
-  switch (status) {
-    case "NOWA":
-      return "Nowa"
-    case "OFERTY_OTRZYMANE":
-      return "Oferty otrzymane"
-    case "W_TRAKCIE":
-      return "W toku"
-    case "ZAKONCZONA":
-      return "Zakończona"
-    case "ANULOWANA":
-      return "Anulowana"
-    default:
-      return status
-  }
-}
+const getCaseStatusLabel = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
-const getCaseStatusBadge = (status: string) => {
-  switch (status) {
-    case "NOWA":
-      return <Badge className="bg-primary/10 text-primary border border-primary/20 px-2 py-0">Nowa</Badge>
-    case "OFERTY_OTRZYMANE":
-      return <Badge className="bg-secondary/15 text-secondary border border-secondary/30 px-2 py-0">Oferty otrzymane</Badge>
-    case "W_TRAKCIE":
-      return <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0">W toku</Badge>
-    case "ZAKONCZONA":
-      return <Badge className="bg-success/10 text-success border border-success/20 px-2 py-0">Zakończona</Badge>
-    case "ANULOWANA":
-      return <Badge className="bg-error/10 text-error border border-error/20 px-2 py-0">Anulowana</Badge>
-    default:
-      return <Badge className="bg-muted/15 text-muted-foreground border border-muted-foreground/20 px-2 py-0">{status}</Badge>
-  }
-}
+const getCaseStatusBadge = (status: string) => (
+  <Badge className={`${caseStatusClass(status)} px-2 py-0`}>{statusLabel(CASE_STATUS_LABEL, status)}</Badge>
+)
 
 const getOfferStatusBadge = (status: string) => {
   switch (status) {

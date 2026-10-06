@@ -32,6 +32,9 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import type { CaseStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_CLASS } from "@/lib/status-style"
 
 const editCaseSchema = z.object({
   nazwaSprawy: z.string().min(1, "Podaj nazwę sprawy"),
@@ -64,13 +67,9 @@ interface CaseData {
   preferowanyKontakt: string
 }
 
-const statusLabels: Record<string, { label: string; className: string }> = {
-  NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-primary/10 text-primary border border-primary/30" },
-  ZAKONCZONA: { label: "Zakończona", className: "bg-success/10 text-success border border-success/30" },
-  ANULOWANA: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30" },
-}
+const statusLabels: Record<string, { label: string; className: string }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], className: CASE_STATUS_CLASS[k] }])
+)
 
 export default function EditCasePage() {
   const params = useParams()

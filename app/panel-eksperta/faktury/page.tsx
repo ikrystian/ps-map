@@ -28,6 +28,9 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { formatCurrency, formatDate } from "@/lib/format"
+import type { InvoiceStatus } from "@prisma/client"
+import { INVOICE_STATUS_LABEL } from "@/lib/labels"
+import { INVOICE_STATUS_CLASS } from "@/lib/status-style"
 
 interface Invoice {
   id: string
@@ -54,13 +57,14 @@ interface Invoice {
   }
 }
 
-const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
-  DRAFT: { label: "Szkic", className: "bg-zinc-500/10 text-muted-foreground border border-zinc-500/30", icon: Clock },
-  ISSUED: { label: "Wystawiona", className: "bg-sky-500/10 text-sky-400 border border-sky-500/30", icon: FileText },
-  SENT: { label: "Wysłana", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30", icon: CheckCircle2 },
-  PAID: { label: "Opłacona", className: "bg-success/10 text-success border border-success/30", icon: CheckCircle2 },
-  CANCELLED: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30", icon: XCircle },
-}
+const INVOICE_ICON = { DRAFT: Clock, ISSUED: FileText, SENT: CheckCircle2, PAID: CheckCircle2, CANCELLED: XCircle } as const
+
+const statusConfig: Record<string, { label: string; className: string; icon: any }> = Object.fromEntries(
+  (Object.keys(INVOICE_STATUS_LABEL) as InvoiceStatus[]).map((k) => [
+    k,
+    { label: INVOICE_STATUS_LABEL[k], className: INVOICE_STATUS_CLASS[k], icon: INVOICE_ICON[k] },
+  ])
+)
 
 const containerVariants = {
   hidden: { opacity: 0 },

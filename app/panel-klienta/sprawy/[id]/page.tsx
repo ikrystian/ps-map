@@ -40,6 +40,9 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { expertAvatar } from "@/lib/expert-avatar"
+import type { CaseStatus, OfferStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL, OFFER_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_CLASS, OFFER_STATUS_VARIANT } from "@/lib/status-style"
 
 interface Case {
   id: string
@@ -143,13 +146,9 @@ interface Case {
   }>
 }
 
-const statusLabels: Record<string, { label: string; className: string }> = {
-  NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
-  ZAKONCZONA: { label: "Zakończona", className: "bg-success/10 text-success border border-success/30" },
-  ANULOWANA: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30" },
-}
+const statusLabels: Record<string, { label: string; className: string }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], className: CASE_STATUS_CLASS[k] }])
+)
 
 const caseTypeLabels: Record<string, string> = {
   OSOBA_PRYWATNA: "Osoba prywatna",
@@ -163,13 +162,9 @@ const contactTypeLabels: Record<string, string> = {
   OBA: "Email i telefon",
 }
 
-const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  ZLOZONA: { label: "Złożona", variant: "secondary" },
-  ZAAKCEPTOWANA: { label: "Zaakceptowana", variant: "default" },
-  ODRZUCONA: { label: "Odrzucona", variant: "destructive" },
-  NEGOCJACJE: { label: "Negocjacje", variant: "outline" },
-  WYGASLA: { label: "Wygasła", variant: "outline" },
-}
+const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(OFFER_STATUS_LABEL) as OfferStatus[]).map((k) => [k, { label: OFFER_STATUS_LABEL[k], variant: OFFER_STATUS_VARIANT[k] }])
+)
 
 const containerVariants = {
   hidden: { opacity: 0 },

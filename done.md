@@ -212,3 +212,13 @@ Weryfikacja: `tsc` (z wykluczeniem test-gcs) = 142 błędy = baza, 0 nowych. Nic
 - **F-072:** `/mails` na prod/stage tylko dla admina; wybór użytkownika na logowaniu wymuszony na „wyłączony” w produkcji (`api/settings`); brak ceny dla okresu → 400 zamiast „darmowego pakietu”.
 - **F-076:** `GET /api/blog/categories` zwraca też `publishedCount`; admin: „N wpisów (opublikowanych: M)”.
 - **F-078:** komunikat zależny od statusu własnej oferty. **F-081:** usunięte `app/sklep/*` (`git rm`, niescommitowane) i wpis w `proxy.ts`.
+
+---
+
+# F-017/F-018/F-019 — domknięcie map statusów
+
+- `lib/status-style.ts` (`CASE_STATUS_CLASS`, `CASE_STATUS_VARIANT`, `OFFER_STATUS_VARIANT`, `INVOICE_STATUS_CLASS`, `caseStatusClass`; `satisfies Record<Enum,…>`) obok `lib/labels.ts`.
+- Lokalne kopie zastąpione: `CaseStatus` — admin `cases` i `cases/[id]`, klient `sprawy`, `sprawy/[id]`, `edytuj`, ekspert `page`, `sprawy`, `sprawy/[id]` (etykiety + badge); `OfferStatus` — admin `cases/[id]`, klient `sprawy/[id]`, `oferty`; `InvoiceStatus` — admin `faktury`, ekspert `faktury` i `subskrypcje-i-platnosci`.
+- Ujednolicone kolory: `W_TRAKCIE` niebieski wszędzie (było teal na `edytuj`), `ZAAKCEPTOWANA` = `default`, `WYGASLA` = `outline` (admin miał `destructive`), faktury `ISSUED` sky / `SENT` blue z jednym obramowaniem.
+- Nie ruszone: `panel-klienta/page.tsx` (`offerStatusStyles`, kolory własne), `panel-eksperta/oferty` (`statusStyles` z kropką i animacją), `getOfferStatusBadge` na pulpicie eksperta, kolory wykresu w `admin/page.tsx`.
+- Weryfikacja: `tsc` bez nowych błędów w ruszanych plikach; UI nie sprawdzany w przeglądarce.

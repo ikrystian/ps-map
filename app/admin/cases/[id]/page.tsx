@@ -48,6 +48,9 @@ interface Client {
 }
 
 import type { LawFirm, Category, Voivodeship } from "@/types"
+import type { CaseStatus, OfferStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL, OFFER_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_VARIANT, OFFER_STATUS_VARIANT } from "@/lib/status-style"
 
 interface Offer {
   id: string
@@ -104,21 +107,13 @@ interface CaseDetails {
   messages: Message[]
 }
 
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  NOWA: { label: "Nowa", variant: "secondary" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "default" },
-  W_TRAKCIE: { label: "W toku", variant: "default" },
-  ZAKONCZONA: { label: "Zakończona", variant: "outline" },
-  ANULOWANA: { label: "Anulowana", variant: "destructive" },
-}
+const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], variant: CASE_STATUS_VARIANT[k] }])
+)
 
-const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  ZLOZONA: { label: "Złożona", variant: "secondary" },
-  ZAAKCEPTOWANA: { label: "Zaakceptowana", variant: "default" },
-  ODRZUCONA: { label: "Odrzucona", variant: "destructive" },
-  NEGOCJACJE: { label: "Negocjacje", variant: "outline" },
-  WYGASLA: { label: "Wygasła", variant: "destructive" },
-}
+const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(OFFER_STATUS_LABEL) as OfferStatus[]).map((k) => [k, { label: OFFER_STATUS_LABEL[k], variant: OFFER_STATUS_VARIANT[k] }])
+)
 
 export default function CaseDetailsPage() {
   const params = useParams()

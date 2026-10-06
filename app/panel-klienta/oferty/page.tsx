@@ -37,21 +37,22 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { expertAvatar } from "@/lib/expert-avatar"
+import { OFFER_STATUS_VARIANT } from "@/lib/status-style"
 
 type Offer = OfferWithCase
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "ZLOZONA":
-      return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Złożona</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ZLOZONA} className="gap-1"><Clock className="h-3 w-3" />Złożona</Badge>
     case "ZAAKCEPTOWANA":
-      return <Badge variant="default" className="gap-1"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ZAAKCEPTOWANA} className="gap-1"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
     case "ODRZUCONA":
-      return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Odrzucona</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ODRZUCONA} className="gap-1"><XCircle className="h-3 w-3" />Odrzucona</Badge>
     case "NEGOCJACJE":
-      return <Badge variant="outline" className="gap-1"><FileText className="h-3 w-3" />Negocjacje</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.NEGOCJACJE} className="gap-1"><FileText className="h-3 w-3" />Negocjacje</Badge>
     case "WYGASLA":
-      return <Badge variant="outline">Wygasła</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.WYGASLA}>Wygasła</Badge>
     default:
       return <Badge>{status}</Badge>
   }

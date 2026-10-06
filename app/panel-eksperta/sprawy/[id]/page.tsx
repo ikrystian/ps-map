@@ -39,6 +39,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { OFFER_HIGHLIGHT_POINTS } from "@/lib/points-pricing"
 import { formatCurrency, formatDate } from "@/lib/format"
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 
 interface Case {
   id: string
@@ -111,22 +112,7 @@ const getCaseTypeLabel = (type: string) => {
   }
 }
 
-const getCaseStatusLabel = (status: string) => {
-  switch (status) {
-    case "NOWA":
-      return "Nowa"
-    case "OFERTY_OTRZYMANE":
-      return "Oferty otrzymane"
-    case "W_TRAKCIE":
-      return "W toku"
-    case "ZAKONCZONA":
-      return "Zakończona"
-    case "ANULOWANA":
-      return "Anulowana"
-    default:
-      return status
-  }
-}
+const getCaseStatusLabel = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
 export default function LawFirmCaseDetailsPage() {
   const { data: session } = useSession()

@@ -87,6 +87,9 @@ interface Case {
 }
 import { Category } from "@/types/categories"
 import { expertAvatar } from "@/lib/expert-avatar"
+import type { CaseStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_CLASS } from "@/lib/status-style"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -101,13 +104,9 @@ const getCaseCategories = (caseItem: {
     ? caseItem.categories.map((link) => link.category)
     : [caseItem.category]
 
-const statusLabels: Record<string, { label: string; className: string }> = {
-  NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
-  ZAKONCZONA: { label: "Zakończona", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" },
-  ANULOWANA: { label: "Anulowana", className: "bg-rose-500/10 text-rose-400 border border-rose-500/30" },
-}
+const statusLabels: Record<string, { label: string; className: string }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], className: CASE_STATUS_CLASS[k] }])
+)
 
 const caseTypeLabels: Record<string, string> = {
   OSOBA_PRYWATNA: "Osoba prywatna",

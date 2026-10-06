@@ -99,6 +99,7 @@ interface Case {
 }
 import { Category } from "@/types/categories"
 import type { Voivodeship } from "@/types"
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -398,22 +399,7 @@ const SprawyPage = () => {
     }
   }
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "NOWA":
-        return "Nowa"
-      case "OFERTY_OTRZYMANE":
-        return "Oferty otrzymane"
-      case "W_TRAKCIE":
-        return "W toku"
-      case "ZAKONCZONA":
-        return "Zakończona"
-      case "ANULOWANA":
-        return "Anulowana"
-      default:
-        return status
-    }
-  }
+  const getStatusLabel = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {
     if (doNegocjacji) return "Do negocjacji"

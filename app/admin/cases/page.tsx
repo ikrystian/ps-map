@@ -47,6 +47,9 @@ interface Client {
 import { Category, Voivodeship } from "@/types"
 import { PaginationData } from '@/types/pagination';
 import { formatDate } from "@/lib/format"
+import type { CaseStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_VARIANT } from "@/lib/status-style"
 
 interface Offer {
   id: string
@@ -82,13 +85,9 @@ interface Case {
 
 
 
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  NOWA: { label: "Nowa", variant: "secondary" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "default" },
-  W_TRAKCIE: { label: "W toku", variant: "default" },
-  ZAKONCZONA: { label: "Zakończona", variant: "outline" },
-  ANULOWANA: { label: "Anulowana", variant: "destructive" },
-}
+const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], variant: CASE_STATUS_VARIANT[k] }])
+)
 
 export default function AdminCasesPage() {
   const [cases, setCases] = useState<Case[]>([])
