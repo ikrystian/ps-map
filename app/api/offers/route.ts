@@ -192,6 +192,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Oferty mogą składać tylko zweryfikowani eksperci (F-080)
+    if (!lawFirm.zweryfikowana) {
+      return Response.json(
+        { error: "Twoje konto czeka na weryfikację przez administratora. Oferty możesz składać po jej zakończeniu." },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const {
       caseId,

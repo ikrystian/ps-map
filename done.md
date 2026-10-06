@@ -222,3 +222,12 @@ Weryfikacja: `tsc` (z wykluczeniem test-gcs) = 142 błędy = baza, 0 nowych. Nic
 - Ujednolicone kolory: `W_TRAKCIE` niebieski wszędzie (było teal na `edytuj`), `ZAAKCEPTOWANA` = `default`, `WYGASLA` = `outline` (admin miał `destructive`), faktury `ISSUED` sky / `SENT` blue z jednym obramowaniem.
 - Nie ruszone: `panel-klienta/page.tsx` (`offerStatusStyles`, kolory własne), `panel-eksperta/oferty` (`statusStyles` z kropką i animacją), `getOfferStatusBadge` na pulpicie eksperta, kolory wykresu w `admin/page.tsx`.
 - Weryfikacja: `tsc` bez nowych błędów w ruszanych plikach; UI nie sprawdzany w przeglądarce.
+
+---
+
+# F-079/F-080 — decyzje: blokada niezweryfikowanych, brak zakresu = brak spraw
+
+- `POST /api/offers`: 403 „Twoje konto czeka na weryfikację…”, gdy `LawFirm.zweryfikowana=false` (komunikat trafia do toasta w formularzu oferty). **Skutek:** na dev BPCoders (niezweryfikowany) nie złoży już oferty, dopóki admin go nie zweryfikuje.
+- `buildLawFirmCaseWhereInput` (`lib/cases.ts`): ekspert bez zadeklarowanych kategorii/obszaru widzi tylko sprawy z własnych poleceń (lista, pulpit, liczniki menu). Dotyczy też „cała Polska” bez kategorii. Pusty stan listy spraw wskazuje `/panel-eksperta/zakres-uslug`.
+- Nie ruszone: `GET /api/cases/[id]` nie stosuje filtra zakresu (dostęp po bezpośrednim linku do sprawy NOWA/OFERTY_OTRZYMANE nadal możliwy).
+- Weryfikacja: `tsc` bez nowych błędów; nie testowane na działającym API.

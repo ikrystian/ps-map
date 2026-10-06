@@ -684,6 +684,9 @@ const SprawyPage = () => {
           <h3 className="text-xl font-bold text-foreground mb-2 font-playfair">Brak spraw w bazie</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             Nie znaleźliśmy żadnych zleceń spełniających Twoje kryteria filtrowania.
+            Widzisz tylko sprawy z zadeklarowanych kategorii i obszaru działania — jeśli jeszcze ich nie
+            ustawiłeś, uzupełnij{" "}
+            <a href="/panel-eksperta/zakres-uslug" className="text-primary underline underline-offset-2">zakres usług</a>.
           </p>
           <Button
             variant="outline"

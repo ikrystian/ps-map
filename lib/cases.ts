@@ -66,11 +66,14 @@ export function buildLawFirmCaseWhereInput(
     referral: { is: { lawFirmId: lawFirm.id } },
   }
 
-  if (declaredScopeConditions.length > 0) {
-    scopeConditions.push({
-      OR: [{ AND: declaredScopeConditions }, ownReferralCondition],
-    })
-  }
+  // Brak zadeklarowanego zakresu (kategorii / obszaru) = brak spraw poza własnymi poleceniami
+  // — ekspert nie dostaje wszystkich spraw „na zapas” (F-080).
+  scopeConditions.push({
+    OR: [
+      declaredScopeConditions.length > 0 ? { AND: declaredScopeConditions } : { id: { in: [] } },
+      ownReferralCondition,
+    ],
+  })
 
   // Wyklucz sprawy, w których zaakceptowano ofertę INNEGO eksperta
   const acceptedByOtherCondition: Prisma.CaseWhereInput = {
