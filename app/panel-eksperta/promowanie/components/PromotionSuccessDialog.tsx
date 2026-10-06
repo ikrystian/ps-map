@@ -21,6 +21,7 @@ import {
   getPromotionTypeLabel,
   getPromotionSuccessDetails,
 } from "../utils"
+import { formatDate, formatMonthYear } from "@/lib/format"
 
 interface PromotionSuccessDialogProps {
   open: boolean
@@ -190,22 +191,13 @@ export function PromotionSuccessDialog({
                             <span className="font-semibold text-foreground">Okres ważności:</span>
                             {isMonthly ? (
                               <span className="text-primary font-semibold">
-                                {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
-                                  "pl-PL",
-                                  { timeZone: "Europe/Warsaw", month: "long", year: "numeric" }
-                                )}
+                                {formatMonthYear(purchasedPromotion.startPromocji)}
                               </span>
                             ) : (
                               <span className="text-primary font-semibold">
-                                {new Date(purchasedPromotion.startPromocji).toLocaleDateString(
-                                  "pl-PL",
-                                  { timeZone: "Europe/Warsaw" }
-                                )}{" "}
+                                {formatDate(purchasedPromotion.startPromocji)}{" "}
                                 -{" "}
-                                {new Date(purchasedPromotion.koniecPromocji).toLocaleDateString(
-                                  "pl-PL",
-                                  { timeZone: "Europe/Warsaw" }
-                                )}{" "}
+                                {formatDate(purchasedPromotion.koniecPromocji)}{" "}
                                 ({purchasedPromotion.czasTrwaniaDni} dni)
                               </span>
                             )}

@@ -61,7 +61,7 @@ import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { BlogPost } from '@/types/blog';
 import { PaginationData } from '@/types/pagination';
-import { formatDate } from "@/lib/format"
+import { formatDate, formatNumber } from "@/lib/format"
 
 
 
@@ -361,7 +361,7 @@ export default function AdminBlogPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {stats.totalViews.toLocaleString("pl-PL")}
+              {formatNumber(stats.totalViews)}
             </div>
             <p className="text-xs text-muted-foreground">Odsłon wszystkich artykułów</p>
           </CardContent>

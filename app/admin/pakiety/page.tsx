@@ -15,6 +15,7 @@ import {
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatCurrency } from "@/lib/format"
 
 interface SubscriptionPlan {
   id: string
@@ -92,7 +93,7 @@ export default function AdminSubscriptionPlansPage() {
     if (price === 0) return "Darmowy"
     // Ceny pakietów są w złotych (tak je zapisuje formularz i tak je rozlicza faktura);
     // punkty to osobna waluta, której koszt liczy się z `pointsToPlnRatio` (F-042).
-    return `${price.toLocaleString("pl-PL", { maximumFractionDigits: 2 })} zł`
+    return formatCurrency(price)
   }
 
   if (loading) {

@@ -53,6 +53,13 @@ export function formatDateTimeSeconds(value: DateInput): string {
   }).format(d)
 }
 
+/** wrzesień 2026 — miesiąc i rok (okresy rozliczeniowe, promocje miesięczne, statystyki) */
+export function formatMonthYear(value: DateInput): string {
+  const d = toDate(value)
+  if (!d) return EMPTY_PLACEHOLDER
+  return new Intl.DateTimeFormat("pl-PL", { month: "long", year: "numeric", timeZone: APP_TIME_ZONE }).format(d)
+}
+
 /** 15 375,00 zł */
 export function formatCurrency(amount: number | null | undefined): string {
   if (amount === null || amount === undefined || Number.isNaN(Number(amount))) return EMPTY_PLACEHOLDER
@@ -67,6 +74,11 @@ export function formatNumber(value: number | null | undefined, fractionDigits = 
   return new Intl.NumberFormat("pl-PL", {
     minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits,
   }).format(Number(value))
+}
+
+/** 12 345 — punkty bez jednostki (dopisz „pkt” w miejscu użycia) */
+export function formatPoints(value: number | null | undefined): string {
+  return formatNumber(value, 0)
 }
 
 /** 33,3% */

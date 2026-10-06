@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { formatDateTime } from "@/lib/format"
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
         '{klient}': newBooking.client.user.name || newBooking.client.user.email,
         '{czas}': `${duration} min`,
         '{temat}': topic || 'Konsultacja prawna',
-        '{termin}': new Date(consultationDate).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' }),
+        '{termin}': formatDateTime(consultationDate),
         '{linkDoPanelu}': `${process.env.URL || ''}/panel-eksperta/konsultacje`,
       },
     })

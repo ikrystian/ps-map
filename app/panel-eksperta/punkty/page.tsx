@@ -1,6 +1,6 @@
 "use client"
 
-import { formatCurrency, formatDateTime, formatNumber } from "@/lib/format"
+import { formatCurrency, formatDateTime, formatNumber, formatPoints } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -120,7 +120,6 @@ interface LawFirm {
   nazwa: string
 }
 
-const formatPoints = (value: number) => value.toLocaleString("pl-PL")
 
 // Style kart pakietów — przypisywane cyklicznie wg kolejności z ustawień admina
 const PACKAGE_STYLES = [

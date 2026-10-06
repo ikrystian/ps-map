@@ -3,6 +3,7 @@ import { CONSULTATION_FORM_LABELS } from "@/lib/consultation-requests"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { formatDateTime } from "@/lib/format"
 
 /**
  * POST /api/consultation-interests/[id]/accept
@@ -108,9 +109,7 @@ export async function POST(
     })
 
     const baseUrl = process.env.NEXTAUTH_URL || process.env.URL || "http://localhost:3000"
-    const terminText = interest.proponowanyTermin.toLocaleString("pl-PL", {
-      timeZone: "Europe/Warsaw",
-    })
+    const terminText = formatDateTime(interest.proponowanyTermin)
 
     try {
       const { notification } = await sendSystemNotification({

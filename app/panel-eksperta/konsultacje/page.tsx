@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { Calendar, Clock, FileText, Loader2, Mail, Trash2, User, Video, MessageCircle, MoreVertical, Archive, RotateCcw, CreditCard } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
@@ -20,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { BlogCategory } from "@/types"
 import { clientAvatar } from "@/lib/client-avatar"
+import { formatDateTime } from "@/lib/format"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -300,7 +299,7 @@ export default function ConsultationsPage() {
                   <div className="flex flex-wrap gap-2">
                     <Badge className="bg-primary/10 text-primary border border-primary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
+                      {formatDateTime(new Date(booking.consultationDate))}
                     </Badge>
                     <Badge className="bg-background/40 text-foreground/80 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Clock className="h-3 w-3" />

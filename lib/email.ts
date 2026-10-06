@@ -1026,14 +1026,7 @@ export function generateContactFormBokEmail({
 }): { subject: string; html: string; text: string } {
   const subjectLabel = CONTACT_SUBJECT_LABELS[subject] || subject
   const emailSubject = `[Kontakt] ${subjectLabel} - ${senderName}`
-  const receivedAt = new Date().toLocaleString('pl-PL', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Warsaw',
-  })
+  const receivedAt = formatDateTime(new Date())
 
   const row = (label: string, value: string, first = false) => `
         <tr>

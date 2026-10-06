@@ -12,12 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
 import { CONSULTATION_FORM_LABELS } from "@/lib/consultation-requests"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { ArrowLeft, Calendar, CheckCircle2, Clock, Loader2, Phone, Users, Video, Wallet } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { formatDate, formatDateLong, formatDateTime } from "@/lib/format"
 
 const MIN_WIADOMOSC_LENGTH = 100
 
@@ -252,7 +251,7 @@ export default function ExpertConsultationRequestDetailPage() {
 
       <PageHeader
         title={request.temat}
-        subtitle={`Zapytanie z ${format(new Date(request.createdAt), "d MMMM yyyy", { locale: pl })} · ${request.liczbaZgloszen} zgłoszeń`}
+        subtitle={`Zapytanie z ${formatDateLong(new Date(request.createdAt))} · ${request.liczbaZgloszen} zgłoszeń`}
       />
 
       <div className="relative z-10 space-y-6">
@@ -294,9 +293,9 @@ export default function ExpertConsultationRequestDetailPage() {
                 {(request.terminOd || request.terminDo) && (
                   <p>
                     Dostępność klienta:{" "}
-                    {request.terminOd ? format(new Date(request.terminOd), "d MMM yyyy", { locale: pl }) : "—"}
+                    {request.terminOd ? formatDate(new Date(request.terminOd)) : "—"}
                     {" – "}
-                    {request.terminDo ? format(new Date(request.terminDo), "d MMM yyyy", { locale: pl }) : "—"}
+                    {request.terminDo ? formatDate(new Date(request.terminDo)) : "—"}
                   </p>
                 )}
                 {request.preferowanyTermin && <p>Preferowane godziny: {request.preferowanyTermin}</p>}
@@ -333,7 +332,7 @@ export default function ExpertConsultationRequestDetailPage() {
               <div className="flex flex-wrap gap-2">
                 <Badge className="gap-1.5 rounded-md border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
                   <Calendar className="h-3 w-3" />
-                  {format(new Date(ownInterest.proponowanyTermin), "PPP p", { locale: pl })}
+                  {formatDateTime(new Date(ownInterest.proponowanyTermin))}
                 </Badge>
                 <Badge className="gap-1.5 rounded-md border border-border/10 bg-background/40 px-2.5 py-0.5 text-sm font-medium text-foreground/80">
                   <Clock className="h-3 w-3" />

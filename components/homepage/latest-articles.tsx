@@ -7,6 +7,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { BlogPost } from '@/types/blog';
+import { formatDateLong } from "@/lib/format"
 
 
 
@@ -14,16 +15,10 @@ interface LatestArticlesProps {
   blogPosts: BlogPost[]
 }
 
-// Format dates using Intl.DateTimeFormat for better localization
 const getFormattedDate = (post: BlogPost) => {
   const dateStr = post.dataPublikacji || post.createdAt
   if (!dateStr) return ""
-  const dateObj = new Date(dateStr)
-  return new Intl.DateTimeFormat("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(dateObj)
+  return formatDateLong(dateStr)
 }
 
 function ArticleCard({ post, index }: { post: BlogPost; index: number }) {

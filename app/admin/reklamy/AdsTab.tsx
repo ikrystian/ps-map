@@ -22,7 +22,7 @@ import {
 import { useState } from "react"
 import type { AdClient, Advertisement } from "./types"
 import { AD_LOCATIONS } from "./types"
-import { formatDate } from "@/lib/format"
+import { formatDate, formatNumber } from "@/lib/format"
 
 interface AdsTabProps {
   ads: Advertisement[]
@@ -261,8 +261,8 @@ export function AdsTab({ ads, clients, onRefresh }: AdsTabProps) {
                             <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Do: {ad.endDate ? formatDate(ad.endDate) : "zawsze"}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-center font-semibold">{ad.impressions.toLocaleString()}</td>
-                        <td className="py-3 px-4 text-center font-semibold">{ad.clicks.toLocaleString()}</td>
+                        <td className="py-3 px-4 text-center font-semibold">{formatNumber(ad.impressions)}</td>
+                        <td className="py-3 px-4 text-center font-semibold">{formatNumber(ad.clicks)}</td>
                         <td className="py-3 px-4 text-center font-semibold text-primary">{ctr.toFixed(2)}%</td>
                         <td className="py-3 px-4 text-center">
                           <Badge variant="outline" className="text-xs">{ad.weight}x</Badge>

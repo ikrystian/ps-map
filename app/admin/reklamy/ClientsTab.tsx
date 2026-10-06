@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import type { AdClient } from "./types"
+import { formatNumber } from "@/lib/format"
 
 interface ClientsTabProps {
   clients: AdClient[]
@@ -173,13 +174,13 @@ export function ClientsTab({ clients, onRefresh }: ClientsTabProps) {
                       <p className="text-xs text-muted-foreground flex items-center justify-center gap-0.5 mb-0.5">
                         <Eye className="h-3 w-3" /> Wyśw.
                       </p>
-                      <p className="font-bold text-sm">{stats.impressions.toLocaleString()}</p>
+                      <p className="font-bold text-sm">{formatNumber(stats.impressions)}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-xs text-muted-foreground flex items-center justify-center gap-0.5 mb-0.5">
                         <MousePointerClick className="h-3 w-3" /> Klik.
                       </p>
-                      <p className="font-bold text-sm">{stats.clicks.toLocaleString()}</p>
+                      <p className="font-bold text-sm">{formatNumber(stats.clicks)}</p>
                     </div>
                     <div className="text-center">
                       <p className="text-xs text-muted-foreground flex items-center justify-center gap-0.5 mb-0.5">

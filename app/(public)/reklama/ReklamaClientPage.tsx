@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/components/ui/sonner"
 import { NumberTicker } from "@/components/ui/number-ticker"
+import { formatNumber } from "@/lib/format"
 import "./reklama.css"
 
 // Formaty reklamowe dane
@@ -904,7 +905,7 @@ ${formData.tresc}`
                       <Users className="h-4 w-4" />
                       Miesięczny zasięg (wyświetlenia)
                     </span>
-                    <span className="text-xl font-bold text-foreground">{calcResults.impressions.toLocaleString()}</span>
+                    <span className="text-xl font-bold text-foreground">{formatNumber(calcResults.impressions)}</span>
                   </div>
 
                   {/* Stat 2: Clicks */}
@@ -913,7 +914,7 @@ ${formData.tresc}`
                       <MousePointerClick className="h-4 w-4" />
                       Przewidywane kliknięcia
                     </span>
-                    <span className="text-xl font-bold text-foreground">{calcResults.clicks.toLocaleString()}</span>
+                    <span className="text-xl font-bold text-foreground">{formatNumber(calcResults.clicks)}</span>
                   </div>
 
                   {/* Stat 3: CPC */}

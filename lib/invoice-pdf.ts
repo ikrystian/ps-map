@@ -8,6 +8,7 @@ import { join } from "path"
 import fontkit from "@pdf-lib/fontkit"
 import { PDFDocument, PDFFont, rgb, RGB } from "pdf-lib"
 import QRCode from "qrcode"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 /**
  * Katalog z finalnymi plikami PDF faktur. Celowo POZA `.uploads`, bo tamten
@@ -75,21 +76,8 @@ export function invoicePdfPath(invoiceNumber: string): string {
   return join(INVOICES_DIR, `${invoiceNumber.replace(/[^a-zA-Z0-9-]/g, "_")}.pdf`)
 }
 
-const formatPln = (amount: number) =>
-  new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
-
-const formatDatePl = (d: Date | string) =>
-  new Date(d).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: "Europe/Warsaw",
-  })
+const formatPln = formatCurrency
+const formatDatePl = formatDate
 
 /**
  * Generuje finalny plik PDF faktury z numerem KSeF i weryfikacyjnym kodem QR.

@@ -10,6 +10,7 @@ import type { AdClient, Advertisement } from "./types"
 import { ClientsTab } from "./ClientsTab"
 import { AdsTab } from "./AdsTab"
 import { RotationsTab } from "./RotationsTab"
+import { formatNumber } from "@/lib/format"
 
 export default function AdminAdsPage() {
   const [ads, setAds] = useState<Advertisement[]>([])
@@ -98,7 +99,7 @@ export default function AdminAdsPage() {
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div>
-              <span className="text-2xl font-bold">{totalImpressions.toLocaleString()}</span>
+              <span className="text-2xl font-bold">{formatNumber(totalImpressions)}</span>
               <p className="text-xs text-muted-foreground mt-1">odsłon na portalu</p>
             </div>
             <div className="p-2 bg-primary/10 rounded-full text-primary">
@@ -114,7 +115,7 @@ export default function AdminAdsPage() {
           <CardContent className="flex items-center justify-between">
             <div>
               <span className="text-2xl font-bold">{avgCtr.toFixed(2)}%</span>
-              <p className="text-xs text-muted-foreground mt-1">{totalClicks.toLocaleString()} kliknięć</p>
+              <p className="text-xs text-muted-foreground mt-1">{formatNumber(totalClicks)} kliknięć</p>
             </div>
             <div className="p-2 bg-primary/10 rounded-full text-primary">
               <Percent className="h-5 w-5" />

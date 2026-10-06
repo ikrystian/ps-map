@@ -231,3 +231,16 @@ Weryfikacja: `tsc` (z wykluczeniem test-gcs) = 142 błędy = baza, 0 nowych. Nic
 - `buildLawFirmCaseWhereInput` (`lib/cases.ts`): ekspert bez zadeklarowanych kategorii/obszaru widzi tylko sprawy z własnych poleceń (lista, pulpit, liczniki menu). Dotyczy też „cała Polska” bez kategorii. Pusty stan listy spraw wskazuje `/panel-eksperta/zakres-uslug`.
 - Nie ruszone: `GET /api/cases/[id]` nie stosuje filtra zakresu (dostęp po bezpośrednim linku do sprawy NOWA/OFERTY_OTRZYMANE nadal możliwy).
 - Weryfikacja: `tsc` bez nowych błędów; nie testowane na działającym API.
+
+---
+
+# F-001 — domknięcie migracji formaterów
+
+Stan wyjściowy: lokalne `formatDate/formatCurrency` w `app/`, `components/` i `lib/` były już w większości podmienione (77 plików importuje `lib/format`). Ta paczka usuwa resztę rozproszonych formatów:
+- `lib/format.ts`: dodane `formatMonthYear` („wrzesień 2026”) i `formatPoints` (liczba pl-PL bez jednostki).
+- date-fns z `locale: pl` w widokach konsultacji, poleceń i landingu polecenia (9 plików) → `formatDateLong` / `formatDate` / `formatDateTime`. Wcześniej: „24 wrz 2026”, „24 września 2026 04:01” (`PPP p`); teraz jeden format na rodzaj (data, data z godziną).
+- Inline `toLocale*String`/`Intl` → wspólne formatery: e-maile i powiadomienia (`api/case-referrals`, `consultation-interests`, `consultations`, `lib/consultations.ts`, `lib/email.ts`), `PublicFooter`, blog (slider, najnowsze artykuły, podgląd admina), `UserInfoDialog`, promocje (`PromotionSuccessDialog`, `ConfirmPromotionDialog`), `panel-klienta/newsy`, `lib/invoice-pdf.ts` (`formatPln`/`formatDatePl` = wspólne), `admin/pakiety` (`formatCurrency`), `statystyki` (miesiąc przez `formatMonthYear`).
+- Liczby: `.toLocaleString()` bez locale (impresje/kliknięcia w `admin/reklamy`, `reklama`, punkty w `pozycja-ogloszenia`, `punkty`) → `formatNumber`/`formatPoints` (wcześniej zależne od locale przeglądarki).
+- Zmiany widoczne dla użytkownika: daty konsultacji i poleceń bez skrótów miesięcy (`24.09.2026`), `Wyświetlenia` blogu i newsy w jednym formacie; strefa Europe/Warsaw w UI konsultacji (wcześniej strefa przeglądarki).
+- **Zostawione celowo:** kalendarz (`components/calendar/*`, date-fns jako biblioteka widoku), `date-picker`/`date-time-picker`, formaty względne czatu (`components/messages/*`, `lib/time-utils.ts`: „wczoraj”, dzień tygodnia), `formatDistanceToNow` w dzwonkach, `lib/ksef.ts` (formaty XML KSeF), `admin/cases/[id]` termin w UTC (F-046), animacje liczb na `/dla-prawnika`.
+- Weryfikacja: `tsc` 51 błędów = stan bazowy; UI nie sprawdzany w przeglądarce.

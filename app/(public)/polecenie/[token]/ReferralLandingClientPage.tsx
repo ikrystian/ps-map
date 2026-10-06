@@ -5,14 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading"
 import { expertAvatar } from "@/lib/expert-avatar"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { motion } from "framer-motion"
 import { AlertCircle, ArrowRight, Clock, Loader2, LogIn, MapPin, UserPlus } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { formatDateLong } from "@/lib/format"
 
 interface ReferralData {
   token: string
@@ -255,7 +254,7 @@ export default function ReferralLandingClientPage({ token }: { token: string }) 
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3.5 w-3.5" />
                 Link ważny do{" "}
-                {format(new Date(referral.expiresAt), "d MMMM yyyy", { locale: pl })}
+                {formatDateLong(new Date(referral.expiresAt))}
               </div>
             </div>
 

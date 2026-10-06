@@ -40,6 +40,7 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
+import { formatPoints } from "@/lib/format"
 
 interface RankingLawFirm {
   id: string
@@ -377,7 +378,7 @@ export default function RankingBoostPage() {
                   <div className="text-4xl sm:text-5xl font-black text-foreground/80 font-playfair tracking-tight">
                     #{currentRank}
                   </div>
-                  <span className="text-xs text-muted-foreground mt-2 font-mono">{lawFirm.rankingScore.toLocaleString()} pkt</span>
+                  <span className="text-xs text-muted-foreground mt-2 font-mono">{formatPoints(lawFirm.rankingScore)} pkt</span>
                 </div>
 
                 {/* Transition Arrow / Value */}
@@ -394,7 +395,7 @@ export default function RankingBoostPage() {
                         <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
                           <Rocket className="h-5 w-5 animate-bounce" />
                         </div>
-                        <span className="text-xs font-bold text-primary font-mono">+{boostValue.toLocaleString()}</span>
+                        <span className="text-xs font-bold text-primary font-mono">+{formatPoints(boostValue)}</span>
                         {packageBonusPercent > 0 && (
                           <span className="text-[10px] text-cyan-400 font-semibold whitespace-nowrap">
                             {points} pkt +{packageBonusPercent}% (pakiet)
@@ -438,7 +439,7 @@ export default function RankingBoostPage() {
                     "text-xs mt-2 font-mono transition-colors",
                     points > 0 ? "text-primary font-semibold" : "text-muted-foreground"
                   )}>
-                    {boostedScore.toLocaleString()} pkt
+                    {formatPoints(boostedScore)} pkt
                   </span>
                 </div>
               </div>
@@ -454,7 +455,7 @@ export default function RankingBoostPage() {
                       Przeznacz punkty
                     </label>
                     <div className="text-xs text-muted-foreground">
-                      Dostępne saldo: <strong className="text-foreground font-mono">{(lawFirm.punktySaldo ?? 0).toLocaleString()} pkt</strong>
+                      Dostępne saldo: <strong className="text-foreground font-mono">{formatPoints((lawFirm.punktySaldo ?? 0))} pkt</strong>
                     </div>
                   </div>
 
@@ -562,7 +563,7 @@ export default function RankingBoostPage() {
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-zinc-400 text-sm pt-2 leading-relaxed">
                         Przeznaczasz <strong className="text-white font-semibold">{points} punktów</strong> na zwiększenie pozycji w rankingu w głównej kategorii.
-                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{boostedScore.toLocaleString()} pkt</strong>
+                        Ta operacja odejmie punkty z Twojego konta i zwiększy wynik w rankingu do <strong className="text-primary font-semibold">{formatPoints(boostedScore)} pkt</strong>
                         {packageBonusPercent > 0 && (
                           <> (w tym <strong className="text-cyan-400 font-semibold">+{packageBonusPercent}%</strong> bonusu za pakiet {lawFirm.pakietSubskrypcji})</>
                         )}. Operacji tej nie można cofnąć.
@@ -661,7 +662,7 @@ export default function RankingBoostPage() {
                           </div>
 
                           <div className="text-right shrink-0">
-                            <span className="text-xs font-mono font-bold text-foreground">{score.toLocaleString()}</span>
+                            <span className="text-xs font-mono font-bold text-foreground">{formatPoints(score)}</span>
                             <span className="text-[10px] text-muted-foreground font-light block leading-none">pkt</span>
                           </div>
                         </div>
@@ -713,7 +714,7 @@ export default function RankingBoostPage() {
                   {packageBonusPercent > 0 ? (
                     <>Twój pakiet <strong className="text-white font-medium">{lawFirm.pakietSubskrypcji}</strong> daje{" "}
                       <strong className="text-cyan-400 font-medium">+{packageBonusPercent}%</strong> do wyniku
-                      (obecnie {lawFirm.packageBonusScore?.toLocaleString() ?? 0} pkt).</>
+                      (obecnie {formatPoints(lawFirm.packageBonusScore) ?? 0} pkt).</>
                   ) : (
                     <>Nie masz aktywnego pakietu, więc nie otrzymujesz tego bonusu.</>
                   )}

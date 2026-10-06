@@ -449,10 +449,7 @@ export default function ClientNewsCenterPage() {
                         </span>
                         <span>•</span>
                         <span>
-                          {post.dataPublikacji && new Date(post.dataPublikacji).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
-                            day: "numeric",
-                            month: "short",
-                          })}
+                          {post.dataPublikacji && formatDate(post.dataPublikacji)}
                         </span>
                       </div>
                     </div>

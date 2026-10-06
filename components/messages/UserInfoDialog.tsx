@@ -16,6 +16,7 @@ import { Ban, Calendar, CheckCircle2, Mail, UserCircle } from "lucide-react"
 import { useState } from "react"
 import { expertAvatar } from "@/lib/expert-avatar"
 import { clientAvatar } from "@/lib/client-avatar"
+import { formatDateLong } from "@/lib/format"
 
 interface UserInfo {
   id: string
@@ -204,11 +205,7 @@ export function UserInfoDialog({
                 <Calendar className="h-4 w-4 flex-shrink-0" />
                 <span>
                   Dołączył:{" "}
-                  {new Date(userInfo.createdAt).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDateLong(userInfo.createdAt)}
                 </span>
               </div>
 

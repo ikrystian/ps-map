@@ -1,6 +1,6 @@
 "use client"
 
-import { formatNumber } from "@/lib/format"
+import { formatMonthYear, formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { FeatureLockedCard } from "@/components/permissions"
 import { BorderBeam } from "@/components/ui/border-beam"
@@ -94,12 +94,8 @@ interface StatsData {
 }
 
 const formatDate = (dateString: string) => {
-  const months = [
-    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
-  ]
-  const [year, month] = dateString.split("-")
-  return `${months[parseInt(month) - 1]} ${year}`
+  const label = formatMonthYear(`${dateString}-01T12:00:00`)
+  return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
 const viewsChartConfig = {

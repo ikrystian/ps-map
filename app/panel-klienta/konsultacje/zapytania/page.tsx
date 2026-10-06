@@ -8,12 +8,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
 import { CONSULTATION_FORM_LABELS } from "@/lib/consultation-requests"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { motion } from "framer-motion"
 import { Clock, Loader2, MessageCircle, Users, Wallet } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { formatDate } from "@/lib/format"
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOWE: {
@@ -181,7 +180,7 @@ export default function ClientConsultationRequestsPage() {
                             <span className="text-xs text-primary">{pendingCount} do rozpatrzenia</span>
                           )}
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(request.createdAt), "d MMM yyyy", { locale: pl })}
+                            {formatDate(new Date(request.createdAt))}
                           </span>
                         </div>
                       </div>

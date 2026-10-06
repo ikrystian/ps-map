@@ -1,14 +1,12 @@
 "use client"
 
-import { formatCurrency } from "@/lib/format"
+import { formatCurrency, formatDateTime } from "@/lib/format"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { Calendar, Clock, CreditCard, FileText, Loader2, Trash2, Video, MessageCircle, MoreVertical } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
@@ -228,7 +226,7 @@ export default function ClientConsultationsPage() {
                   <div className="flex flex-wrap gap-2">
                     <Badge className="bg-primary/10 text-primary border border-primary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
+                      {formatDateTime(new Date(booking.consultationDate))}
                     </Badge>
                     <Badge className="bg-background/40 text-foreground/80 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Clock className="h-3 w-3" />

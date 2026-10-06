@@ -13,6 +13,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect, Fragment } from "react"
 import { openCookiePreferences } from "@/components/CookieConsent"
+import { formatDateTime } from "@/lib/format"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (
@@ -38,15 +39,7 @@ const defaultSocialLinks = {
 function formatDeployTime(isoString: string): string {
   if (!isoString) return ""
   try {
-    const date = new Date(isoString)
-    return date.toLocaleString("pl-PL", {
-      timeZone: "Europe/Warsaw",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return formatDateTime(isoString)
   } catch {
     return ""
   }

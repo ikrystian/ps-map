@@ -4,6 +4,7 @@ import { format } from "date-fns"
 import { pl } from "date-fns/locale"
 import { createGoogleMeetLink } from "./google-meet"
 import { sendSystemNotification } from "./notifications"
+import { formatDateTime } from "@/lib/format"
 
 /**
  * Generuje linki Google Meet dla zaakceptowanych konsultacji na 5 minut przed ich rozpoczęciem.
@@ -48,7 +49,7 @@ export async function generateUpcomingGoogleMeetLinks(): Promise<number> {
           data: { googleMeetUrl: meetLink },
         })
 
-        const dateStr = new Date(booking.consultationDate).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+        const dateStr = formatDateTime(booking.consultationDate);
         const linkTresc = ` Link do spotkania Google Meet: ${meetLink}`;
 
         // Wyślij powiadomienie do klienta
