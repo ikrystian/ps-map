@@ -16,6 +16,7 @@
     "db:seed": "prisma db seed",
     "db:seed:pages": "bun run prisma/seed-static-pages-only.ts",
     "db:seed:categories": "bun run prisma/seed-categories-only.ts",
+    "db:seed:scheduler": "bun run prisma/seed-scheduler-only.ts",
     "db:update:category-descriptions": "bun run prisma/update-category-descriptions.ts",
     "db:geocode:experts": "bun run prisma/geocode-experts.ts",
     "reset": "prisma generate && prisma migrate dev && prisma db seed && python3 prisma/import_postal_codes.py",
