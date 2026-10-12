@@ -6,6 +6,7 @@ import { seedBlogCategories } from './seeds/blog-categories'
 import { seedCategories } from './seeds/categories'
 import { seedEmailTemplates } from './seeds/email-templates';
 import { seedExpertiseCategories } from './seeds/expertise-categories';
+import { seedCategoryExpertiseLinks } from './seeds/category-expertise';
 import { seedPromotionConfigs } from './seeds/promotions'
 import { seedStaticPages } from './seeds/static-pages'
 import { seedVoivodeships } from './seeds/voivodeships'
@@ -96,6 +97,7 @@ async function main() {
   await seedCategories(prisma)
   await seedBlogCategories(prisma)             // drzewo kategorii bloga (sprawy prywatne + firmowe)
   await seedExpertiseCategories(prisma)        // drzewo kategorii rejestracji ekspertów (krok 1)
+  await seedCategoryExpertiseLinks(prisma)     // kategorie ↔ specjalizacje ekspertów (po obu powyższych)
   await seedPromotionConfigs(prisma)
   await seedPackages(prisma)
   await seedEmailTemplates(prisma)

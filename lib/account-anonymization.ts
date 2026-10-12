@@ -80,6 +80,10 @@ export interface AnonymizeAccountResult {
   filesDeleted: number
 }
 
+/** Komunikat dla admina, gdy próbuje usunąć konto, które zostało już zanonimizowane. */
+export const ACCOUNT_ALREADY_ANONYMIZED_MESSAGE =
+  "To konto zostało już zanonimizowane. Nie można usunąć użytkownika z systemu całkowicie ze względów prawnych — dane wymagane przepisami (np. dokumentacja księgowa) muszą być przechowywane do końca okresu retencji."
+
 /** Rzucany, gdy konto zostało już zanonimizowane. */
 export class AccountAlreadyAnonymizedError extends Error {
   constructor(userId: string) {

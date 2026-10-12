@@ -25,10 +25,14 @@ export async function GET(request: NextRequest) {
 
     // Budowanie warunkówquery
     const where: any = {}
+    const and: any[] = []
 
-    // Domyślnie nie pokazuj zarchiwizowanych
+    // Domyślnie nie pokazuj zarchiwizowanych — poza sprawami usuniętych użytkowników:
+    // anonimizacja konta archiwizuje ich sprawy, a admin ma je nadal widzieć.
     if (!showArchived) {
-      where.isArchived = false
+      and.push({
+        OR: [{ isArchived: false }, { client: { user: { deletedAt: { not: null } } } }],
+      })
     }
 
     // Filtr statusu
@@ -43,11 +47,17 @@ export async function GET(request: NextRequest) {
 
     // Wyszukiwanie po tytule, opisie lub danych klienta
     if (search) {
-      where.OR = [
-        { nazwaSprawy: { contains: search } },
-        { opisSprawy: { contains: search } },
-        { imieNazwisko: { contains: search } },
-      ]
+      and.push({
+        OR: [
+          { nazwaSprawy: { contains: search } },
+          { opisSprawy: { contains: search } },
+          { imieNazwisko: { contains: search } },
+        ],
+      })
+    }
+
+    if (and.length > 0) {
+      where.AND = and
     }
 
     // Pobierz sprawy z paginacją
@@ -63,6 +73,7 @@ export async function GET(request: NextRequest) {
               user: {
                 select: {
                   email: true,
+                  deletedAt: true,
                 },
               },
             },

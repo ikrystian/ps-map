@@ -41,6 +41,7 @@ interface Client {
   nazwisko: string
   user: {
     email: string
+    deletedAt: string | null
   }
 }
 
@@ -298,6 +299,11 @@ export default function AdminCasesPage() {
                             {caseItem.client.imie} {caseItem.client.nazwisko}
                           </div>
                           <div className="text-muted-foreground text-xs">{caseItem.client.user.email}</div>
+                          {caseItem.client.user.deletedAt && (
+                            <Badge variant="outline" className="mt-1 text-xs">
+                              Konto usunięte
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>

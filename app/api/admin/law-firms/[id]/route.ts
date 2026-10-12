@@ -1,6 +1,10 @@
 import { auth } from "@/auth"
 import { cleanCityName } from "@/lib/city-name"
-import { anonymizeUserAccount } from "@/lib/account-anonymization"
+import {
+  ACCOUNT_ALREADY_ANONYMIZED_MESSAGE,
+  AccountAlreadyAnonymizedError,
+  anonymizeUserAccount,
+} from "@/lib/account-anonymization"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
@@ -676,6 +680,16 @@ export async function DELETE(
       return NextResponse.json({ error: "Law firm not found" }, { status: 404 })
     }
 
+    // Konto już zanonimizowane — fizyczne usunięcie skasowałoby kaskadowo rejestr
+    // anonimizacji i dane objęte retencją, więc usunięcie z systemu jest zablokowane.
+    const alreadyAnonymized = await prisma.accountDeletion.findUnique({
+      where: { userId: existingLawFirm.userId },
+      select: { id: true },
+    })
+    if (alreadyAnonymized) {
+      return NextResponse.json({ error: ACCOUNT_ALREADY_ANONYMIZED_MESSAGE }, { status: 409 })
+    }
+
     // Fizyczne usunięcie użytkownika kasuje kaskadowo faktury i dowody księgowe,
     // które muszą być przechowywane 5 lat (art. 74 ust. 2 pkt 4 ustawy
     // o rachunkowości, art. 86 § 1 Ordynacji podatkowej). Jeżeli takie dokumenty
@@ -718,6 +732,9 @@ export async function DELETE(
       { status: 200 }
     )
   } catch (error) {
+    if (error instanceof AccountAlreadyAnonymizedError) {
+      return NextResponse.json({ error: ACCOUNT_ALREADY_ANONYMIZED_MESSAGE }, { status: 409 })
+    }
     console.error("Error deleting law firm:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }

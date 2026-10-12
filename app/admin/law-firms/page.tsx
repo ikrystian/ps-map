@@ -107,7 +107,8 @@ export default function AdminLawFirmsPage() {
         throw new Error(error.error || "Error deleting law firm")
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete law firm")
+      // Dłuższy czas wyświetlania — komunikat o zanonimizowanym koncie jest długi.
+      toast.error(error instanceof Error ? error.message : "Failed to delete law firm", { duration: 10000 })
     }
   }
 
