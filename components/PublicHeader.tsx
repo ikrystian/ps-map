@@ -1,6 +1,7 @@
 "use client"
 
 import { AddCaseButton } from "@/components/AddCaseButton"
+import { AddMenuButton } from "@/components/AddMenuButton"
 import { SiteLogo } from "@/components/site-logo"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
@@ -387,9 +388,14 @@ export default function PublicHeader({
             <Image className="block md:hidden min-w-[32px]" src="/images/mobile-logo.webp" alt="Logo" title="Przystąp do sprawy" width={53} height={45} style={{ width: "auto", height: "32px" }} />
           </Link>
           <div className="flex">
-            {/* Navigation Menu */}
-            <NavigationMenu className="hidden xl:flex">
-              <NavigationMenuList className="flex lg:gap-2">
+            {/*
+              Navigation Menu — `static` przenosi pozycjonowanie viewportu na <header>
+              (fixed), a `right-0` na wrapperze viewportu rozciąga go na całą szerokość,
+              więc mega menu (1080px) jest wyśrodkowane na ekranie zamiast przyklejać
+              się do lewej krawędzi zwężonego paska i wychodzić poza prawy brzeg.
+            */}
+            <NavigationMenu className="hidden xl:flex static [&>div:last-child]:right-0">
+              <NavigationMenuList className="flex gap-2 space-x-0">
                 {/* Szukaj / Zamknij Animated Button */}
                 <NavigationMenuItem>
                   <AnimatePresence mode="wait">
@@ -435,15 +441,33 @@ export default function PublicHeader({
 
 
 
+                {/*
+                  Grupa "Sprawy": wspólny podpis + dwa triggery (firmowe/prywatne) połączone
+                  w jedną pigułkę. Każdy trigger musi zostać osobnym NavigationMenuItem
+                  (własna treść mega menu), więc pigułkę składamy z sąsiadujących <li>
+                  (-ml-2 znosi gap listy).
+                */}
+                <li
+                  aria-hidden
+                  className={cn(
+                    "flex h-9 items-center gap-2.5 rounded-l-lg bg-white/[0.04] pl-3 text-[11px] font-semibold uppercase tracking-[0.12em] select-none transition-colors",
+                    isFirmoweActive || isPrywatneActive ? "text-primary/80" : "text-muted-foreground/80"
+                  )}
+                >
+                  Sprawy
+                  <span className="h-4 w-px bg-white/15" />
+                </li>
+
                 {/* Sprawy Firmowe - Mega Menu */}
-                <NavigationMenuItem>
+                <NavigationMenuItem className="-ml-2 bg-white/[0.04]">
                   <NavigationMenuTrigger
+                    aria-label="Sprawy firmowe"
                     className={cn(
-                      "bg-transparent hover:bg-background",
+                      "bg-transparent hover:bg-background px-3",
                       isFirmoweActive && "text-primary font-semibold"
                     )}
                   >
-                    Sprawy firmowe
+                    firmowe
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
@@ -517,14 +541,15 @@ export default function PublicHeader({
                 </NavigationMenuItem>
 
                 {/* Sprawy Prywatne - Mega Menu */}
-                <NavigationMenuItem>
+                <NavigationMenuItem className="-ml-2 rounded-r-lg bg-white/[0.04]">
                   <NavigationMenuTrigger
+                    aria-label="Sprawy prywatne"
                     className={cn(
-                      "bg-transparent hover:bg-background",
+                      "bg-transparent hover:bg-background px-3",
                       isPrywatneActive && "text-primary font-semibold"
                     )}
                   >
-                    Sprawy prywatne
+                    prywatne
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
@@ -738,15 +763,11 @@ export default function PublicHeader({
                   <>
                     <AddCaseButton
                       href="/dodaj-sprawe"
-                      className="flex"
+                      className="flex lg:hidden"
                       labelClassName="hidden min-[390px]:block"
                       iconClassName="min-[390px]:hidden"
                     />
-                    <AddCaseButton
-                      href="/panel-klienta/konsultacje/zapytaj"
-                      label="Konsultacja online"
-                      className="hidden lg:flex"
-                    />
+                    <AddMenuButton className="hidden lg:flex" />
                   </>
                 )}
                 {(userRole === "CLIENT" || userRole === "LAW_FIRM") && (
@@ -754,7 +775,6 @@ export default function PublicHeader({
                     <NotificationBell />
                   </>
                 )}
-                <ThemeToggle className="hidden sm:inline-flex" />
                 <UserMenu
                   userRole={userRole}
                   userName={userName}
@@ -766,13 +786,8 @@ export default function PublicHeader({
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <AddCaseButton href="/dodaj-sprawe" className="flex" />
-                <AddCaseButton
-                  href="/panel-klienta/konsultacje/zapytaj"
-                  label="Konsultacja online"
-                  className="hidden lg:flex"
-                />
-                <ThemeToggle className="hidden sm:inline-flex" />
+                <AddCaseButton href="/dodaj-sprawe" className="flex lg:hidden" />
+                <AddMenuButton className="hidden lg:flex" />
                 <Link href="/logowanie" className="hidden xl:flex">
                   <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
                 </Link>

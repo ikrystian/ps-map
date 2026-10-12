@@ -356,10 +356,6 @@ export default function SearchLawyerPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-4xl font-playfair font-medium tracking-tight">Szukaj prawnika</h1>
-        </div>
 
         {/* Horizontal Filters */}
         <AnimatePresence>
@@ -646,16 +642,6 @@ export default function SearchLawyerPage() {
                     <div className="space-y-2">
                       <Label className="text-xs">Opcje</Label>
                       <div className="flex flex-col gap-2 pt-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="onlineOnly"
-                            checked={onlineOnly}
-                            onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
-                          />
-                          <Label htmlFor="onlineOnly" className="cursor-pointer text-sm font-normal">
-                            Tylko online
-                          </Label>
-                        </div>
 
                         <div className="flex items-center space-x-2">
                           <Checkbox

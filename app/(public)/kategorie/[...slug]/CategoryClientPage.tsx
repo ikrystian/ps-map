@@ -517,7 +517,7 @@ export default function CategoryClientPage({
             {/* Opis kategorii — nad listą wyników (pierwszy ekran + indeks) */}
             {category.opis && (
               <div
-                className="mt-2 max-w-3xl prose prose-sm md:prose-base dark:prose-invert whitespace-pre-line text-foreground/90 prose-p:text-foreground/90 prose-headings:text-foreground"
+                className="mt-2 max-w-ful prose prose-sm md:prose-base dark:prose-invert whitespace-pre-line text-foreground/90 prose-p:text-foreground/90 prose-headings:text-foreground"
                 dangerouslySetInnerHTML={{ __html: category.opis }}
               />
             )}
@@ -748,16 +748,6 @@ export default function CategoryClientPage({
 
                 {/* Checkboxes */}
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="onlineOnly"
-                      checked={onlineOnly}
-                      onCheckedChange={(checked) => setOnlineOnly(checked as boolean)}
-                    />
-                    <Label htmlFor="onlineOnly" className="cursor-pointer">
-                      Tylko online
-                    </Label>
-                  </div>
 
                   <div className="flex items-center space-x-2">
                     <Checkbox
