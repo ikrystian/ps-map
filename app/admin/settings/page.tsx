@@ -2041,7 +2041,7 @@ export default function AdminSettingsPage() {
                     placeholder="10"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Ile maks. kategorii może zaznaczyć ekspert w zakresie usług
+                    Ile maks. kategorii nadrzędnych może zaznaczyć ekspert w zakresie usług (podkategorie są bez limitu)
                   </p>
                 </div>
 

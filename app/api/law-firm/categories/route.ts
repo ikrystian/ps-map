@@ -46,6 +46,15 @@ async function getMaxCategories(userId: string) {
   return maxCategories
 }
 
+// Limit pakietu dotyczy wyłącznie kategorii nadrzędnych (bez rodzica);
+// podkategorie są nielimitowane niezależnie od pakietu.
+async function countParentCategories(categoryIds: string[]) {
+  if (categoryIds.length === 0) return 0
+  return prisma.category.count({
+    where: { id: { in: categoryIds }, parentId: null },
+  })
+}
+
 export async function GET() {
   try {
     const session = await auth()
@@ -166,11 +175,14 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Invalid categories data" }, { status: 400 })
     }
 
-    // Sprawdź limit kategorii
+    // Sprawdź limit kategorii — liczą się tylko kategorie nadrzędne
     const maxCategories = await getMaxCategories(session.user.id)
-    if (categories.length > maxCategories) {
+    const parentCount = await countParentCategories(
+      categories.map((cat: { categoryId: string }) => cat.categoryId)
+    )
+    if (parentCount > maxCategories) {
       return NextResponse.json(
-        { error: `Przekroczono maksymalną liczbę kategorii (${maxCategories}).` },
+        { error: `Przekroczono maksymalną liczbę kategorii nadrzędnych (${maxCategories}). Podkategorie nie są limitowane.` },
         { status: 400 }
       )
     }

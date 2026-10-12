@@ -501,6 +501,10 @@ export default function LawFirmServicesPage() {
     return selectedCategories.some(sc => sc.categoryId === categoryId)
   }
 
+  // Limit pakietu dotyczy tylko kategorii nadrzędnych — podkategorie są nielimitowane
+  const isParentCategory = (cat: Category) => !cat.parentId
+  const parentSelectedCount = selectedCategories.filter(sc => isParentCategory(sc.category)).length
+
   const toggleCategory = (category: Category) => {
     if (isSelected(category.id)) {
       if (category.id === mainCategoryId) {
@@ -525,11 +529,10 @@ export default function LawFirmServicesPage() {
         : []
       const newCategories = [category, ...unselectedAncestors, ...unselectedDescendants]
 
-      if (selectedCategories.length + newCategories.length > maxCategories) {
+      const newParentCount = newCategories.filter(isParentCategory).length
+      if (parentSelectedCount + newParentCount > maxCategories) {
         toast.error(
-          unselectedDescendants.length > 0
-            ? `Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej kategorii zaznacza też jej podkategorie (razem ${newCategories.length} nowych kategorii).`
-            : `Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej specjalizacji wymaga zaznaczenia jej rodziców (razem ${newCategories.length} nowych kategorii).`
+          `Możesz zaznaczyć maksymalnie ${maxCategories} kategorii nadrzędnych (podkategorie nie są limitowane). Ta zmiana dodaje ${newParentCount} nową kategorię nadrzędną.`
         )
         return
       }
@@ -1333,17 +1336,20 @@ export default function LawFirmServicesPage() {
                     <span className="text-muted-foreground flex items-center gap-1.5">
                       <Star className="h-3.5 w-3.5 text-primary fill-primary" /> Specjalizacje
                     </span>
-                    <span>{selectedCategories.length} / {maxCategories}</span>
+                    <span>{parentSelectedCount} / {maxCategories}</span>
                   </div>
                   <div className="h-2 w-full bg-card rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-300",
-                        selectedCategories.length >= maxCategories ? "bg-rose-500" : "bg-primary"
+                        parentSelectedCount >= maxCategories ? "bg-rose-500" : "bg-primary"
                       )}
-                      style={{ width: `${Math.min(100, (selectedCategories.length / maxCategories) * 100)}%` }}
+                      style={{ width: `${Math.min(100, (parentSelectedCount / maxCategories) * 100)}%` }}
                     />
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Limit dotyczy kategorii nadrzędnych. Podkategorie są bez limitu.
+                  </p>
                 </div>
 
                 {areaData.calaPolska ? (
@@ -1426,7 +1432,7 @@ export default function LawFirmServicesPage() {
                   Kolejność
                 </CardTitle>
                 <Badge variant="secondary" className="text-xs bg-muted text-foreground/80 hover:bg-muted border-none rounded-lg">
-                  {selectedCategories.length} / {maxCategories}
+                  {selectedCategories.length}
                 </Badge>
               </div>
               <CardDescription className="text-muted-foreground text-xs">

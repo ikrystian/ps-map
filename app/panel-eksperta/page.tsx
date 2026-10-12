@@ -330,7 +330,10 @@ export default function LawFirmDashboardPage() {
 
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json()
-        setCategoriesCount(categoriesData.categories?.length || 0)
+        // Limit pakietu dotyczy tylko kategorii nadrzędnych (podkategorie są nielimitowane)
+        setCategoriesCount(
+          (categoriesData.categories ?? []).filter((c: { category?: { parentId?: string | null } }) => !c.category?.parentId).length
+        )
       }
 
       if (offersResponse.ok) {

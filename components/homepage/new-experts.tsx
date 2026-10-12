@@ -89,12 +89,16 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                 >
                   {/* Image Section */}
                   <div className="relative md:h-[290px] w-full overflow-hidden bg-background">
-                    {/* Gold emblem badge top-left */}
-                    <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-card/95 border border-[#cda567]/60 flex items-center justify-center shadow-lg">
-                      <svg className="w-[18px] h-[18px] text-[#cda567]" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.86 11.18c-.46-1.58-1.5-2.88-2.92-3.66-.46-.25-1-.18-1.39.17l-1.92 1.76c-.34.31-.85.38-1.26.17l-1.96-1.01c-.55-.28-1.22.04-1.34.65l-.54 2.76c-.08.41.13.82.5 1.01l2.09 1.07c.33.17.48.56.35.91l-.99 2.65c-.19.51.13 1.08.68 1.15h4.15c.42 0 .79-.27.92-.67l1.78-5.34c.26-.78.36-1.61.27-2.43zM12 9.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
-                      </svg>
-                    </div>
+                    {/* Subscription package emblem top-left */}
+                    {firm.pakietObrazek && (
+                      <div className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-card/95 border border-[#cda567]/60 p-1.5 flex items-center justify-center shadow-lg overflow-hidden">
+                        <img
+                          src={firm.pakietObrazek}
+                          alt="Pakiet"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
 
                     {/* Expert Portrait */}
                     <img
