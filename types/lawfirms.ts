@@ -195,6 +195,8 @@ export interface LawFirm extends LawFirmWithLocation {
     status?: string
     emailVerified?: string | Date | null
     createdAt?: string | Date
+    // Ustawione dla kont usuniętych (zanonimizowanych)
+    deletedAt?: string | Date | null
   }
   // Publiczny e-mail kontaktowy (opcjonalny — obecnie nieeksponowany przez API)
   emailKontakt?: string | null

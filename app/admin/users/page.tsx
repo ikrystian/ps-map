@@ -45,6 +45,7 @@ interface User {
   createdAt: string
   updatedAt: string
   lastLogin?: Date | null
+  deletedAt?: string | null
   client?: {
     id: string
     imie: string
@@ -261,6 +262,9 @@ export default function AdminUsersPage() {
   const getEffectiveStatusBadge = (
     user: User
   ): { label: string; variant: "default" | "primary" | "secondary" | "destructive" | "outline" } => {
+    if (user.deletedAt) {
+      return { label: "Konto usunięte", variant: "outline" }
+    }
     if (user.status === "ACTIVE" && !user.emailVerified) {
       return { label: "Email niepotwierdzony", variant: "outline" }
     }
@@ -397,6 +401,11 @@ export default function AdminUsersPage() {
                       <Badge variant={getEffectiveStatusBadge(user).variant}>
                         {getEffectiveStatusBadge(user).label}
                       </Badge>
+                      {user.deletedAt && (
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          {formatDateTime(user.deletedAt)}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       {user.client && (
@@ -415,6 +424,8 @@ export default function AdminUsersPage() {
                       {formatDateTime(user.createdAt)}
                     </TableCell>
                     <TableCell className="text-right">
+                      {/* Konto zanonimizowane — brak akcji (edycja przywróciłaby dane osobowe). */}
+                      {!user.deletedAt && (
                       <div className="flex items-center gap-2 justify-end">
                         <Button
                           variant="outline"
@@ -449,6 +460,7 @@ export default function AdminUsersPage() {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

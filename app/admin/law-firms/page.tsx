@@ -307,6 +307,11 @@ export default function AdminLawFirmsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
+                        {lawFirm.user?.deletedAt && (
+                          <Badge variant="outline" className="text-xs">
+                            Konto usunięte
+                          </Badge>
+                        )}
                         {lawFirm.zweryfikowana ? (
                           <Badge variant="default" className="text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
@@ -332,25 +337,29 @@ export default function AdminLawFirmsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center gap-2 justify-end">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
-                          <Link href={`/admin/law-firms/${lawFirm.id}/edit`}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openDeleteDialog(lawFirm)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      {/* Konto zanonimizowane — brak akcji (edycja przywróciłaby dane osobowe,
+                          a fizyczne usunięcie jest zablokowane przez retencję). */}
+                      {!lawFirm.user?.deletedAt && (
+                        <div className="flex items-center gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                          >
+                            <Link href={`/admin/law-firms/${lawFirm.id}/edit`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openDeleteDialog(lawFirm)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

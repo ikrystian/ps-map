@@ -67,6 +67,7 @@ export async function GET(request: NextRequest) {
               emailVerified: true,
               createdAt: true,
               lastLogin: true,
+              deletedAt: true,
               ...USER_CONTACT_SELECT,
             },
           },

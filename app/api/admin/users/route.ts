@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get("role") || ""
     const status = searchParams.get("status") || ""
 
-    // Build where clause for filters
-    const where: any = {
-      deletedAt: null, // Only show non-deleted users
-    }
+    // Build where clause for filters.
+    // Konta usunięte (zanonimizowane) też zwracamy — rekord User zostaje w bazie
+    // (retencja, patrz lib/account-anonymization.ts), a admin ma je widzieć.
+    const where: any = {}
 
     // Search by user fields (name, email, first/last name, phone)
     if (search) {
