@@ -1,9 +1,6 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ArrowLeft,
   Building2,
@@ -13,10 +10,11 @@ import {
   Tag
 } from "lucide-react";
 import Link from "next/link";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
 import { formatDate } from "@/lib/format"
+import { BlogPostViewTracker, ParallaxHeroImage, ReadingProgressBar } from "./BlogPostInteractive";
 
 interface AdSenseSettings {
   enabled: boolean;
@@ -26,19 +24,14 @@ interface AdSenseSettings {
   slotSidebar: string;
 }
 
-interface BlogPostClientPageProps {
+interface BlogPostViewProps {
   post: BlogPost & { isUnpublished?: boolean };
   adsense?: AdSenseSettings;
 }
 
-export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps) {
-  // Treść jest już dostarczona server-side (patrz page.tsx) — tu tylko
-  // liczymy realną odsłonę, niezależnie od statycznego/ISR cache'owania strony.
-  useEffect(() => {
-    if (post.isUnpublished) return;
-    fetch(`/api/blog/posts/${post.slug}/view`, { method: "POST", keepalive: true }).catch(() => {});
-  }, [post.slug, post.isUnpublished]);
-
+// Komponent serwerowy — cała treść wpisu trafia do HTML-a z serwera; interaktywne
+// dodatki (licznik odsłon, pasek postępu, paralaksa) są w BlogPostInteractive.
+export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
   const formatViews = (views?: number): string => {
     if (!views || views === 1) return views === 1 ? "1 wyświetlenie" : "0 wyświetleń";
     const lastDigit = views % 10;
@@ -48,20 +41,6 @@ export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps)
     }
     return `${views} wyświetleń`;
   };
-
-  // Set up Scroll-driven animations
-  const { scrollY, scrollYProgress } = useScroll();
-
-  // Spring settings for smooth progress bar
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  // Parallax calculations for hero image
-  const imageY = useTransform(scrollY, [0, 600], [0, 180]);
-  const imageScale = useTransform(scrollY, [0, 600], [1, 1.1]);
 
   // Calculate estimated reading time (assuming 200 words per minute)
   const estimatedReadingTime = post.tresc
@@ -124,23 +103,14 @@ export default function BlogPostPage({ post, adsense }: BlogPostClientPageProps)
       )}
 
       {/* Reading progress bar */}
-      <motion.div
-        className="fixed top-[65px] left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-secondary to-primary origin-left z-50 shadow-xs"
-        style={{ scaleX }}
-      />
+      <BlogPostViewTracker slug={post.slug} disabled={isUnpublished} />
+      <ReadingProgressBar />
 
       {/* Hero Section with Featured Image / Parallax */}
       {post.obrazekWyrozniajacy ? (
         <div className="on-dark relative h-[55vh] min-h-[400px] max-h-[600px] w-full overflow-hidden bg-background">
           {/* Parallax Image wrapper */}
-          <motion.div
-            className="absolute inset-0 bg-cover bg-center will-change-transform"
-            style={{
-              backgroundImage: `url(${post.obrazekWyrozniajacy})`,
-              y: imageY,
-              scale: imageScale,
-            }}
-          />
+          <ParallaxHeroImage src={post.obrazekWyrozniajacy} />
           {/* Immersive overlays */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background-sec" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/40 to-transparent pointer-events-none" />

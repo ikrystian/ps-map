@@ -2,7 +2,7 @@ import { getPublicBlogPostBySlug, getPublishedBlogPostSlugs } from "@/lib/blog-p
 import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
-import BlogPostClientPage from "./BlogPostClientPage"
+import BlogPostView from "./BlogPostView"
 
 interface PageProps {
   params: Promise<{
@@ -86,5 +86,5 @@ export default async function BlogPostPage({ params }: PageProps) {
     console.error("Error reading AdSense settings for blog post:", error)
   }
 
-  return <BlogPostClientPage post={post} adsense={adsense} />
+  return <BlogPostView post={post} adsense={adsense} />
 }
