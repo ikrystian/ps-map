@@ -408,21 +408,32 @@ export default function LawFirmRegistrationPage() {
     }
   }
 
-  // Ekspert z gałęzi „Eksperci” widzi w kroku 6 tylko kategorie powiązane z wybraną
-  // specjalizacją; prawnicy — pełną listę (zachowanie bez zmian).
+  // W kroku 6 wybiera się tylko kategorię nadrzędną — jej podkategorie zaznaczają się
+  // automatycznie. Ekspert z gałęzi „Eksperci” widzi wyłącznie podkategorie powiązane
+  // z wybraną specjalizacją (i rodziców, do których należą); prawnicy — wszystkie.
   const isExpertBranch = isInExpertsBranch(expertiseCategories, formData.expertiseCategoryId)
-  const expertCategories = isExpertBranch
-    ? categories.filter(
-        (cat) => cat.aktywna !== false && cat.expertiseCategoryIds?.includes(formData.expertiseCategoryId)
-      )
-    : []
+  const isLinkedToExpertise = (cat: Category) =>
+    !isExpertBranch || !!cat.expertiseCategoryIds?.includes(formData.expertiseCategoryId)
+  const activeCategories = categories.filter((cat) => cat.aktywna !== false)
+  const childrenByParent = new Map<string, Category[]>()
+  for (const cat of activeCategories) {
+    if (!cat.parentId || !isLinkedToExpertise(cat)) continue
+    childrenByParent.set(cat.parentId, [...(childrenByParent.get(cat.parentId) ?? []), cat])
+  }
+  const getChildCategories = (parentId: string) =>
+    (childrenByParent.get(parentId) ?? []).slice().sort((a, b) => a.nazwa.localeCompare(b.nazwa))
+  const parentCategories = activeCategories
+    .filter((cat) => !cat.parentId && (isLinkedToExpertise(cat) || childrenByParent.has(cat.id)))
+    .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
 
   // Zmiana specjalizacji (albo dane z localStorage sprzed zmiany powiązań) mogą zostawić
   // w formData kategorię, której już nie ma na liście — do walidacji i zapisu bierzemy
-  // tylko te, które nadal są dostępne dla wybranej specjalizacji.
-  const selectedCategoryIds = isExpertBranch
-    ? formData.categoriesIds.filter((id) => expertCategories.some((cat) => cat.id === id))
-    : formData.categoriesIds
+  // wybranego rodzica (o ile nadal jest dostępny) i aktualny zestaw jego podkategorii.
+  // Rodzic idzie pierwszy, bo API traktuje pierwszą kategorię jako główną.
+  const selectedParent = parentCategories.find((cat) => formData.categoriesIds.includes(cat.id))
+  const selectedCategoryIds = selectedParent
+    ? [selectedParent.id, ...getChildCategories(selectedParent.id).map((cat) => cat.id)]
+    : []
 
   const validateStep = () => {
     setError("")
@@ -438,7 +449,7 @@ export default function LawFirmRegistrationPage() {
         break
       case 6:
         // Specjalizacja bez powiązanych kategorii: nie ma z czego wybierać, więc nie blokujemy
-        if (isExpertBranch && expertCategories.length === 0) return true
+        if (isExpertBranch && parentCategories.length === 0) return true
         schema = step6Schema
         dataToValidate = { categoriesIds: selectedCategoryIds }
         break
@@ -820,27 +831,26 @@ export default function LawFirmRegistrationPage() {
       }
 
       case 6: {
-        const mainCategories = (isExpertBranch ? expertCategories : categories.filter((cat) => !cat.parentId))
-          .slice()
-          .sort((a, b) => a.nazwa.localeCompare(b.nazwa))
-        const businessCategories = mainCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE")
-        const privateCategories = mainCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE")
+        const businessCategories = parentCategories.filter((cat) => cat.typ === "SPRAWY_FIRMOWE")
+        const privateCategories = parentCategories.filter((cat) => cat.typ !== "SPRAWY_FIRMOWE")
 
         const renderCategoryCard = (cat: Category) => {
-          const isSelected = formData.categoriesIds.includes(cat.id)
+          const isSelected = selectedParent?.id === cat.id
+          const childCategories = getChildCategories(cat.id)
           return (
             <div
               key={cat.id}
               className={cn(
-                "group relative flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+                "group relative flex flex-col gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer",
                 isSelected
                   ? "bg-primary/5 border-primary shadow-sm"
                   : "bg-card border-transparent hover:border-primary/30 hover:bg-muted/50"
               )}
               onClick={() => {
+                // Wybór kategorii nadrzędnej zaznacza od razu wszystkie jej podkategorie
                 setFormData(prev => ({
                   ...prev,
-                  categoriesIds: [cat.id]
+                  categoriesIds: [cat.id, ...childCategories.map((child) => child.id)]
                 }))
                 if (fieldErrors.categoriesIds) {
                   const newErrors = { ...fieldErrors }
@@ -849,23 +859,48 @@ export default function LawFirmRegistrationPage() {
                 }
               }}
             >
-              <div className="flex items-center space-x-4">
-                <div className={cn(
-                  "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                  isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
-                )}>
-                  {isSelected && <Check className="w-4 h-4" />}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center space-x-4">
+                  <div className={cn(
+                    "w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors",
+                    isSelected ? "border-primary bg-primary text-white" : "border-muted-foreground/30"
+                  )}>
+                    {isSelected && <Check className="w-4 h-4" />}
+                  </div>
+                  <span className={cn(
+                    "text-sm font-medium transition-colors",
+                    isSelected ? "text-primary" : "text-foreground"
+                  )}>
+                    {cat.nazwa}
+                  </span>
                 </div>
-                <span className={cn(
-                  "text-sm font-medium transition-colors",
-                  isSelected ? "text-primary" : "text-foreground"
-                )}>
-                  {cat.nazwa}
-                </span>
+                {isSelected && (
+                  <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
+                    Wybrano
+                  </div>
+                )}
               </div>
-              {isSelected && (
-                <div className="flex items-center text-sm font-bold uppercase tracking-wider text-primary px-2 py-1 bg-primary/10 rounded-md">
-                  Wybrano
+              {childCategories.length > 0 && (
+                <div className="pl-10 space-y-1.5">
+                  <p className="text-xs text-muted-foreground">
+                    Podkategorie ({childCategories.length}){isSelected ? " — zaznaczone automatycznie" : ""}:
+                  </p>
+                  <ul className="flex flex-wrap gap-1.5">
+                    {childCategories.map((child) => (
+                      <li
+                        key={child.id}
+                        className={cn(
+                          "inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md border",
+                          isSelected
+                            ? "border-primary/30 bg-primary/10 text-primary"
+                            : "border-border bg-muted/50 text-muted-foreground"
+                        )}
+                      >
+                        {isSelected && <Check className="w-3 h-3" />}
+                        {child.nazwa}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
@@ -883,9 +918,9 @@ export default function LawFirmRegistrationPage() {
                 {isExpertBranch
                   ? "Zaznacz główną kategorię powiązaną z Twoją specjalizacją."
                   : "Zaznacz główną dziedzinę prawa, w której się specjalizujesz."}
-                {" "}Pomoże nam to lepiej dopasować zapytania od klientów.
+                {" "}Wszystkie jej podkategorie zaznaczymy automatycznie — pomoże nam to lepiej dopasować zapytania od klientów.
               </p>
-              {isExpertBranch && categories.length > 0 && expertCategories.length === 0 && (
+              {isExpertBranch && categories.length > 0 && parentCategories.length === 0 && (
                 <div className="bg-muted p-6 rounded-xl text-center text-muted-foreground">
                   <p className="text-sm">
                     Dla wybranej specjalizacji nie ma jeszcze przypisanych kategorii.
