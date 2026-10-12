@@ -2,6 +2,10 @@ import { getPublishedBlogPostSlugs } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import type { MetadataRoute } from "next"
 
+// Regeneracja co godzinę (jak /blog/[slug]) — bez tego sitemap powstaje raz
+// przy buildzie i nowe wpisy bloga trafiają do niego dopiero po redeployu.
+export const revalidate = 3600
+
 type ChangeFrequency = NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>
 
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: ChangeFrequency }[] = [

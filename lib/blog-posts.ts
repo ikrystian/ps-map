@@ -5,10 +5,14 @@ import { prisma } from "@/lib/prisma"
 import { PaginationData } from "@/types/pagination"
 import { BlogPost } from "@/types/blog"
 
-const PUBLISHED_BLOG_POST_WHERE = {
-  opublikowany: true,
-  OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }],
-} as const
+// Funkcja, nie stała — `new Date()` musi być liczone przy każdym zapytaniu,
+// inaczej zaplanowane wpisy nie trafiałyby do sitemapy aż do restartu procesu.
+function publishedBlogPostWhere() {
+  return {
+    opublikowany: true,
+    OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }],
+  }
+}
 
 interface GetPublicBlogPostsOptions {
   page?: number
@@ -125,7 +129,7 @@ export async function getPublicBlogPosts(
  */
 export async function getPublishedBlogPostSlugs() {
   return prisma.blogPost.findMany({
-    where: PUBLISHED_BLOG_POST_WHERE,
+    where: publishedBlogPostWhere(),
     select: { slug: true, updatedAt: true },
   })
 }
