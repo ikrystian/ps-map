@@ -1521,11 +1521,12 @@ export default function LawFirmRegistrationPage() {
   return (
     <AuthLayout
       heroTitle="Rozwijaj swój profil z nami"
-      heroDescription="Dołącz do największej w Polsce platformy łączącej ekspertów i specjalistów z klientami. Zyskaj dostęp do nowych spraw i buduj swoją markę online."
+      heroDescription="Załóż profil, opisz swoje usługi i odbieraj zapytania od osób, które potrzebują fachowej pomocy.  
+Konsultacje prowadzisz online, a całe honorarium zostaje u Ciebie. "
       heroStats={[
-        { value: 2500, unit: "+", label: "Ekspertów" },
-        { value: 12000, unit: "+", label: "Zapytań/mies." },
-        { value: 96, unit: "%", label: "Zadowolenia" },
+        { value: 0, unit: "zł", label: "Rejestracja" },
+        { value: 0, unit: "%", label: "Prowizji" },
+        { value: 24, unit: "/7", label: "Dostępność" },
       ]}
     >
       <Card className="border-none shadow-none bg-transparent">
