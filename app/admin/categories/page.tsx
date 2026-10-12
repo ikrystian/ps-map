@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import {
   Table,
@@ -35,6 +36,9 @@ export default function AdminCategoriesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false)
+  const [deleteAllConfirmText, setDeleteAllConfirmText] = useState("")
+  const [isDeletingAll, setIsDeletingAll] = useState(false)
 
   // Pobieranie kategorii
   const fetchCategories = async () => {
@@ -81,6 +85,33 @@ export default function AdminCategoriesPage() {
     }
   }
 
+
+  // Usuwanie wszystkich kategorii
+  const handleDeleteAllCategories = async () => {
+    setIsDeletingAll(true)
+    try {
+      const response = await fetch("/api/admin/categories", { method: "DELETE" })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Błąd usuwania kategorii")
+      }
+
+      toast.success(`Usunięto ${data.deleted} ${plural(data.deleted, "kategorię", "kategorie", "kategorii")}`)
+      setIsDeleteAllDialogOpen(false)
+      setExpandedRows(new Set())
+      fetchCategories()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć kategorii")
+    } finally {
+      setIsDeletingAll(false)
+    }
+  }
+
+  const openDeleteAllDialog = () => {
+    setDeleteAllConfirmText("")
+    setIsDeleteAllDialogOpen(true)
+  }
 
   // Otwieranie dialogu usuwania
   const openDeleteDialog = (category: Category) => {
@@ -224,6 +255,7 @@ export default function AdminCategoriesPage() {
   }
 
   const hierarchicalCategories = buildCategoryHierarchy(categories)
+  const totalExpertLinks = categories.reduce((sum, cat) => sum + (cat._count?.lawFirms || 0), 0)
 
   if (loading) {
     return (
@@ -244,6 +276,15 @@ export default function AdminCategoriesPage() {
           </Button>
           <Button variant="outline" onClick={handleCollapseAll}>
             Zwiń wszystkie
+          </Button>
+          <Button
+            variant="outline"
+            onClick={openDeleteAllDialog}
+            disabled={categories.length === 0}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Usuń wszystkie
           </Button>
           <Button onClick={() => router.push("/admin/categories/new")}>
             <Plus className="h-4 w-4 mr-2" />
@@ -305,6 +346,46 @@ export default function AdminCategoriesPage() {
               onClick={handleDeleteCategory}
             >
               Usuń
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog usuwania wszystkich kategorii */}
+      <Dialog open={isDeleteAllDialogOpen} onOpenChange={setIsDeleteAllDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Usunąć wszystkie kategorie?</DialogTitle>
+            <DialogDescription>
+              Zostanie usuniętych {categories.length} {plural(categories.length, "kategoria", "kategorie", "kategorii")} razem
+              z podkategoriami. Znikną też powiązania ekspertów z kategoriami ({totalExpertLinks}),
+              statystyki kategorii i powiązania ze specjalizacjami. Tej operacji nie można cofnąć.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label htmlFor="delete-all-confirm" className="text-sm">
+              Wpisz <strong>USUŃ</strong>, aby potwierdzić
+            </label>
+            <Input
+              id="delete-all-confirm"
+              value={deleteAllConfirmText}
+              onChange={(e) => setDeleteAllConfirmText(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteAllDialogOpen(false)}
+            >
+              Anuluj
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAllCategories}
+              disabled={deleteAllConfirmText.trim() !== "USUŃ" || isDeletingAll}
+            >
+              {isDeletingAll ? "Usuwanie..." : "Usuń wszystkie"}
             </Button>
           </DialogFooter>
         </DialogContent>
