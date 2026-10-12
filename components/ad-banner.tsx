@@ -1,5 +1,6 @@
 "use client"
 
+import { withAdId } from "@/lib/ads"
 import { cn } from "@/lib/utils"
 import { ExternalLink, Megaphone } from "lucide-react"
 import Link from "next/link"
@@ -206,7 +207,7 @@ export function AdBanner({ location, className }: AdBannerProps) {
       ) : ad.imageUrl ? (
         // Opcja 2: Grafika z linkiem
         <a
-          href={ad.linkUrl}
+          href={withAdId(ad.linkUrl, ad.id)}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleAdClick}
