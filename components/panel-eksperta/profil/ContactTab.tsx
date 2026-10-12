@@ -24,6 +24,12 @@ import type { Voivodeship } from "@/types"
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
+// Maska kodu pocztowego: same cyfry, myślnik po drugiej (np. 00-000)
+function formatPostalCode(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 5)
+  return digits.length > 2 ? `${digits.slice(0, 2)}-${digits.slice(2)}` : digits
+}
+
 interface ContactTabProps {
   formData: {
     imieKontakt: string
@@ -434,9 +440,13 @@ export function ContactTab({
                       <Input
                         id="kodPocztowy"
                         value={formData.kodPocztowy}
-                        readOnly
-                        className="pl-10 bg-background/50 border-border/30 text-muted-foreground cursor-not-allowed rounded-xl focus-visible:ring-0"
+                        onChange={(e) => handleInputChange("kodPocztowy", formatPostalCode(e.target.value))}
+                        placeholder="00-000"
+                        inputMode="numeric"
+                        autoComplete="postal-code"
+                        maxLength={6}
                         required
+                        className="pl-10 bg-background/20 border-border/30 text-foreground rounded-xl focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all duration-200"
                       />
                     </div>
                   </div>

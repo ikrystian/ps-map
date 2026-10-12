@@ -345,6 +345,13 @@ function LawFirmProfilePageContent() {
     e.preventDefault()
     setIsSaving(true)
 
+    if (formData.kodPocztowy && !/^\d{2}-\d{3}$/.test(formData.kodPocztowy)) {
+      toast.error("Wpisz poprawny kod pocztowy (np. 00-000)")
+      handleTabChange("contact")
+      setIsSaving(false)
+      return
+    }
+
     // Walidacja limitów obszaru działania
     if (!formData.calaPolska) {
       if (formData.voivodeshipsIds.length > maxVoivodeships) {

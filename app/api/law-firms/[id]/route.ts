@@ -284,7 +284,15 @@ export async function PUT(
 
     // Adres (model User)
     if (body.adres) userUpdateData.adres = body.adres
-    if (body.kodPocztowy) userUpdateData.kodPocztowy = body.kodPocztowy
+    if (body.kodPocztowy) {
+      if (!/^\d{2}-\d{3}$/.test(body.kodPocztowy)) {
+        return NextResponse.json(
+          { error: "Wpisz poprawny kod pocztowy (np. 00-000)" },
+          { status: 400 }
+        )
+      }
+      userUpdateData.kodPocztowy = body.kodPocztowy
+    }
     if (body.miasto) userUpdateData.miasto = cleanCityName(body.miasto) || body.miasto
     if (body.voivodeshipId) userUpdateData.voivodeshipId = body.voivodeshipId
 
