@@ -26,6 +26,9 @@ const nextConfig: NextConfig = {
   env: {
     ENV: process.env.ENV || "local",
     DEPLOY_TIME: process.env.DEPLOY_TIME || "",
+    // Wartość wpiekana w bundle przy `next build` — klucz cache migawki
+    // linków na /mapa-strony (lib/site-map.ts), więc każdy build ją odświeża.
+    BUILD_TIME: new Date().toISOString(),
   },
   images: {
     remotePatterns: [

@@ -272,12 +272,12 @@ export default function PublicFooter() {
             >
               Ustawienia cookies
             </button>
-            <a
-              href="/sitemap.xml"
+            <Link
+              href="/mapa-strony"
               className="font-light hover:text-[#d7b56d] transition-colors"
             >
               Mapa strony
-            </a>
+            </Link>
             {deployTime && (
               <span className="font-light text-neutral-600" title="Data ostatniej aktualizacji strony">
                 Aktualizacja: {deployTime}
