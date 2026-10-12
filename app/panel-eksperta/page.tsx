@@ -232,6 +232,8 @@ export default function LawFirmDashboardPage() {
   const [citiesCount, setCitiesCount] = useState(0)
   const [keywordsCount, setKeywordsCount] = useState(0)
   const [isCalaPolska, setIsCalaPolska] = useState(false)
+  // Hierarchia geograficzna z ustawień admina: "voivodeships" | "counties" | "cities" (null = jeszcze nie pobrano)
+  const [geoHierarchy, setGeoHierarchy] = useState<string | null>(null)
   const [rejectedIds, setRejectedIds] = useState<Set<string>>(new Set())
 
   // Sprawdź uprawnienia i limity
@@ -312,11 +314,19 @@ export default function LawFirmDashboardPage() {
     if (!session?.user?.id) return
 
     try {
-      const [categoriesResponse, offersResponse, areaResponse] = await Promise.all([
+      const [categoriesResponse, offersResponse, areaResponse, settingsResponse] = await Promise.all([
         fetch("/api/law-firm/categories"),
         fetch("/api/offers?status=active"),
-        fetch("/api/law-firm/area")
+        fetch("/api/law-firm/area"),
+        fetch("/api/settings")
       ])
+
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json()
+        setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")
+      } else {
+        setGeoHierarchy("voivodeships")
+      }
 
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json()
@@ -721,27 +731,33 @@ export default function LawFirmDashboardPage() {
                     />
                   </div>
 
+                  {/* Poziom główny z "Hierarchia geograficzna" (admin/settings): limit dotyczy tylko jego,
+                      poziom wtórny jest auto-zaznaczany i nie jest limitowany (spójnie z api/law-firm/area). */}
                   {/* Powiaty */}
-                  <div className="p-4 rounded-xl border border-border/10 bg-background/15">
-                    <LimitIndicator
-                      current={isCalaPolska ? permissions.limits.counties : countiesCount}
-                      limit={isCalaPolska ? null : permissions.limits.counties}
-                      label="Powiaty"
-                      type="counties"
-                      size="md"
-                    />
-                  </div>
+                  {geoHierarchy === "counties" && (
+                    <div className="p-4 rounded-xl border border-border/10 bg-background/15">
+                      <LimitIndicator
+                        current={isCalaPolska ? permissions.limits.counties : countiesCount}
+                        limit={isCalaPolska ? null : permissions.limits.counties}
+                        label="Powiaty"
+                        type="counties"
+                        size="md"
+                      />
+                    </div>
+                  )}
 
                   {/* Miasta */}
-                  <div className="p-4 rounded-xl border border-border/10 bg-background/15">
-                    <LimitIndicator
-                      current={isCalaPolska ? permissions.limits.cities : citiesCount}
-                      limit={isCalaPolska ? null : permissions.limits.cities}
-                      label="Miasta"
-                      type="cities"
-                      size="md"
-                    />
-                  </div>
+                  {geoHierarchy === "cities" && (
+                    <div className="p-4 rounded-xl border border-border/10 bg-background/15">
+                      <LimitIndicator
+                        current={isCalaPolska ? permissions.limits.cities : citiesCount}
+                        limit={isCalaPolska ? null : permissions.limits.cities}
+                        label="Miasta"
+                        type="cities"
+                        size="md"
+                      />
+                    </div>
+                  )}
 
                   {/* Tagi / Słowa kluczowe */}
                   <div className="p-4 rounded-xl border border-border/10 bg-background/15">
