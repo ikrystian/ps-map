@@ -460,7 +460,6 @@ ${formData.tresc}`
           <p className="text-center text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground/80 mb-8">
             Czytamy to codziennie, żebyś Ty nie musiał
           </p>
-<<<<<<< HEAD
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-16">
             {TRUSTED_LOGOS.map((logo) => (
               <div
@@ -481,20 +480,6 @@ ${formData.tresc}`
                   width={logo.width}
                   height={logo.height}
                   className="absolute inset-0 h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-=======
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-12 md:gap-x-16">
-            {MEDIA_LOGOS.map((logo) => (
-              <div
-                key={logo.name}
-                title={logo.name}
-                className="flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={logo.mono}
-                  alt={logo.alt}
-                  className={`${logo.className} w-auto object-contain dark:brightness-200 dark:contrast-125 transition-all`}
->>>>>>> b9aa00def136023a01b6a66f4e22ae372e25eaed
                 />
               </div>
             ))}
