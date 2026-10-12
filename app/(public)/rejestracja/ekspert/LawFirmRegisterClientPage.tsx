@@ -882,9 +882,6 @@ export default function LawFirmRegistrationPage() {
               </div>
               {childCategories.length > 0 && (
                 <div className="pl-10 space-y-1.5">
-                  <p className="text-xs text-muted-foreground">
-                    Podkategorie ({childCategories.length}){isSelected ? " — zaznaczone automatycznie" : ""}:
-                  </p>
                   <ul className="flex flex-wrap gap-1.5">
                     {childCategories.map((child) => (
                       <li
