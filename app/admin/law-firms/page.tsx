@@ -144,15 +144,6 @@ export default function AdminLawFirmsPage() {
     }
   }
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
   if (loading && lawFirms.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -309,8 +300,8 @@ export default function AdminLawFirmsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getSubscriptionBadgeVariant((lawFirm.pakietSubskrypcji ?? "PODSTAWOWY") as SubscriptionPackage)}>
-                        {formatSubscription((lawFirm.pakietSubskrypcji ?? "PODSTAWOWY") as SubscriptionPackage)}
+                      <Badge variant={lawFirm.pakietSubskrypcji ? getSubscriptionBadgeVariant(lawFirm.pakietSubskrypcji as SubscriptionPackage) : "outline"}>
+                        {lawFirm.pakietSubskrypcji ? formatSubscription(lawFirm.pakietSubskrypcji as SubscriptionPackage) : "Brak pakietu"}
                       </Badge>
                     </TableCell>
                     <TableCell>

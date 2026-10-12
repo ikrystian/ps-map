@@ -16,6 +16,7 @@ import {
 import { Award, CheckCircle, Gift, RefreshCw, Search, TrendingUp, Users, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatDate, formatDateTime } from "@/lib/format"
 
 interface PartnerProgram {
   id: string
@@ -48,28 +49,6 @@ interface Stats {
   active: number
   verified: number
   totalPointsAllocated: number
-}
-
-const formatDate = (date: Date | string | null) => {
-  if (!date) return "-"
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  })
-}
-
-const formatDateTime = (date: Date | string | null) => {
-  if (!date) return "-"
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
 }
 
 const MONTH_NAMES = [

@@ -59,7 +59,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       <p class="mb-3">Użyte w Regulaminie pojęcia oznaczają:</p>
       <ul class="space-y-2 pl-4 list-disc">
         <li><strong>1. Platforma</strong> - serwis internetowy Prosta Sprawa dostępny pod adresem www.prostasprawa.pl</li>
-        <li><strong>2. Usługodawca</strong> - właściciel platformy Prosta Sprawa z siedzibą w Warszawie</li>
+        <li><strong>2. Usługodawca</strong> - właściciel platformy Prosta Sprawa z siedzibą w Kielcach</li>
         <li><strong>3. Użytkownik</strong> - każda osoba korzystająca z Platformy</li>
         <li><strong>4. Klient</strong> - osoba fizyczna, firma lub organizacja poszukująca pomocy prawnej</li>
         <li><strong>5. Ekspert</strong> - ekspert prawny, radca prawny, adwokat lub inny podmiot świadczący usługi prawne</li>
@@ -225,12 +225,12 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
     <div id="administrator" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 shadow-sm">
       <h3 class="text-xl font-bold mb-4 text-white">1. Administrator danych osobowych</h3>
       <p class="mb-4">
-        Administratorem Twoich danych osobowych jest właściciel platformy Prosta Sprawa z siedzibą w Warszawie.
+        Administratorem Twoich danych osobowych jest właściciel platformy Prosta Sprawa z siedzibą w Kielcach.
       </p>
       <div class="bg-neutral-950 p-4 border border-neutral-800 rounded-lg text-sm">
         <p class="font-semibold mb-2 text-white">Dane kontaktowe:</p>
         <p>Email: iod@prostasprawa.pl</p>
-        <p>Adres: ul. Przykładowa 123, 00-001 Warszawa</p>
+        <p>Adres: ul. Generała Mariana Langiewicza 16 lok. 3, 25-381 Kielce</p>
       </div>
     </div>
 
@@ -319,7 +319,7 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 
     <div class="border-l-2 border-primary pl-5 sm:pl-6">
       <p class="text-foreground/80 text-sm sm:text-base leading-relaxed">
-        Dziś łączymy klientów z prawnikami i ekspertami z całej Polski. Działamy we wszystkich 16 województwach, obejmujemy 44 kategorie spraw i ponad 100 specjalizacji, prywatnych i firmowych.
+        Dziś łączymy klientów z prawnikami i ekspertami z całej Polski. Działamy we wszystkich 16 województwach, obejmujemy 45 kategorii spraw i ponad 100 specjalizacji, prywatnych i firmowych.
       </p>
     </div>
   </div>
@@ -335,9 +335,9 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       <div class="bg-card border border-border rounded-xl p-6">
-        <div class="font-playfair text-4xl text-primary mb-2">44</div>
-        <p class="text-foreground text-sm font-semibold mb-1">kategorie spraw</p>
-        <p class="text-muted-foreground text-sm leading-relaxed">22 prywatne i 22 firmowe</p>
+        <div class="font-playfair text-4xl text-primary mb-2">45</div>
+        <p class="text-foreground text-sm font-semibold mb-1">kategorii spraw</p>
+        <p class="text-muted-foreground text-sm leading-relaxed">23 prywatne i 22 firmowe</p>
       </div>
 
       <div class="bg-card border border-border rounded-xl p-6">
@@ -697,8 +697,8 @@ export async function seedStaticPages(originalPrisma: PrismaClient) {
       </div>
       <h3 class="font-semibold text-white mb-2">Adres</h3>
       <p class="text-sm text-neutral-400">
-        ul. Przykładowa 123<br />
-        00-001 Warszawa, Polska
+        ul. Generała Mariana Langiewicza 16 lok. 3<br />
+        25-381 Kielce, Polska
       </p>
     </div>
   </div>

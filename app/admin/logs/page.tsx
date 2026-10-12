@@ -14,12 +14,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
 import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Pagination } from '@/types/pagination';
+import { formatDateTimeSeconds } from "@/lib/format"
 
 interface SystemLog {
   id: string
@@ -61,6 +60,7 @@ const levelLabels = {
 
 export default function AdminLogsPage() {
   const [logs, setLogs] = useState<SystemLog[]>([])
+  const [levelCounts, setLevelCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -102,6 +102,7 @@ export default function AdminLogsPage() {
 
       const data = await response.json()
       setLogs(data.logs)
+      setLevelCounts(data.levelCounts || {})
       setPagination(data.pagination)
     } catch (error) {
       console.error("Error fetching logs:", error)
@@ -118,10 +119,6 @@ export default function AdminLogsPage() {
 
   const handlePageChange = (newPage: number) => {
     setPagination({ ...pagination, page: newPage })
-  }
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd.MM.yyyy HH:mm:ss", { locale: pl })
   }
 
   const parseMetadata = (metadata: string | null) => {
@@ -214,7 +211,7 @@ export default function AdminLogsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{levelLabels[level as keyof typeof levelLabels]}</p>
-                  <p className="text-2xl font-bold">-</p>
+                  <p className="text-2xl font-bold">{levelCounts[level] ?? 0}</p>
                 </div>
                 <Icon className={`h-8 w-8 opacity-50`} />
               </div>
@@ -260,7 +257,7 @@ export default function AdminLogsPage() {
                       return (
                         <TableRow key={log.id} className="hover:bg-muted/50">
                           <TableCell className="text-sm">
-                            {formatDate(log.createdAt)}
+                            {formatDateTimeSeconds(log.createdAt)}
                           </TableCell>
                           <TableCell>
                             <Badge className={levelColors[log.level]}>

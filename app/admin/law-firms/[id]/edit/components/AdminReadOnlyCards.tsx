@@ -3,12 +3,10 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award, Briefcase, Building, CalendarClock, Layers } from "lucide-react"
-
-const formatDate = (value?: string | Date | null) =>
-  value ? new Date(value).toLocaleString("pl-PL") : "—"
+import { formatDate, formatDateTime } from "@/lib/format"
 
 const formatDay = (value?: string | Date | null) =>
-  value ? new Date(value).toLocaleDateString("pl-PL") : "—"
+  value ? formatDate(value) : "—"
 
 // --- DANE FIRMY Z BIAŁEJ LISTY (COMPANY_*) ---
 export interface CompanyData {
@@ -88,19 +86,19 @@ export function AccountMetaCard({ meta }: { meta: AccountMeta }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-0.5">
             <p className="text-xs text-muted-foreground">Konto utworzone</p>
-            <p className="text-sm font-medium">{formatDate(meta.userCreatedAt)}</p>
+            <p className="text-sm font-medium">{formatDateTime(meta.userCreatedAt)}</p>
           </div>
           <div className="space-y-0.5">
             <p className="text-xs text-muted-foreground">Profil eksperta utworzony</p>
-            <p className="text-sm font-medium">{formatDate(meta.lawFirmCreatedAt)}</p>
+            <p className="text-sm font-medium">{formatDateTime(meta.lawFirmCreatedAt)}</p>
           </div>
           <div className="space-y-0.5">
             <p className="text-xs text-muted-foreground">Ostatnia modyfikacja profilu</p>
-            <p className="text-sm font-medium">{formatDate(meta.lawFirmUpdatedAt)}</p>
+            <p className="text-sm font-medium">{formatDateTime(meta.lawFirmUpdatedAt)}</p>
           </div>
           <div className="space-y-0.5">
             <p className="text-xs text-muted-foreground">Ostatnie logowanie</p>
-            <p className="text-sm font-medium">{formatDate(meta.lastLogin)}</p>
+            <p className="text-sm font-medium">{formatDateTime(meta.lastLogin)}</p>
           </div>
         </div>
       </CardContent>

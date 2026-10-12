@@ -113,7 +113,7 @@ export default function RankingClientPage() {
               </div>
               <div className="flex items-center gap-2 bg-muted border border-border/10 px-4 py-2.5 rounded-full text-foreground/80">
                 <Coins className="h-4 w-4 text-[#d7b56d]" />
-                <span>Kryterium rankingu: Aktywność i Punkty Salda</span>
+                <span>Kryterium rankingu: wynik punktowy (weryfikacja, wyświetlenia, oceny, promocje, pakiet)</span>
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ export default function RankingClientPage() {
                               </div>
                               <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/40 border border-border/15 text-sm text-muted-foreground font-light mt-1">
                                 <Coins className="h-3 w-3 text-[#d7b56d]" />
-                                <span>{firm.punktySaldo}</span>
+                                <span>{firm.rankingScore} pkt</span>
                               </div>
                             </div>
 
@@ -329,9 +329,9 @@ export default function RankingClientPage() {
               </div>
               <h4 className="font-bold text-sm text-foreground">Punkty w rankingu</h4>
               <p className="text-xs text-muted-foreground font-light leading-relaxed">
-                Eksperci zdobywają punkty za aktywność w serwisie: odpowiadanie na zapytania klientów,
-                otrzymywanie pozytywnych opinii, publikowanie artykułów oraz uczestnictwo w programie
-                partnerskim.
+                Wynik punktowy to ta sama wartość, wg której działa wyszukiwarka: weryfikacja profilu,
+                wyświetlenia, średnia ocena z opinii, aktywne promocje, punkty wydane na promocje
+                oraz bonus za pakiet. Saldo punktów do wydania nie wpływa na pozycję.
               </p>
             </div>
             <div className="space-y-2">
@@ -341,7 +341,7 @@ export default function RankingClientPage() {
               <h4 className="font-bold text-sm text-foreground">Aktualizacja rankingu</h4>
               <p className="text-xs text-muted-foreground font-light leading-relaxed">
                 Ranking jest aktualizowany na bieżąco i odzwierciedla rzeczywistą aktywność eksperta
-                w serwisie. Pozycje w rankingu mogą się zmieniać w zależności od zdobywanych punktów.
+                w serwisie. Pozycje mogą się zmieniać wraz z ocenami, wyświetleniami i promocjami.
               </p>
             </div>
             <div className="space-y-2">

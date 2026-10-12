@@ -1,6 +1,7 @@
 "use client"
 
 import { BorderBeam } from "@/components/ui/border-beam"
+import { COMPANY } from "@/lib/company"
 import {
   Accordion,
   AccordionContent,
@@ -376,7 +377,7 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                 </Link>
 
                 {/* Email */}
-                <a href="mailto:kontakt@prostasprawa.pl" className="group">
+                <a href={`mailto:${COMPANY.email}`} className="group">
                   <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-background/20 hover:bg-secondary/5 hover:border-secondary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary group-hover:scale-110 group-hover:bg-secondary/20 transition-all mb-4">
                       <Mail className="h-6 w-6" />
@@ -384,17 +385,17 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                     <div className="space-y-1">
                       <h4 className="font-semibold text-foreground text-sm group-hover:text-secondary transition-colors">Wyślij e-mail</h4>
                       <p className="text-muted-foreground text-xs leading-relaxed font-light">
-                        Napisz wiadomość e-mail. Pomożemy w ciągu kilku godzin.
+                        Napisz wiadomość e-mail. Odpowiadamy zwykle w ciągu {COMPANY.responseTime}.
                       </p>
                     </div>
                     <Button variant="link" className="text-secondary hover:text-secondary-hover text-xs font-semibold gap-1 mt-4 p-0">
-                      kontakt@prostasprawa.pl
+                      {COMPANY.email}
                     </Button>
                   </div>
                 </a>
 
                 {/* Telefon */}
-                <a href="tel:+48123456789" className="group">
+                <a href={COMPANY.phoneHref} className="group">
                   <div className="flex flex-col items-center text-center p-5 rounded-lg border border-border/30 bg-background/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300 h-full justify-between">
                     <div className="h-12 w-12 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all mb-4">
                       <Phone className="h-6 w-6" />
@@ -402,11 +403,11 @@ export function HelpCenter({ odbiorca, messagesPath }: HelpCenterProps) {
                     <div className="space-y-1">
                       <h4 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">Zadzwoń do nas</h4>
                       <p className="text-muted-foreground text-xs leading-relaxed font-light">
-                        Infolinia czynna od poniedziałku do piątku w godz. 9:00 - 17:00.
+                        Infolinia czynna: {COMPANY.hours}.
                       </p>
                     </div>
                     <Button variant="link" className="text-primary hover:text-primary-hover text-xs font-semibold gap-1 mt-4 p-0">
-                      +48 534 888 555
+                      {COMPANY.phone}
                     </Button>
                   </div>
                 </a>

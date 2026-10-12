@@ -1,5 +1,6 @@
 "use client"
 
+import { formatDate, formatNumber } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +21,6 @@ import {
   CheckCircle2,
   Globe,
   Heart,
-  Mail,
   MapPin,
   Phone,
   Star,
@@ -126,14 +126,6 @@ export default function ClientFavoritesPage() {
         ))}
       </div>
     )
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
   }
 
   if (isLoading) {
@@ -271,7 +263,7 @@ export default function ClientFavoritesPage() {
                             <div className="flex items-center gap-2.5 flex-wrap">
                               {renderStars(lawFirm.avgRating)}
                               <span className="text-xs font-bold text-foreground mt-0.5">
-                                {lawFirm.avgRating.toFixed(1)}
+                                {formatNumber(lawFirm.avgRating, 1)}
                               </span>
                               <span className="text-xs text-muted-foreground font-light mt-0.5">
                                 ({lawFirm.reviewCount}{" "}

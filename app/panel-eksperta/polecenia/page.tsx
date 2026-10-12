@@ -17,8 +17,6 @@ import { Heading } from "@/components/ui/heading"
 import { toast } from "@/components/ui/sonner"
 import { REFERRAL_STATUS_LABELS } from "@/lib/case-referrals"
 import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { motion } from "framer-motion"
 import {
   Ban,
@@ -33,6 +31,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { formatDate } from "@/lib/format"
 
 interface ReferralListItem {
   id: string
@@ -236,7 +235,7 @@ export default function ExpertReferralsPage() {
                     Brak polecenia
                   </Heading>
                   <p className="mt-1.5 text-sm font-light leading-relaxed text-muted-foreground">
-                    Nie wysłałeś jeszcze żadnego polecenia. Wybierz zakres sprawy i miasto, a my
+                    Nie wysłano jeszcze żadnego polecenia. Wybierz zakres sprawy i miasto, a my
                     wyślemy klientowi gotowy link.
                   </p>
                 </div>
@@ -300,10 +299,10 @@ export default function ExpertReferralsPage() {
                           </div>
 
                           <p className="text-xs text-muted-foreground">
-                            Wysłano {format(new Date(referral.createdAt), "d MMM yyyy", { locale: pl })}
+                            Wysłano {formatDate(new Date(referral.createdAt))}
                             {" · "}
                             {referral.status === "WYGASLE" ? "wygasł" : "ważny do"}{" "}
-                            {format(new Date(referral.expiresAt), "d MMM yyyy", { locale: pl })}
+                            {formatDate(new Date(referral.expiresAt))}
                           </p>
 
                           {referral.case && (

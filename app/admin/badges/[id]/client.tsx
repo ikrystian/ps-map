@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import Image from "next/image"
 import { expertAvatar } from "@/lib/expert-avatar"
+import { formatDate } from "@/lib/format"
 
 const badgeSchema = z.object({
     name: z.string().min(1, "Nazwa jest wymagana"),
@@ -489,7 +490,7 @@ export function EditBadgeClient({ badge }: { badge: Badge }) {
                                         <div className="text-left">
                                             <div className="text-sm font-medium line-clamp-1">{assignment.lawFirm.nazwa}</div>
                                             <div className="text-xs text-muted-foreground">
-                                                Dodano: {new Date(assignment.awardedAt).toLocaleDateString()}
+                                                Dodano: {formatDate(assignment.awardedAt)}
                                             </div>
                                         </div>
                                     </div>

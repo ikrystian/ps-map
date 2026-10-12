@@ -30,6 +30,20 @@ const eslintConfig = defineConfig([
       },
     },
   },
+  // Daty i kwoty formatujemy wspólnymi funkcjami z lib/format.ts (F-001) — bez lokalnych kopii.
+  {
+    ignores: ["lib/format.ts", "lib/ksef.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "VariableDeclarator[id.name=/^(formatDate|formatDateTime|formatShortDate|formatCurrency)$/], FunctionDeclaration[id.name=/^(formatDate|formatDateTime|formatShortDate|formatCurrency)$/]",
+          message: "Użyj formatDate/formatDateTime/formatCurrency z @/lib/format zamiast lokalnej definicji.",
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

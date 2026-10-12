@@ -61,6 +61,7 @@ import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { BlogPost } from '@/types/blog';
 import { PaginationData } from '@/types/pagination';
+import { formatDate, formatNumber } from "@/lib/format"
 
 
 
@@ -258,15 +259,6 @@ export default function AdminBlogPage() {
     window.open(`/blog/${post.slug}?preview=true`, "_blank")
   }
 
-  const formatDate = (dateString?: string | Date | null) => {
-    if (!dateString) return ""
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-  }
-
   const renderTags = (tagsString: string | null) => {
     if (!tagsString) return null
     try {
@@ -369,7 +361,7 @@ export default function AdminBlogPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {stats.totalViews.toLocaleString("pl-PL")}
+              {formatNumber(stats.totalViews)}
             </div>
             <p className="text-xs text-muted-foreground">Odsłon wszystkich artykułów</p>
           </CardContent>

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
               },
             },
             reviews: {
+              where: PUBLIC_REVIEW_WHERE,
               select: {
                 ocenaOgolna: true,
               },

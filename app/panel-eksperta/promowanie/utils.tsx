@@ -111,16 +111,6 @@ export const getIconComponent = (iconName: string | null) => {
   return ICON_MAP[iconName] || TrendingUp
 }
 
-export const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
 
 export const getPromotionTypeLabel = (type: string, promotionTypes: any[]) => {
   const promo = promotionTypes.find((p) => p.type === type)
@@ -222,7 +212,7 @@ export const getPromotionSuccessDetails = (
     case "TOP_LISTA":
       return {
         gdzie: "Strona główna naszego serwisu w prestiżowej, wydzielonej sekcji 'Top Eksperci'.",
-        jak: "Twoja ekspert zostanie umieszczona w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
+        jak: "Twój profil zostanie umieszczony w elitarnym gronie na samej stronie głównej. Sekcja ta jest projektowana w sposób przyciągający uwagę i budujący maksymalne zaufanie oraz prestiż marki wśród odwiedzających.",
         kiedy:
           "Twój profil będzie stale wyświetlany w tej karuzeli/liście przez cały opłacony czas trwania promocji.",
       }

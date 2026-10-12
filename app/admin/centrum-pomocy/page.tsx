@@ -400,7 +400,7 @@ export default function AdminHelpCenterPage() {
     <div className="space-y-6">
       <AdminHeaderSetter 
         title="Centrum pomocy" 
-        subtitle="Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy ekspertów" 
+        subtitle="Zarządzaj kategoriami i pytaniami wyświetlanymi w centrum pomocy (dla klientów i ekspertów)" 
       />
 
       <Tabs defaultValue="categories" className="w-full">

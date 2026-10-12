@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       },
       orderBy: [
         { zweryfikowana: "desc" },
-        { pozycjaRanking: { sort: "desc", nulls: "last" } },
+        { pozycjaRanking: { sort: "asc", nulls: "last" } },
       ],
       take: 20,
     })

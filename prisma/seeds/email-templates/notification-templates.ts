@@ -7,7 +7,7 @@ export const notificationTemplates = [
     temat: 'Masz nową wiadomość od {nadawca}',
     tresc: `Witaj {odbiorca},
 
-Otrzymałeś nową wiadomość w systemie Prosta Sprawa.
+Masz nową wiadomość w systemie Prosta Sprawa.
 
 Od: {nadawca}
 Wiadomość: {fragmentWiadomosci}...
@@ -17,7 +17,7 @@ Zaloguj się do panelu, aby przeczytać pełną wiadomość i odpowiedzieć.
 Pozdrawiamy,
 Zespół Prosta Sprawa`,
     trescHtml: `<h2 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Witaj {odbiorca},</h2>
-<p style="margin: 0 0 16px 0;">Otrzymałeś nową wiadomość w systemie komunikacji <strong>ProstaSprawa</strong> od użytkownika <strong>{nadawca}</strong>.</p>
+<p style="margin: 0 0 16px 0;">Masz nową wiadomość w systemie komunikacji <strong>ProstaSprawa</strong> od użytkownika <strong>{nadawca}</strong>.</p>
 
 <div style="background-color: #181818; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 24px 0;">
   <h3 style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 15px; font-weight: 600; color: #ffffff; margin-top: 0; margin-bottom: 10px;">Skrót wiadomości:</h3>
@@ -43,7 +43,7 @@ Zespół Prosta Sprawa`,
   {
     typ: EmailType.NOWA_OPINIA,
     nazwa: 'Nowa opinia - powiadomienie dla ekspertów',
-    temat: 'Otrzymałeś nową opinię od klienta',
+    temat: 'Masz nową opinię od klienta',
     tresc: `Witaj {ekspert},
 
 Klient {klient} wystawił Ci opinię!

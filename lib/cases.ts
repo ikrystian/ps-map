@@ -66,11 +66,14 @@ export function buildLawFirmCaseWhereInput(
     referral: { is: { lawFirmId: lawFirm.id } },
   }
 
-  if (declaredScopeConditions.length > 0) {
-    scopeConditions.push({
-      OR: [{ AND: declaredScopeConditions }, ownReferralCondition],
-    })
-  }
+  // Brak zadeklarowanego zakresu (kategorii / obszaru) = brak spraw poza własnymi poleceniami
+  // — ekspert nie dostaje wszystkich spraw „na zapas” (F-080).
+  scopeConditions.push({
+    OR: [
+      declaredScopeConditions.length > 0 ? { AND: declaredScopeConditions } : { id: { in: [] } },
+      ownReferralCondition,
+    ],
+  })
 
   // Wyklucz sprawy, w których zaakceptowano ofertę INNEGO eksperta
   const acceptedByOtherCondition: Prisma.CaseWhereInput = {
@@ -89,6 +92,9 @@ export function buildLawFirmCaseWhereInput(
   // Sprawa z kreatora /dodaj-sprawe jest ukryta przed wszystkimi ekspertami,
   // dopóki klient nie potwierdzi adresu e-mail (patrz Case.czekaNaAktywacjeEmail).
   scopeConditions.push({ czekaNaAktywacjeEmail: false })
+
+  // Sprawa zarchiwizowana przez admina nie jest widoczna ani otwarta na oferty (F-025/F-066)
+  scopeConditions.push({ isArchived: false })
 
   if (additionalWhere) {
     scopeConditions.push(additionalWhere)

@@ -17,6 +17,7 @@ import { clearAppCacheAndStorage } from "@/lib/utils"
 import { AlertTriangle, FileText, Info, Loader2, ShieldCheck, Trash2 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
+import { formatDate } from "@/lib/format"
 
 /** Fraza, którą użytkownik musi przepisać, aby potwierdzić usunięcie konta. */
 const CONFIRMATION_PHRASE = "USUWAM KONTO"
@@ -28,14 +29,6 @@ interface RetentionSummary {
   cases: number
   offers: number
   retentionUntil: string
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
 }
 
 /**

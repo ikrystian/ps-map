@@ -60,3 +60,103 @@ export function expertisePathSegments(
   const path = formatExpertisePath(category);
   return path ? path.split(" > ") : [];
 }
+
+/**
+ * Id-y od korzenia do liścia (np. [rootId, subId, leafId]) — pozwala
+ * dopasować eksperta do przycisku filtra niezależnie od poziomu drzewa,
+ * na którym przycisk operuje (kategoria, podkategoria lub specjalizacja).
+ */
+export function expertiseCategoryIdChain(
+  category?: ExpertiseCategoryWithPath | null
+): string[] {
+  if (!category) return [];
+
+  const ids: string[] = [];
+  const grandParent = category.parent?.parent;
+
+  if (grandParent) ids.push(grandParent.id);
+  if (category.parent) ids.push(category.parent.id);
+  ids.push(category.id);
+
+  return ids;
+}
+
+/**
+ * Nazwa korzenia drzewa ExpertiseCategory, którego specjalizacje mają
+ * kategorie powiązane przez CategoryExpertiseCategory (gałąź „Prawnicy”
+ * zachowuje pełną, niefiltrowaną listę kategorii).
+ */
+export const EXPERTS_ROOT_NAME = "Eksperci";
+
+/**
+ * Czy specjalizacja (liść) należy do gałęzi „Eksperci”. Korzeń to najdalszy
+ * przodek dociągnięty przez EXPERTISE_CATEGORY_PATH_SELECT.
+ */
+export function isExpertsBranch(
+  category?: ExpertiseCategoryWithPath | null
+): boolean {
+  if (!category) return false;
+  const root = category.parent?.parent ?? category.parent ?? category;
+  return root.nazwa === EXPERTS_ROOT_NAME;
+}
+
+interface LinkableCategory {
+  id: string;
+  parentId?: string | null;
+  expertiseCategoryIds?: string[];
+}
+
+/**
+ * Zawęża drzewo kategorii do powiązanych ze specjalizacją eksperta — ta sama
+ * reguła co w kroku „Kategorie” rejestracji, ale z zachowaniem struktury drzewa:
+ * powiązania wiszą głównie na podkategoriach, więc do wyniku trafiają też ich
+ * przodkowie (bez nich drzewo by się spłaszczyło).
+ *
+ * Lista wejściowa powinna zawierać już tylko aktywne kategorie.
+ */
+export function filterCategoriesByExpertise<T extends LinkableCategory>(
+  categories: T[],
+  expertiseCategoryId: string
+): T[] {
+  const byId = new Map(categories.map((category) => [category.id, category]));
+  const visibleIds = new Set(
+    categories
+      .filter((category) => category.expertiseCategoryIds?.includes(expertiseCategoryId))
+      .map((category) => category.id)
+  );
+
+  for (const id of [...visibleIds]) {
+    let parentId = byId.get(id)?.parentId;
+    while (parentId && !visibleIds.has(parentId)) {
+      visibleIds.add(parentId);
+      parentId = byId.get(parentId)?.parentId;
+    }
+  }
+
+  return categories.filter((category) => visibleIds.has(category.id));
+}
+
+interface ExpertiseTreeNode {
+  id: string;
+  nazwa: string;
+  children?: ExpertiseTreeNode[];
+}
+
+/**
+ * To samo co `isExpertsBranch`, ale dla drzewa z `/api/expertise-categories`
+ * (kategoria > podkategoria > specjalizacja) — używane po stronie klienta.
+ */
+export function isInExpertsBranch(
+  tree: ExpertiseTreeNode[],
+  expertiseCategoryId: string
+): boolean {
+  if (!expertiseCategoryId) return false;
+
+  const contains = (node: ExpertiseTreeNode): boolean =>
+    node.id === expertiseCategoryId ||
+    (node.children ?? []).some(contains);
+
+  return tree.some(
+    (root) => root.nazwa === EXPERTS_ROOT_NAME && contains(root)
+  );
+}

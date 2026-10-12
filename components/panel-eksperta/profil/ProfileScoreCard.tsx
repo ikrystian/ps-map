@@ -235,7 +235,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
         },
         {
           id: "adres",
-          label: "Adre",
+          label: "Adres",
           description:
             "Ulica, kod pocztowy i miasto.",
           weight: 8,

@@ -45,6 +45,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { Review } from "@/types"
 import { clientAvatar } from "@/lib/client-avatar"
+import { formatDate } from "@/lib/format"
 
 interface ReviewsSectionProps {
   reviews: Review[]
@@ -167,15 +168,6 @@ export function ReviewsSection({
       if (sortBy === "LOWEST") return a.ocenaOgolna - b.ocenaOgolna
       return 0
     })
-
-  // Date Formatter
-  const formatDate = (dateString: string | Date) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
 
   // Star Render Helper
   const renderStars = (rating: number, sizeClass = "h-4 w-4") => {

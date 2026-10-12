@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/components/ui/sonner"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { Calendar, Clock, FileText, Loader2, Mail, Trash2, User, Video, MessageCircle, MoreVertical, Archive, RotateCcw, CreditCard } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
@@ -20,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { BlogCategory } from "@/types"
 import { clientAvatar } from "@/lib/client-avatar"
+import { formatDateTime } from "@/lib/format"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -300,7 +299,7 @@ export default function ConsultationsPage() {
                   <div className="flex flex-wrap gap-2">
                     <Badge className="bg-primary/10 text-primary border border-primary/20 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(booking.consultationDate), "PPP p", { locale: pl })}
+                      {formatDateTime(new Date(booking.consultationDate))}
                     </Badge>
                     <Badge className="bg-background/40 text-foreground/80 border border-border/10 gap-1.5 py-0.5 px-2.5 rounded-md font-medium text-sm">
                       <Clock className="h-3 w-3" />
@@ -519,8 +518,8 @@ export default function ConsultationsPage() {
 
                     <path d="M300 220 l-10 80 h15 l10 -80 Z" fill="#27272a" />
                     <path d="M325 220 l5 80 h15 l-5 -80 Z" fill="#27272a" />
-                    <path d="M280 300 h25 r4 v-8 Z" fill="#18181b" />
-                    <path d="M335 300 h25 r4 v-8 Z" fill="#18181b" />
+                    <path d="M280 300 h25 v-8 Z" fill="#18181b" />
+                    <path d="M335 300 h25 v-8 Z" fill="#18181b" />
                     <path d="M280 140 h60 l-10 90 h-40 Z" fill="var(--primary)" opacity="0.9" />
                     <path d="M305 125 h10 v20 h-10 Z" fill="#3f3f46" />
                     <circle cx="310" cy="115" r="22" fill="#52525b" />

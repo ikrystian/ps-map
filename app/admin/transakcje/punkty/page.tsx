@@ -32,8 +32,10 @@ import { ArrowRightLeft, Coins, Eye, Receipt, Search, TrendingDown, TrendingUp }
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { POINT_TRANSACTION_LABELS } from "@/lib/point-transaction-labels"
 import type { LawFirm } from "@/types"
 import { PaginationData } from '@/types/pagination';
+import { formatDateTime } from "@/lib/format"
 
 interface PointTransaction {
   id: string
@@ -49,16 +51,18 @@ interface PointTransaction {
 
 
 const pointTransactionTypeLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; customClass?: string }> = {
-  SUBSCRIPTION_PURCHASE: { label: "Zakup subskrypcji", variant: "destructive", customClass: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200" },
-  POINTS_PURCHASE: { label: "Zakup punktów", variant: "default", customClass: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200" },
-  PROMOTION_PURCHASE: { label: "Promocja", variant: "secondary", customClass: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200" },
-  OFFER_HIGHLIGHT: { label: "Wyróżnienie oferty", variant: "outline", customClass: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200" },
-  PARTNER_BONUS: { label: "Bonus partnerski", variant: "default", customClass: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200" },
-  ADMIN_ADJUSTMENT: { label: "Korekta admina", variant: "secondary", customClass: "bg-slate-100 text-slate-800 dark:bg-card/30 dark:text-muted-foreground border-slate-200" },
-  REFUND: { label: "Zwrot punktów", variant: "outline", customClass: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200" },
-  SUBSCRIPTION_BONUS: { label: "Bonus za pakiet", variant: "default", customClass: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200" },
-  REVIEW_DELETE: { label: "Usunięcie opinii", variant: "destructive", customClass: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200" },
-  BUG_REPORT_REWARD: { label: "Nagroda za zgłoszenie błędu", variant: "default", customClass: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400 border-cyan-200" },
+  SUBSCRIPTION_PURCHASE: { label: POINT_TRANSACTION_LABELS.SUBSCRIPTION_PURCHASE, variant: "destructive", customClass: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200" },
+  POINTS_PURCHASE: { label: POINT_TRANSACTION_LABELS.POINTS_PURCHASE, variant: "default", customClass: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200" },
+  PROMOTION_PURCHASE: { label: POINT_TRANSACTION_LABELS.PROMOTION_PURCHASE, variant: "secondary", customClass: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200" },
+  OFFER_HIGHLIGHT: { label: POINT_TRANSACTION_LABELS.OFFER_HIGHLIGHT, variant: "outline", customClass: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200" },
+  PARTNER_BONUS: { label: POINT_TRANSACTION_LABELS.PARTNER_BONUS, variant: "default", customClass: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200" },
+  ADMIN_ADJUSTMENT: { label: POINT_TRANSACTION_LABELS.ADMIN_ADJUSTMENT, variant: "secondary", customClass: "bg-slate-100 text-slate-800 dark:bg-card/30 dark:text-muted-foreground border-slate-200" },
+  REFUND: { label: POINT_TRANSACTION_LABELS.REFUND, variant: "outline", customClass: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200" },
+  PROMOTION_REFUND: { label: POINT_TRANSACTION_LABELS.PROMOTION_REFUND, variant: "outline", customClass: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400 border-teal-200" },
+  SUBSCRIPTION_BONUS: { label: POINT_TRANSACTION_LABELS.SUBSCRIPTION_BONUS, variant: "default", customClass: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200" },
+  REVIEW_DELETE: { label: POINT_TRANSACTION_LABELS.REVIEW_DELETE, variant: "destructive", customClass: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200" },
+  SURVEY_REWARD: { label: POINT_TRANSACTION_LABELS.SURVEY_REWARD, variant: "default", customClass: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400 border-cyan-200" },
+  BUG_REPORT_REWARD: { label: POINT_TRANSACTION_LABELS.BUG_REPORT_REWARD, variant: "default", customClass: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400 border-cyan-200" },
 }
 
 export default function AdminTransakcjePunktyPage() {
@@ -113,17 +117,6 @@ export default function AdminTransakcjePunktyPage() {
   const openDetailsDialog = (tx: PointTransaction) => {
     setSelectedTx(tx)
     setIsDetailsOpen(true)
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   // Calculate statistics for the current page
@@ -269,7 +262,7 @@ export default function AdminTransakcjePunktyPage() {
                   return (
                     <TableRow key={tx.id}>
                       <TableCell className="font-medium whitespace-nowrap">
-                        {formatDate(tx.createdAt)}
+                        {formatDateTime(tx.createdAt)}
                       </TableCell>
                       <TableCell>
                         <div>
@@ -372,7 +365,7 @@ export default function AdminTransakcjePunktyPage() {
                 </div>
                 <div>
                   <span className="text-xs uppercase font-semibold text-muted-foreground block mb-1">Data i godzina</span>
-                  <span className="font-semibold text-sm">{formatDate(selectedTx.createdAt)}</span>
+                  <span className="font-semibold text-sm">{formatDateTime(selectedTx.createdAt)}</span>
                 </div>
               </div>
 

@@ -43,8 +43,12 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
-
-const POINTS_PER_PLN = 2
+import {
+  DEFAULT_POINTS_TO_PLN_RATIO,
+  parsePointsToPlnRatio,
+  plnToPoints,
+} from "@/lib/points-pricing"
+import { formatDate } from "@/lib/format"
 
 interface SubscriptionPlan {
   id: string
@@ -74,14 +78,6 @@ interface SubscriptionPlan {
   punktyGratis: number
   skillLawFocus: boolean
   kolor: string | null
-}
-
-const formatDate = (dateString: string | Date) => {
-  return new Date(dateString).toLocaleDateString("pl-PL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
 }
 
 // Dodaje kanał alfa do 6-znakowego koloru hex (kolor pakietu z panelu admina)
@@ -192,6 +188,11 @@ export default function LawFirmPackagePage() {
   const [activatedUntil, setActivatedUntil] = useState<string | null>(null)
   const [showActivatedModal, setShowActivatedModal] = useState(false)
   const [geoHierarchy, setGeoHierarchy] = useState<string>("cities")
+  // 1 pkt = X zł — ten sam przelicznik z ustawień co w sklepie punktów i w API zakupu (F-015)
+  const [pointsToPlnRatio, setPointsToPlnRatio] = useState<number>(DEFAULT_POINTS_TO_PLN_RATIO)
+
+  /** Koszt pakietu w punktach dla ceny w zł. */
+  const toPoints = (pln: number) => plnToPoints(pln, pointsToPlnRatio)
 
   const isSubscriptionActive = !!lawFirm?.pakietSubskrypcji &&
     (!lawFirm.dataPakietuDo || new Date(lawFirm.dataPakietuDo) > new Date())
@@ -240,6 +241,7 @@ export default function LawFirmPackagePage() {
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json()
         setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")
+        setPointsToPlnRatio(parsePointsToPlnRatio(settingsData.pointsToPlnRatio))
       }
 
       setLawFirm(firmData)
@@ -270,12 +272,24 @@ export default function LawFirmPackagePage() {
     }
   }
 
+  // Największa realna zniżka okresu względem płacenia co miesiąc (z cen w bazie)
+  const getMaxDiscountPercent = (period: "6" | "12"): number => {
+    const months = Number(period)
+    const discounts = plans.map((plan) => {
+      const monthly = plan.cena1Miesiac ?? 0
+      const price = getPriceValue(plan, period)
+      if (monthly <= 0 || price <= 0) return 0
+      return Math.round((1 - price / (monthly * months)) * 100)
+    })
+    return Math.max(0, ...discounts)
+  }
+
   const getPrice = (plan: SubscriptionPlan, period: string) => {
     const price = getPriceValue(plan, period)
     if (price === 0 && plan.typ !== "FREE") return "-"
     if (plan.typ === "FREE") return "Darmowy"
 
-    const pointsCost = Math.round(price * POINTS_PER_PLN)
+    const pointsCost = toPoints(price)
     return `${pointsCost} pkt`
   }
 
@@ -504,7 +518,7 @@ export default function LawFirmPackagePage() {
       >
         <div className="hidden md:inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20 self-start">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Wzmocnij pozycję swojej eksperta</span>
+          <span>Wzmocnij pozycję swojego profilu</span>
         </div>
       </PageHeader>
 
@@ -618,9 +632,11 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Półrocznie
-              <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
-                Zniżka do 72%
-              </span>
+              {getMaxDiscountPercent("6") > 0 && (
+                <span className="bg-green-100 text-green-700 dark:bg-green-950/80 dark:text-green-400 px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
+                  Zniżka do {getMaxDiscountPercent("6")}%
+                </span>
+              )}
             </button>
             <button
               type="button"
@@ -631,9 +647,11 @@ export default function LawFirmPackagePage() {
                 }`}
             >
               Rocznie
-              <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
-                Zaoszczędź 12%
-              </span>
+              {getMaxDiscountPercent("12") > 0 && (
+                <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-sm font-bold uppercase tracking-wide">
+                  Zniżka do {getMaxDiscountPercent("12")}%
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -649,7 +667,7 @@ export default function LawFirmPackagePage() {
             const isDowngrade = targetPlanRank < currentPlanRank
 
             const priceVal = getPriceValue(plan, selectedPeriod)
-            const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
+            const pointsCost = toPoints(priceVal)
             const canAfford = (lawFirm.punktySaldo || 0) >= pointsCost
 
             const periodMonths = parseInt(selectedPeriod)
@@ -974,7 +992,7 @@ export default function LawFirmPackagePage() {
                       const isPopular = plan.typ.toUpperCase() === "PREMIUM"
                       const isBestVal = plan.typ.toUpperCase() === "BIZNES"
                       const priceVal = getPriceValue(plan, selectedPeriod)
-                      const pointsCost = Math.round(priceVal * POINTS_PER_PLN)
+                      const pointsCost = toPoints(priceVal)
 
                       return (
                         <td
@@ -1029,7 +1047,7 @@ export default function LawFirmPackagePage() {
                   }
 
                   const price = getPriceValue(selectedPlan, selectedPeriod)
-                  const pointsCost = Math.round(price * POINTS_PER_PLN)
+                  const pointsCost = toPoints(price)
                   const canAfford = lawFirm ? (lawFirm.punktySaldo || 0) >= pointsCost : false
 
                   return (
@@ -1102,7 +1120,7 @@ export default function LawFirmPackagePage() {
             <AlertDialogCancel className="border-border rounded-xl">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmPurchase}
-              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && (lawFirm.punktySaldo || 0) < Math.round(getPriceValue(selectedPlan, selectedPeriod) * POINTS_PER_PLN))}
+              disabled={purchasing || isSelectedPlanDowngrade || !!(selectedPlan && lawFirm && (lawFirm.punktySaldo || 0) < toPoints(getPriceValue(selectedPlan, selectedPeriod)))}
               className="bg-primary hover:bg-primary-hover text-white font-semibold rounded-xl"
             >
               {purchasing ? (

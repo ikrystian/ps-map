@@ -1,9 +1,12 @@
-// Typ danych i walidatory kroków 1-4 kreatora sprawy ("Typ", "Opis", "Kategoria i
-// lokalizacja", "Termin i budżet") — współdzielone między gałęzią z sesją i bez sesji
-// w app/(public)/dodaj-sprawe/DodajSprawaClientPage.tsx. Te kroki są funkcjonalnie
-// identyczne niezależnie od tego, czy użytkownik jest zalogowany.
+// Typ danych i walidatory kroków 1-5 kreatora sprawy ("Prawnik czy ekspert", "Typ",
+// "Opis", "Kategoria i lokalizacja", "Termin i budżet") — współdzielone między gałęzią
+// z sesją i bez sesji w app/(public)/dodaj-sprawe/DodajSprawaClientPage.tsx. Te kroki
+// są funkcjonalnie identyczne niezależnie od tego, czy użytkownik jest zalogowany.
 
 export type CaseType = "OSOBA_PRYWATNA" | "FIRMA" | "ORGANIZACJA"
+
+/** Kogo klient szuka — zawęża listę kategorii w kroku „Kategoria i lokalizacja”. */
+export type SpecialistType = "PRAWNIK" | "EKSPERT"
 
 export interface FileAttachment {
   url: string
@@ -11,20 +14,23 @@ export interface FileAttachment {
 }
 
 export interface CaseDraftData {
-  // Krok 1: Typ sprawy
+  // Krok 1: Prawnik czy ekspert
+  typSpecjalisty: SpecialistType | ""
+
+  // Krok 2: Typ sprawy
   typSprawy: CaseType | ""
 
-  // Krok 2: Opis
+  // Krok 3: Opis
   nazwaSprawy: string
   opisSprawy: string
   zalaczniki: string[]
 
-  // Krok 3: Kategoria i lokalizacja (sprawa może mieć wiele kategorii)
+  // Krok 4: Kategoria i lokalizacja (sprawa może mieć wiele kategorii)
   categoryIds: string[]
   voivodeshipId: string
   cityId: string
 
-  // Krok 4: Termin i budżet
+  // Krok 5: Termin i budżet
   oczekiwanyTerminRealizacji: string
   trybPilny: boolean
   budzetOd: string
@@ -33,6 +39,7 @@ export interface CaseDraftData {
 }
 
 export const initialCaseDraftData: CaseDraftData = {
+  typSpecjalisty: "",
   typSprawy: "",
   nazwaSprawy: "",
   opisSprawy: "",
@@ -47,27 +54,33 @@ export const initialCaseDraftData: CaseDraftData = {
   doNegocjacji: true,
 }
 
-/** Pola kroków 1-4, w kolejności użytej do przewinięcia do pierwszego błędu. */
-export const caseDraftStepFieldOrder: Record<1 | 2 | 3 | 4, string[]> = {
-  1: ["typSprawy"],
-  2: ["nazwaSprawy", "opisSprawy"],
-  3: ["categoryIds", "cityId"],
-  4: [],
+/** Pola kroków 1-5, w kolejności użytej do przewinięcia do pierwszego błędu. */
+export const caseDraftStepFieldOrder: Record<1 | 2 | 3 | 4 | 5, string[]> = {
+  1: ["typSpecjalisty"],
+  2: ["typSprawy"],
+  3: ["nazwaSprawy", "opisSprawy"],
+  4: ["categoryIds", "cityId"],
+  5: [],
 }
 
 export function getCaseDraftStepErrors(
-  step: 1 | 2 | 3 | 4,
+  step: 1 | 2 | 3 | 4 | 5,
   data: CaseDraftData
 ): Record<string, string> {
   const errors: Record<string, string> = {}
 
   switch (step) {
     case 1:
+      if (!data.typSpecjalisty) {
+        errors.typSpecjalisty = "Wybierz, kogo szukasz, aby przejść do następnego kroku"
+      }
+      break
+    case 2:
       if (!data.typSprawy) {
         errors.typSprawy = "Wybierz typ sprawy, aby przejść do następnego kroku"
       }
       break
-    case 2:
+    case 3:
       if (!data.nazwaSprawy.trim()) {
         errors.nazwaSprawy = "Podaj nazwę sprawy"
       }
@@ -77,7 +90,7 @@ export function getCaseDraftStepErrors(
         errors.opisSprawy = `Opis musi mieć co najmniej 50 znaków - brakuje jeszcze ${50 - data.opisSprawy.length}`
       }
       break
-    case 3:
+    case 4:
       if (data.categoryIds.length === 0) {
         errors.categoryIds = "Wybierz co najmniej jedną kategorię sprawy"
       }
@@ -85,7 +98,7 @@ export function getCaseDraftStepErrors(
         errors.cityId = "Wybierz miasto, którego dotyczy sprawa"
       }
       break
-    case 4:
+    case 5:
       // Termin i budżet są opcjonalne
       break
   }

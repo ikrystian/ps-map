@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, User, Tag } from "lucide-react"
 import type { LawFirm } from "@/types"
+import { formatCurrency } from "@/lib/format"
 
 interface Service {
   id: string
@@ -26,12 +27,6 @@ const serviceUnitLabels: Record<string, string> = {
 }
 
 export function ServicesTab({ lawFirm }: ServicesTabProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
-  }
 
   const firmCategories = lawFirm.categories || []
   const hasCategories = firmCategories.length > 0

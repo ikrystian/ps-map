@@ -6,7 +6,7 @@ import { sendSystemNotification } from "@/lib/notifications"
 import { Prisma } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
 
-const MIN_OPIS_LENGTH = 100
+const MIN_OPIS_LENGTH = 50
 
 const requestInclude = {
   category: { select: { id: true, nazwa: true, slug: true } },

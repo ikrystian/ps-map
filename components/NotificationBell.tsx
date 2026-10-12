@@ -51,7 +51,10 @@ export function NotificationBell() {
       if (response.ok) {
         const data = await response.json()
         setNotifications(data)
-        setUnreadCount(data.filter((n: Notification) => !n.przeczytane).length)
+        const headerCount = Number(response.headers.get("X-Unread-Count"))
+        setUnreadCount(Number.isFinite(headerCount) && response.headers.has("X-Unread-Count")
+          ? headerCount
+          : data.filter((n: Notification) => !n.przeczytane).length)
       }
     } catch (error) {
       console.error("Error fetching notifications:", error)

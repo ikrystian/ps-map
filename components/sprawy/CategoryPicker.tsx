@@ -27,6 +27,9 @@ import { useState } from "react";
 
 export type CaseTypeValue = "OSOBA_PRYWATNA" | "FIRMA" | "ORGANIZACJA" | "";
 
+/** Kogo szuka klient: sprawy prawne czy usługi ekspertów. Pusta wartość = bez filtrowania. */
+export type SpecialistTypeValue = "PRAWNIK" | "EKSPERT" | "";
+
 /** Kategoria zwracana przez `GET /api/categories` (pola istotne dla wyboru). */
 export interface CategoryOption {
   id: string;
@@ -46,10 +49,43 @@ export function getCategoryTypeFor(typSprawy: CaseTypeValue) {
   return typSprawy === "OSOBA_PRYWATNA" ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE";
 }
 
+/**
+ * Predykat „czy kategoria należy do wybranej grupy” (sprawy prawne / usługi ekspertów).
+ * Flagę `ekspercka` mają tylko kategorie główne, a podkategorie dziedziczą grupę po swoim
+ * korzeniu — dlatego korzeń szukamy w pełnej liście, niezależnie od aktywności i typu.
+ */
+export function createSpecialistTypeFilter(
+  categories: CategoryOption[],
+  typSpecjalisty: SpecialistTypeValue,
+): (category: CategoryOption) => boolean {
+  if (!typSpecjalisty) return () => true;
+
+  const byId = new Map(categories.map((cat) => [cat.id, cat]));
+  const wantExpert = typSpecjalisty === "EKSPERT";
+
+  return (category) => {
+    let root = category;
+    // Limit głębokości chroni przed cyklem w danych (parentId wskazujący na potomka)
+    for (let depth = 0; root.parentId && depth < 5; depth++) {
+      const parent = byId.get(root.parentId);
+      if (!parent) break;
+      root = parent;
+    }
+    return !!root.ekspercka === wantExpert;
+  };
+}
+
 /** Buduje dwupoziomowe drzewo (dziedziny → specjalizacje) dla wybranego typu sprawy. */
-export function buildCategoryTree(categories: CategoryOption[], typSprawy: CaseTypeValue): CategoryOption[] {
+export function buildCategoryTree(
+  categories: CategoryOption[],
+  typSprawy: CaseTypeValue,
+  typSpecjalisty: SpecialistTypeValue = "",
+): CategoryOption[] {
   const targetType = getCategoryTypeFor(typSprawy);
-  const activeCats = categories.filter((cat) => cat.aktywna && cat.typ === targetType);
+  const matchesSpecialistType = createSpecialistTypeFilter(categories, typSpecjalisty);
+  const activeCats = categories.filter(
+    (cat) => cat.aktywna && cat.typ === targetType && matchesSpecialistType(cat),
+  );
   const rootCats = activeCats.filter((cat) => !cat.parentId);
 
   return rootCats.map((root) => ({
@@ -74,6 +110,8 @@ interface CategoryPickerProps {
   categories: CategoryOption[];
   isLoadingCategories?: boolean;
   typSprawy: CaseTypeValue;
+  /** Zawęża listę do spraw prawnych albo usług ekspertów; bez wartości pokazuje wszystko. */
+  typSpecjalisty?: SpecialistTypeValue;
   value: string[];
   onChange: (categoryIds: string[]) => void;
   hasError?: boolean;
@@ -88,6 +126,7 @@ export function CategoryPicker({
   categories,
   isLoadingCategories = false,
   typSprawy,
+  typSpecjalisty = "",
   value,
   onChange,
   hasError,
@@ -96,7 +135,8 @@ export function CategoryPicker({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
 
-  const filteredCats = buildCategoryTree(categories, typSprawy);
+  const filteredCats = buildCategoryTree(categories, typSprawy, typSpecjalisty);
+  const isExpertSearch = typSpecjalisty === "EKSPERT";
 
   // Przy otwieraniu modala ustaw dziedzinę odpowiadającą pierwszej wybranej kategorii
   const handleOpenChange = (open: boolean) => {
@@ -137,7 +177,10 @@ export function CategoryPicker({
     const query = searchQuery.toLowerCase().trim();
     if (!query) return [];
 
-    const activeCats = categories.filter((cat) => cat.aktywna && cat.typ === targetType);
+    const matchesSpecialistType = createSpecialistTypeFilter(categories, typSpecjalisty);
+    const activeCats = categories.filter(
+      (cat) => cat.aktywna && cat.typ === targetType && matchesSpecialistType(cat),
+    );
 
     return activeCats
       .filter((cat) => cat.nazwa.toLowerCase().includes(query))
@@ -220,7 +263,9 @@ export function CategoryPicker({
               <ChevronRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
             </span>
             <span className="text-xs text-muted-foreground mt-1 font-normal group-hover:text-foreground/80">
-              Kliknij, aby otworzyć wyszukiwarkę i pełny spis dziedzin prawa
+              {isExpertSearch
+                ? "Kliknij, aby otworzyć wyszukiwarkę i pełny spis dziedzin usług"
+                : "Kliknij, aby otworzyć wyszukiwarkę i pełny spis dziedzin prawa"}
             </span>
             <span className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/30 text-xs font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all">
               Otwórz listę kategorii <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
@@ -237,8 +282,8 @@ export function CategoryPicker({
             Wybierz kategorie sprawy
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-xs">
-            Wyszukaj odpowiednie kategorie prawne lub wybierz je z podziału tematycznego. Możesz
-            zaznaczyć więcej niż jedną.
+            {isExpertSearch ? "Wyszukaj odpowiednie kategorie usług" : "Wyszukaj odpowiednie kategorie prawne"}{" "}
+            lub wybierz je z podziału tematycznego. Możesz zaznaczyć więcej niż jedną.
           </DialogDescription>
         </DialogHeader>
 
@@ -317,7 +362,7 @@ export function CategoryPicker({
               )}
             >
               <div className="text-xs font-bold text-muted-foreground/80 px-2.5 py-1.5 uppercase tracking-wider mb-1">
-                Działy prawa
+                {isExpertSearch ? "Dziedziny usług" : "Działy prawa"}
               </div>
               {isLoadingCategories ? (
                 <div className="text-xs text-muted-foreground px-2 py-2 flex items-center gap-1.5">

@@ -535,7 +535,7 @@ export function EnhancedChatArea({
     } else if (diffInMinutes < 60) {
       return `${diffInMinutes} min temu`
     } else if (date.toDateString() === now.toDateString()) {
-      return date.toLocaleTimeString("pl-PL", {
+      return date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
         hour: "2-digit",
         minute: "2-digit",
       })
@@ -544,14 +544,14 @@ export function EnhancedChatArea({
       yesterday.setDate(yesterday.getDate() - 1)
 
       if (date.toDateString() === yesterday.toDateString()) {
-        return `wczoraj ${date.toLocaleTimeString("pl-PL", {
+        return `wczoraj ${date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
           hour: "2-digit",
           minute: "2-digit",
         })}`
       } else if (diffInMinutes < 7 * 24 * 60) {
-        return date.toLocaleDateString("pl-PL", { weekday: "long" })
+        return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long" })
       } else {
-        return date.toLocaleDateString("pl-PL", {
+        return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
           day: "numeric",
           month: "long",
           year:
@@ -572,7 +572,7 @@ export function EnhancedChatArea({
     } else if (date.toDateString() === yesterday.toDateString()) {
       return "Wczoraj"
     } else {
-      return date.toLocaleDateString("pl-PL", {
+      return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
         day: "numeric",
         month: "long",
         year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
@@ -1070,7 +1070,7 @@ export function EnhancedChatArea({
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground font-light">Rejestracja:</span>
                 <span className="text-foreground/80 col-span-2">
-                  {otherUser.createdAt ? new Date(otherUser.createdAt).toLocaleDateString("pl-PL", {
+                  {otherUser.createdAt ? new Date(otherUser.createdAt).toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
                     year: "numeric",
                     month: "long",
                     day: "numeric",

@@ -36,6 +36,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { use, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatCurrency, formatDateTime } from "@/lib/format"
 
 interface SubscriptionPlan {
   id: string
@@ -214,24 +215,6 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować transakcji")
     }
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
   }
 
   if (loading) {
@@ -503,16 +486,16 @@ export default function AdminTransactionDetailsPage({ params }: { params: Promis
             <CardContent className="pt-6 space-y-3 text-sm">
               <div className="flex justify-between items-center py-1">
                 <span className="text-muted-foreground">Utworzono</span>
-                <span className="font-medium text-foreground">{formatDate(order.createdAt)}</span>
+                <span className="font-medium text-foreground">{formatDateTime(order.createdAt)}</span>
               </div>
               <div className="flex justify-between items-center py-1 border-t">
                 <span className="text-muted-foreground">Ostatnia zmiana</span>
-                <span className="font-medium text-foreground">{formatDate(order.updatedAt)}</span>
+                <span className="font-medium text-foreground">{formatDateTime(order.updatedAt)}</span>
               </div>
               <div className="flex justify-between items-center py-1 border-t">
                 <span className="text-muted-foreground">Data zapłaty</span>
                 <span className="font-medium text-foreground">
-                  {order.zaplaconoData ? formatDate(order.zaplaconoData) : "—"}
+                  {order.zaplaconoData ? formatDateTime(order.zaplaconoData) : "—"}
                 </span>
               </div>
             </CardContent>

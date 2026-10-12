@@ -129,7 +129,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
 
   const formatMessageTime = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleTimeString("pl-PL", {
+    return date.toLocaleTimeString("pl-PL", { timeZone: "Europe/Warsaw",
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -146,7 +146,7 @@ export function ChatArea({ conversationId, onMessageSent, onBack }: ChatAreaProp
     } else if (date.toDateString() === yesterday.toDateString()) {
       return "Wczoraj"
     } else {
-      return date.toLocaleDateString("pl-PL", {
+      return date.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw",
         day: "numeric",
         month: "long",
         year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,

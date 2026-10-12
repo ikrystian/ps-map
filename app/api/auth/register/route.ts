@@ -1,4 +1,5 @@
 import { isReferralUsable } from "@/lib/case-referrals"
+import { cleanCityName } from "@/lib/city-name"
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
 import { consumePhoneVerificationToken, PHONE_VERIFICATION_MESSAGES } from "@/lib/phone-verification"
 import { prisma } from "@/lib/prisma"
@@ -205,7 +206,7 @@ export async function POST(request: NextRequest) {
           to: user.email,
           templateType: EmailType.POTWIERDZENIE_EMAIL,
           variables: {
-            "{imie}": userData.name || user.email,
+            "{imie}": userData.name || "w Prostej Sprawie",
             "{email}": user.email,
             "{linkPotwierdzenia}": verificationUrl,
             "{kod}": verificationCode,
@@ -261,7 +262,7 @@ export async function POST(request: NextRequest) {
           telefonZweryfikowany: new Date(),
           adres: clientData.adres || null,
           voivodeshipId: await resolveVoivodeshipId(clientData.voivodeshipId),
-          miasto: clientData.miasto || null,
+          miasto: cleanCityName(clientData.miasto) || null,
           kodPocztowy: clientData.kodPocztowy || null,
         },
       })
@@ -364,14 +365,14 @@ export async function POST(request: NextRequest) {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          imie: userData.lawFirm.imieKontakt || "Do uzupełnienia",
-          nazwisko: userData.lawFirm.nazwiskoKontakt || "Do uzupełnienia",
-          numerTelefonu: phoneCheck.phone || userData.lawFirm.numerTelefonu || "000000000",
+          imie: userData.lawFirm.imieKontakt || null,
+          nazwisko: userData.lawFirm.nazwiskoKontakt || null,
+          numerTelefonu: phoneCheck.phone || userData.lawFirm.numerTelefonu || null,
           telefonZweryfikowany: new Date(),
           numerTelefonu2: userData.lawFirm.numerTelefonu2 || null,
           adres: userData.lawFirm.adres,
-          kodPocztowy: userData.lawFirm.kodPocztowy || "00-000",
-          miasto: userData.lawFirm.miasto,
+          kodPocztowy: userData.lawFirm.kodPocztowy || null,
+          miasto: cleanCityName(userData.lawFirm.miasto) || userData.lawFirm.miasto,
           voivodeshipId: (await resolveVoivodeshipId(userData.lawFirm.voivodeshipId)) || defaultVoivodeship.id,
         },
       })

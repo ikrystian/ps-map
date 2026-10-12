@@ -15,6 +15,7 @@ import {
 import { AlertCircle, Calendar, CheckCircle, Download, Mail, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatDateTime } from "@/lib/format"
 
 interface NewsletterSubscriber {
   id: string
@@ -26,17 +27,6 @@ interface NewsletterSubscriber {
   dataPotwierdzenia: string | null
   dataZapisu: string
   dataRezygnacji: string | null
-}
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
 }
 
 export default function AdminNewsletterPage() {
@@ -90,11 +80,11 @@ export default function AdminNewsletterPage() {
         return [
           sub.email,
           sub.imie || "",
-          formatDate(sub.dataZapisu),
+          formatDateTime(sub.dataZapisu),
           sub.potwierdzony ? "Tak" : "Nie",
-          sub.dataPotwierdzenia ? formatDate(sub.dataPotwierdzenia) : "",
+          sub.dataPotwierdzenia ? formatDateTime(sub.dataPotwierdzenia) : "",
           statusStr,
-          sub.dataRezygnacji ? formatDate(sub.dataRezygnacji) : "",
+          sub.dataRezygnacji ? formatDateTime(sub.dataRezygnacji) : "",
         ]
       })
 
@@ -274,7 +264,7 @@ export default function AdminNewsletterPage() {
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {formatDate(subscriber.dataZapisu)}
+                        {formatDateTime(subscriber.dataZapisu)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -292,7 +282,7 @@ export default function AdminNewsletterPage() {
                     <TableCell>
                       {subscriber.dataRezygnacji ? (
                         <div className="text-sm text-muted-foreground">
-                          {formatDate(subscriber.dataRezygnacji)}
+                          {formatDateTime(subscriber.dataRezygnacji)}
                         </div>
                       ) : (
                         "-"

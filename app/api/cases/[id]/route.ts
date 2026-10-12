@@ -168,6 +168,17 @@ export async function GET(
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
+      // Zarchiwizowana przez admina sprawa nie jest dostępna dla ekspertów, którzy nie mają w niej oferty (F-025/F-066)
+      if (caseData.isArchived && !hasOffer) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      }
+
+      // Dane kontaktowe klienta (imię, nazwisko, telefon) ekspert dostaje dopiero po akceptacji
+      // swojej oferty — wcześniej klient mógł jeszcze wybrać „Preferowany kontakt: e-mail” (F-080)
+      if (!(acceptedOffer && acceptedOffer.lawFirmId === lawFirm.id)) {
+        caseDataWithCount = { ...caseDataWithCount, imieNazwisko: "", telefonKontakt: "" }
+      }
+
       // Nie ujawniamy konkurentowi, który ekspert polecił sprawę — tylko własne polecenie
       if (caseDataWithCount.referral && caseDataWithCount.referral.lawFirm.id !== lawFirm.id) {
         caseDataWithCount = { ...caseDataWithCount, referral: null }

@@ -1,7 +1,9 @@
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { EmailLogStatus } from "@prisma/client"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { formatDateTimeSeconds } from "@/lib/format"
 
 // Strona deweloperska – zawsze renderowana dynamicznie, bez cache'owania.
 export const dynamic = "force-dynamic"
@@ -11,20 +13,15 @@ export const metadata = {
   robots: { index: false, follow: false },
 }
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("pl-PL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(date)
-}
-
 export default async function MailsPage() {
   const nodeEnv = process.env.NODE_ENV as string
   const isDev = nodeEnv !== "production" && nodeEnv !== "stage"
+  const isRestrictedEnv = !isDev
+  // Na produkcji/stage podgląd e-maili (kody weryfikacyjne, linki) tylko dla admina (F-072)
+  if (isRestrictedEnv) {
+    const session = await auth()
+    if (session?.user?.role !== "ADMIN") notFound()
+  }
 
   const setting = await prisma.settings.findUnique({
     where: { key: "emailLogToMails" },
@@ -91,7 +88,7 @@ export default async function MailsPage() {
                         {log.subject || "(bez tematu)"}
                       </p>
                       <time className="shrink-0 font-mono text-xs text-muted-foreground">
-                        {formatDate(log.sentAt)}
+                        {formatDateTimeSeconds(log.sentAt)}
                       </time>
                     </div>
                     <p className="mt-0.5 truncate text-sm text-muted-foreground">

@@ -119,11 +119,14 @@ export function computeRankingScore(input: RankingScoreInput): RankingScoreBreak
 }
 
 /**
- * Sumuje punkty wydane na promocje na podstawie transakcji typu PROMOTION_PURCHASE.
- * Kwoty są ujemne (wydatek), więc zwracamy wartość bezwzględną.
+ * Sumuje punkty wydane na promocje na podstawie transakcji PROMOTION_PURCHASE (ujemne)
+ * i PROMOTION_REFUND (dodatnie, zwrot za anulowaną promocję) — patrz
+ * `PROMOTION_SPEND_TRANSACTION_TYPES` w lib/points-ledger.ts. Zwraca wydatek netto;
+ * nadwyżka zwrotów (np. zwrot za promocję kupioną przed wprowadzeniem księgi) nie
+ * daje ujemnego wyniku ani „wydatku” ze znakiem odwróconym.
  */
 export function sumPromotionSpentPoints(
   transactions: Array<{ amount: number }>
 ): number {
-  return Math.abs(transactions.reduce((sum, tx) => sum + tx.amount, 0))
+  return Math.max(0, -transactions.reduce((sum, tx) => sum + tx.amount, 0))
 }

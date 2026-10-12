@@ -3,6 +3,7 @@ import { CONSULTATION_DURATIONS, CONSULTATION_FORM_LABELS } from "@/lib/consulta
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { formatDateTime } from "@/lib/format"
 
 const MIN_WIADOMOSC_LENGTH = 100
 
@@ -270,7 +271,7 @@ export async function POST(request: NextRequest) {
     // Powiadomienie poza transakcją – żeby przeszło przez ustawienia użytkownika i socket
     try {
       const baseUrl = process.env.NEXTAUTH_URL || process.env.URL || "http://localhost:3000"
-      const terminText = termin.toLocaleString("pl-PL", { timeZone: "Europe/Warsaw" })
+      const terminText = formatDateTime(termin)
 
       const { notification } = await sendSystemNotification({
         userId: consultationRequest.client.userId,

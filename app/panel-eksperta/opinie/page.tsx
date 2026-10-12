@@ -1,5 +1,6 @@
 "use client"
 
+import { formatDate, formatNumber } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -53,17 +54,6 @@ import { useEffect, useMemo, useState } from "react"
 import type { LawFirm, Review } from "@/types"
 import { expertAvatar } from "@/lib/expert-avatar"
 import { clientAvatar } from "@/lib/client-avatar"
-
-
-// Format date helper
-const formatDate = (date: Date | string) => {
-  const d = new Date(date)
-  return d.toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
 
 
 
@@ -420,7 +410,7 @@ export default function LawFirmReviewsPage() {
                 <Star className="h-5 w-5 fill-amber-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground leading-none">{stats.avgRating.toFixed(1)}</p>
+                <p className="text-2xl font-bold text-foreground leading-none">{formatNumber(stats.avgRating, 1)}</p>
                 <p className="text-sm uppercase font-semibold text-muted-foreground tracking-wider mt-1">Średnia ocena</p>
               </div>
             </div>
@@ -464,7 +454,7 @@ export default function LawFirmReviewsPage() {
               <CardContent className="pt-4 flex-1 flex flex-col justify-center items-center text-center gap-2">
                 <div className="relative flex items-center justify-center">
                   <span className="text-6xl font-extrabold tracking-tighter text-foreground filter drop-shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                    {stats.avgRating.toFixed(2)}
+                    {formatNumber(stats.avgRating, 1)}
                   </span>
                   <span className="text-lg font-semibold text-muted-foreground self-end mb-1 ml-1">/5</span>
                 </div>
@@ -495,7 +485,7 @@ export default function LawFirmReviewsPage() {
                       <UserCheck className="h-4 w-4 text-amber-500" />
                       <span>Profesjonalizm</span>
                     </div>
-                    <span className="font-bold text-foreground">{stats.avgProfesjonalizm.toFixed(1)} / 5.0</span>
+                    <span className="font-bold text-foreground">{formatNumber(stats.avgProfesjonalizm, 1)} / 5</span>
                   </div>
                   <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-background border border-border/20">
                     <motion.div
@@ -514,7 +504,7 @@ export default function LawFirmReviewsPage() {
                       <MessageCircle className="h-4 w-4 text-emerald-500" />
                       <span>Komunikacja</span>
                     </div>
-                    <span className="font-bold text-foreground">{stats.avgKomunikacja.toFixed(1)} / 5.0</span>
+                    <span className="font-bold text-foreground">{formatNumber(stats.avgKomunikacja, 1)} / 5</span>
                   </div>
                   <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-background border border-border/20">
                     <motion.div
@@ -533,7 +523,7 @@ export default function LawFirmReviewsPage() {
                       <Calendar className="h-4 w-4 text-indigo-500" />
                       <span>Terminowość</span>
                     </div>
-                    <span className="font-bold text-foreground">{stats.avgTerminowosc.toFixed(1)} / 5.0</span>
+                    <span className="font-bold text-foreground">{formatNumber(stats.avgTerminowosc, 1)} / 5</span>
                   </div>
                   <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-background border border-border/20">
                     <motion.div
@@ -552,7 +542,7 @@ export default function LawFirmReviewsPage() {
                       <TrendingUp className="h-4 w-4 text-purple-500" />
                       <span>Stosunek jakości do ceny</span>
                     </div>
-                    <span className="font-bold text-foreground">{stats.avgStosunekJakosci.toFixed(1)} / 5.0</span>
+                    <span className="font-bold text-foreground">{formatNumber(stats.avgStosunekJakosci, 1)} / 5</span>
                   </div>
                   <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-background border border-border/20">
                     <motion.div
@@ -780,7 +770,7 @@ export default function LawFirmReviewsPage() {
                             {renderStars(review.ocenaOgolna)}
                             <div className="flex items-center gap-1 text-xs font-semibold text-foreground/80">
                               <span>Ocena ogólna:</span>
-                              <span className="text-amber-500 font-bold">{review.ocenaOgolna.toFixed(1)}/5</span>
+                              <span className="text-amber-500 font-bold">{formatNumber(review.ocenaOgolna, 1)}/5</span>
                             </div>
                           </div>
                         </div>
@@ -995,7 +985,7 @@ export default function LawFirmReviewsPage() {
                 </span>
                 <span className="flex items-center gap-1 text-amber-500 font-semibold">
                   <Star className="h-3 w-3 fill-amber-500" />
-                  {selectedReview.ocenaOgolna.toFixed(1)}/5
+                  {formatNumber(selectedReview.ocenaOgolna, 1)}/5
                 </span>
               </div>
               <h4 className="font-semibold text-sm text-foreground">{selectedReview.tytulOpinii}</h4>
@@ -1095,7 +1085,7 @@ export default function LawFirmReviewsPage() {
                   </span>
                   <span className="flex items-center gap-1 text-red-400 font-semibold bg-red-950/40 px-2 py-0.5 rounded-full border border-red-900/30">
                     <Star className="h-3 w-3 fill-red-400" />
-                    {reviewToDelete.ocenaOgolna.toFixed(1)}/5
+                    {formatNumber(reviewToDelete.ocenaOgolna, 1)}/5
                   </span>
                 </div>
                 <h4 className="font-semibold text-sm text-foreground">{reviewToDelete.tytulOpinii}</h4>

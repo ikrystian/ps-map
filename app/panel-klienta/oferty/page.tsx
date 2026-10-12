@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays, formatCurrency, formatDate } from "@/lib/format"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
@@ -36,36 +37,22 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { expertAvatar } from "@/lib/expert-avatar"
+import { OFFER_STATUS_VARIANT } from "@/lib/status-style"
 
 type Offer = OfferWithCase
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "ZLOZONA":
-      return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Złożona</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ZLOZONA} className="gap-1"><Clock className="h-3 w-3" />Złożona</Badge>
     case "ZAAKCEPTOWANA":
-      return <Badge variant="default" className="gap-1"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ZAAKCEPTOWANA} className="gap-1"><CheckCircle2 className="h-3 w-3" />Zaakceptowana</Badge>
     case "ODRZUCONA":
-      return <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Odrzucona</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.ODRZUCONA} className="gap-1"><XCircle className="h-3 w-3" />Odrzucona</Badge>
     case "NEGOCJACJE":
-      return <Badge variant="outline" className="gap-1"><FileText className="h-3 w-3" />Negocjacje</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.NEGOCJACJE} className="gap-1"><FileText className="h-3 w-3" />Negocjacje</Badge>
     case "WYGASLA":
-      return <Badge variant="outline">Wygasła</Badge>
+      return <Badge variant={OFFER_STATUS_VARIANT.WYGASLA}>Wygasła</Badge>
     default:
       return <Badge>{status}</Badge>
   }
@@ -310,7 +297,7 @@ export default function ClientOffersPage() {
                     <p className="text-sm text-muted-foreground mb-1">Termin realizacji</p>
                     <p className="text-lg font-semibold flex items-center gap-2 text-foreground">
                       <Clock className="h-4 w-4 text-primary" />
-                      {offer.terminRealizacjiDni} dni roboczych
+                      {formatBusinessDays(offer.terminRealizacjiDni)}
                     </p>
                   </div>
 
@@ -492,7 +479,7 @@ export default function ClientOffersPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold mb-2 text-foreground/80 text-sm">Termin realizacji</h3>
-                  <p className="text-2xl font-bold text-foreground">{selectedOffer.terminRealizacjiDni} dni roboczych</p>
+                  <p className="text-2xl font-bold text-foreground">{formatBusinessDays(selectedOffer.terminRealizacjiDni)}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2 text-foreground/80 text-sm">Warunki płatności</h3>
@@ -582,7 +569,7 @@ export default function ClientOffersPage() {
                 {formatCurrency(selectedOffer.kwotaBrutto)}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                Termin: {selectedOffer.terminRealizacjiDni} dni roboczych
+                Termin: {formatBusinessDays(selectedOffer.terminRealizacjiDni)}
               </p>
             </div>
           )}

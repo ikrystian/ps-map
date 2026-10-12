@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { sendInvoiceToKsef } from "@/lib/ksef"
+import { createInvoiceWithNumber } from "@/lib/invoice-number"
+import { claimOrderPayment, creditPointsForOrder } from "@/lib/points-ledger"
 
 /**
  * Rozbija pełny adres z Białej listy MF (np. "UL. PRZYKŁADOWA 1, 00-000 WARSZAWA")
@@ -154,25 +156,9 @@ export async function generateInvoiceForOrder(orderId: string) {
       return null
     }
 
-    // Generate invoice number (format: FV/YYYY/MM/XXXXX)
     const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
 
-    // Get the count of invoices in this month
-    const startOfMonth = new Date(year, now.getMonth(), 1)
-    const endOfMonth = new Date(year, now.getMonth() + 1, 0, 23, 59, 59)
-
-    const invoiceCount = await prisma.invoice.count({
-      where: {
-        createdAt: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-      },
-    })
-
-    const invoiceNumber = `FV/${year}/${month}/${String(invoiceCount + 1).padStart(5, '0')}`
+    // Numer FV/RRRR/MM/NNNNN nadaje createInvoiceWithNumber (jedna seria, F-047)
 
     // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
     // razie z profilu kancelarii/użytkownika.
@@ -185,9 +171,8 @@ export async function generateInvoiceForOrder(orderId: string) {
     const vatAmount = grossAmount - netAmount
 
     // Create the invoice
-    const invoice = await prisma.invoice.create({
-      data: {
-        invoiceNumber,
+    const invoice = await createInvoiceWithNumber(
+      {
         orderId: order.id,
         lawFirmId: order.lawFirmId,
         buyerName: buyer.buyerName,
@@ -206,9 +191,10 @@ export async function generateInvoiceForOrder(orderId: string) {
         paymentDate: order.zaplaconoData || now,
         dueDate: order.zaplaconoData || now, // Already paid
       },
-    })
+      now
+    )
 
-    console.log(`Invoice ${invoiceNumber} generated for order ${orderId}`)
+    console.log(`Invoice ${invoice.invoiceNumber} generated for order ${orderId}`)
 
     // Send the invoice to KSeF 2.0 in the background
     sendInvoiceToKsef(invoice.id).catch((err) => {
@@ -233,30 +219,22 @@ export async function markOrderAsPaidAndGenerateInvoice(
   transactionId?: string
 ) {
   try {
-    // Update order status to ZAPLACONE
-    const order = await prisma.order.update({
-      where: { id: orderId },
-      data: {
-        statusPlatnosci: "ZAPLACONE",
-        zaplaconoData: new Date(),
-        ...(transactionId && { transactionId }),
-      },
-      include: {
-        invoice: true,
-      },
-    })
-
-    // If it's a points order, add points to law firm
-    if (order.orderType === "POINTS" && order.liczbaPunktow) {
-      await prisma.lawFirm.update({
-        where: { id: order.lawFirmId },
-        data: {
-          punktySaldo: {
-            increment: order.liczbaPunktow,
-          },
-        },
+    // Oznacz zamówienie jako opłacone i uznaj punkty (z wpisem w historii) w jednej
+    // transakcji. Ponowne wywołanie dla opłaconego już zamówienia niczego nie dolicza.
+    const order = await prisma.$transaction(async (tx) => {
+      const claimed = await claimOrderPayment(tx, orderId, transactionId ? { transactionId } : {})
+      const order = await tx.order.findUniqueOrThrow({
+        where: { id: orderId },
+        include: { invoice: true },
       })
-    }
+
+      // If it's a points order, add points to law firm
+      if (claimed && order.orderType === "POINTS") {
+        await creditPointsForOrder(tx, order)
+      }
+
+      return order
+    })
 
     // Generate invoice if it doesn't exist
     if (!order.invoice) {

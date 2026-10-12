@@ -68,6 +68,8 @@ export interface LawFirm extends LawFirmWithLocation {
   bieglySadowy?: boolean
   bieglySadowyNazwaSadu?: string | null
   punktySaldo?: number
+  /** Wynik rankingowy (lib/ranking-score.ts) — publiczny /ranking */
+  rankingScore?: number
   pakietSubskrypcji?: string | null
   pakietObrazek?: string | null
   dataPakietuOd?: string | Date | null

@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { ExpertiseLinksPicker } from "@/components/admin/expertise-links-picker"
 import { IconPicker } from "@/components/admin/icon-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { Input } from "@/components/ui/input"
@@ -49,6 +50,7 @@ const categorySchema = z.object({
   kolejnosc: z.number(),
   wyswietlajNaGlownejPrywatne: z.boolean(),
   wyswietlajNaGlownejFirmowe: z.boolean(),
+  expertiseCategoryIds: z.array(z.string()),
 })
 
 export type CategoryFormValues = z.infer<typeof categorySchema>
@@ -89,6 +91,7 @@ export function CategoryForm({
       kolejnosc: initialData.kolejnosc,
       wyswietlajNaGlownejPrywatne: !!initialData.wyswietlajNaGlownejPrywatne,
       wyswietlajNaGlownejFirmowe: !!initialData.wyswietlajNaGlownejFirmowe,
+      expertiseCategoryIds: initialData.expertiseCategoryIds ?? [],
     } : {
       nazwa: "",
       slug: "",
@@ -105,6 +108,7 @@ export function CategoryForm({
       kolejnosc: 0,
       wyswietlajNaGlownejPrywatne: false,
       wyswietlajNaGlownejFirmowe: false,
+      expertiseCategoryIds: [],
     },
   })
 
@@ -227,6 +231,34 @@ export function CategoryForm({
                               minHeight="300px"
                             />
                           </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Specjalizacje ekspertów</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="expertiseCategoryIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormDescription>
+                          Kategoria będzie dostępna w rejestracji ekspertów z gałęzi „Eksperci”, którzy
+                          wybrali jedną z zaznaczonych specjalizacji. Prawnicy widzą wszystkie kategorie
+                          niezależnie od tego ustawienia.
+                        </FormDescription>
+                        <FormControl>
+                          <ExpertiseLinksPicker
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

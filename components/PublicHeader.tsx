@@ -41,6 +41,14 @@ interface PublicHeaderProps {
   showCategoryCounts?: boolean
 }
 
+// Grupa w mega menu "Eksperci": kategoria/podkategoria z ExpertiseCategory
+// wraz z jej bezpośrednimi dziećmi (specjalizacjami) do wyświetlenia w kolumnie.
+interface ExpertMenuGroup {
+  id: string
+  nazwa: string
+  children: { id: string; nazwa: string }[]
+}
+
 
 
 
@@ -246,11 +254,12 @@ export default function PublicHeader({
   const prywatneCat = categories.filter(c => c.typ === 'SPRAWY_PRYWATNE')
 
   // Rozdziela kategorie na kolumny mega menu, wyrównując je wg przybliżonej wysokości
-  // (nagłówek + widoczne podkategorie), z zachowaniem kolejności
-  const splitIntoColumns = (cats: CategoryWithChildren[], numCols: number) => {
-    const weight = (c: CategoryWithChildren) => 2 + Math.min(c.children?.length || 0, 5)
+  // (nagłówek + widoczne podkategorie), z zachowaniem kolejności. Generyczna, bo tej samej
+  // logiki używamy zarówno dla kategorii spraw, jak i grup specjalizacji ekspertów.
+  const splitIntoColumns = <T extends { children?: unknown[] }>(cats: T[], numCols: number) => {
+    const weight = (c: T) => 2 + Math.min(c.children?.length || 0, 5)
     const total = cats.reduce((sum, c) => sum + weight(c), 0)
-    const cols: CategoryWithChildren[][] = Array.from({ length: numCols }, () => [])
+    const cols: T[][] = Array.from({ length: numCols }, () => [])
     let colIdx = 0
     let acc = 0
     for (const cat of cats) {
@@ -267,6 +276,22 @@ export default function PublicHeader({
     return cols.filter((col) => col.length > 0)
   }
 
+  // Grupy dla mega menu "Eksperci": gałąź „Prawnicy” (role jako bezpośrednie specjalizacje)
+  // oraz podkategorie gałęzi „Eksperci” (każda ze swoimi specjalizacjami) — to samo drzewo
+  // co krok wyboru specjalizacji w rejestracji eksperta.
+  const expertMenuGroups: ExpertMenuGroup[] = (() => {
+    const prawnicyRoot = expertiseCategories.find((c: any) => c.nazwa === "Prawnicy")
+    const ekspertRoot = expertiseCategories.find((c: any) => c.nazwa === "Eksperci")
+    const groups: ExpertMenuGroup[] = []
+    if (prawnicyRoot) {
+      groups.push({ id: prawnicyRoot.id, nazwa: prawnicyRoot.nazwa, children: prawnicyRoot.children ?? [] })
+    }
+    for (const sub of ekspertRoot?.children ?? []) {
+      groups.push({ id: sub.id, nazwa: sub.nazwa, children: sub.children ?? [] })
+    }
+    return groups
+  })()
+
   const isFirmoweActive = firmoweCat.some(
     (category) =>
       pathname === `/kategorie/${category.slug}` ||
@@ -279,6 +304,7 @@ export default function PublicHeader({
       (category.children && category.children.some((child) => pathname === `/kategorie/${category.slug}/${child.slug}`))
   )
 
+  const isEkspertyActive = pathname === "/szukaj-prawnika" && !!searchParams.get("expertiseCategoryId")
   const isONasActive = pathname === "/o-nas"
   const isDlaPrawnikaActive = pathname.startsWith("/dla-prawnika")
   const isZNamiWygrywaszActive = pathname === "/z-nami-wygrywasz"
@@ -564,6 +590,69 @@ export default function PublicHeader({
                         <NavigationMenuLink asChild>
                           <Link href="/kategorie" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
                             Zobacz wszystkie kategorie <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
+                          </Link>
+                        </NavigationMenuLink>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                {/* Eksperci - Mega Menu */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "bg-transparent hover:bg-background",
+                      isEkspertyActive && "text-primary font-semibold"
+                    )}
+                  >
+                    Eksperci
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[800px] xl:w-[1080px] p-6 lg:p-8 bg-card max-h-[calc(100vh-5.5rem)] overflow-y-auto">
+                      <div className="grid grid-cols-4">
+                        {splitIntoColumns(expertMenuGroups, 4).map((column, columnIndex) => (
+                          <div
+                            key={columnIndex}
+                            className={cn(
+                              "space-y-5 px-5 first:pl-0 last:pr-0",
+                              columnIndex > 0 && "border-l border-white/[0.08]"
+                            )}
+                          >
+                            {column.map((group) => (
+                              <div key={group.id} className="pb-5 border-b border-white/[0.08] last:border-b-0 last:pb-0">
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    href={`/szukaj-prawnika?expertiseCategoryId=${group.id}`}
+                                    className="group/cat-title inline-flex items-center gap-1.5 font-semibold text-sm hover:text-primary mb-2.5 transition-colors text-neutral-800 dark:text-foreground"
+                                  >
+                                    <span>{group.nazwa}</span>
+                                    <ChevronRight className="h-3.5 w-3.5 opacity-0 -translate-x-1.5 group-hover/cat-title:opacity-100 group-hover/cat-title:translate-x-0 transition-all text-primary" />
+                                  </Link>
+                                </NavigationMenuLink>
+                                {group.children.length > 0 && (
+                                  <div className="border-l border-neutral-200/60 dark:border-border/60 pl-3.5 space-y-1.5 ml-0.5">
+                                    {group.children.map((child) => (
+                                      <NavigationMenuLink key={child.id} asChild>
+                                        <Link
+                                          href={`/szukaj-prawnika?expertiseCategoryId=${child.id}`}
+                                          className="group/child-item flex items-center text-[13px] transition-all duration-300 hover:text-primary leading-relaxed relative pl-0 hover:pl-3 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary before:opacity-0 hover:before:opacity-100 before:scale-0 hover:before:scale-100 before:transition-all before:duration-300 w-full text-muted-foreground"
+                                        >
+                                          <span>{child.nazwa}</span>
+                                        </Link>
+                                      </NavigationMenuLink>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-6 pt-5 border-t border-neutral-100 dark:border-border/80 flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Szukasz prawnika lub eksperta z konkretnej dziedziny?</span>
+                        <NavigationMenuLink asChild>
+                          <Link href="/szukaj-prawnika" className="group/all text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+                            Zobacz wszystkich ekspertów <span className="translate-x-0 transition-transform group-hover/all:translate-x-1">→</span>
                           </Link>
                         </NavigationMenuLink>
                       </div>
@@ -892,6 +981,50 @@ export default function PublicHeader({
                               className="block pt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
                             >
                               Zobacz wszystkie kategorie →
+                            </Link>
+                          </AccordionContent>
+                        </AccordionItem>
+
+                        {/* Eksperci Accordion */}
+                        <AccordionItem value="eksperci" className="border-border">
+                          <AccordionTrigger className={cn(
+                            "py-2 text-base font-medium hover:no-underline text-foreground hover:text-primary transition-colors [&>svg]:text-muted-foreground [&>svg]:h-4 [&>svg]:w-4",
+                            isEkspertyActive && "text-primary"
+                          )}>
+                            Eksperci
+                          </AccordionTrigger>
+                          <AccordionContent className="pt-2 pb-4 pl-4 space-y-4">
+                            {expertMenuGroups.map((group) => (
+                              <div key={group.id} className="space-y-2">
+                                <Link
+                                  href={`/szukaj-prawnika?expertiseCategoryId=${group.id}`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className="flex items-center justify-between font-semibold text-sm hover:text-primary transition-colors text-neutral-350"
+                                >
+                                  <span>{group.nazwa}</span>
+                                </Link>
+                                {group.children.length > 0 && (
+                                  <div className="border-l border-border pl-3.5 space-y-2 ml-1">
+                                    {group.children.map((child) => (
+                                      <Link
+                                        key={child.id}
+                                        href={`/szukaj-prawnika?expertiseCategoryId=${child.id}`}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between text-xs hover:text-primary transition-colors text-muted-foreground"
+                                      >
+                                        <span>{child.nazwa}</span>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            <Link
+                              href="/szukaj-prawnika"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="block pt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Zobacz wszystkich ekspertów →
                             </Link>
                           </AccordionContent>
                         </AccordionItem>

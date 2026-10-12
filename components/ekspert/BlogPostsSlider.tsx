@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRef } from "react"
+import { formatDateLong } from "@/lib/format"
 
 interface BlogPostsSliderProps {
   blogPosts: BlogPost[]
@@ -32,11 +33,7 @@ export function BlogPostsSlider({ blogPosts }: BlogPostsSliderProps) {
   const getFormattedDate = (post: BlogPost) => {
     const dateStr = post.dataPublikacji || post.createdAt
     if (!dateStr) return ""
-    return new Intl.DateTimeFormat("pl-PL", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(dateStr))
+    return formatDateLong(dateStr)
   }
 
   return (

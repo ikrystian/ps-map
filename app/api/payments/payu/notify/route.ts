@@ -1,5 +1,6 @@
 import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 import { payuClient } from "@/lib/payu"
+import { claimOrderPayment } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -51,16 +52,13 @@ export async function POST(request: NextRequest) {
 
     if (status === 'COMPLETED' && dbOrder.statusPlatnosci !== 'ZAPLACONE') {
       // Update Order and LawFirm
-      await prisma.$transaction(async (tx) => {
-        // Update Order
-        await tx.order.update({
-          where: { id: dbOrder.id },
-          data: {
-            statusPlatnosci: 'ZAPLACONE',
-            zaplaconoData: new Date(),
-            transactionId: orderId // Ensure transaction ID is set
-          }
+      const settled = await prisma.$transaction(async (tx) => {
+        // Zajmij zamówienie warunkowo — `verify` (powrót użytkownika) i to powiadomienie
+        // przychodzą niemal równocześnie, a punkty/pakiet mogą zostać naliczone tylko raz.
+        const claimed = await claimOrderPayment(tx, dbOrder.id, {
+          transactionId: orderId // Ensure transaction ID is set
         })
+        if (!claimed) return false
 
         // Handle Points
         if (dbOrder.orderType === 'POINTS') {
@@ -141,7 +139,13 @@ export async function POST(request: NextRequest) {
 
         // Try to emit socket event (fire and forget inside transaction might be tricky if socket lib fails, but we catch error outside)
         // We can return notification to emit outside transaction if needed, but here we just want to ensure DB consistency.
+        return true
       })
+
+      // Zamówienie rozliczył już inny proces (np. verify) — nic więcej do zrobienia
+      if (!settled) {
+        return Response.json({ status: "OK" })
+      }
 
       // Emit socket event (outside transaction to avoid blocking)
       try {

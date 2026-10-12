@@ -38,6 +38,7 @@ import { CheckCircle, ExternalLink, Search, XCircle } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
+import { formatDateTime } from "@/lib/format"
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
   NOWE: { label: "Nowe", variant: "secondary" },
@@ -142,15 +143,6 @@ export default function AdminBugReportsPage() {
     if (user.imie || user.nazwisko) return `${user.imie ?? ""} ${user.nazwisko ?? ""}`.trim()
     return user.name || user.email
   }
-
-  const formatDate = (date: string | Date) =>
-    new Date(date).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
 
   const screenshotCount = (zalaczniki: string | null | undefined) => {
     if (!zalaczniki) return 0
@@ -289,7 +281,7 @@ export default function AdminBugReportsPage() {
                         {statusLabels[report.status].label}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm">{formatDate(report.createdAt)}</TableCell>
+                    <TableCell className="text-sm">{formatDateTime(report.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       {report.status === "NOWE" && (
                         <div className="flex items-center gap-1 justify-end">

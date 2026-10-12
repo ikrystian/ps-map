@@ -30,7 +30,7 @@ export async function seedPromotionConfigs(prisma: PrismaClient) {
         'Maksymalny zasięg i ekspozycja',
         'Prestiżowa pozycja',
         'Priorytetowe wyświetlanie',
-        'Zwiększona konwersja o 60%'
+        'Większa szansa na zapytania od klientów'
       ]),
       icon: 'Home',
       color: '#2196F3',

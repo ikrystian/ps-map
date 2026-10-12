@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBusinessDays, formatCurrency, formatDateTime } from "@/lib/format"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,6 +48,9 @@ interface Client {
 }
 
 import type { LawFirm, Category, Voivodeship } from "@/types"
+import type { CaseStatus, OfferStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL, OFFER_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_VARIANT, OFFER_STATUS_VARIANT } from "@/lib/status-style"
 
 interface Offer {
   id: string
@@ -103,21 +107,13 @@ interface CaseDetails {
   messages: Message[]
 }
 
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  NOWA: { label: "Nowa", variant: "secondary" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", variant: "default" },
-  W_TRAKCIE: { label: "W toku", variant: "default" },
-  ZAKONCZONA: { label: "Zakończona", variant: "outline" },
-  ANULOWANA: { label: "Anulowana", variant: "destructive" },
-}
+const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], variant: CASE_STATUS_VARIANT[k] }])
+)
 
-const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  ZLOZONA: { label: "Złożona", variant: "secondary" },
-  ZAAKCEPTOWANA: { label: "Zaakceptowana", variant: "default" },
-  ODRZUCONA: { label: "Odrzucona", variant: "destructive" },
-  NEGOCJACJE: { label: "Negocjacje", variant: "outline" },
-  WYGASLA: { label: "Wygasła", variant: "destructive" },
-}
+const offerStatusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = Object.fromEntries(
+  (Object.keys(OFFER_STATUS_LABEL) as OfferStatus[]).map((k) => [k, { label: OFFER_STATUS_LABEL[k], variant: OFFER_STATUS_VARIANT[k] }])
+)
 
 export default function CaseDetailsPage() {
   const params = useParams()
@@ -179,22 +175,9 @@ export default function CaseDetailsPage() {
     setIsDeleteDialogOpen(true)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pl-PL", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pl-PL", {
-      style: "currency",
-      currency: "PLN",
-    }).format(amount)
-  }
+  // Termin to doba kalendarzowa (północ UTC) — formatowanie w UTC, bez godziny (F-046)
+  const formatDateOnly = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("pl-PL", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })
 
   if (loading) {
     return (
@@ -322,7 +305,7 @@ export default function CaseDetailsPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">Oczekiwany termin realizacji</p>
                   {caseData.oczekiwanyTerminRealizacji ? (
-                    <p className="font-medium">{formatDate(caseData.oczekiwanyTerminRealizacji)}</p>
+                    <p className="font-medium">{formatDateOnly(caseData.oczekiwanyTerminRealizacji)}</p>
                   ) : (
                     <p className="text-muted-foreground">Nie określono</p>
                   )}
@@ -359,12 +342,12 @@ export default function CaseDetailsPage() {
                             <p className="text-sm text-muted-foreground">Cena</p>
                             <p className="font-semibold text-lg">{formatCurrency(offer.kwotaBrutto)}</p>
                             <p className="text-xs text-muted-foreground">
-                              Netto: {formatCurrency(offer.kwotaNetto)} (VAT {offer.vat}%)
+                              Netto: {formatCurrency(offer.kwotaNetto)} ({offer.vat === -1 ? "VAT zwolniony" : `VAT ${offer.vat}%`})
                             </p>
                           </div>
                           <div>
                             <p className="text-sm text-muted-foreground">Termin realizacji</p>
-                            <p className="font-medium">{offer.terminRealizacjiDni} dni roboczych</p>
+                            <p className="font-medium">{formatBusinessDays(offer.terminRealizacjiDni)}</p>
                           </div>
                         </div>
                         <Separator className="my-4" />
@@ -377,7 +360,7 @@ export default function CaseDetailsPage() {
                           <p className="text-sm">{offer.zakresUslug}</p>
                         </div>
                         <p className="text-xs text-muted-foreground mt-4">
-                          Złożona: {formatDate(offer.createdAt)}
+                          Złożona: {formatDateTime(offer.createdAt)}
                         </p>
                       </CardContent>
                     </Card>
@@ -417,7 +400,7 @@ export default function CaseDetailsPage() {
                         </div>
                         <p className="text-sm mt-3 whitespace-pre-wrap">{message.tresc}</p>
                         <p className="text-xs text-muted-foreground mt-3">
-                          {formatDate(message.createdAt)}
+                          {formatDateTime(message.createdAt)}
                         </p>
                       </CardContent>
                     </Card>
@@ -552,19 +535,19 @@ export default function CaseDetailsPage() {
             <CardContent className="space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground">Utworzona</p>
-                <p className="font-medium">{formatDate(caseData.createdAt)}</p>
+                <p className="font-medium">{formatDateTime(caseData.createdAt)}</p>
               </div>
               <Separator />
               <div>
                 <p className="text-sm text-muted-foreground">Ostatnia aktualizacja</p>
-                <p className="font-medium">{formatDate(caseData.updatedAt)}</p>
+                <p className="font-medium">{formatDateTime(caseData.updatedAt)}</p>
               </div>
               {caseData.zamknieto && (
                 <>
                   <Separator />
                   <div>
                     <p className="text-sm text-muted-foreground">Zamknięta</p>
-                    <p className="font-medium">{formatDate(caseData.zamknieto)}</p>
+                    <p className="font-medium">{formatDateTime(caseData.zamknieto)}</p>
                   </div>
                 </>
               )}
@@ -573,7 +556,7 @@ export default function CaseDetailsPage() {
                   <Separator />
                   <div>
                     <p className="text-sm text-muted-foreground">Zarchiwizowana</p>
-                    <p className="font-medium">{formatDate(caseData.archivedAt)}</p>
+                    <p className="font-medium">{formatDateTime(caseData.archivedAt)}</p>
                   </div>
                 </>
               )}

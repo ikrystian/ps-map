@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth"
 import { serverCache } from "@/lib/cache"
+import { applyPointsChange } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
+import { PROMOTION_LABELS, type PromotionTypeUnion } from "@/lib/promotions"
 import { NextRequest } from "next/server"
 
 // GET /api/promotions/[id] - Pobierz szczegóły promocji
@@ -200,6 +202,14 @@ export async function DELETE(
       )
     }
 
+    // Anulowana wcześniej promocja nie może wygenerować drugiego zwrotu punktów
+    if (!promotion.aktywna) {
+      return Response.json(
+        { error: "Promocja została już anulowana" },
+        { status: 400 }
+      )
+    }
+
     // Sprawdź czy promocja już się zakończyła
     const now = new Date()
     const end = new Date(promotion.koniecPromocji)
@@ -226,24 +236,38 @@ export async function DELETE(
       refundPoints = Math.floor(promotion.kosztPunktow * (1 - usedPercentage))
     }
 
-    // Deaktywuj promocję i zwróć punkty w transakcji
-    const [deactivatedPromotion, updatedLawFirm] = await prisma.$transaction([
-      prisma.promotion.update({
-        where: { id },
+    // Deaktywuj promocję i zwróć punkty (wraz z wpisem w historii) w jednej transakcji.
+    // Warunkowa dezaktywacja (`aktywna: true`) domyka wyścig dwóch równoległych anulowań.
+    const deactivatedPromotion = await prisma.$transaction(async (tx) => {
+      const { count } = await tx.promotion.updateMany({
+        where: { id, aktywna: true },
         data: {
           aktywna: false,
           automatyczneOdnowienie: false,
         },
-      }),
-      prisma.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          punktySaldo: {
-            increment: refundPoints,
-          },
-        },
-      }),
-    ])
+      })
+      if (count === 0) return null
+
+      if (refundPoints > 0) {
+        const promotionLabel = PROMOTION_LABELS[promotion.typPromocji as PromotionTypeUnion]
+        await applyPointsChange(
+          tx,
+          lawFirm.id,
+          refundPoints,
+          "PROMOTION_REFUND",
+          `Zwrot za anulowaną promocję „${promotionLabel}”`
+        )
+      }
+
+      return tx.promotion.findUniqueOrThrow({ where: { id } })
+    })
+
+    if (!deactivatedPromotion) {
+      return Response.json(
+        { error: "Promocja została już anulowana" },
+        { status: 400 }
+      )
+    }
 
     if (promotion.typPromocji === "PROMOCJA_KATEGORII" && promotion.kategoriaPromocji) {
       serverCache.delete(`category:${promotion.kategoriaPromocji}:promoted-experts`)

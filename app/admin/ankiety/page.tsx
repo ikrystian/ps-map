@@ -12,6 +12,7 @@ import { db } from "@/lib/db"
 import { Coins, Eye, Plus } from "lucide-react"
 import Link from "next/link"
 import SurveyToggle from "./SurveyToggle"
+import { formatDate } from "@/lib/format"
 
 export default async function AnkietyPage() {
   const surveys = await db.survey.findMany({
@@ -71,7 +72,7 @@ export default async function AnkietyPage() {
                   <SurveyToggle id={survey.id} aktywna={survey.aktywna} />
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
-                  {survey.createdAt.toLocaleDateString("pl-PL")}
+                  {formatDate(survey.createdAt)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Link href={`/admin/ankiety/${survey.id}`}>

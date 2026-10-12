@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
+import { formatDateTime } from "@/lib/format"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -42,7 +43,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (status) {
       updateData.status = status
       if (status === "ACCEPTED") {
-        const dateStr = new Date(booking.consultationDate).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+        const dateStr = formatDateTime(booking.consultationDate);
 
         // Create notification for client
         await sendSystemNotification({

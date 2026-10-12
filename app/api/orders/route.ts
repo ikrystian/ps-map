@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { creditPointsForOrder } from "@/lib/points-ledger"
 import { buildPointsPricingConfig, resolvePointsOrder } from "@/lib/points-pricing"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "10")
     const status = searchParams.get("status") // OCZEKUJE, ZAPLACONE, ANULOWANE, ZWROT
+    const orderType = searchParams.get("orderType") // POINTS, SUBSCRIPTION
 
     // Buduj warunki zapytania
     const where: any = {
@@ -49,6 +51,10 @@ export async function GET(request: NextRequest) {
 
     if (status) {
       where.statusPlatnosci = status
+    }
+
+    if (orderType === "POINTS" || orderType === "SUBSCRIPTION") {
+      where.orderType = orderType
     }
 
     // Pobierz zamówienia z paginacją
@@ -247,33 +253,34 @@ export async function POST(request: NextRequest) {
     // Utwórz zamówienie
     const orderNumber = `PKT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`
 
-    const order = await prisma.order.create({
-      data: {
-        lawFirmId: lawFirm.id,
-        orderNumber,
-        pakietPunktow,
-        liczbaPunktow,
-        kwota,
-        metodaPlatnosci,
-        daneFaktury: finalDaneFaktury,
-        statusPlatnosci: shouldAutoApprove ? "ZAPLACONE" : "OCZEKUJE",
-        zaplaconoData: shouldAutoApprove ? new Date() : null,
-        transactionId: isTestPayment ? `TXN-TEST-PTS-${Date.now()}` : null,
-        externalOrderId: isTestPayment ? `EXT-TEST-PTS-${Date.now()}` : null,
-      },
+    // Zamówienie i (przy auto-akceptacji) naliczenie punktów z wpisem w historii —
+    // w jednej transakcji, żeby nie powstało opłacone zamówienie bez punktów.
+    const order = await prisma.$transaction(async (tx) => {
+      const created = await tx.order.create({
+        data: {
+          lawFirmId: lawFirm.id,
+          orderNumber,
+          pakietPunktow,
+          liczbaPunktow,
+          kwota,
+          metodaPlatnosci,
+          daneFaktury: finalDaneFaktury,
+          statusPlatnosci: shouldAutoApprove ? "ZAPLACONE" : "OCZEKUJE",
+          zaplaconoData: shouldAutoApprove ? new Date() : null,
+          transactionId: isTestPayment ? `TXN-TEST-PTS-${Date.now()}` : null,
+          externalOrderId: isTestPayment ? `EXT-TEST-PTS-${Date.now()}` : null,
+        },
+      })
+
+      if (shouldAutoApprove) {
+        await creditPointsForOrder(tx, created)
+      }
+
+      return created
     })
 
     if (shouldAutoApprove) {
-      // 1. Zwiększ saldo punktów eksperta natychmiast
-      await prisma.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          punktySaldo: {
-            increment: liczbaPunktow,
-          },
-        },
-      })
-      // 2. Wygeneruj opłaconą fakturę
+      // Wygeneruj opłaconą fakturę
       await generateInvoiceForOrder(order.id)
     }
 

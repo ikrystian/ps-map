@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "@/components/ui/sonner"
 import { NumberTicker } from "@/components/ui/number-ticker"
+import { formatNumber } from "@/lib/format"
 import "./reklama.css"
 
 // Logotypy partnerow / mediow
@@ -107,6 +108,40 @@ const FAQ_ITEMS = [
     question: "Czy są jakieś ograniczenia dotyczące reklamowanych usług?",
     answer: "Reklamowane usługi muszą być zgodne z prawem oraz regulaminem naszego serwisu. Skupiamy się na prawie, podatkach, ubezpieczeniach, finansach i usługach wsparcia biznesu. Zastrzegamy sobie prawo do odmowy emisji reklam naruszających dobre obyczaje lub konkurencyjnych bezpośrednio do samej platformy."
   }
+]
+
+// Media / Baza wiedzy logotypy
+const MEDIA_LOGOS = [
+  {
+    name: "Dziennik Gazeta Prawna",
+    mono: "/images/logos/dgp_mono.webp",
+    alt: "Dziennik Gazeta Prawna",
+    className: "h-11 md:h-13",
+  },
+  {
+    name: "Rzeczpospolita",
+    mono: "/images/logos/rzeczpospolita_mono.webp",
+    alt: "Rzeczpospolita",
+    className: "h-13 md:h-15",
+  },
+  {
+    name: "Prawo.pl",
+    mono: "/images/logos/prawo_pl_mono.webp",
+    alt: "Prawo.pl",
+    className: "h-11 md:h-13",
+  },
+  {
+    name: "ISAP",
+    mono: "/images/logos/isap_mono.webp",
+    alt: "Internetowy System Aktów Prawnych (ISAP)",
+    className: "h-7 md:h-8",
+  },
+  {
+    name: "Portal Informacyjny Sądów Powszechnych",
+    mono: "/images/logos/portal_inf_mono.webp",
+    alt: "Portal Informacyjny Sądów Powszechnych",
+    className: "h-11 md:h-13",
+  },
 ]
 
 function LayoutIcon(props: any) {
@@ -404,7 +439,7 @@ ${formData.tresc}`
                 <NumberTicker value={48} decimalPlaces={1} />
                 <span>%</span>
               </div>
-              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Średni CTR Banerów</p>
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Szacunkowy CTR banerów (przykładowy)</p>
             </div>
 
             <div className="text-center space-y-1.5">
@@ -423,8 +458,9 @@ ${formData.tresc}`
       <section className="relative z-10 py-10 border-b border-border/30 bg-muted/10 select-none">
         <div className="container mx-auto px-4 max-w-7xl">
           <p className="text-center text-[10px] font-bold uppercase tracking-[3px] text-muted-foreground/80 mb-8">
-            Zaufali nam liderzy branży prawnej i biznesowej
+            Czytamy to codziennie, żebyś Ty nie musiał
           </p>
+<<<<<<< HEAD
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-16">
             {TRUSTED_LOGOS.map((logo) => (
               <div
@@ -445,6 +481,20 @@ ${formData.tresc}`
                   width={logo.width}
                   height={logo.height}
                   className="absolute inset-0 h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+=======
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-12 md:gap-x-16">
+            {MEDIA_LOGOS.map((logo) => (
+              <div
+                key={logo.name}
+                title={logo.name}
+                className="flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={logo.mono}
+                  alt={logo.alt}
+                  className={`${logo.className} w-auto object-contain dark:brightness-200 dark:contrast-125 transition-all`}
+>>>>>>> b9aa00def136023a01b6a66f4e22ae372e25eaed
                 />
               </div>
             ))}
@@ -888,7 +938,7 @@ ${formData.tresc}`
                       <Users className="h-4 w-4" />
                       Miesięczny zasięg (wyświetlenia)
                     </span>
-                    <span className="text-xl font-bold text-foreground">{calcResults.impressions.toLocaleString()}</span>
+                    <span className="text-xl font-bold text-foreground">{formatNumber(calcResults.impressions)}</span>
                   </div>
 
                   {/* Stat 2: Clicks */}
@@ -897,7 +947,7 @@ ${formData.tresc}`
                       <MousePointerClick className="h-4 w-4" />
                       Przewidywane kliknięcia
                     </span>
-                    <span className="text-xl font-bold text-foreground">{calcResults.clicks.toLocaleString()}</span>
+                    <span className="text-xl font-bold text-foreground">{formatNumber(calcResults.clicks)}</span>
                   </div>
 
                   {/* Stat 3: CPC */}

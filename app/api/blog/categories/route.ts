@@ -40,7 +40,15 @@ export async function GET(request: Request) {
       },
     })
 
-    return NextResponse.json(categories)
+    // _count.blogPosts = wszystkie wpisy (blokada usuwania); publishedCount = widoczne publicznie (F-076)
+    const published = await prisma.blogPost.groupBy({
+      by: ["categoryId"],
+      where: { opublikowany: true, OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }] },
+      _count: { id: true },
+    })
+    const publishedMap = new Map(published.map((p) => [p.categoryId, p._count.id]))
+
+    return NextResponse.json(categories.map((c) => ({ ...c, publishedCount: publishedMap.get(c.id) ?? 0 })))
   } catch (error) {
     console.error("Error fetching blog categories:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

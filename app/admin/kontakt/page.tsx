@@ -48,17 +48,16 @@ import {
   Clock,
   ExternalLink,
   Eye,
-  Filter,
   Inbox,
   Mail,
   Megaphone,
-  MessageSquare,
   Phone,
   RefreshCw,
   Search,
   Trash2,
   XCircle,
 } from "lucide-react"
+import { formatDateTime } from "@/lib/format"
 
 interface ContactMessage {
   id: string
@@ -271,21 +270,6 @@ export default function AdminContactMessagesPage() {
 
   // Zakładka ekspertów nie ma kolumn ze statusem i akcjami
   const columnCount = activeTab === "eksperci" ? 6 : 7
-
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr)
-      return new Intl.DateTimeFormat("pl-PL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(date)
-    } catch {
-      return dateStr
-    }
-  }
 
   return (
     <>
@@ -504,7 +488,7 @@ export default function AdminContactMessagesPage() {
                         }}
                       >
                         <TableCell className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                          {formatDate(msg.createdAt)}
+                          {formatDateTime(msg.createdAt)}
                         </TableCell>
                         <TableCell>
                           <div className="font-semibold text-sm text-foreground">
@@ -694,7 +678,7 @@ export default function AdminContactMessagesPage() {
                   Wiadomość od {selectedMessage.imieNazwisko}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  Wysłano {formatDate(selectedMessage.createdAt)}
+                  Wysłano {formatDateTime(selectedMessage.createdAt)}
                 </DialogDescription>
               </DialogHeader>
 

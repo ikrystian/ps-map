@@ -1,5 +1,6 @@
 "use client"
 
+import { phoneSchema, nipSchema } from "@/lib/validation"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,17 +32,20 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import type { CaseStatus } from "@prisma/client"
+import { CASE_STATUS_LABEL } from "@/lib/labels"
+import { CASE_STATUS_CLASS } from "@/lib/status-style"
 
 const editCaseSchema = z.object({
   nazwaSprawy: z.string().min(1, "Podaj nazwę sprawy"),
-  opisSprawy: z.string().min(100, "Opis musi mieć co najmniej 100 znaków"),
+  opisSprawy: z.string().min(50, "Opis musi mieć co najmniej 50 znaków"),
   oczekiwanyTerminRealizacji: z.string().optional(),
   trybPilny: z.boolean(),
   budzetOd: z.union([z.number(), z.undefined()]),
   budzetDo: z.union([z.number(), z.undefined()]),
   doNegocjacji: z.boolean(),
   imieNazwisko: z.string().min(1, "Podaj imię i nazwisko"),
-  telefonKontakt: z.string().min(1, "Podaj numer telefonu"),
+  telefonKontakt: phoneSchema,
   preferowanyKontakt: z.enum(["EMAIL", "TELEFON", "OBA"]),
 })
 
@@ -63,13 +67,9 @@ interface CaseData {
   preferowanyKontakt: string
 }
 
-const statusLabels: Record<string, { label: string; className: string }> = {
-  NOWA: { label: "Nowa", className: "bg-primary/10 text-primary border border-primary/30" },
-  OFERTY_OTRZYMANE: { label: "Oferty otrzymane", className: "bg-secondary/15 text-secondary border border-secondary/30" },
-  W_TRAKCIE: { label: "W toku", className: "bg-primary/10 text-primary border border-primary/30" },
-  ZAKONCZONA: { label: "Zakończona", className: "bg-success/10 text-success border border-success/30" },
-  ANULOWANA: { label: "Anulowana", className: "bg-error/10 text-error border border-error/30" },
-}
+const statusLabels: Record<string, { label: string; className: string }> = Object.fromEntries(
+  (Object.keys(CASE_STATUS_LABEL) as CaseStatus[]).map((k) => [k, { label: CASE_STATUS_LABEL[k], className: CASE_STATUS_CLASS[k] }])
+)
 
 export default function EditCasePage() {
   const params = useParams()
@@ -277,10 +277,10 @@ export default function EditCasePage() {
                     <FormItem>
                       <FormLabel className="text-xs font-semibold text-muted-foreground">Opis sprawy</FormLabel>
                       <FormControl>
-                        <Textarea rows={6} placeholder="Szczegółowy opis sprawy (minimum 100 znaków)" {...field} />
+                        <Textarea rows={6} placeholder="Szczegółowy opis sprawy (minimum 50 znaków)" {...field} />
                       </FormControl>
                       <FormDescription className="text-sm text-muted-foreground">
-                        {field.value.length}/100 znaków
+                        {field.value.length} znaków (minimum 50)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

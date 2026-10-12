@@ -1,5 +1,6 @@
 'use client'
 
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatCurrency, formatDate } from "@/lib/format"
 
 interface DashboardStats {
   statistics: {
@@ -110,21 +112,6 @@ export default function AdminDashboardPage() {
 
   const { statistics, charts, recentActivity } = data
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pl-PL', {
-      style: 'currency',
-      currency: 'PLN',
-    }).format(amount)
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pl-PL', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  }
-
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
       // Roles
@@ -194,24 +181,13 @@ export default function AdminDashboardPage() {
     }
   }
 
-  const getStatusName = (status: string) => {
-    const statusNames: Record<string, string> = {
-      NOWA: 'Nowe',
-      ACTIVE: 'Aktywne',
-      PENDING: 'Oczekujące',
-      COMPLETED: 'Zakończone',
-      REJECTED: 'Odrzucone',
-      IN_PROGRESS: 'W toku',
-      W_TOKU: 'W toku',
-      W_TRAKCIE: 'W toku',
-      ZAKONCZONA: 'Zakończone',
-    }
-    return statusNames[status] || status
-  }
+  const getStatusName = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
   const getStatusGradient = (status: string) => {
     const gradients: Record<string, string> = {
       NOWA: 'from-amber-400 to-orange-500 shadow-orange-500/10',
+      OFERTY_OTRZYMANE: 'from-violet-400 to-purple-500 shadow-purple-500/10',
+      ANULOWANA: 'from-slate-400 to-slate-500 shadow-slate-500/10',
       PENDING: 'from-yellow-400 to-amber-500 shadow-amber-500/10',
       ACTIVE: 'from-emerald-400 to-green-500 shadow-green-500/10',
       IN_PROGRESS: 'from-blue-500 to-indigo-500 shadow-indigo-500/10',

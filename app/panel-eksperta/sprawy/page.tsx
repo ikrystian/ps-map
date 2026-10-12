@@ -1,5 +1,6 @@
 "use client"
 
+import { formatBudgetRange, formatDate } from "@/lib/format"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -28,7 +29,6 @@ import {
   Calendar,
   CheckCircle,
   Euro,
-  Eye,
   Heart,
   Loader2,
   MapPin,
@@ -99,6 +99,7 @@ interface Case {
 }
 import { Category } from "@/types/categories"
 import type { Voivodeship } from "@/types"
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -398,39 +399,11 @@ const SprawyPage = () => {
     }
   }
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "NOWA":
-        return "Nowa"
-      case "OFERTY_OTRZYMANE":
-        return "Oferty otrzymane"
-      case "W_TRAKCIE":
-        return "W toku"
-      case "ZAKONCZONA":
-        return "Zakończona"
-      case "ANULOWANA":
-        return "Anulowana"
-      default:
-        return status
-    }
-  }
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    const date = new Date(dateString)
-    return date.toLocaleDateString("pl-PL", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
-  }
+  const getStatusLabel = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
   const formatBudget = (od: number | null, do_: number | null, doNegocjacji: boolean) => {
     if (doNegocjacji) return "Do negocjacji"
-    if (od && do_) return `${od} - ${do_} PLN`
-    if (od) return `Od ${od} PLN`
-    if (do_) return `Do ${do_} PLN`
-    return "Nie określono"
+    return formatBudgetRange(od || null, do_ || null) ?? "Nie określono"
   }
 
   const getStatusCounts = () => {
@@ -520,7 +493,7 @@ const SprawyPage = () => {
 
       <PageHeader
         title="Wszystkie Sprawy"
-        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta are wyróżnione na górze listy."
+        subtitle="Przeglądaj, filtruj i składaj oferty do dostępnych spraw. Sprawy zaakceptowane przez klienta są wyróżnione na górze listy."
       />
 
 
@@ -711,6 +684,9 @@ const SprawyPage = () => {
           <h3 className="text-xl font-bold text-foreground mb-2 font-playfair">Brak spraw w bazie</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             Nie znaleźliśmy żadnych zleceń spełniających Twoje kryteria filtrowania.
+            Widzisz tylko sprawy z zadeklarowanych kategorii i obszaru działania — jeśli jeszcze ich nie
+            ustawiłeś, uzupełnij{" "}
+            <a href="/panel-eksperta/zakres-uslug" className="text-primary underline underline-offset-2">zakres usług</a>.
           </p>
           <Button
             variant="outline"
@@ -808,14 +784,6 @@ const SprawyPage = () => {
 
                       {/* Views count and actions */}
                       <div className="flex items-center gap-2 sm:gap-3.5">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 bg-muted/30 px-2.5 py-1 rounded-lg border border-border/30">
-                          <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                          </span>
-                          <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span title="Liczba ekspertów przeglądających sprawę">{(Math.random() * 15 + 1).toFixed(0)}</span>
-                        </div>
 
                         {/* Favorite button */}
                         <Button

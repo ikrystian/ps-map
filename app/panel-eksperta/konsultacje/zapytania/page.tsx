@@ -9,12 +9,11 @@ import { Heading } from "@/components/ui/heading"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { CONSULTATION_FORM_LABELS } from "@/lib/consultation-requests"
-import { format } from "date-fns"
-import { pl } from "date-fns/locale"
 import { motion } from "framer-motion"
 import { CalendarClock, CheckCircle2, Clock, Loader2, Search, Wallet } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
+import { formatDate } from "@/lib/format"
 
 interface ConsultationRequestListItem {
   id: string
@@ -175,10 +174,10 @@ export default function ExpertConsultationRequestsPage() {
                             <p className="text-xs text-muted-foreground">
                               Dostępność klienta:{" "}
                               {request.terminOd
-                                ? format(new Date(request.terminOd), "d MMM", { locale: pl })
+                                ? formatDate(new Date(request.terminOd))
                                 : "—"}
                               {request.terminDo &&
-                                ` – ${format(new Date(request.terminDo), "d MMM yyyy", { locale: pl })}`}
+                                ` – ${formatDate(new Date(request.terminDo))}`}
                               {request.preferowanyTermin && ` · ${request.preferowanyTermin}`}
                             </p>
                           )}
@@ -189,7 +188,7 @@ export default function ExpertConsultationRequestsPage() {
                             <span className="font-semibold text-foreground">{request.liczbaZgloszen}</span> zgłoszeń
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(request.createdAt), "d MMM yyyy", { locale: pl })}
+                            {formatDate(new Date(request.createdAt))}
                           </span>
                           {!hasApplied && (
                             <Button size="sm" variant="outline" className="mt-1">

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     })
     if (!rl.success) return tooManyRequestsResponse(rl.retryAfterSeconds)
 
-    const { opisSprawy, nazwaSprawy, typSprawy } = await request.json()
+    const { opisSprawy, nazwaSprawy, typSprawy, typSpecjalisty } = await request.json()
 
     if (typeof opisSprawy !== "string" || opisSprawy.trim().length < 50) {
       return NextResponse.json(
@@ -59,8 +59,23 @@ export async function POST(request: NextRequest) {
 
     // Ta sama logika filtrowania co w formularzu dodawania sprawy
     const targetType = typSprawy === "OSOBA_PRYWATNA" ? "SPRAWY_PRYWATNE" : "SPRAWY_FIRMOWE"
+
+    // Prawnik / ekspert (krok 1 kreatora): flagę `ekspercka` mają tylko kategorie główne,
+    // podkategorie dziedziczą grupę po rodzicu — tak samo jak w CategoryPicker.
+    // Brak wartości = bez filtrowania.
+    const wantExpert = typSpecjalisty === "EKSPERT"
+    const specialistTypeFilter =
+      typSpecjalisty === "EKSPERT" || typSpecjalisty === "PRAWNIK"
+        ? {
+            OR: [
+              { parentId: null, ekspercka: wantExpert },
+              { parent: { ekspercka: wantExpert } },
+            ],
+          }
+        : {}
+
     const categories = await prisma.category.findMany({
-      where: { aktywna: true, typ: targetType },
+      where: { aktywna: true, typ: targetType, ...specialistTypeFilter },
       select: {
         id: true,
         nazwa: true,

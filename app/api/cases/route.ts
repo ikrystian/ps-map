@@ -1,3 +1,4 @@
+import { formatBudgetRange } from "@/lib/format"
 import { auth } from "@/auth"
 import { isReferralUsable } from "@/lib/case-referrals"
 import { generateCaseNumber } from "@/lib/case-number"
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       }
 
       const cases = await prisma.case.findMany({
-        where: { clientId: client.id },
+        where: { clientId: client.id, isArchived: false },
         include: {
           category: true,
           categories: { include: { category: true } },
@@ -429,6 +430,10 @@ export async function POST(request: NextRequest) {
       oczekiwanyTerminRealizacji = new Date(body.oczekiwanyTerminRealizacji)
     }
 
+    if (String(body.opisSprawy).trim().length < 50) {
+      return NextResponse.json({ error: "Opis sprawy musi zawierać co najmniej 50 znaków" }, { status: 400 })
+    }
+
     // Utwórz sprawę
     const numerSprawy = await generateCaseNumber(category.id)
 
@@ -496,6 +501,7 @@ export async function POST(request: NextRequest) {
         : `Twoja sprawa "${body.nazwaSprawy}" została dodana. Eksperci prawni mogą teraz składać oferty.`,
       linkUrl: `/panel-klienta/sprawy/${newCase.id}`,
       force: true, // Kluczowe / systemowe powiadomienie
+      skipEmail: true, // e-mail potwierdzający idzie osobnym szablonem poniżej (F-071: bez dubla)
     })
 
     // Emit notification to client via Socket.IO
@@ -505,13 +511,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
     let budzetText = "Do negocjacji"
     if (newCase.budzetOd || newCase.budzetDo) {
-      if (newCase.budzetOd && newCase.budzetDo) {
-        budzetText = `${newCase.budzetOd} - ${newCase.budzetDo} PLN`
-      } else if (newCase.budzetOd) {
-        budzetText = `od ${newCase.budzetOd} PLN`
-      } else if (newCase.budzetDo) {
-        budzetText = `do ${newCase.budzetDo} PLN`
-      }
+      budzetText = formatBudgetRange(newCase.budzetOd, newCase.budzetDo) ?? "Do negocjacji"
     } else if (newCase.doNegocjacji) {
       budzetText = "Do negocjacji"
     }

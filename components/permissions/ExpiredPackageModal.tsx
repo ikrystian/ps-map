@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, ArrowRight, Calendar, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { formatDate } from "@/lib/format"
 
 interface ExpiredPackageModalProps {
   open: boolean;
@@ -42,15 +43,6 @@ export function ExpiredPackageModal({
   ],
 }: ExpiredPackageModalProps) {
   const [remindLater, setRemindLater] = useState(false);
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return "Nieznana data";
-    return new Intl.DateTimeFormat("pl-PL", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(date));
-  };
 
   const handleRemindLater = () => {
     setRemindLater(true);

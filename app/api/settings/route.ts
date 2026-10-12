@@ -61,6 +61,10 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.enableUserSelectionOnLogin) {
       settingsObject.enableUserSelectionOnLogin = "true"
     }
+    // Na produkcji lista wyboru użytkownika na stronie logowania jest zawsze wyłączona (F-072)
+    if (process.env.NODE_ENV === "production") {
+      settingsObject.enableUserSelectionOnLogin = "false"
+    }
     if (!settingsObject.geographicHierarchy) {
       settingsObject.geographicHierarchy = "voivodeships"
     }

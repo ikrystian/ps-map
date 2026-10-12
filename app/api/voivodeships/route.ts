@@ -2,12 +2,22 @@ import { getOrSetCached } from "@/lib/cache"
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // ?hasExperts=true — tylko województwa, w których działa aktywny ekspert (F-055)
+    const hasExperts = new URL(request.url).searchParams.get("hasExperts") === "true"
     const voivodeships = await getOrSetCached(
-      "voivodeships:all",
+      hasExperts ? "voivodeships:hasExperts" : "voivodeships:all",
       async () => {
         return await prisma.voivodeship.findMany({
+          where: hasExperts
+            ? {
+                OR: [
+                  { users: { some: { lawFirm: { is: { aktywna: true } } } } },
+                  { lawFirmVoivodeships: { some: { lawFirm: { aktywna: true } } } },
+                ],
+              }
+            : undefined,
           orderBy: {
             nazwa: "asc",
           },

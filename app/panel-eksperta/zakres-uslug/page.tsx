@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { filterCategoriesByExpertise } from "@/lib/expertise-category"
 import { scrollToAndHighlight } from "@/lib/scroll-highlight"
 import { BorderBeam } from "@/components/ui/border-beam"
 import {
@@ -237,6 +238,8 @@ function SortableItem({ item, index, isMainCategory, onRemove, skillLawFocusActi
 export default function LawFirmServicesPage() {
   const [allCategories, setAllCategories] = useState<Category[]>([])
   const [flatCategories, setFlatCategories] = useState<Category[]>([])
+  // Ekspert z gałęzi „Eksperci” — lista kategorii zawężona do powiązanych z jego specjalizacją
+  const [expertiseFilterActive, setExpertiseFilterActive] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState<LawFirmCategory[]>([])
   const [mainCategoryId, setMainCategoryId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -301,7 +304,27 @@ export default function LawFirmServicesPage() {
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
 
-      const activeCategories = categoriesData.filter((cat: Category) => cat.aktywna)
+      // Lista kategorii zależy od specjalizacji eksperta, więc dane profilu
+      // wczytujemy przed zbudowaniem drzewa.
+      let expertiseCategoryId: string | null = null
+      const selectedResponse = await fetch("/api/law-firm/categories")
+      if (selectedResponse.ok) {
+        const selectedData = await selectedResponse.json()
+        setSelectedCategories(selectedData.categories || [])
+        setMainCategoryId(selectedData.mainCategoryId || null)
+        setMaxCategories(selectedData.maxCategories || 10)
+        setSkillLawFocusActive(selectedData.skillLawFocusActive || false)
+        expertiseCategoryId = selectedData.expertiseCategoryId || null
+      }
+
+      let activeCategories: Category[] = categoriesData.filter((cat: Category) => cat.aktywna)
+
+      // Ekspert z gałęzi „Eksperci” widzi tylko kategorie powiązane ze swoją specjalizacją
+      // (jak w kroku „Kategorie” rejestracji); prawnicy — pełną listę.
+      if (expertiseCategoryId) {
+        activeCategories = filterCategoriesByExpertise(activeCategories, expertiseCategoryId)
+      }
+      setExpertiseFilterActive(!!expertiseCategoryId)
       setFlatCategories(activeCategories)
 
       // Build tree where children are complete Category objects
@@ -327,15 +350,6 @@ export default function LawFirmServicesPage() {
       })
 
       setAllCategories(rootCategories)
-
-      const selectedResponse = await fetch("/api/law-firm/categories")
-      if (selectedResponse.ok) {
-        const selectedData = await selectedResponse.json()
-        setSelectedCategories(selectedData.categories || [])
-        setMainCategoryId(selectedData.mainCategoryId || null)
-        setMaxCategories(selectedData.maxCategories || 10)
-        setSkillLawFocusActive(selectedData.skillLawFocusActive || false)
-      }
 
       const voivResponse = await fetch("/api/voivodeships")
       if (voivResponse.ok) {
@@ -471,16 +485,17 @@ export default function LawFirmServicesPage() {
     return ancestors
   }
 
-  const getDescendantIds = (cat: Category): string[] => {
-    const ids: string[] = []
+  const getDescendants = (cat: Category): Category[] => {
+    const descendants: Category[] = []
     if (cat.children) {
       for (const child of cat.children) {
-        ids.push(child.id)
-        ids.push(...getDescendantIds(child))
+        descendants.push(child, ...getDescendants(child))
       }
     }
-    return ids
+    return descendants
   }
+
+  const getDescendantIds = (cat: Category): string[] => getDescendants(cat).map(child => child.id)
 
   const isSelected = (categoryId: string) => {
     return selectedCategories.some(sc => sc.categoryId === categoryId)
@@ -504,14 +519,23 @@ export default function LawFirmServicesPage() {
     } else {
       const ancestors = getAncestors(category)
       const unselectedAncestors = ancestors.filter(anc => !isSelected(anc.id))
+      // Ekspert z gałęzi „Eksperci”: zaznaczenie rodzica zaznacza też jego (widoczne) dzieci
+      const unselectedDescendants = expertiseFilterActive
+        ? getDescendants(category).filter(desc => !isSelected(desc.id))
+        : []
+      const newCategories = [category, ...unselectedAncestors, ...unselectedDescendants]
 
-      if (selectedCategories.length + 1 + unselectedAncestors.length > maxCategories) {
-        toast.error(`Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej specjalizacji wymaga zaznaczenia jej rodziców (razem ${1 + unselectedAncestors.length} nowych kategorii).`)
+      if (selectedCategories.length + newCategories.length > maxCategories) {
+        toast.error(
+          unselectedDescendants.length > 0
+            ? `Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej kategorii zaznacza też jej podkategorie (razem ${newCategories.length} nowych kategorii).`
+            : `Możesz zaznaczyć maksymalnie ${maxCategories} kategorii. Zaznaczenie tej specjalizacji wymaga zaznaczenia jej rodziców (razem ${newCategories.length} nowych kategorii).`
+        )
         return
       }
 
       const maxKolejnosc = selectedCategories.reduce((max, sc) => Math.max(max, sc.kolejnosc), -1)
-      const newItems = [category, ...unselectedAncestors].map((cat, index) => ({
+      const newItems = newCategories.map((cat, index) => ({
         id: `temp-${Date.now()}-${index}`,
         categoryId: cat.id,
         kolejnosc: maxKolejnosc + 1 + index,
@@ -785,6 +809,8 @@ export default function LawFirmServicesPage() {
     const isExpanded = expandedCategories.has(category.id) || (query && (matchesSelf || matchesDescendant))
     const selected = isSelected(category.id)
     const isMain = category.id === mainCategoryId
+    // Ekspert z gałęzi „Eksperci” ustawia jako główną tylko kategorię bez rodzica
+    const canBeMain = !expertiseFilterActive || !category.parentId
 
     const currentOrAncestorMatched = parentMatched || matchesSelf
 
@@ -826,7 +852,7 @@ export default function LawFirmServicesPage() {
                   <Badge variant="default" className="text-xs bg-primary hover:bg-primary-hover text-white border-none rounded-lg">
                     Główna
                   </Badge>
-                ) : (
+                ) : canBeMain && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -939,7 +965,10 @@ export default function LawFirmServicesPage() {
                 <div>
                   <CardTitle className="text-xl text-foreground font-playfair">Dostępne specjalizacje</CardTitle>
                   <CardDescription className="text-muted-foreground text-sm">
-                    Zaznacz dziedziny prawa, w których świadczysz pomoc. Klienci znajdą Cię po tych kategoriach.
+                    {expertiseFilterActive
+                      ? "Zaznacz kategorie powiązane z Twoją specjalizacją, w których świadczysz pomoc. Zaznaczenie kategorii nadrzędnej zaznacza też jej podkategorie."
+                      : "Zaznacz dziedziny prawa, w których świadczysz pomoc."}
+                    {" "}Klienci znajdą Cię po tych kategoriach.
                   </CardDescription>
                 </div>
               </div>
@@ -986,6 +1015,14 @@ export default function LawFirmServicesPage() {
                   </Button>
                 </div>
               </div>
+
+              {expertiseFilterActive && flatCategories.length === 0 && (
+                <div className="bg-muted p-6 rounded-xl text-center text-muted-foreground mb-6">
+                  <p className="text-sm">
+                    Dla Twojej specjalizacji nie ma jeszcze przypisanych kategorii.
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-6 grid grid-cols-1 md:grid-cols-2 gap-x-8">
                 <div className="space-y-4">

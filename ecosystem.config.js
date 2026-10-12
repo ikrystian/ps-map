@@ -7,6 +7,7 @@ module.exports = {
       cwd: "/root/projects/ps-map",
       env: {
         NODE_ENV: "production",
+        TZ: "Europe/Warsaw",
       },
     },
   ],

@@ -161,16 +161,6 @@ export function HeroSection() {
                 <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Prowizji od Twojej sprawy</p>
               </div>
             </div>
-
-            <div className="flex items-center gap-3 group">
-              <div className="bg-secondary/10 p-2 rounded-lg group-hover:bg-secondary/20 transition-colors">
-                <ArrowRight className="h-5 w-5 text-secondary" />
-              </div>
-              <div className="text-left">
-                <p className="text-foreground font-bold text-xl leading-none">100%</p>
-                <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Zweryfikowanych ekspertów</p>
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>

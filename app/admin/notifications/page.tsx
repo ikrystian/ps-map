@@ -41,6 +41,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { formatDateTime } from "@/lib/format"
 
 // Types
 type NotificationType =
@@ -455,7 +456,7 @@ export default function NotificationsAdminPage() {
                             </div>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-xs text-muted-foreground">
-                            {new Date(item.createdAt).toLocaleString('pl-PL')}
+                            {formatDateTime(item.createdAt)}
                           </td>
                           <td className="px-4 py-3 text-center">
                             {item.przeczytane ? (

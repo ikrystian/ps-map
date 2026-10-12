@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/prisma"
+import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { buildAddress, geocodeAddress, inPolandBounds } from "@/lib/geocoding"
+import {
+  EXPERTISE_CATEGORY_PATH_SELECT,
+  expertiseCategoryIdChain,
+  formatExpertisePath,
+} from "@/lib/expertise-category"
 import { NextResponse } from "next/server"
 
 /**
@@ -50,7 +56,9 @@ export async function GET() {
           take: 4,
           select: { category: { select: { nazwa: true, slug: true } } },
         },
-        reviews: { select: { ocenaOgolna: true } },
+        expertiseCategoryId: true,
+        expertiseCategory: EXPERTISE_CATEGORY_PATH_SELECT,
+        reviews: { where: PUBLIC_REVIEW_WHERE, select: { ocenaOgolna: true } },
       },
     })
 
@@ -105,6 +113,9 @@ export async function GET() {
           lng,
           mainCategory: firm.mainCategory?.nazwa ?? null,
           categories: firm.categories.map((c) => c.category.nazwa),
+          expertiseCategoryId: firm.expertiseCategoryId,
+          expertiseCategoryIds: expertiseCategoryIdChain(firm.expertiseCategory),
+          expertiseCategoryPath: formatExpertisePath(firm.expertiseCategory),
           liczbaOpinii: oceny.length,
           sredniaOcen: oceny.length
             ? Math.round((oceny.reduce((a, b) => a + b, 0) / oceny.length) * 10) / 10

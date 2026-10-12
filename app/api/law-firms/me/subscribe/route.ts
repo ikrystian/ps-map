@@ -1,6 +1,14 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { createInvoiceWithNumber } from "@/lib/invoice-number"
+import { sendInvoiceToKsef } from "@/lib/ksef"
+import {
+  applyPointsChange,
+  creditSubscriptionBonus,
+  InsufficientPointsError,
+} from "@/lib/points-ledger"
+import { parsePointsToPlnRatio, plnToPoints } from "@/lib/points-pricing"
 import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
@@ -83,6 +91,11 @@ export async function POST(request: NextRequest) {
 
     // Oblicz cenę w zależności od okresu
     let price = 0
+    // Brak ceny dla okresu (NULL) = okres wyłączony, a nie „darmowy pakiet” (F-072)
+    const periodPrice = period === 1 ? plan.cena1Miesiac : period === 6 ? plan.cena6Miesiecy : period === 12 ? plan.cena12Miesiecy : undefined
+    if ((period === 1 || period === 6 || period === 12) && (periodPrice === null || periodPrice === undefined)) {
+      return Response.json({ error: "Ten okres rozliczeniowy nie jest dostępny dla wybranego pakietu" }, { status: 400 })
+    }
     switch (period) {
       case 1:
         price = plan.cena1Miesiac ?? 0
@@ -132,18 +145,21 @@ export async function POST(request: NextRequest) {
         miasto: lawFirm.user?.miasto || "",
       })
 
-      const [updatedFreeLawFirm, freeOrder] = await prisma.$transaction([
-        prisma.lawFirm.update({
+      const { updatedFreeLawFirm, freeOrder } = await prisma.$transaction(async (tx) => {
+        // Bonus punktów z wpisem w historii (przed aktualizacją eksperta, żeby zwrócone
+        // `lawFirm` miało już nowe saldo)
+        await creditSubscriptionBonus(tx, lawFirm.id, plan)
+
+        const updatedFreeLawFirm = await tx.lawFirm.update({
           where: { id: lawFirm.id },
           data: {
             pakietSubskrypcji: plan.typ,
             dataPakietuOd,
             dataPakietuDo: null, // bezterminowo
             autoRenewal: false,
-            punktySaldo: { increment: plan.punktyGratis },
           },
-        }),
-        prisma.order.create({
+        })
+        const freeOrder = await tx.order.create({
           data: {
             orderNumber,
             lawFirmId: lawFirm.id,
@@ -158,14 +174,16 @@ export async function POST(request: NextRequest) {
             zaplaconoData: new Date(),
             daneFaktury: finalDaneFaktury,
           },
-        }),
+        })
         // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
         // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
-        prisma.notificationSettings.updateMany({
+        await tx.notificationSettings.updateMany({
           where: { userId: session.user.id },
           data: { welcomePackageSeen: true },
-        }),
-      ])
+        })
+
+        return { updatedFreeLawFirm, freeOrder }
+      })
 
       return Response.json({
         success: true,
@@ -296,9 +314,15 @@ export async function POST(request: NextRequest) {
 
     const isPendingPayment = isOnlinePayment || (isTestPayment && !shouldAutoApprove)
 
-    // Konwersja ceny na punkty (1 PLN = 2 pkt)
-    const POINTS_PER_PLN = 2
-    const pointsCost = Math.round(finalPrice * POINTS_PER_PLN)
+    // Konwersja ceny na punkty według wspólnego przelicznika `pointsToPlnRatio`
+    // (1 pkt = X zł) — tego samego, którego używa sklep punktów, regulamin i UI (F-015).
+    let pointsCost = 0
+    if (isPointPayment) {
+      const ratioSetting = await prisma.settings.findUnique({
+        where: { key: "pointsToPlnRatio" },
+      })
+      pointsCost = plnToPoints(finalPrice, parsePointsToPlnRatio(ratioSetting?.value))
+    }
 
     let updatedLawFirm: any = lawFirm
     let order
@@ -319,49 +343,27 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Prepare point transactions
-      const balanceAfterPurchase = lawFirm.punktySaldo - pointsCost
-      const balanceAfterBonus = balanceAfterPurchase + plan.punktyGratis
-
-      const pointTransactions = [
-        prisma.pointTransaction.create({
-          data: {
-            lawFirmId: lawFirm.id,
-            amount: -pointsCost,
-            balanceAfter: balanceAfterPurchase,
-            type: "SUBSCRIPTION_PURCHASE",
-            description: `Zakup pakietu ${plan.nazwa} na okres ${period} miesięcy`,
-          },
-        }),
-      ]
-
-      // Add bonus transaction if there are bonus points
-      if (plan.punktyGratis > 0) {
-        pointTransactions.push(
-          prisma.pointTransaction.create({
-            data: {
-              lawFirmId: lawFirm.id,
-              amount: plan.punktyGratis,
-              balanceAfter: balanceAfterBonus,
-              type: "SUBSCRIPTION_BONUS",
-              description: `Bonus punktów za pakiet ${plan.nazwa}`,
-            },
-          })
+      const result = await prisma.$transaction(async (tx) => {
+        // Obciążenie punktów + bonus, każde z wpisem w historii
+        await applyPointsChange(
+          tx,
+          lawFirm.id,
+          -pointsCost,
+          "SUBSCRIPTION_PURCHASE",
+          `Zakup pakietu ${plan.nazwa} na okres ${period} miesięcy`
         )
-      }
+        await creditSubscriptionBonus(tx, lawFirm.id, plan)
 
-      const result = await prisma.$transaction([
-        prisma.lawFirm.update({
+        const updated = await tx.lawFirm.update({
           where: { id: lawFirm.id },
           data: {
             pakietSubskrypcji: plan.typ,
             dataPakietuOd,
             dataPakietuDo,
             autoRenewal,
-            punktySaldo: balanceAfterBonus,
           },
-        }),
-        prisma.order.create({
+        })
+        const created = await tx.order.create({
           data: {
             orderNumber,
             lawFirmId: lawFirm.id,
@@ -377,17 +379,18 @@ export async function POST(request: NextRequest) {
             zaplaconoData: new Date(),
             daneFaktury: finalDaneFaktury,
           },
-        }),
-        ...pointTransactions,
+        })
         // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
         // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
-        prisma.notificationSettings.updateMany({
+        await tx.notificationSettings.updateMany({
           where: { userId: session.user.id },
           data: { welcomePackageSeen: true },
-        }),
-      ])
-      updatedLawFirm = result[0]
-      order = result[1]
+        })
+
+        return { updated, created }
+      })
+      updatedLawFirm = result.updated
+      order = result.created
     } else if (isPendingPayment) {
       // Dla płatności online lub niezatwierdzonej testowej tworzymy tylko zamówienie oczekujące
       order = await prisma.order.create({
@@ -410,20 +413,21 @@ export async function POST(request: NextRequest) {
       })
     } else {
       // Dla innych metod (symulacja/przelew) aktualizujemy od razu
-      const result = await prisma.$transaction([
-        prisma.lawFirm.update({
+      const result = await prisma.$transaction(async (tx) => {
+        // Bonus punktów z wpisem w historii (przed aktualizacją eksperta, żeby
+        // zwrócone `lawFirm` miało już nowe saldo)
+        await creditSubscriptionBonus(tx, lawFirm.id, plan)
+
+        const updated = await tx.lawFirm.update({
           where: { id: lawFirm.id },
           data: {
             pakietSubskrypcji: plan.typ,
             dataPakietuOd,
             dataPakietuDo,
             autoRenewal,
-            punktySaldo: {
-              increment: plan.punktyGratis,
-            },
           },
-        }),
-        prisma.order.create({
+        })
+        const created = await tx.order.create({
           data: {
             orderNumber,
             lawFirmId: lawFirm.id,
@@ -440,55 +444,65 @@ export async function POST(request: NextRequest) {
             transactionId: isTestPayment ? `TXN-TEST-SUB-${Date.now()}` : null,
             externalOrderId: isTestPayment ? `EXT-TEST-SUB-${Date.now()}` : null,
           },
-        }),
+        })
         // Samodzielny zakup pakietu — modal powitalny o darmowym pakiecie Biznes
         // nie powinien się już wyświetlać (kupujący widzi modal aktywacji zakupu)
-        prisma.notificationSettings.updateMany({
+        await tx.notificationSettings.updateMany({
           where: { userId: session.user.id },
           data: { welcomePackageSeen: true },
-        }),
-      ])
-      updatedLawFirm = result[0]
-      order = result[1]
+        })
+
+        return { updated, created }
+      })
+      updatedLawFirm = result.updated
+      order = result.created
     }
 
-    // Generuj numer faktury
-    const invoiceNumber = `FV/${new Date().getFullYear()}/${String(Date.now()).slice(-6)}`
+    // Płatność punktami nie generuje faktury (jak w `generateInvoiceForOrder` i w PUT
+    // `/api/admin/transakcje/[id]`): faktura powstała przy zakupie punktów, a ponowne
+    // fakturowanie tej samej wartości dublowałoby przychód (F-060).
+    let invoice: { id: string; invoiceNumber: string } | null = null
 
-    // Oblicz kwoty VAT na podstawie finalnej ceny
-    const vatRate = 23.0
-    const netAmount = finalPrice / (1 + vatRate / 100)
-    const vatAmount = finalPrice - netAmount
-    const grossAmount = finalPrice
+    if (!isPointPayment) {
+      // Oblicz kwoty VAT na podstawie finalnej ceny
+      const vatRate = 23.0
+      const netAmount = finalPrice / (1 + vatRate / 100)
+      const vatAmount = finalPrice - netAmount
+      const grossAmount = finalPrice
 
-    // Oblicz termin płatności (7 dni)
-    const dueDate = new Date()
-    dueDate.setDate(dueDate.getDate() + 7)
+      // Oblicz termin płatności (7 dni)
+      const dueDate = new Date()
+      dueDate.setDate(dueDate.getDate() + 7)
 
-    // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
-    // razie z profilu kancelarii/użytkownika.
-    const buyer = resolveInvoiceBuyer(lawFirm)
+      // Dane nabywcy: z CompanyData (Biała lista) jeśli uzupełnione, w przeciwnym
+      // razie z profilu kancelarii/użytkownika.
+      const buyer = resolveInvoiceBuyer(lawFirm)
 
-    // Utwórz fakturę
-    const invoice = await prisma.invoice.create({
-      data: {
-        invoiceNumber,
-        orderId: order.id,
-        lawFirmId: lawFirm.id,
-        buyerName: buyer.buyerName,
-        buyerNIP: buyer.buyerNIP,
-        buyerAddress: buyer.buyerAddress,
-        buyerPostalCode: buyer.buyerPostalCode,
-        buyerCity: buyer.buyerCity,
-        netAmount,
-        vatRate,
-        vatAmount,
-        grossAmount,
-        status: isPendingPayment ? "ISSUED" : "PAID",
-        dueDate,
-        paymentDate: isPendingPayment ? null : new Date(),
-      },
-    })
+      // Utwórz fakturę
+      invoice = await createInvoiceWithNumber({
+          orderId: order.id,
+          lawFirmId: lawFirm.id,
+          buyerName: buyer.buyerName,
+          buyerNIP: buyer.buyerNIP,
+          buyerAddress: buyer.buyerAddress,
+          buyerPostalCode: buyer.buyerPostalCode,
+          buyerCity: buyer.buyerCity,
+          netAmount,
+          vatRate,
+          vatAmount,
+          grossAmount,
+          status: isPendingPayment ? "ISSUED" : "PAID",
+          dueDate,
+          paymentDate: isPendingPayment ? null : new Date(),
+      })
+
+      // Jak w generateInvoiceForOrder: opłacona faktura od razu idzie do KSeF (F-061)
+      if (!isPendingPayment) {
+        sendInvoiceToKsef(invoice.id).catch((err) => {
+          console.error(`Failed to send invoice ${invoice?.id} to KSeF:`, err)
+        })
+      }
+    }
 
     return Response.json({
       success: true,
@@ -512,12 +526,20 @@ export async function POST(request: NextRequest) {
         id: order.id,
         orderNumber: order.orderNumber,
       },
-      invoice: {
-        id: invoice.id,
-        invoiceNumber: invoice.invoiceNumber,
-      },
+      invoice: invoice
+        ? {
+          id: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+        }
+        : null,
     })
   } catch (error) {
+    if (error instanceof InsufficientPointsError) {
+      return Response.json(
+        { error: "Niewystarczająca liczba punktów" },
+        { status: 400 }
+      )
+    }
     console.error("Error subscribing to plan:", error)
     return Response.json(
       { error: "Wystąpił błąd podczas aktywacji pakietu" },

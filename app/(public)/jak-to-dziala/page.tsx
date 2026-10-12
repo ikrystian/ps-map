@@ -69,7 +69,7 @@ export default function HowItWorksPage() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Min. 100 znaków opisu</span>
+                      <span>Min. 50 znaków opisu</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
@@ -394,7 +394,7 @@ export default function HowItWorksPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Ponad 1000 ekspertów z całej Polski. Wszystkie specjalizacje prawne - od prawa
+                  Eksperci z całej Polski. Wszystkie specjalizacje prawne - od prawa
                   rodzinnego po korporacyjne.
                 </p>
               </CardContent>

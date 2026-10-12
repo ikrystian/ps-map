@@ -1,3 +1,4 @@
+import { syncStoredOfferCounters } from "@/lib/offer-stats"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
@@ -175,7 +176,7 @@ export async function PUT(
       )
     }
 
-    // Sprawdź czy oferta istnieje i należy do ekspercie
+    // Sprawdź czy oferta istnieje i należy do eksperta
     const existingOffer = await prisma.offer.findUnique({
       where: { id }
     })
@@ -217,7 +218,7 @@ export async function PUT(
     let kwotaBrutto = existingOffer.kwotaBrutto
     if (kwotaNetto !== undefined && vat !== undefined) {
       const vatMultiplier = vat === -1 ? 0 : vat / 100
-      kwotaBrutto = kwotaNetto + (kwotaNetto * vatMultiplier)
+      kwotaBrutto = Math.round((kwotaNetto + kwotaNetto * vatMultiplier) * 100) / 100
     }
 
     // Aktualizuj ofertę
@@ -287,7 +288,7 @@ export async function DELETE(
       )
     }
 
-    // Sprawdź czy oferta istnieje i należy do ekspercie
+    // Sprawdź czy oferta istnieje i należy do eksperta
     const existingOffer = await prisma.offer.findUnique({
       where: { id }
     })
@@ -321,12 +322,7 @@ export async function DELETE(
       })
 
       // Zmniejsz licznik złożonych ofert
-      await tx.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          zlozoneOferty: { decrement: 1 }
-        }
-      })
+      await syncStoredOfferCounters(lawFirm.id, tx)
     })
 
     return Response.json({ message: "Oferta została usunięta" })

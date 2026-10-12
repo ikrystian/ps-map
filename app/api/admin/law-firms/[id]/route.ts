@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { cleanCityName } from "@/lib/city-name"
 import { anonymizeUserAccount } from "@/lib/account-anonymization"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
@@ -262,7 +263,7 @@ export async function PUT(
       const cleanNip = body.nip.replace(/[-\s]/g, "")
       if (!nipRegex.test(cleanNip)) {
         return NextResponse.json(
-          { error: "NIP must be 10 digits" },
+          { error: "NIP musi składać się z 10 cyfr" },
           { status: 400 }
         )
       }
@@ -371,7 +372,7 @@ export async function PUT(
     if (body.numerTelefonu2 !== undefined) userContactUpdateData.numerTelefonu2 = body.numerTelefonu2
     if (body.adres !== undefined) userContactUpdateData.adres = body.adres
     if (body.kodPocztowy !== undefined) userContactUpdateData.kodPocztowy = body.kodPocztowy
-    if (body.miasto !== undefined) userContactUpdateData.miasto = body.miasto
+    if (body.miasto !== undefined) userContactUpdateData.miasto = cleanCityName(body.miasto) || body.miasto
     if (body.voivodeshipId !== undefined) userContactUpdateData.voivodeshipId = body.voivodeshipId
     if (body.latitude !== undefined) {
       userContactUpdateData.latitude =

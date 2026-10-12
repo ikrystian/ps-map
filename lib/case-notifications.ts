@@ -1,3 +1,4 @@
+import { formatBudgetRange } from "@/lib/format"
 import { sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
@@ -66,13 +67,7 @@ export async function notifyMatchingLawFirmsForCase(caseId: string): Promise<voi
 
   let budzetText = "Do negocjacji"
   if (newCase.budzetOd || newCase.budzetDo) {
-    if (newCase.budzetOd && newCase.budzetDo) {
-      budzetText = `${newCase.budzetOd} - ${newCase.budzetDo} PLN`
-    } else if (newCase.budzetOd) {
-      budzetText = `od ${newCase.budzetOd} PLN`
-    } else if (newCase.budzetDo) {
-      budzetText = `do ${newCase.budzetDo} PLN`
-    }
+    budzetText = formatBudgetRange(newCase.budzetOd, newCase.budzetDo) ?? "Do negocjacji"
   }
 
   const { emitNewNotification } = await import("@/lib/socket")

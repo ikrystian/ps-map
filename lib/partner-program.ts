@@ -7,6 +7,7 @@
  * - Automatyczne przydzielanie punktów
  */
 
+import { applyPointsChange } from '@/lib/points-ledger'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -257,16 +258,15 @@ export async function allocateMonthlyPoints(year: number, month: number) {
       }
 
       // Przyznaj punkty w transakcji
-      await prisma.$transaction(async (tx: any) => {
-        // Dodaj punkty do salda eksperta
-        await tx.lawFirm.update({
-          where: { id: partner.lawFirmId },
-          data: {
-            punktySaldo: {
-              increment: partner.monthlyPoints
-            }
-          }
-        })
+      await prisma.$transaction(async (tx) => {
+        // Dodaj punkty do salda eksperta (z wpisem w historii punktów)
+        await applyPointsChange(
+          tx,
+          partner.lawFirmId,
+          partner.monthlyPoints,
+          "PARTNER_BONUS",
+          `Bonus Klubu Partnerskiego za ${String(month).padStart(2, "0")}/${year}`
+        )
 
         // Zapisz w historii
         await tx.partnerPointsHistory.create({

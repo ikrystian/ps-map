@@ -1,4 +1,5 @@
 import { anonymizeUserAccount } from "@/lib/account-anonymization"
+import { cleanCityName } from "@/lib/city-name"
 import { auth } from "@/lib/auth"
 import { pickEditableCompanyDataFields } from "@/lib/biala-lista"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
@@ -284,7 +285,7 @@ export async function PUT(
     // Adres (model User)
     if (body.adres) userUpdateData.adres = body.adres
     if (body.kodPocztowy) userUpdateData.kodPocztowy = body.kodPocztowy
-    if (body.miasto) userUpdateData.miasto = body.miasto
+    if (body.miasto) userUpdateData.miasto = cleanCityName(body.miasto) || body.miasto
     if (body.voivodeshipId) userUpdateData.voivodeshipId = body.voivodeshipId
 
     // Multimedia

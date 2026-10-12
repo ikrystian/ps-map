@@ -2,7 +2,9 @@ import { auth } from "@/lib/auth"
 import { serverCache } from "@/lib/cache"
 import { generatePromotionActivatedEmail } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
+import { applyPointsChange, InsufficientPointsError } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
+import { PROMOTION_LABELS, type PromotionTypeUnion } from "@/lib/promotions"
 import {
   getRecommendedCategoryScope,
   isEligibleForRecommendedPromotion,
@@ -330,9 +332,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Utwórz promocję i odejmij punkty w transakcji
-    const [promotion, updatedLawFirm] = await prisma.$transaction([
-      prisma.promotion.create({
+    const promotionLabel = PROMOTION_LABELS[typPromocji as PromotionTypeUnion]
+
+    // Utwórz promocję i odejmij punkty (wraz z wpisem w historii) w jednej transakcji
+    const promotion = await prisma.$transaction(async (tx) => {
+      const created = await tx.promotion.create({
         data: {
           lawFirmId: lawFirm.id,
           typPromocji: typPromocji as PromotionType,
@@ -345,35 +349,24 @@ export async function POST(request: NextRequest) {
           automatyczneOdnowienie: automatyczneOdnowienie || false,
           aktywna: true,
         },
-      }),
-      prisma.lawFirm.update({
-        where: { id: lawFirm.id },
-        data: {
-          punktySaldo: {
-            decrement: kosztPunktow,
-          },
-        },
-      }),
-    ])
+      })
+
+      await applyPointsChange(
+        tx,
+        lawFirm.id,
+        -kosztPunktow,
+        "PROMOTION_PURCHASE",
+        `Zakup promocji „${promotionLabel}” (${finalCzasTrwaniaDni} dni)`
+      )
+
+      return created
+    })
 
     // Odśwież cache promocji strony głównej, aby nowa promocja była od razu widoczna
     serverCache.delete("homepage:promotions")
     if (typPromocji === "PROMOCJA_KATEGORII" && kategoriaPromocji) {
       serverCache.delete(`category:${kategoriaPromocji}:promoted-experts`)
     }
-
-    // Get promotion label for notification
-    const promotionLabels = {
-      PODBICIE_OGLOSZENIA: 'Podbicie ogłoszenia',
-      WYROZNIENIE: 'Wyróżnienie profilu',
-      TOP_LISTA: 'Top Lista',
-      STRONA_GLOWNA: 'Strona Główna Premium',
-      POLECANI_PRAWNICY: 'Polecani prawnicy i adwokaci',
-      NAJCZESCIEJ_KONSULTOWANE: 'Najczęściej konsultowane kategorie',
-      PROMOCJA_KATEGORII: 'Promocja w kategorii',
-    }
-
-    const promotionLabel = promotionLabels[typPromocji as keyof typeof promotionLabels]
 
     // Get user email for sending notification
     const user = await prisma.user.findUnique({
@@ -407,6 +400,12 @@ export async function POST(request: NextRequest) {
 
     return Response.json(promotion, { status: 201 })
   } catch (error) {
+    if (error instanceof InsufficientPointsError) {
+      return Response.json(
+        { error: "Niewystarczająca liczba punktów" },
+        { status: 400 }
+      )
+    }
     console.error("Error creating promotion:", error)
     return Response.json(
       { error: "Błąd podczas tworzenia promocji" },

@@ -628,7 +628,7 @@ export default function ForLawyersClientPage() {
                                             <span className="dot-yellow"></span>{" "}
                                             <span className="dot-green"></span>
                                         </div>
-                                        <div className="mockup-title">&nbsp;</div>
+                                        <div className="mockup-title">PRZYKŁADOWE DANE — ILUSTRACJA</div>
                                     </div>
                                     <div className="analytics-body">
                                         <div className="analytics-main-row">
@@ -1712,7 +1712,7 @@ export default function ForLawyersClientPage() {
                                             <span className="dot-yellow"></span>{" "}
                                             <span className="dot-green"></span>
                                         </div>
-                                        <div className="mockup-title">KARTA WIZYTÓWKI & SYGNAŁY ZAUFANIA</div>
+                                        <div className="mockup-title">KARTA WIZYTÓWKI & SYGNAŁY ZAUFANIA (PRZYKŁAD)</div>
                                     </div>
                                     <div className="mockup-body">
                                         {/* Expert Header Mockup */}

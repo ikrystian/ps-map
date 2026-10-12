@@ -1,3 +1,5 @@
+import { syncStoredOfferCounters } from "@/lib/offer-stats"
+import { formatCurrency } from "@/lib/format"
 import { auth } from "@/auth"
 import { sendEmailWithTemplate } from "@/lib/email"
 import { prisma } from "@/lib/prisma"
@@ -133,7 +135,8 @@ export async function POST(
         where: {
           caseId: offer.caseId,
           id: { not: id },
-          status: { not: "ODRZUCONA" }
+          // nie nadpisujemy historii: odrzucone i wygasłe zostają jak były
+          status: { notIn: ["ODRZUCONA", "WYGASLA"] }
         },
         data: {
           status: "ODRZUCONA",
@@ -149,32 +152,8 @@ export async function POST(
         }
       })
 
-      // Zaktualizuj statystyki eksperta
-      await tx.lawFirm.update({
-        where: { id: offer.lawFirmId },
-        data: {
-          wygraneOferty: { increment: 1 }
-        }
-      })
-
-      // Przelicz konwersję
-      const lawFirmStats = await tx.lawFirm.findUnique({
-        where: { id: offer.lawFirmId },
-        select: {
-          zlozoneOferty: true,
-          wygraneOferty: true
-        }
-      })
-
-      if (lawFirmStats && lawFirmStats.zlozoneOferty > 0) {
-        const konwersja = (lawFirmStats.wygraneOferty / lawFirmStats.zlozoneOferty) * 100
-        await tx.lawFirm.update({
-          where: { id: offer.lawFirmId },
-          data: {
-            konwersja
-          }
-        })
-      }
+      // Liczniki zapisane (sortowanie) odświeżane z tabeli Offer; wyświetlane statystyki liczone na żywo
+      await syncStoredOfferCounters(offer.lawFirmId, tx)
 
       // Get current date info for stats
       const now = new Date()
@@ -273,7 +252,7 @@ export async function POST(
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
 
-    // 1. Wyślij e-mail o akceptacji do ekspercie
+    // 1. Wyślij e-mail o akceptacji do eksperta
     if (offer.lawFirm?.user?.email) {
       try {
         await sendEmailWithTemplate({
@@ -283,7 +262,7 @@ export async function POST(
             "{ekspert}": offer.lawFirm.nazwa,
             "{klient}": `${client.imie} ${client.nazwisko}`,
             "{nazwaSprawi}": offer.case.nazwaSprawy,
-            "{kwota}": `${offer.kwotaBrutto.toFixed(2)} PLN`,
+            "{kwota}": formatCurrency(offer.kwotaBrutto),
             "{emailKlienta}": session.user.email || "Brak",
             "{telefonKlienta}": client.user?.numerTelefonu || "Nie podano",
             "{linkDoPanelu}": `${baseUrl}/panel-eksperta/oferty`,

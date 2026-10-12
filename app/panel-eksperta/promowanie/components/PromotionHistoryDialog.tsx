@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/table"
 import { Clock } from "lucide-react"
 import { Promotion } from "../types"
-import { getPromotionTypeLabel, formatDate, getPromotionStatusBadge } from "../utils"
+import { getPromotionTypeLabel, getPromotionStatusBadge } from "../utils"
+import { formatDate, formatDateTime } from "@/lib/format"
 
 interface PromotionHistoryDialogProps {
   open: boolean
@@ -89,11 +90,11 @@ export function PromotionHistoryDialog({
                         {promo.kategoriaPromocji || promo.wojewodztwoPromocji || "Cały serwis"}
                       </TableCell>
                       <TableCell className="text-[11px] text-[#b7b5a9]">
-                        {formatDate(promo.createdAt)}
+                        {formatDateTime(promo.createdAt)}
                       </TableCell>
                       <TableCell className="text-[11px] text-[#b7b5a9] space-y-0.5">
-                        <div>Od: {new Date(promo.startPromocji).toLocaleDateString("pl-PL")}</div>
-                        <div>Do: {new Date(promo.koniecPromocji).toLocaleDateString("pl-PL")}</div>
+                        <div>Od: {formatDate(promo.startPromocji)}</div>
+                        <div>Do: {formatDate(promo.koniecPromocji)}</div>
                       </TableCell>
                       <TableCell className="text-right font-semibold text-xs text-secondary py-3">
                         {promo.kosztPunktow} pkt

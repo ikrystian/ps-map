@@ -20,7 +20,6 @@ import {
   ExternalLink,
   FileText,
   Loader2,
-  Mail,
   MapPin,
   Paperclip,
   Phone,
@@ -38,6 +37,9 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { OFFER_HIGHLIGHT_POINTS } from "@/lib/points-pricing"
+import { formatCurrency, formatDate } from "@/lib/format"
+import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 
 interface Case {
   id: string
@@ -97,21 +99,6 @@ interface Case {
   }
 }
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pl-PL", {
-    style: "currency",
-    currency: "PLN",
-  }).format(amount)
-}
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("pl-PL", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
-
 const getCaseTypeLabel = (type: string) => {
   switch (type) {
     case "OSOBA_PRYWATNA":
@@ -125,22 +112,7 @@ const getCaseTypeLabel = (type: string) => {
   }
 }
 
-const getCaseStatusLabel = (status: string) => {
-  switch (status) {
-    case "NOWA":
-      return "Nowa"
-    case "OFERTY_OTRZYMANE":
-      return "Oferty otrzymane"
-    case "W_TRAKCIE":
-      return "W toku"
-    case "ZAKONCZONA":
-      return "Zakończona"
-    case "ANULOWANA":
-      return "Anulowana"
-    default:
-      return status
-  }
-}
+const getCaseStatusLabel = (status: string) => statusLabel(CASE_STATUS_LABEL, status)
 
 export default function LawFirmCaseDetailsPage() {
   const { data: session } = useSession()
@@ -152,6 +124,7 @@ export default function LawFirmCaseDetailsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showOfferForm, setShowOfferForm] = useState(false)
   const [hasExistingOffer, setHasExistingOffer] = useState(false)
+  const [ownOfferStatus, setOwnOfferStatus] = useState<string | null>(null)
   const [lawFirmPoints, setLawFirmPoints] = useState<number | null>(null)
 
   // Dane formularza oferty
@@ -196,6 +169,7 @@ export default function LawFirmCaseDetailsPage() {
         if (offersResponse.ok) {
           const offersData = await offersResponse.json()
           setHasExistingOffer(offersData.offers.length > 0)
+          setOwnOfferStatus(offersData.offers[0]?.status ?? null)
         }
       }
     } catch (err) {
@@ -491,29 +465,11 @@ export default function LawFirmCaseDetailsPage() {
                     <span>Dane kontaktowe</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* Imie Nazwisko */}
-                  <div className="flex items-center text-sm text-muted-foreground bg-muted/10 px-3.5 py-3 rounded-xl border border-border/20">
-                    <User className="h-4.5 w-4.5 mr-3 text-muted-foreground flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Osoba kontaktowa</span>
-                      <span className="font-semibold text-foreground text-xs leading-none truncate">
-                        {caseData.imieNazwisko}
-                      </span>
-                    </div>
-                  </div>
-
-
-                  {/* Telefon */}
-                  <div className="flex items-center text-sm text-muted-foreground bg-muted/10 px-3.5 py-3 rounded-xl border border-border/20">
-                    <Phone className="h-4.5 w-4.5 mr-3 text-muted-foreground flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-muted-foreground/75 leading-none mb-1">Numer telefonu</span>
-                      <span className="font-semibold text-foreground text-xs leading-none truncate">
-                        {caseData.telefonKontakt}
-                      </span>
-                    </div>
-                  </div>
+                <CardContent className="p-6">
+                  <p className="text-sm text-muted-foreground font-light">
+                    Dane kontaktowe klienta (imię, nazwisko i numer telefonu) zobaczysz po zaakceptowaniu Twojej oferty.
+                    Do tego czasu kontaktuj się z klientem przez wiadomości w serwisie.
+                  </p>
                 </CardContent>
               </Card>
             )
@@ -681,7 +637,7 @@ export default function LawFirmCaseDetailsPage() {
                         id="wyroznienie"
                         checked={offerForm.wyroznienie}
                         onCheckedChange={(checked) => handleOfferFormChange("wyroznienie", checked)}
-                        disabled={lawFirmPoints !== null && lawFirmPoints < 50}
+                        disabled={lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS}
                         className="data-[state=checked]:bg-secondary"
                       />
                       <div className="flex-grow min-w-0">
@@ -689,15 +645,15 @@ export default function LawFirmCaseDetailsPage() {
                           htmlFor="wyroznienie"
                           className={cn(
                             "cursor-pointer text-sm font-bold text-foreground flex items-center gap-1.5",
-                            lawFirmPoints !== null && lawFirmPoints < 50 && "opacity-50 cursor-not-allowed"
+                            lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS && "opacity-50 cursor-not-allowed"
                           )}
                         >
-                          Wyróżnij tę ofertę (koszt: 50 punktów)
+                          Wyróżnij tę ofertę (koszt: {OFFER_HIGHLIGHT_POINTS} punktów)
                         </Label>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Twoja oferta zostanie podświetlona na złoty kolor i zaprezentowana na samej górze skrzynki klienta.
                         </p>
-                        {lawFirmPoints !== null && lawFirmPoints < 50 && (
+                        {lawFirmPoints !== null && lawFirmPoints < OFFER_HIGHLIGHT_POINTS && (
                           <p className="text-xs text-rose-400 mt-2 font-medium">
                             Niewystarczające saldo punktów (masz: {lawFirmPoints} pkt).{" "}
                             <Link href="/panel-eksperta/punkty" className="underline text-secondary hover:text-secondary/85">
@@ -743,8 +699,14 @@ export default function LawFirmCaseDetailsPage() {
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-foreground font-playfair">Złożyłeś już ofertę do tej sprawy</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">Twoja oferta czeka na rozpatrzenie przez klienta.</p>
+                    <h4 className="text-base font-bold text-foreground font-playfair">Oferta została już złożona do tej sprawy</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{{
+                      ZLOZONA: "Twoja oferta czeka na rozpatrzenie przez klienta.",
+                      NEGOCJACJE: "Oferta jest w trakcie negocjacji z klientem.",
+                      ZAAKCEPTOWANA: "Klient zaakceptował Twoją ofertę.",
+                      ODRZUCONA: "Klient odrzucił Twoją ofertę.",
+                      WYGASLA: "Twoja oferta wygasła.",
+                    }[ownOfferStatus ?? "ZLOZONA"] ?? "Twoja oferta czeka na rozpatrzenie przez klienta."}</p>
                   </div>
                 </div>
                 <Link href="/panel-eksperta/oferty">

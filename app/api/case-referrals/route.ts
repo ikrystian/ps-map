@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { CaseType, EmailType } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
+import { formatDate } from "@/lib/format"
 
 const referralInclude = {
   categories: { include: { category: true } },
@@ -200,7 +201,7 @@ export async function POST(request: NextRequest) {
           "{nazwaSprawy}": nazwaSprawy || "Do uzupełnienia przez klienta",
           "{wiadomosc}": wiadomosc || "Brak dodatkowej wiadomości.",
           "{linkPolecenia}": link,
-          "{waznyDo}": expiresAt.toLocaleDateString("pl-PL", { timeZone: "Europe/Warsaw" }),
+          "{waznyDo}": formatDate(expiresAt),
         },
       })
     } catch (emailError) {
