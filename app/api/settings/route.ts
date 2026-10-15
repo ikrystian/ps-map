@@ -6,11 +6,51 @@ import {
 import prisma from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
+/**
+ * Klucze, które endpoint może zwrócić bez logowania. Allowlista, nie denylista — tabela `Settings`
+ * trzyma też sekrety (hasło SMTP, tokeny SMSAPI/KSeF) i konfigurację wewnętrzną, a każdy nowy klucz
+ * dodany w panelu admina ma być domyślnie niepubliczny. Nowy klucz potrzebny na froncie dopisz tutaj.
+ */
+const PUBLIC_SETTING_KEYS = [
+  "maxLawFirmCategories",
+  "maxLawFirmVoivodeships",
+  "maxLawFirmCities",
+  "maxLawFirmTags",
+  "showExpertTutorial",
+  "deleteReviewCostRating1",
+  "deleteReviewCostRating2",
+  "deleteReviewCostRating3",
+  "enablePaymentTest",
+  "enablePaymentPrzelewy24",
+  "enablePaymentPayU",
+  "enablePaymentPrzelew",
+  "enablePaymentTpay",
+  "enableUserSelectionOnLogin",
+  "geographicHierarchy",
+  "publicItemsPerPage",
+  "promoteConsultedImmediately",
+  "homepageConsultedCategories",
+  "homepageRecommendedCategory",
+  "comingSoonMode",
+  "pointsToPlnRatio",
+  "pointsPriceTiers",
+  "pointsPackages",
+  "minCustomPoints",
+  "footerCopyrightText",
+  "footerSocialFacebook",
+  "footerSocialInstagram",
+  "footerSocialLinkedin",
+  "footerSocialTwitter",
+  "footerSocialYoutube",
+]
+
 // GET - Pobierz publiczne ustawienia
 export async function GET(request: NextRequest) {
   try {
-    // Pobierz ustawienia
-    const settings = await prisma.settings.findMany()
+    // Pobierz wyłącznie ustawienia publiczne
+    const settings = await prisma.settings.findMany({
+      where: { key: { in: PUBLIC_SETTING_KEYS } },
+    })
 
     // Konwertuj na obiekt klucz-wartość
     const settingsObject = settings.reduce((acc: Record<string, string>, setting: any) => {

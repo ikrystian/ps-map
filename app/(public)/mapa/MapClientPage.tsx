@@ -525,6 +525,87 @@ export default function MapClientPage() {
       </header>
 
       <div className="container mx-auto px-4 pb-16">
+        {expertiseTree.length > 0 && (
+          <div className="mb-6 space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <h2 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <Filter className="h-4 w-4 text-primary" />
+                Filtruj ekspertów na mapie
+              </h2>
+              {activeFilterIds.size > 0 && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+                >
+                  Wyczyść filtry ({activeFilterIds.size})
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              {expertiseTree.map((root) => (
+                <div key={root.id} className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <FilterChip
+                      label={root.nazwa}
+                      active={activeFilterIds.has(root.id)}
+                      onClick={() => toggleFilter(root.id)}
+                      emphasized
+                    />
+                    {(root.children ?? []).map((child) => {
+                      const hasSpecializations = (child.children?.length ?? 0) > 0
+                      return (
+                        <span key={child.id} className="inline-flex items-center gap-1">
+                          <FilterChip
+                            label={child.nazwa}
+                            active={activeFilterIds.has(child.id)}
+                            onClick={() => toggleFilter(child.id)}
+                          />
+                          {hasSpecializations && (
+                            <button
+                              type="button"
+                              onClick={() => toggleExpandedGroup(child.id)}
+                              aria-label={`Pokaż specjalizacje: ${child.nazwa}`}
+                              aria-expanded={expandedGroupIds.has(child.id)}
+                              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                            >
+                              <ChevronDown
+                                className={cn(
+                                  "h-3.5 w-3.5 transition-transform",
+                                  expandedGroupIds.has(child.id) && "rotate-180"
+                                )}
+                              />
+                            </button>
+                          )}
+                        </span>
+                      )
+                    })}
+                  </div>
+
+                  {(root.children ?? [])
+                    .filter((child) => expandedGroupIds.has(child.id) && (child.children?.length ?? 0) > 0)
+                    .map((child) => (
+                      <div
+                        key={child.id}
+                        className="flex flex-wrap items-center gap-2 pl-4 ml-1 border-l border-border/60"
+                      >
+                        {child.children!.map((leaf) => (
+                          <FilterChip
+                            key={leaf.id}
+                            label={leaf.nazwa}
+                            active={activeFilterIds.has(leaf.id)}
+                            onClick={() => toggleFilter(leaf.id)}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="relative w-full h-[70vh] min-h-[480px] rounded-2xl overflow-hidden border border-border shadow-sm bg-muted">
           {!MAPBOX_TOKEN ? (
             <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
@@ -611,87 +692,6 @@ export default function MapClientPage() {
             </>
           )}
         </div>
-
-        {expertiseTree.length > 0 && (
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <h2 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <Filter className="h-4 w-4 text-primary" />
-                Filtruj ekspertów na mapie
-              </h2>
-              {activeFilterIds.size > 0 && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
-                >
-                  Wyczyść filtry ({activeFilterIds.size})
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              {expertiseTree.map((root) => (
-                <div key={root.id} className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <FilterChip
-                      label={root.nazwa}
-                      active={activeFilterIds.has(root.id)}
-                      onClick={() => toggleFilter(root.id)}
-                      emphasized
-                    />
-                    {(root.children ?? []).map((child) => {
-                      const hasSpecializations = (child.children?.length ?? 0) > 0
-                      return (
-                        <span key={child.id} className="inline-flex items-center gap-1">
-                          <FilterChip
-                            label={child.nazwa}
-                            active={activeFilterIds.has(child.id)}
-                            onClick={() => toggleFilter(child.id)}
-                          />
-                          {hasSpecializations && (
-                            <button
-                              type="button"
-                              onClick={() => toggleExpandedGroup(child.id)}
-                              aria-label={`Pokaż specjalizacje: ${child.nazwa}`}
-                              aria-expanded={expandedGroupIds.has(child.id)}
-                              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-                            >
-                              <ChevronDown
-                                className={cn(
-                                  "h-3.5 w-3.5 transition-transform",
-                                  expandedGroupIds.has(child.id) && "rotate-180"
-                                )}
-                              />
-                            </button>
-                          )}
-                        </span>
-                      )
-                    })}
-                  </div>
-
-                  {(root.children ?? [])
-                    .filter((child) => expandedGroupIds.has(child.id) && (child.children?.length ?? 0) > 0)
-                    .map((child) => (
-                      <div
-                        key={child.id}
-                        className="flex flex-wrap items-center gap-2 pl-4 ml-1 border-l border-border/60"
-                      >
-                        {child.children!.map((leaf) => (
-                          <FilterChip
-                            key={leaf.id}
-                            label={leaf.nazwa}
-                            active={activeFilterIds.has(leaf.id)}
-                            onClick={() => toggleFilter(leaf.id)}
-                          />
-                        ))}
-                      </div>
-                    ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
