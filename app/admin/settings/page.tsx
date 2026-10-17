@@ -160,10 +160,6 @@ interface Settings {
     value: string
     description: string | null
   }
-  enableUserSelectionOnLogin?: {
-    value: string
-    description: string | null
-  }
   smsMode?: {
     value: string
     description: string | null
@@ -408,7 +404,6 @@ export default function AdminSettingsPage() {
   const [deleteCost1, setDeleteCost1] = useState("500")
   const [deleteCost2, setDeleteCost2] = useState("300")
   const [deleteCost3, setDeleteCost3] = useState("100")
-  const [enableUserSelectionOnLogin, setEnableUserSelectionOnLogin] = useState("true")
   const [ksefEnabled, setKsefEnabled] = useState("false")
   const [ksefNip, setKsefNip] = useState("1234567890")
   const [ksefToken, setKsefToken] = useState("")
@@ -508,7 +503,6 @@ export default function AdminSettingsPage() {
         setDeleteCost1(data.deleteReviewCostRating1?.value || "500")
         setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
         setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
-        setEnableUserSelectionOnLogin(data.enableUserSelectionOnLogin?.value || "true")
         setKsefEnabled(data.ksefEnabled?.value || "false")
         setKsefNip(data.ksefNip?.value || "1234567890")
         setKsefToken(data.ksefToken?.value || "")
@@ -838,10 +832,6 @@ export default function AdminSettingsPage() {
             pointsPackages: {
               value: JSON.stringify(fromPackageDrafts(pointPackages)),
               description: "Pakiety punktów (JSON) prezentowane w panelu eksperta, wraz z punktami gratis",
-            },
-            enableUserSelectionOnLogin: {
-              value: enableUserSelectionOnLogin,
-              description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
             },
             ksefEnabled: {
               value: ksefEnabled,
@@ -1336,33 +1326,6 @@ export default function AdminSettingsPage() {
                   {geographicHierarchy === "cities" && "Miasta"}
                 </span>. Zmiana wpływa na formularze i wyniki wyszukiwania ekspertów według lokalizacji.
               </p>
-            </CardContent>
-          </Card>
-
-          {/* Ustawienia logowania */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Logowanie</CardTitle>
-              <CardDescription>
-                Konfiguracja formularza logowania w serwisie
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between space-y-0 rounded-lg border border-border/60 bg-muted/20 p-4 hover:bg-muted/40 transition-colors">
-                <div className="space-y-0.5">
-                  <Label htmlFor="enableUserSelectionOnLogin" className="text-base font-semibold">
-                    Wybór użytkownika przy logowaniu
-                  </Label>
-                  <p className="text-sm text-muted-foreground max-w-xl">
-                    Włącza/wyłącza możliwość szybkiego wyboru użytkownika testowego z listy rozwijanej zamiast wpisywania adresu email.
-                  </p>
-                </div>
-                <Switch
-                  id="enableUserSelectionOnLogin"
-                  checked={enableUserSelectionOnLogin === "true"}
-                  onCheckedChange={(checked) => setEnableUserSelectionOnLogin(checked ? "true" : "false")}
-                />
-              </div>
             </CardContent>
           </Card>
 

@@ -169,12 +169,6 @@ export async function GET(request: NextRequest) {
         description: "Czy płatność przez Tpay ma być dostępna jako metoda płatności",
       }
     }
-    if (!settingsObject.enableUserSelectionOnLogin) {
-      settingsObject.enableUserSelectionOnLogin = {
-        value: "true",
-        description: "Czy włączyć listę wyboru użytkowników na stronie logowania",
-      }
-    }
     if (!settingsObject.ksefEnabled) {
       settingsObject.ksefEnabled = {
         value: "false",

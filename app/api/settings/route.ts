@@ -25,7 +25,6 @@ const PUBLIC_SETTING_KEYS = [
   "enablePaymentPayU",
   "enablePaymentPrzelew",
   "enablePaymentTpay",
-  "enableUserSelectionOnLogin",
   "geographicHierarchy",
   "publicItemsPerPage",
   "promoteConsultedImmediately",
@@ -98,13 +97,6 @@ export async function GET(request: NextRequest) {
     if (!settingsObject.enablePaymentTpay) {
       settingsObject.enablePaymentTpay = "true"
     }
-    if (!settingsObject.enableUserSelectionOnLogin) {
-      settingsObject.enableUserSelectionOnLogin = "true"
-    }
-    // Na produkcji lista wyboru użytkownika na stronie logowania jest zawsze wyłączona (F-072)
-    if (process.env.NODE_ENV === "production") {
-      settingsObject.enableUserSelectionOnLogin = "false"
-    }
     if (!settingsObject.geographicHierarchy) {
       settingsObject.geographicHierarchy = "voivodeships"
     }
@@ -159,7 +151,6 @@ export async function GET(request: NextRequest) {
         enablePaymentPayU: "true",
         enablePaymentPrzelew: "true",
         enablePaymentTpay: "true",
-        enableUserSelectionOnLogin: "true",
         publicItemsPerPage: "12",
       },
       { status: 200 }
