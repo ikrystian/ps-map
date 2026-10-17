@@ -432,7 +432,7 @@ export default function AdminPozycjonowaniePage() {
                 {context === "SEARCH" ? (
                   <div className="space-y-2 mt-2 text-sm text-muted-foreground">
                     <p>
-                      Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdej eksperta przypisywany jest
+                      Kolejność w głównej wyszukiwarce jest generowana algorytmicznie. Każdy ekspert przypisywany jest
                       wynik punktowy (**Score**), według którego są sortowane. Wzór punktowy wygląda następująco:
                     </p>
                     <div className="bg-background border border-border p-3 rounded-lg font-mono text-foreground text-center my-3 max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-2">
