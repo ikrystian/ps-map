@@ -197,7 +197,8 @@ export function CoverageAreaSelector({
         const responses = await Promise.all(
           voivodeshipsIds.map((voivodeshipId) => {
             const query = new URLSearchParams({ voivodeshipId, limit: "50" })
-            if (citySearch.trim()) query.set("search", citySearch.trim())
+            // /api/cities przyjmuje frazę od 2 znaków
+            if (citySearch.trim().length >= 2) query.set("search", citySearch.trim())
             return fetch(`/api/cities?${query.toString()}`).then((r) => (r.ok ? r.json() : []))
           })
         )
