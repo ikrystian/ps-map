@@ -1109,7 +1109,7 @@ export default function PublicHeader({
                           isRankingActive ? "text-primary font-semibold" : "text-foreground"
                         )}
                       >
-                        Ranking eksperta
+                        Ranking ekspertów
                       </Link>
 
                       <Link

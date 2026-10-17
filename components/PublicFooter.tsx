@@ -151,14 +151,15 @@ export default function PublicFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/kontakt" className="hover:text-[#d7b56d] transition-colors">
-                  Kontakt
+                <Link href="/pomoc" className="hover:text-[#d7b56d] transition-colors">
+                  Pomoc
                 </Link>
               </li>
-              <Link href="/regulamin" className=" hover:text-[#d7b56d] transition-colors flex items-center">
-
-                <span>Regulamin</span>
-              </Link>
+              <li>
+                <Link href="/regulamin" className="hover:text-[#d7b56d] transition-colors">
+                  Regulamin
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -177,7 +178,7 @@ export default function PublicFooter() {
               <li>
                 <Link href="/ranking" className="text-muted-foreground hover:text-secondary transition-colors flex items-center">
                   <GoldCheck />
-                  <span>Ranking eksperta</span>
+                  <span>Ranking ekspertów</span>
                 </Link>
               </li>
               <li>
@@ -215,8 +216,11 @@ export default function PublicFooter() {
 
           {/* Column 4: Kontakt (~25% / 3 cols) */}
           <div className="space-y-3 col-span-2 lg:col-span-3">
+            {/* Jedyny link do /kontakt na desktopie (w nagłówku jest tylko w menu mobilnym) */}
             <h3 className="font-playfair text-foreground text-lg font-normal tracking-wide mb-4">
-              Kontakt
+              <Link href="/kontakt" className="hover:text-[#d7b56d] transition-colors">
+                Kontakt
+              </Link>
             </h3>
 
             <div>Polska Grupa Identyfikacji Firm Sp. z o.o.</div>
