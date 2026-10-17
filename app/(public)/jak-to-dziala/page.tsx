@@ -15,14 +15,37 @@ import {
   TrendingUp,
   Users
 } from "lucide-react"
+import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
+
+// Pakiet na start zależy od ustawień admina (autoGrantBusinessPackage, pakiet podstawowy)
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Jak to działa? Przewodnik po Platformie",
   description: "Dowiedz się, jak w prosty i bezpieczny sposób opublikować sprawę prawną lub dołączyć jako ekspert i zdobywać zlecenia.",
 }
 
-export default function HowItWorksPage() {
+// Ten sam wybór pakietu co przy rejestracji eksperta w app/api/law-firms/route.ts
+async function getStarterPackageText(): Promise<string> {
+  try {
+    const autoGrant = await prisma.settings.findUnique({ where: { key: "autoGrantBusinessPackage" } })
+    if (autoGrant?.value === "true") {
+      return "Na start dostajesz pakiet Biznes na 3 miesiące, bez opłat. Potem wybierasz pakiet dopasowany do swoich potrzeb."
+    }
+    const primaryPackage = await prisma.subscriptionPlan.findFirst({ where: { isPrimary: true, aktywny: true } })
+    if (primaryPackage) {
+      return `Na start dostajesz pakiet ${primaryPackage.nazwa}, a w panelu w każdej chwili możesz przejść na wyższy.`
+    }
+  } catch (error) {
+    console.error("Error loading starter package for /jak-to-dziala:", error)
+  }
+  return "Pakiet możesz w każdej chwili zmienić w panelu eksperta."
+}
+
+export default async function HowItWorksPage() {
+  const starterPackageText = await getStarterPackageText()
+
   return (
     <div className="min-h-screen bg-background-sec">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -115,7 +138,7 @@ export default function HowItWorksPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Powiadomienia push i e-mail</span>
+                      <span>Powiadomienia e-mail i w panelu</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -249,12 +272,11 @@ export default function HowItWorksPage() {
                     1
                   </div>
                 </div>
-                <CardTitle>Zarejestruj się i wybierz pakiet</CardTitle>
+                <CardTitle>Zarejestruj się i uzupełnij profil</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Stwórz konto, wypełnij profil eksperta i wybierz odpowiedni pakiet subskrypcyjny
-                  dopasowany do Twoich potrzeb.
+                  Stwórz konto i wypełnij profil eksperta. {starterPackageText}
                 </p>
               </CardContent>
             </Card>
@@ -432,7 +454,7 @@ export default function HowItWorksPage() {
               <h3 className="font-semibold mb-2">Czy muszę płacić za korzystanie z platformy jako klient?</h3>
               <p className="text-muted-foreground">
                 Nie, dla klientów korzystanie z Prosta Sprawa jest całkowicie bezpłatne.
-                Płacisz tylko bezpośrednio ekspercie za świadczone usługi prawne.
+                Płacisz tylko bezpośrednio ekspertowi za świadczone usługi prawne.
               </p>
             </div>
             <div>
@@ -473,7 +495,7 @@ export default function HowItWorksPage() {
             <div className="text-center">
               <h2 className="text-3xl font-bold mb-4">Gotowy, żeby rozpocząć?</h2>
               <p className="text-lg mb-6 opacity-90">
-                Dołącz do tysięcy zadowolonych użytkowników i znajdź rozwiązanie swojego problemu prawnego już dziś!
+                Znajdź rozwiązanie swojego problemu prawnego już dziś!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" asChild>
