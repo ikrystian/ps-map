@@ -50,6 +50,9 @@ const SECTION_ICONS: Record<string, ReactNode> = {
 
 const DEFAULT_SECTION_ICON = <FileText className="w-5 h-5" />
 
+// PDF generowany na żądanie z bieżącej treści regulaminu (app/api/legal-pages/[slug]/pdf)
+const REGULAMIN_PDF_URL = "/api/legal-pages/regulamin/pdf"
+
 export default function RegulaminClientPage({ content }: { content: LegalPageContent }) {
   const [activeTab, setActiveTab] = useState<"tldr" | "full">("tldr")
   const [searchQuery, setSearchQuery] = useState("")
@@ -282,7 +285,7 @@ Miejscowość, Data: `
               <span className="hidden sm:inline">Drukuj</span>
             </button>
             <a
-              href="/Regulamin serwisu Prostasprawa.pl.docx.pdf"
+              href={REGULAMIN_PDF_URL}
               download
               className="flex items-center justify-center gap-2 bg-card border border-border hover:border-border text-foreground/80 hover:text-foreground px-4 py-2.5 rounded-xl text-sm transition-all duration-300 cursor-pointer"
               title="Pobierz plik PDF"
@@ -523,10 +526,10 @@ Miejscowość, Data: `
                   Wersja papierowa
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Pobierz oficjalną wersję PDF regulaminu podpisaną cyfrowo, aby zachować ją na swoim dysku lub wydrukować.
+                  Pobierz aktualną treść regulaminu w formacie PDF, aby zachować ją na swoim dysku lub wydrukować.
                 </p>
                 <a
-                  href="/Regulamin serwisu Prostasprawa.pl.docx.pdf"
+                  href={REGULAMIN_PDF_URL}
                   download
                   className="w-full flex items-center justify-center gap-2 bg-[#0e7a57] hover:bg-[#0c6b4c] text-white text-xs font-semibold py-2 px-4 rounded-lg shadow transition-colors cursor-pointer"
                 >
