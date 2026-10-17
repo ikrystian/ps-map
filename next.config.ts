@@ -66,6 +66,25 @@ const nextConfig: NextConfig = {
     // Enable type checking during build to catch errors before production
     ignoreBuildErrors: true,
   },
+  // Bez nagłówka X-Powered-By: Next.js — nie zdradzamy stacku
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // Przeglądarka ignoruje HSTS przesłany po HTTP, więc lokalny dev na http:// działa bez zmian.
+          // Bez includeSubDomains — nie wszystkie subdomeny prostasprawa.pl muszą mieć HTTPS.
+          { key: "Strict-Transport-Security", value: "max-age=63072000" },
+          // SAMEORIGIN, bo własne podglądy PDF (panel eksperta) osadzamy w iframe z tego samego originu
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // Pełny URL tylko w obrębie serwisu; na zewnątrz sam origin (osadzenia YouTube go wymagają)
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
