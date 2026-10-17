@@ -181,9 +181,13 @@ export async function GET(
       skillLawFocusActive = assignedPlan.skillLawFocus
     }
 
+    // Statystyki ofert (złożone / wygrane / konwersja) są tylko dla eksperta i admina — nie w profilu publicznym
+    const { zlozoneOferty: _zlozoneOferty, wygraneOferty: _wygraneOferty, konwersja: _konwersja, ...publicLawFirm } =
+      flattenLawFirmUser(lawFirm)
+
     // Parse JSON fields
     const parsedLawFirm = {
-      ...flattenLawFirmUser(lawFirm),
+      ...publicLawFirm,
       userId: lawFirm.userId, // Include userId for chat functionality
       // Dane firmy do faktury (null jeśli ekspert rejestrował się jako osoba prywatna)
       companyData: lawFirm.user?.companyData ?? null,

@@ -1,4 +1,3 @@
-import { getOfferStatsMap } from "@/lib/offer-stats"
 import { pickCompanyDataFields } from "@/lib/biala-lista"
 import { cleanCityName } from "@/lib/city-name"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
@@ -287,8 +286,6 @@ export async function GET(request: NextRequest) {
       })
       : []
 
-    const offerStatsMap = await getOfferStatsMap(lawFirmIds)
-
     // Calculate ratings, boosts, and highlight types for each law firm
     const lawFirmsWithData = await Promise.all(
       lawFirms.map(async (firm: any) => {
@@ -349,8 +346,6 @@ export async function GET(request: NextRequest) {
           avgRating: parseFloat(avgRating.toFixed(1)),
           reviewCount: firm.reviews.length,
           wyswietleniaProfilu: firm.wyswietleniaProfilu,
-          zlozoneOferty: offerStatsMap.get(firm.id)?.zlozoneOferty ?? 0,
-          wygraneOferty: offerStatsMap.get(firm.id)?.wygraneOferty ?? 0,
           pakietSubskrypcji: firm.pakietSubskrypcji,
           pakietObrazek: firm.pakietSubskrypcji ? (planImageMap.get(firm.pakietSubskrypcji) ?? null) : null,
           // Promotion data

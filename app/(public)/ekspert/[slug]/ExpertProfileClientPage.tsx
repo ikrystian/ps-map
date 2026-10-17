@@ -1256,19 +1256,10 @@ export default function LawFirmProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
-                    <p className="text-sm font-bold text-foreground">{lawFirm.wyswietleniaProfilu}</p>
-                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wyświetlenia (łącznie)</p>
-                  </div>
-                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
-                    <p className="text-sm font-bold text-foreground">{lawFirm.zlozoneOferty}</p>
-                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Złożone oferty</p>
-                  </div>
-                  <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1">
-                    <p className="text-sm font-bold text-foreground">{lawFirm.wygraneOferty}</p>
-                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wygrane</p>
-                  </div>
+                {/* Liczby złożonych i wygranych ofert są widoczne tylko w panelu eksperta */}
+                <div className="bg-muted/20 p-3.5 rounded-xl border border-border/40 space-y-1 text-center">
+                  <p className="text-sm font-bold text-foreground">{lawFirm.wyswietleniaProfilu}</p>
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider leading-tight">Wyświetlenia (łącznie)</p>
                 </div>
               </CardContent>
             </Card>
