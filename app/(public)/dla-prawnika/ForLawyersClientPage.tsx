@@ -999,7 +999,7 @@ export default function ForLawyersClientPage() {
                                                     </div>
                                                     <div className="stream-tag bottom-left">
                                                         <div className="user-info-box">
-                                                            <span className="user-name">r. pr. Jak Kowalski</span>
+                                                            <span className="user-name">r. pr. Jan Kowalski</span>
                                                             <div className="audio-wave-indicator">
                                                                 <span className="wave-bar"></span>{" "}
                                                                 <span className="wave-bar"></span>{" "}
@@ -1134,7 +1134,7 @@ export default function ForLawyersClientPage() {
                                         <span className="dot-yellow"></span>{" "}
                                         <span className="dot-green"></span>
                                     </div>
-                                    <div className="mockup-title">prostasprawa.pl — Panel Doradcy</div>
+                                    <div className="mockup-title">PANEL DORADCY — PRZYKŁADOWE DANE</div>
                                 </div>
                                 <div className="mockup-body">
                                     {/* Advisor Profile Widget */}
@@ -1245,8 +1245,7 @@ export default function ForLawyersClientPage() {
                                     </div>
                                     <p className="feature-text">
                                         Wszystkie sprawy z ich statusem, historia kontaktu i statystyki aktywności. Z klientem
-                                        rozmawiasz przez wbudowany czat, a rozliczenia i faktury ogarniasz bez wychodzenia z
-                                        platformy.
+                                        rozmawiasz przez wbudowany czat.
                                     </p>
                                 </div>
 
@@ -1264,8 +1263,9 @@ export default function ForLawyersClientPage() {
                                         </div>
                                     </div>
                                     <p className="feature-text">
-                                        W panelu publikujesz artykuły eksperckie. Takie treści budują Twoją widoczność w sieci,
-                                        mogą trafiać do wyników wyszukiwania i coraz częściej do odpowiedzi generowanych przez AI.
+                                        W pakietach Premium i Biznes publikujesz w panelu artykuły eksperckie. Takie treści budują
+                                        Twoją widoczność w sieci, mogą trafiać do wyników wyszukiwania i coraz częściej do odpowiedzi
+                                        generowanych przez AI.
                                     </p>
                                 </div>
 
