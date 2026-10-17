@@ -17,9 +17,6 @@ const PUBLIC_SETTING_KEYS = [
   "maxLawFirmCities",
   "maxLawFirmTags",
   "showExpertTutorial",
-  "deleteReviewCostRating1",
-  "deleteReviewCostRating2",
-  "deleteReviewCostRating3",
   "enablePaymentTest",
   "enablePaymentPrzelewy24",
   "enablePaymentPayU",
@@ -72,15 +69,6 @@ export async function GET(request: NextRequest) {
     }
     if (!settingsObject.showExpertTutorial) {
       settingsObject.showExpertTutorial = "false"
-    }
-    if (!settingsObject.deleteReviewCostRating1) {
-      settingsObject.deleteReviewCostRating1 = "500"
-    }
-    if (!settingsObject.deleteReviewCostRating2) {
-      settingsObject.deleteReviewCostRating2 = "300"
-    }
-    if (!settingsObject.deleteReviewCostRating3) {
-      settingsObject.deleteReviewCostRating3 = "100"
     }
     if (!settingsObject.enablePaymentTest) {
       settingsObject.enablePaymentTest = "true"
@@ -139,9 +127,6 @@ export async function GET(request: NextRequest) {
         maxLawFirmCities: "3",
         maxLawFirmTags: "5",
         showExpertTutorial: "false",
-        deleteReviewCostRating1: "500",
-        deleteReviewCostRating2: "300",
-        deleteReviewCostRating3: "100",
         pointsToPlnRatio: "1",
         pointsPriceTiers: JSON.stringify(DEFAULT_POINT_PRICE_TIERS),
         pointsPackages: JSON.stringify(DEFAULT_POINT_PACKAGES),

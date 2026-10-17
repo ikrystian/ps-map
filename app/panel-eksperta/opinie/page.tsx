@@ -36,6 +36,7 @@ import {
   ChevronUp,
   Edit2,
   Filter,
+  Flag,
   Loader2,
   MessageCircle,
   MessageSquare,
@@ -45,7 +46,6 @@ import {
   Star,
   ThumbsDown,
   ThumbsUp,
-  Trash2,
   TrendingUp,
   UserCheck
 } from "lucide-react"
@@ -115,11 +115,11 @@ export default function LawFirmReviewsPage() {
   const [sortOption, setSortOption] = useState("newest") // newest, oldest, rating-desc, rating-asc
   const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({})
 
-  // Usuwanie opinii za punkty
-  const [deleteCosts, setDeleteCosts] = useState<Record<number, number>>({ 1: 500, 2: 300, 3: 100 })
-  const [deleteConfirmDialogOpen, setDeleteConfirmDialogOpen] = useState(false)
-  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null)
-  const [deletingReview, setDeletingReview] = useState(false)
+  // Zgłaszanie opinii do administracji
+  const [reportDialogOpen, setReportDialogOpen] = useState(false)
+  const [reviewToReport, setReviewToReport] = useState<Review | null>(null)
+  const [reportForm, setReportForm] = useState({ reason: "SPAM", description: "" })
+  const [submittingReport, setSubmittingReport] = useState(false)
 
   // Dialog Reply states
   const [replyDialogOpen, setReplyDialogOpen] = useState(false)
@@ -167,23 +167,7 @@ export default function LawFirmReviewsPage() {
         id: lawFirmData.id,
         nazwa: lawFirmData.nazwa,
         logo: lawFirmData.logo,
-        punktySaldo: lawFirmData.punktySaldo || 0
       } as any)
-
-      // Pobierz koszty usunięcia opinii z ustawień systemowych
-      try {
-        const settingsResponse = await fetch(`/api/settings`)
-        if (settingsResponse.ok) {
-          const settingsData = await settingsResponse.json()
-          setDeleteCosts({
-            1: parseInt(settingsData.deleteReviewCostRating1 || "500"),
-            2: parseInt(settingsData.deleteReviewCostRating2 || "300"),
-            3: parseInt(settingsData.deleteReviewCostRating3 || "100"),
-          })
-        }
-      } catch (settingsErr) {
-        console.error("Błąd podczas pobierania kosztów usunięcia opinii:", settingsErr)
-      }
 
       // Pobierz opinie
       const params = new URLSearchParams({
@@ -258,48 +242,36 @@ export default function LawFirmReviewsPage() {
     }
   }
 
-  const handleDeleteReviewClick = (review: Review) => {
-    setReviewToDelete(review)
-    setDeleteConfirmDialogOpen(true)
+  const handleReportClick = (review: Review) => {
+    setReviewToReport(review)
+    setReportForm({ reason: "SPAM", description: "" })
+    setReportDialogOpen(true)
   }
 
-  const handleConfirmDeleteReview = async () => {
-    if (!reviewToDelete) return
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!reviewToReport) return
 
-    const cost = deleteCosts[reviewToDelete.ocenaOgolna] || 500
-
-    setDeletingReview(true)
+    setSubmittingReport(true)
     try {
-      const response = await fetch(`/api/reviews/${reviewToDelete.id}`, {
-        method: "DELETE",
+      const response = await fetch(`/api/reviews/${reviewToReport.id}/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reportForm),
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || "Nie udało się usunąć opinii")
+        throw new Error(errorData.error || "Nie udało się zgłosić opinii")
       }
 
-      const responseData = await response.json()
-
-      // Zaktualizuj listę opinii locally
-      setReviews((prev) => prev.filter((r) => r.id !== reviewToDelete.id))
-
-      // Zaktualizuj saldo punktów
-      setLawFirm((prev) => {
-        if (!prev) return null
-        return {
-          ...prev,
-          punktySaldo: responseData.newSaldo ?? ((prev.punktySaldo || 0) - cost),
-        }
-      })
-
-      toast.success("Opinia została pomyślnie usunięta!")
-      setDeleteConfirmDialogOpen(false)
-      setReviewToDelete(null)
+      toast.success("Opinia została zgłoszona do administracji. Zgłoszenie zostanie rozpatrzone przez moderatora.")
+      setReportDialogOpen(false)
+      setReviewToReport(null)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Nie udało się usunąć opinii")
+      toast.error(err instanceof Error ? err.message : "Nie udało się zgłosić opinii")
     } finally {
-      setDeletingReview(false)
+      setSubmittingReport(false)
     }
   }
 
@@ -886,20 +858,18 @@ export default function LawFirmReviewsPage() {
                           </div>
                         )}
 
-                        {/* Przyciski akcji (Odpowiedz / Edytuj / Usuń za punkty) */}
+                        {/* Przyciski akcji (Zgłoś / Odpowiedz / Edytuj) */}
                         <div className="flex flex-wrap justify-end items-center gap-2 pt-2 border-t border-border/20 pl-0 md:pl-16">
-                          {review.ocenaOgolna <= 3 && (
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDeleteReviewClick(review)}
-                              className="rounded-xl text-xs font-semibold px-4 transition-all duration-300 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-200 hover:scale-[1.02]"
-                            >
-                              <Trash2 className="h-3.5 w-3.5 mr-1.5 text-red-400 animate-pulse" />
-                              Usuń opinię ({deleteCosts[review.ocenaOgolna] || 500} pkt)
-                            </Button>
-                          )}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleReportClick(review)}
+                            className="rounded-xl text-xs font-semibold px-4 text-muted-foreground hover:text-destructive"
+                          >
+                            <Flag className="h-3.5 w-3.5 mr-1.5" />
+                            Zgłoś opinię
+                          </Button>
                           <Button
                             type="button"
                             variant={review.odpowiedz ? "outline" : "default"}
@@ -1061,101 +1031,89 @@ export default function LawFirmReviewsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Potwierdzenia Usunięcia Negatywnej Opinii */}
-      <Dialog open={deleteConfirmDialogOpen} onOpenChange={setDeleteConfirmDialogOpen}>
+      {/* Dialog zgłoszenia opinii do administracji */}
+      <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-background/95 backdrop-blur-md border border-border/30 shadow-2xl rounded-2xl overflow-hidden">
-          <BorderBeam lightColor="#e11d48" lightWidth={400} duration={8} borderWidth={1} />
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2 text-red-500">
-              <AlertCircle className="h-5 w-5 animate-pulse text-red-500" />
-              <span>Usuń negatywną opinię za punkty</span>
+            <DialogTitle className="text-lg md:text-xl font-semibold flex items-center gap-2">
+              <Flag className="h-5 w-5 text-destructive" />
+              <span>Zgłoś opinię do administracji</span>
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Ta operacja trwale usunie opinię z Twojego profilu publicznego i przestanie ona wpływać na Twoją średnią ocenę.
+              Jeśli uważasz, że opinia narusza regulamin serwisu (jest fałszywa, zawiera wulgaryzmy, stanowi spam itp.), zgłoś ją do moderatora. Administracja przeanalizuje zgłoszenie i w razie naruszenia usunie opinię.
             </DialogDescription>
           </DialogHeader>
 
-          {reviewToDelete && (
-            <div className="space-y-4 my-2">
-              {/* Podgląd usuwanej opinii */}
-              <div className="bg-background border border-red-900/20 rounded-xl p-3.5 space-y-2">
+          <form onSubmit={handleReportSubmit} className="space-y-4">
+            {reviewToReport && (
+              <div className="bg-background border border-border/30 rounded-xl p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-foreground">
-                    {reviewToDelete.anonimowa ? "Klient anonimowy" : `${reviewToDelete.client.imie} ${reviewToDelete.client.nazwisko}`}
+                    {reviewToReport.anonimowa ? "Klient anonimowy" : `${reviewToReport.client.imie} ${reviewToReport.client.nazwisko}`}
                   </span>
-                  <span className="flex items-center gap-1 text-red-400 font-semibold bg-red-950/40 px-2 py-0.5 rounded-full border border-red-900/30">
-                    <Star className="h-3 w-3 fill-red-400" />
-                    {formatNumber(reviewToDelete.ocenaOgolna, 1)}/5
+                  <span className="flex items-center gap-1 text-amber-500 font-semibold">
+                    <Star className="h-3 w-3 fill-amber-500" />
+                    {formatNumber(reviewToReport.ocenaOgolna, 1)}/5
                   </span>
                 </div>
-                <h4 className="font-semibold text-sm text-foreground">{reviewToDelete.tytulOpinii}</h4>
-                <p className="text-xs text-muted-foreground italic break-words leading-relaxed whitespace-pre-line">
-                  "{reviewToDelete.trescOpinii}"
+                <h4 className="font-semibold text-sm text-foreground">{reviewToReport.tytulOpinii}</h4>
+                <p className="text-xs text-muted-foreground italic break-words leading-relaxed whitespace-pre-line line-clamp-4">
+                  &bdquo;{reviewToReport.trescOpinii}&rdquo;
                 </p>
               </div>
+            )}
 
-              {/* Informacje o punktach */}
-              <div className="bg-muted border border-border/20 rounded-xl p-4 space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Twoje obecne saldo:</span>
-                  <span className="font-bold text-foreground">{lawFirm?.punktySaldo ?? 0} pkt</span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm border-t border-border/10 pt-2">
-                  <span className="text-muted-foreground">Koszt usunięcia tej opinii:</span>
-                  <span className="font-bold text-red-400">-{deleteCosts[reviewToDelete.ocenaOgolna] || 500} pkt</span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm border-t border-border/10 pt-2">
-                  <span className="text-muted-foreground">Prognozowane saldo po operacji:</span>
-                  <span className={`font-bold ${((lawFirm?.punktySaldo ?? 0) - (deleteCosts[reviewToDelete.ocenaOgolna] || 500)) < 0 ? "text-red-500" : "text-emerald-400"}`}>
-                    {((lawFirm?.punktySaldo ?? 0) - (deleteCosts[reviewToDelete.ocenaOgolna] || 500))} pkt
-                  </span>
-                </div>
-
-                {((lawFirm?.punktySaldo ?? 0) - (deleteCosts[reviewToDelete.ocenaOgolna] || 500)) < 0 && (
-                  <div className="bg-red-950/30 border border-red-900/40 rounded-xl p-3 flex gap-2.5 items-start text-xs text-red-200 mt-2">
-                    <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold">Niewystarczające środki na koncie</p>
-                      <p className="text-red-300/80 mt-0.5">
-                        Potrzebujesz dodatkowych {(deleteCosts[reviewToDelete.ocenaOgolna] || 500) - (lawFirm?.punktySaldo ?? 0)} punktów, aby usunąć tę opinię.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="reportReason" className="text-sm font-semibold">Powód zgłoszenia *</Label>
+              <Select
+                value={reportForm.reason}
+                onValueChange={(value) => setReportForm({ ...reportForm, reason: value })}
+              >
+                <SelectTrigger id="reportReason" className="bg-background">
+                  <SelectValue placeholder="Wybierz powód" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SPAM">Spam lub reklama</SelectItem>
+                  <SelectItem value="WULGARYZMY">Wulgaryzmy lub obraźliwe treści</SelectItem>
+                  <SelectItem value="FALSZYWA_OPINIA">Niewiarygodna / fałszywa opinia</SelectItem>
+                  <SelectItem value="NIEODPOWIEDNIA">Nieodpowiednia treść</SelectItem>
+                  <SelectItem value="INNY">Inny powód</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
 
-          <DialogFooter className="pt-2 border-t border-border/20 flex flex-row items-center justify-end gap-2.5">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                setDeleteConfirmDialogOpen(false)
-                setReviewToDelete(null)
-              }}
-              disabled={deletingReview}
-              className="rounded-xl text-xs font-semibold px-4 h-9 text-muted-foreground hover:text-foreground"
-            >
-              Anuluj
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleConfirmDeleteReview}
-              disabled={
-                deletingReview ||
-                !reviewToDelete ||
-                (lawFirm?.punktySaldo ?? 0) < (deleteCosts[reviewToDelete?.ocenaOgolna] || 500)
-              }
-              className="rounded-xl text-xs font-semibold px-5 h-9 bg-red-600 hover:bg-red-700 text-white"
-            >
-              {deletingReview && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin text-foreground" />}
-              Potwierdź usunięcie
-            </Button>
-          </DialogFooter>
+            <div className="space-y-2">
+              <Label htmlFor="reportDescription" className="text-sm font-semibold">Uzasadnienie (opcjonalnie)</Label>
+              <Textarea
+                id="reportDescription"
+                value={reportForm.description}
+                onChange={(e) => setReportForm({ ...reportForm, description: e.target.value })}
+                placeholder="Opisz krótko, dlaczego zgłaszasz tę opinię..."
+                rows={4}
+              />
+            </div>
+
+            <DialogFooter className="pt-2 border-t border-border/20 flex flex-row items-center justify-end gap-2.5">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setReportDialogOpen(false)}
+                disabled={submittingReport}
+                className="rounded-xl text-xs font-semibold px-4 h-9 text-muted-foreground hover:text-foreground"
+              >
+                Anuluj
+              </Button>
+              <Button
+                type="submit"
+                variant="destructive"
+                disabled={submittingReport || !reviewToReport}
+                className="rounded-xl text-xs font-semibold px-5 h-9"
+              >
+                {submittingReport && <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />}
+                Zgłoś opinię
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

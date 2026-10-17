@@ -148,18 +148,6 @@ interface Settings {
     value: string
     description: string | null
   }
-  deleteReviewCostRating1?: {
-    value: string
-    description: string | null
-  }
-  deleteReviewCostRating2?: {
-    value: string
-    description: string | null
-  }
-  deleteReviewCostRating3?: {
-    value: string
-    description: string | null
-  }
   smsMode?: {
     value: string
     description: string | null
@@ -401,9 +389,6 @@ export default function AdminSettingsPage() {
   const [enablePaymentPayU, setEnablePaymentPayU] = useState("true")
   const [enablePaymentTpay, setEnablePaymentTpay] = useState("true")
   const [enablePaymentPrzelew, setEnablePaymentPrzelew] = useState("true")
-  const [deleteCost1, setDeleteCost1] = useState("500")
-  const [deleteCost2, setDeleteCost2] = useState("300")
-  const [deleteCost3, setDeleteCost3] = useState("100")
   const [ksefEnabled, setKsefEnabled] = useState("false")
   const [ksefNip, setKsefNip] = useState("1234567890")
   const [ksefToken, setKsefToken] = useState("")
@@ -500,9 +485,6 @@ export default function AdminSettingsPage() {
         setEnablePaymentPayU(data.enablePaymentPayU?.value || "true")
         setEnablePaymentTpay(data.enablePaymentTpay?.value || "true")
         setEnablePaymentPrzelew(data.enablePaymentPrzelew?.value || "true")
-        setDeleteCost1(data.deleteReviewCostRating1?.value || "500")
-        setDeleteCost2(data.deleteReviewCostRating2?.value || "300")
-        setDeleteCost3(data.deleteReviewCostRating3?.value || "100")
         setKsefEnabled(data.ksefEnabled?.value || "false")
         setKsefNip(data.ksefNip?.value || "1234567890")
         setKsefToken(data.ksefToken?.value || "")
@@ -634,14 +616,6 @@ export default function AdminSettingsPage() {
 
     if (!contactEmail || !supportEmail) {
       toast.error("Adresy email są wymagane")
-      return
-    }
-
-    const deleteCost1Num = parseInt(deleteCost1)
-    const deleteCost2Num = parseInt(deleteCost2)
-    const deleteCost3Num = parseInt(deleteCost3)
-    if (isNaN(deleteCost1Num) || deleteCost1Num < 0 || isNaN(deleteCost2Num) || deleteCost2Num < 0 || isNaN(deleteCost3Num) || deleteCost3Num < 0) {
-      toast.error("Koszty usunięcia opinii muszą być liczbami większymi lub równymi 0")
       return
     }
 
@@ -804,18 +778,6 @@ export default function AdminSettingsPage() {
             enablePaymentPrzelew: {
               value: enablePaymentPrzelew,
               description: "Czy płatność przelewem tradycyjnym ma być dostępna jako metoda płatności",
-            },
-            deleteReviewCostRating1: {
-              value: deleteCost1,
-              description: "Koszt usunięcia opinii z oceną 1★ w punktach",
-            },
-            deleteReviewCostRating2: {
-              value: deleteCost2,
-              description: "Koszt usunięcia opinii z oceną 2★ w punktach",
-            },
-            deleteReviewCostRating3: {
-              value: deleteCost3,
-              description: "Koszt usunięcia opinii z oceną 3★ w punktach",
             },
             pointsToPlnRatio: {
               value: pointsToPlnRatio,
@@ -2361,57 +2323,6 @@ export default function AdminSettingsPage() {
                   <p className="text-sm text-muted-foreground">
                     Minimalna liczba znaków w opinii (10-500)
                   </p>
-                </div>
-              </div>
-
-              <Separator className="my-4" />
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground">Koszt usunięcia opinii (w punktach)</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Określ, ile punktów kosztuje usunięcie negatywnej opinii przez eksperta, w zależności od oceny (1-3 gwiazdki).
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="deleteCost1">Ocena 1★</Label>
-                    <Input
-                      id="deleteCost1"
-                      type="number"
-                      min="0"
-                      value={deleteCost1}
-                      onChange={(e) => setDeleteCost1(e.target.value)}
-                      placeholder="500"
-                    />
-                    <p className="text-xs text-muted-foreground">Punkty za opinię 1★</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="deleteCost2">Ocena 2★</Label>
-                    <Input
-                      id="deleteCost2"
-                      type="number"
-                      min="0"
-                      value={deleteCost2}
-                      onChange={(e) => setDeleteCost2(e.target.value)}
-                      placeholder="300"
-                    />
-                    <p className="text-xs text-muted-foreground">Punkty za opinię 2★</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="deleteCost3">Ocena 3★</Label>
-                    <Input
-                      id="deleteCost3"
-                      type="number"
-                      min="0"
-                      value={deleteCost3}
-                      onChange={(e) => setDeleteCost3(e.target.value)}
-                      placeholder="100"
-                    />
-                    <p className="text-xs text-muted-foreground">Punkty za opinię 3★</p>
-                  </div>
                 </div>
               </div>
             </CardContent>
