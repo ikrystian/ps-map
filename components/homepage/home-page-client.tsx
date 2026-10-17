@@ -26,6 +26,7 @@ import { LocalSeoLinks } from "@/components/seo/local-seo-links";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 import { SurveySection } from "@/components/homepage/survey-section";
 import { VideoConsultationSection } from "@/components/homepage/video-consultation-section";
+import { fetchShared } from "@/lib/shared-fetch";
 
 export default function HomePageClient() {
   const { data: session } = useSession();
@@ -62,7 +63,7 @@ export default function HomePageClient() {
         }
 
         // Fetch categories
-        const categoriesResponse = await fetch("/api/categories");
+        const categoriesResponse = await fetchShared("/api/categories");
         if (categoriesResponse.ok) {
           const categoriesData = await categoriesResponse.json();
           setCategories(categoriesData.filter((cat: Category) => cat.aktywna));

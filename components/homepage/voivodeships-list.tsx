@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { fetchShared } from "@/lib/shared-fetch";
 
 export function VoivodeshipsList() {
   const [voivodeships, setVoivodeships] = useState<
@@ -14,7 +15,7 @@ export function VoivodeshipsList() {
   useEffect(() => {
     const fetchVoivodeships = async () => {
       try {
-        const res = await fetch("/api/voivodeships");
+        const res = await fetchShared("/api/voivodeships");
         const data = await res.json();
         if (Array.isArray(data)) {
           setVoivodeships(data);

@@ -100,6 +100,7 @@ interface Case {
 import { Category } from "@/types/categories"
 import type { Voivodeship } from "@/types"
 import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -231,8 +232,8 @@ const SprawyPage = () => {
   const fetchLocationSettings = async () => {
     try {
       const [voivRes, settingsRes] = await Promise.all([
-        fetch("/api/voivodeships"),
-        fetch("/api/settings"),
+        fetchShared("/api/voivodeships"),
+        fetchShared("/api/settings"),
       ])
       if (voivRes.ok) setVoivodeships(await voivRes.json())
       if (settingsRes.ok) {
@@ -246,7 +247,7 @@ const SprawyPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/categories")
+      const response = await fetchShared("/api/categories")
       if (response.ok) {
         const data = await response.json()
         setCategories(data.filter((cat: Category) => !cat.parentId))

@@ -14,6 +14,7 @@ import Link from "next/link"
 import { useState, useEffect, Fragment } from "react"
 import { openCookiePreferences } from "@/components/CookieConsent"
 import { formatDateTime } from "@/lib/format"
+import { fetchShared } from "@/lib/shared-fetch"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (
@@ -70,7 +71,7 @@ export default function PublicFooter() {
   useEffect(() => {
     const fetchFooterSettings = async () => {
       try {
-        const response = await fetch("/api/settings")
+        const response = await fetchShared("/api/settings")
         if (response.ok) {
           const data = await response.json()
           if (data.footerCopyrightText !== undefined) {

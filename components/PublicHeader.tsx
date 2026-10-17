@@ -31,6 +31,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { InteractiveHoverButton } from "./ui/interactive-hover-button"
+import { fetchShared } from "@/lib/shared-fetch"
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
@@ -122,7 +123,7 @@ export default function PublicHeader({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories")
+        const response = await fetchShared("/api/categories")
         if (response.ok) {
           const data = await response.json()
           setCategories(data.filter((cat: CategoryWithChildren) => !cat.parentId))
@@ -140,8 +141,8 @@ export default function PublicHeader({
     const fetchSettingsAndVoivodeships = async () => {
       try {
         const [settingsRes, voivodeshipsRes] = await Promise.all([
-          fetch("/api/settings"),
-          fetch("/api/voivodeships"),
+          fetchShared("/api/settings"),
+          fetchShared("/api/voivodeships"),
         ])
         if (settingsRes.ok) {
           const data = await settingsRes.json()

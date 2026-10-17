@@ -49,6 +49,7 @@ import {
   plnToPoints,
 } from "@/lib/points-pricing"
 import { formatDate } from "@/lib/format"
+import { fetchShared } from "@/lib/shared-fetch"
 
 interface SubscriptionPlan {
   id: string
@@ -225,7 +226,7 @@ export default function LawFirmPackagePage() {
       const [firmResponse, plansResponse, settingsResponse] = await Promise.all([
         fetch("/api/law-firms/me"),
         fetch("/api/subscription-plans"),
-        fetch("/api/settings"),
+        fetchShared("/api/settings"),
       ])
 
       if (!firmResponse.ok) {

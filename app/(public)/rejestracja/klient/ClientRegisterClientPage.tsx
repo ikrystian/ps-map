@@ -24,6 +24,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Voivodeship } from "@/types"
+import { fetchShared } from "@/lib/shared-fetch"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -104,7 +105,7 @@ export default function ClientRegistrationPage() {
   useEffect(() => {
     const fetchVoivodeships = async () => {
       try {
-        const response = await fetch("/api/voivodeships")
+        const response = await fetchShared("/api/voivodeships")
         if (response.ok) {
           const data = await response.json()
           setVoivodeships(data)

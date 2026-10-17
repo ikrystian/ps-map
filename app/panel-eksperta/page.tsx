@@ -40,6 +40,7 @@ import type { LawFirm } from "@/types"
 import { BlogPost } from '@/types/blog';
 import { CASE_STATUS_LABEL, statusLabel } from "@/lib/labels"
 import { caseStatusClass } from "@/lib/status-style"
+import { fetchShared } from "@/lib/shared-fetch"
 
 interface Case {
   id: string
@@ -318,7 +319,7 @@ export default function LawFirmDashboardPage() {
         fetch("/api/law-firm/categories"),
         fetch("/api/offers?status=active"),
         fetch("/api/law-firm/area"),
-        fetch("/api/settings")
+        fetchShared("/api/settings")
       ])
 
       if (settingsResponse.ok) {

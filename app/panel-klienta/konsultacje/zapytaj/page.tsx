@@ -15,6 +15,7 @@ import { CheckCircle2, Loader2, Phone, Video } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const MIN_OPIS_LENGTH = 50
 
@@ -64,7 +65,7 @@ export default function AskForConsultationPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories")
+        const response = await fetchShared("/api/categories")
         if (response.ok) {
           setCategories(await response.json())
         }

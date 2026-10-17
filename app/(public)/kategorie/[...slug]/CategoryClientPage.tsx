@@ -74,6 +74,7 @@ const ICON_MAP: Record<string, any> = {
   MessageSquare
 }
 import type { LawFirm, Voivodeship, Category } from "@/types"
+import { fetchShared } from "@/lib/shared-fetch"
 
 // Helper function to check if law firm is open
 const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {
@@ -180,7 +181,7 @@ export default function CategoryClientPage({
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`/api/categories`)
+        const response = await fetchShared("/api/categories")
         if (response.ok) {
           const data = await response.json()
           setAllCategories(data)
@@ -220,8 +221,8 @@ export default function CategoryClientPage({
     const fetchVoivodeshipsAndSettings = async () => {
       try {
         const [voivodeshipsRes, settingsRes] = await Promise.all([
-          fetch("/api/voivodeships"),
-          fetch("/api/settings"),
+          fetchShared("/api/voivodeships"),
+          fetchShared("/api/settings"),
         ])
         if (voivodeshipsRes.ok) {
           const data = await voivodeshipsRes.json()

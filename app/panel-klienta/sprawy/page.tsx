@@ -90,6 +90,7 @@ import { expertAvatar } from "@/lib/expert-avatar"
 import type { CaseStatus } from "@prisma/client"
 import { CASE_STATUS_LABEL } from "@/lib/labels"
 import { CASE_STATUS_CLASS } from "@/lib/status-style"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const stripHtml = (html: string) => {
   return html ? html.replace(/<[^>]*>/g, "") : ""
@@ -163,7 +164,7 @@ export default function ClientCasesPage() {
       try {
         const [casesRes, catsRes] = await Promise.all([
           fetch("/api/cases"),
-          fetch("/api/categories"),
+          fetchShared("/api/categories"),
         ])
 
         if (!casesRes.ok) {

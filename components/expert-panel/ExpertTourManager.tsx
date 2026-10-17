@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import Script from "next/script"
 import { useCallback, useEffect, useState } from "react"
 import { ExpertTourButton } from "./ExpertTourButton"
+import { fetchShared } from "@/lib/shared-fetch"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tour steps per route
@@ -476,7 +477,7 @@ export function ExpertTourManager() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch("/api/settings")
+        const response = await fetchShared("/api/settings")
         if (response.ok) {
           const data = await response.json()
           setIsEnabled(data.showExpertTutorial === "true")

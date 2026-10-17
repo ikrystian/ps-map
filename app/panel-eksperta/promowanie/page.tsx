@@ -31,6 +31,7 @@ import { NewPromotionDialog } from "./components/NewPromotionDialog"
 import { PromotionWallet } from "./components/PromotionWallet"
 import { PromotionFormats } from "./components/PromotionFormats"
 import { CampaignControlCenter } from "./components/CampaignControlCenter"
+import { fetchShared } from "@/lib/shared-fetch"
 
 export default function LawFirmPromotionPage() {
   const { data: session } = useSession()
@@ -146,13 +147,13 @@ export default function LawFirmPromotionPage() {
       setPromotions(promotionsData)
 
       // Pobierz kategorie
-      const categoriesResponse = await fetch("/api/categories")
+      const categoriesResponse = await fetchShared("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Nie udało się pobrać kategorii")
       const categoriesData = await categoriesResponse.json()
       setCategories(categoriesData)
 
       // Pobierz województwa
-      const voivodeshipsResponse = await fetch("/api/voivodeships")
+      const voivodeshipsResponse = await fetchShared("/api/voivodeships")
       if (!voivodeshipsResponse.ok) throw new Error("Nie udało się pobrać województw")
       const voivodeshipsData = await voivodeshipsResponse.json()
       setVoivodeships(voivodeshipsData)
@@ -165,7 +166,7 @@ export default function LawFirmPromotionPage() {
 
       // Pobierz ustawienia publiczne (m.in. tryb testowy oraz kategorie najczęściej konsultowane)
       try {
-        const settingsResponse = await fetch("/api/settings")
+        const settingsResponse = await fetchShared("/api/settings")
         if (settingsResponse.ok) {
           const settingsData = await settingsResponse.json()
           setPromoteConsultedImmediately(settingsData.promoteConsultedImmediately === "true")

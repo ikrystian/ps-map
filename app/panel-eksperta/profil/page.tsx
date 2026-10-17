@@ -21,6 +21,7 @@ import type { Voivodeship, City } from "@/types"
 
 
 import { Category } from "@/types/categories"
+import { fetchShared } from "@/lib/shared-fetch"
 
 function LawFirmProfilePageContent() {
   const router = useRouter()
@@ -163,7 +164,7 @@ function LawFirmProfilePageContent() {
       try {
         // Pobierz dane pomocnicze
         const [voivRes, lawFirmRes, areaRes, expRes] = await Promise.all([
-          fetch("/api/voivodeships"),
+          fetchShared("/api/voivodeships"),
           session?.user?.id ? fetch(`/api/law-firms/${session.user.id}`) : null,
           fetch("/api/law-firm/area"),
           fetch("/api/expertise-categories"),

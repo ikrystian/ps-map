@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { fetchShared } from "@/lib/shared-fetch";
 
 interface CategoryLite {
   id: string;
@@ -127,8 +128,8 @@ export function LocalSeoLinks({
     const fetchData = async () => {
       try {
         const [catsRes, voivRes, citiesRes] = await Promise.all([
-          fetch("/api/categories"),
-          fetch("/api/voivodeships?hasExperts=true"),
+          fetchShared("/api/categories"),
+          fetchShared("/api/voivodeships?hasExperts=true"),
           fetch("/api/cities?hasExperts=true"),
         ]);
 

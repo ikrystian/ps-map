@@ -58,6 +58,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import { fetchShared } from "@/lib/shared-fetch"
 
 type PreferredContact = "EMAIL" | "TELEFON" | "OBA"
 
@@ -347,7 +348,7 @@ export default function DodajSprawaClientPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories")
+        const response = await fetchShared("/api/categories")
         if (response.ok) setCategories(await response.json())
       } catch (error) {
         console.error("Error fetching categories:", error)

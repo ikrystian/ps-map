@@ -88,6 +88,7 @@ interface LawFirmCategory {
   percentage?: number
 }
 import type { Voivodeship, City, County } from "@/types"
+import { fetchShared } from "@/lib/shared-fetch"
 
 
 interface AreaData {
@@ -300,7 +301,7 @@ export default function LawFirmServicesPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const categoriesResponse = await fetch("/api/categories")
+      const categoriesResponse = await fetchShared("/api/categories")
       if (!categoriesResponse.ok) throw new Error("Failed to fetch categories")
       const categoriesData = await categoriesResponse.json()
 
@@ -351,13 +352,13 @@ export default function LawFirmServicesPage() {
 
       setAllCategories(rootCategories)
 
-      const voivResponse = await fetch("/api/voivodeships")
+      const voivResponse = await fetchShared("/api/voivodeships")
       if (voivResponse.ok) {
         const voivData = await voivResponse.json()
         setAllVoivodeships(voivData)
       }
 
-      const settingsResponse = await fetch("/api/settings")
+      const settingsResponse = await fetchShared("/api/settings")
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json()
         setGeoHierarchy(settingsData.geographicHierarchy || "voivodeships")

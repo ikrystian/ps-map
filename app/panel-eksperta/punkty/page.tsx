@@ -72,6 +72,7 @@ import {
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { fetchShared } from "@/lib/shared-fetch"
 
 interface Order {
   id: string
@@ -230,7 +231,7 @@ export default function LawFirmPointsPage() {
 
     try {
       // Pobierz cennik punktów z ustawień (stawka bazowa, przedziały, pakiety)
-      const settingsResponse = await fetch("/api/settings")
+      const settingsResponse = await fetchShared("/api/settings")
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json()
         const config = buildPointsPricingConfig(settingsData)

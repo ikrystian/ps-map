@@ -35,6 +35,7 @@ import { Fragment, useEffect, useState } from "react"
 
 
 import type { LawFirm, Voivodeship, Category } from "@/types"
+import { fetchShared } from "@/lib/shared-fetch"
 
 // Helper function to check if law firm is open
 const isLawFirmOpen = (godzinyOtwarcia?: Record<string, string>, statusGodzinyOtwarcia?: boolean) => {
@@ -146,10 +147,10 @@ export default function SearchLawyerPage() {
     const fetchFilters = async () => {
       try {
         const [categoriesRes, voivodeshipsRes, expertiseCategoriesRes, settingsRes] = await Promise.all([
-          fetch("/api/categories"),
-          fetch("/api/voivodeships"),
+          fetchShared("/api/categories"),
+          fetchShared("/api/voivodeships"),
           fetch("/api/expertise-categories"),
-          fetch("/api/settings"),
+          fetchShared("/api/settings"),
         ])
 
         if (categoriesRes.ok) {

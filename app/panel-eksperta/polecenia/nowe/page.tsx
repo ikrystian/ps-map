@@ -28,6 +28,7 @@ import { Building2, Copy, Landmark, Loader2, Mail, Send, User } from "lucide-rea
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const CASE_TYPE_OPTIONS: { value: CaseTypeValue; label: string; description: string; icon: typeof User }[] = [
   {
@@ -81,7 +82,7 @@ export default function NewReferralPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories")
+        const response = await fetchShared("/api/categories")
         if (response.ok) setCategories(await response.json())
       } catch (error) {
         console.error("Error fetching categories:", error)

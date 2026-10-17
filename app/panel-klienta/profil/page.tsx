@@ -79,6 +79,7 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 import { Voivodeship } from "@/types"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -218,7 +219,7 @@ export default function ClientProfilePage() {
       }
 
       // Pobierz województwa
-      const voivodeshipsResponse = await fetch("/api/voivodeships")
+      const voivodeshipsResponse = await fetchShared("/api/voivodeships")
       if (voivodeshipsResponse.ok) {
         const data = await voivodeshipsResponse.json()
         setVoivodeships(data)

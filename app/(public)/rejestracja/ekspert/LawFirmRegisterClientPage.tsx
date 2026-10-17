@@ -90,6 +90,7 @@ const step4Schema = z.object({
 
 import { Category, Voivodeship } from "@/types"
 import { isInExpertsBranch } from "@/lib/expertise-category"
+import { fetchShared } from "@/lib/shared-fetch"
 
 const steps = [
   { id: 1, title: "Działalność", icon: Briefcase },
@@ -260,8 +261,8 @@ export default function LawFirmRegistrationPage() {
     const fetchData = async () => {
       try {
         const [voivRes, catRes, expRes] = await Promise.all([
-          fetch("/api/voivodeships"),
-          fetch("/api/categories"),
+          fetchShared("/api/voivodeships"),
+          fetchShared("/api/categories"),
           fetch("/api/expertise-categories"),
         ])
 

@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import type { LawFirm } from "@/types"
 import { formatCurrency } from "@/lib/format"
+import { fetchShared } from "@/lib/shared-fetch"
 
 interface OrderData {
   type?: string // "POINTS" or "PACKAGE"
@@ -68,7 +69,7 @@ export default function CheckoutPage() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch("/api/settings")
+      const response = await fetchShared("/api/settings")
       if (response.ok) {
         const data = await response.json()
         setSettings(data)
