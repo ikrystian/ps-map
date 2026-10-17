@@ -1,3 +1,4 @@
+import { JsonLd } from "@/components/JsonLd"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import { getPublicHelpCategories } from "@/lib/help"
 import { Metadata } from "next"
@@ -34,10 +35,7 @@ export default async function PomocPage() {
   return (
     <div className="min-h-screen bg-background-sec text-foreground/80">
       {/* JSON-LD dla wyników rozszerzonych FAQ w wyszukiwarce */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+      <JsonLd data={faqJsonLd} />
 
       {/* Breadcrumbs Banner — spójny z innymi stronami treściowymi ([slug]) */}
       <div

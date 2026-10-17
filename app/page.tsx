@@ -1,7 +1,9 @@
 import ComingSoon from "@/components/coming-soon/coming-soon";
+import { JsonLd } from "@/components/JsonLd";
 import HomePageClient from "@/components/homepage/home-page-client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { organizationJsonLd } from "@/lib/structured-data";
 
 // Ustawienie "coming soon" odczytywane przy każdym żądaniu
 export const dynamic = "force-dynamic";
@@ -26,5 +28,31 @@ export default async function HomePage() {
     }
   }
 
-  return <HomePageClient />;
+  // Profile społecznościowe ze stopki (Ustawienia admina) trafiają do `sameAs`
+  let socialUrls: string[] = [];
+  try {
+    const socialSettings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: [
+            "footerSocialFacebook",
+            "footerSocialInstagram",
+            "footerSocialLinkedin",
+            "footerSocialTwitter",
+            "footerSocialYoutube",
+          ],
+        },
+      },
+    });
+    socialUrls = socialSettings.map((setting) => setting.value);
+  } catch (error) {
+    console.error("Error reading social links for Organization JSON-LD:", error);
+  }
+
+  return (
+    <>
+      <JsonLd data={organizationJsonLd({ socialUrls })} />
+      <HomePageClient />
+    </>
+  );
 }

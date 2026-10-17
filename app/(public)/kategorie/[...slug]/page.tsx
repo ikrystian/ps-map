@@ -3,6 +3,8 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import CategoryClientPage from "./CategoryClientPage"
 import { pageTitle } from "@/lib/page-title"
+import { JsonLd } from "@/components/JsonLd"
+import { breadcrumbListJsonLd } from "@/lib/structured-data"
 
 interface PageProps {
   params: Promise<{
@@ -47,7 +49,28 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound()
   }
 
+  // Te same poziomy co widoczne okruszki w CategoryClientPage
+  const ancestors =
+    slugArray.length > 1
+      ? slugArray.slice(0, -1).map((s, index) => ({
+        name: categories.find((c) => c.slug === s)?.nazwa ?? s,
+        path: `/kategorie/${slugArray.slice(0, index + 1).join("/")}`,
+      }))
+      : category.parent
+        ? [{ name: category.parent.nazwa, path: `/kategorie/${category.parent.slug ?? ""}` }]
+        : []
+
+  const breadcrumbs = breadcrumbListJsonLd([
+    { name: "Strona główna", path: "/" },
+    { name: "Kategorie", path: "/kategorie" },
+    ...ancestors,
+    { name: category.nazwa, path: `/kategorie/${slugArray.join("/")}` },
+  ])
+
   return (
-    <CategoryClientPage initialCategory={category} initialCategories={categories} />
+    <>
+      <JsonLd data={breadcrumbs} />
+      <CategoryClientPage initialCategory={category} initialCategories={categories} />
+    </>
   )
 }

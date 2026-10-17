@@ -4,6 +4,8 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import BlogPostView from "./BlogPostView"
 import { pageTitle } from "@/lib/page-title"
+import { articleJsonLd } from "@/lib/structured-data"
+import { JsonLd } from "@/components/JsonLd"
 
 interface PageProps {
   params: Promise<{
@@ -25,6 +27,10 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }))
 }
 
+function getPlainDescription(post: { metaDescription?: string | null; tresc?: string | null }) {
+  return post.metaDescription || (post.tresc ?? "").replace(/<[^>]*>/g, "").substring(0, 160)
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const post = await getPublicBlogPostBySlug(slug)
@@ -36,8 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const rawTitle = post.metaTitle || `${post.tytul} | Blog`
-  const plainTextDescription =
-    post.metaDescription || (post.tresc ?? "").replace(/<[^>]*>/g, "").substring(0, 160)
+  const plainTextDescription = getPlainDescription(post)
 
   return {
     title: pageTitle(rawTitle, post.isUnpublished ? "[Podgląd] " : ""),
@@ -87,5 +92,25 @@ export default async function BlogPostPage({ params }: PageProps) {
     console.error("Error reading AdSense settings for blog post:", error)
   }
 
-  return <BlogPostView post={post} adsense={adsense} />
+  return (
+    <>
+      {/* Podglądu szkicu nie opisujemy dla wyszukiwarek */}
+      {!post.isUnpublished && (
+        <JsonLd
+          data={articleJsonLd({
+            slug: post.slug,
+            tytul: post.tytul,
+            description: getPlainDescription(post).trim() || null,
+            obrazekWyrozniajacy: post.obrazekWyrozniajacy,
+            dataPublikacji: post.dataPublikacji,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+            categoryName: post.category?.nazwa ?? null,
+            author: post.lawFirm ? { nazwa: post.lawFirm.nazwa, slug: post.lawFirm.slug } : null,
+          })}
+        />
+      )}
+      <BlogPostView post={post} adsense={adsense} />
+    </>
+  )
 }
