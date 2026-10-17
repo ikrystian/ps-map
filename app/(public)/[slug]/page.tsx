@@ -5,6 +5,7 @@ import { renderModule } from "@/lib/module-parser"
 import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { pageTitle } from "@/lib/page-title"
 
 interface PageProps {
   params: Promise<{
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: page.metaTitle || page.title,
+    title: pageTitle(page.metaTitle || page.title),
     description: page.metaDescription || undefined,
   }
 }

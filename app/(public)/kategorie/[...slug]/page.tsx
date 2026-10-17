@@ -2,6 +2,7 @@ import { getCategoriesList } from "@/lib/categories"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import CategoryClientPage from "./CategoryClientPage"
+import { pageTitle } from "@/lib/page-title"
 
 interface PageProps {
   params: Promise<{
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     return {
-      title: category.metaTitle || `${category.nazwa} - Eksperci i Pomoc Prawna`,
+      title: pageTitle(category.metaTitle || `${category.nazwa} - Eksperci i Pomoc Prawna`),
       description: category.metaDescription || category.opis || `Potrzebujesz pomocy prawnej w zakresie: ${category.nazwa}? Znajdź wykwalifikowanych adwokatów, radców prawnych i ekspertów.`,
     }
   } catch (error) {

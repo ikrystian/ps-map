@@ -6,7 +6,7 @@ import PrivacyPolicyClientPage from "./PrivacyPolicyClientPage"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Polityka Prywatności | ProstaSprawa.pl",
+  title: "Polityka Prywatności",
   description: "Zapoznaj się z Polityką Prywatności serwisu ProstaSprawa.pl. Transparentne informacje o przetwarzaniu danych, plikach cookies oraz prawach Użytkownika.",
 }
 

@@ -6,7 +6,7 @@ import RegulaminClientPage from "./RegulaminClientPage"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Regulamin Serwisu | ProstaSprawa.pl",
+  title: "Regulamin Serwisu",
   description: "Zapoznaj się z regulaminem korzystania z serwisu ProstaSprawa.pl. Transparentne zasady współpracy, prawa konsumenta oraz warunki dla klientów i wykonawców.",
 }
 

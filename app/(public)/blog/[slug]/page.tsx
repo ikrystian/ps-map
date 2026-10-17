@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import BlogPostView from "./BlogPostView"
+import { pageTitle } from "@/lib/page-title"
 
 interface PageProps {
   params: Promise<{
@@ -34,12 +35,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
-  const title = post.metaTitle || `${post.tytul} | Blog Prosta Sprawa`
+  const rawTitle = post.metaTitle || `${post.tytul} | Blog`
   const plainTextDescription =
     post.metaDescription || (post.tresc ?? "").replace(/<[^>]*>/g, "").substring(0, 160)
 
   return {
-    title: post.isUnpublished ? `[Podgląd] ${title}` : title,
+    title: pageTitle(rawTitle, post.isUnpublished ? "[Podgląd] " : ""),
     description: plainTextDescription || undefined,
   }
 }

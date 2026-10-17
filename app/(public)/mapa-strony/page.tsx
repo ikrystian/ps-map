@@ -4,7 +4,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Mapa strony | ProstaSprawa.pl",
+  title: "Mapa strony",
   description: "Pełna lista ekspertów oraz artykułów bloga dostępnych w serwisie ProstaSprawa.pl.",
 }
 
