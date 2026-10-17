@@ -39,7 +39,7 @@ import {
   getCaseDraftStepErrors,
   initialCaseDraftData,
 } from "@/components/sprawy/case-draft-types"
-import { getBrowserTelemetry } from "@/lib/rodo-audit"
+import { getBrowserTelemetry } from "@/lib/browser-telemetry"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import {

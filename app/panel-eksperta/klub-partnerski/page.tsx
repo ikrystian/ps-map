@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { generateBannerHtml, generateBannerScript } from "@/lib/partner-program"
+import { generateBannerHtml, generateBannerScript } from "@/lib/partner-banner"
 import {
   AlertCircle,
   Award,

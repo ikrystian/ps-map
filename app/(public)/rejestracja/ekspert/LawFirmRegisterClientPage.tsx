@@ -22,7 +22,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { getBrowserTelemetry } from "@/lib/rodo-audit"
+import { getBrowserTelemetry } from "@/lib/browser-telemetry"
 import { useEffect, useState } from "react"
 
 import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
