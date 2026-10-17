@@ -90,7 +90,10 @@ export default function AdminCategoriesPage() {
   const handleDeleteAllCategories = async () => {
     setIsDeletingAll(true)
     try {
-      const response = await fetch("/api/admin/categories", { method: "DELETE" })
+      const response = await fetch(
+        `/api/admin/categories?confirm=${encodeURIComponent(deleteAllConfirmText.trim())}`,
+        { method: "DELETE" }
+      )
       const data = await response.json()
 
       if (!response.ok) {
