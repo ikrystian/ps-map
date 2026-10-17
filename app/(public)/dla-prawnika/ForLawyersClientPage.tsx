@@ -1475,10 +1475,10 @@ export default function ForLawyersClientPage() {
                                             </svg>
                                         </div>
                                         <div>
-                                            <strong>Aktywność się opłaca</strong>{" "} – widoczność w serwisie to nie tylko kwestia
-                                            pakietu. Liczy się też, jak aktywnie działasz, jak wygląda Twój profil i jak angażujesz
-                                            się w sprawy. Im więcej realnej roboty, tym wyżej jesteś i tym więcej zapytań do Ciebie
-                                            trafia.
+                                            <strong>Opinie i wyświetlenia</strong>{" "} – pozycję wyznacza wynik punktowy liczony tym samym
+                                            wzorem, którego używa wyszukiwarka. Punkty dają zweryfikowany profil, wyświetlenia Twojego
+                                            profilu i średnia ocena z opinii klientów. Dobrze poprowadzone sprawy to lepsze oceny,
+                                            a lepsze oceny to wyższa pozycja.
                                         </div>
                                     </li>
                                     <li className="why-item">
@@ -1489,9 +1489,9 @@ export default function ForLawyersClientPage() {
                                             </svg>
                                         </div>
                                         <div>
-                                            <strong>Punkty za aktywność</strong>{" "} – im więcej realnie robisz na platformie, choćby
-                                            wypełniając ankiety, tym więcej punktów zbierasz. A punkty podbijają Cię wyżej w
-                                            wynikach.
+                                            <strong>Promocje i pakiet</strong>{" "} – aktywna promocja mnoży Twój wynik, a punkty wydane na
+                                            promocje doliczają się do niego. Pakiet abonamentowy dodaje do całego wyniku od 5% do
+                                            30%. Samo saldo punktów, dopóki ich nie wydasz, nie zmienia pozycji.
                                         </div>
                                     </li>
                                     <li className="why-item">
@@ -1535,7 +1535,7 @@ export default function ForLawyersClientPage() {
                                             <span className="dot-yellow"></span>{" "}
                                             <span className="dot-green"></span>
                                         </div>
-                                        <div className="mockup-title">RANKING & PUNKTY AKTYWNOŚCI</div>
+                                        <div className="mockup-title">RANKING & WYNIK PUNKTOWY</div>
                                     </div>
                                     <div className="mockup-body">
                                         {/* Position Widget */}
@@ -1556,7 +1556,7 @@ export default function ForLawyersClientPage() {
 
                                         {/* Weekly Visibility Chart */}
                                         <div className="rank-chart-box">
-                                            <span className="rank-box-label">Widoczność profilu – ostatnie 7 dni</span>
+                                            <span className="rank-box-label">Wyświetlenia profilu – ostatnie 7 dni</span>
                                             <div className="rank-chart">
                                                 <span className="rank-bar" style={{ "--h": "32%" } as React.CSSProperties}></span>{" "}
                                                 <span className="rank-bar" style={{ "--h": "45%" } as React.CSSProperties}></span>{" "}
@@ -1574,7 +1574,7 @@ export default function ForLawyersClientPage() {
                                         {/* Level Progress */}
                                         <div className="rank-level-box">
                                             <div className="rank-level-row">
-                                                <span className="rank-box-label">Poziom: Specjalista → Ekspert</span>{" "}
+                                                <span className="rank-box-label">Do awansu na pozycję #2</span>{" "}
                                                 <span className="rank-level-val" data-count="72" data-suffix="%">72%</span>
                                             </div>
                                             <div className="progress-bar-wrapper">
@@ -1584,33 +1584,43 @@ export default function ForLawyersClientPage() {
 
                                         {/* Points Feed */}
                                         <div className="points-feed">
-                                            <span className="rank-box-label">Ostatnia aktywność</span>
+                                            <span className="rank-box-label">Składniki wyniku</span>
                                             <div className="points-item">
                                                 <span className="points-check">✓</span>{" "}
-                                                <span className="points-name">Wypełniona ankieta</span>{" "}
-                                                <span className="points-val">+10 pkt</span>
+                                                <span className="points-name">Zweryfikowany profil</span>{" "}
+                                                <span className="points-val">+100 pkt</span>
                                             </div>
                                             <div className="points-item">
                                                 <span className="points-check">✓</span>{" "}
-                                                <span className="points-name">Odpowiedź na zapytanie</span>{" "}
-                                                <span className="points-val">+25 pkt</span>
+                                                <span className="points-name">Wyświetlenia profilu (1240 × 0,1)</span>{" "}
+                                                <span className="points-val">+124 pkt</span>
                                             </div>
                                             <div className="points-item">
                                                 <span className="points-check">✓</span>{" "}
-                                                <span className="points-name">Ukończona sprawa</span>{" "}
-                                                <span className="points-val">+40 pkt</span>
+                                                <span className="points-name">Średnia ocena (4,8 × 50)</span>{" "}
+                                                <span className="points-val">+240 pkt</span>
+                                            </div>
+                                            <div className="points-item">
+                                                <span className="points-check">✓</span>{" "}
+                                                <span className="points-name">Podbicie ogłoszenia</span>{" "}
+                                                <span className="points-val">×1,5</span>
+                                            </div>
+                                            <div className="points-item">
+                                                <span className="points-check">✓</span>{" "}
+                                                <span className="points-name">Punkty wydane na promocje</span>{" "}
+                                                <span className="points-val">+150 pkt</span>
                                             </div>
                                             <div className="points-item highlight">
                                                 <span className="points-check">★</span>{" "}
-                                                <span className="points-name">Nowa opinia od klienta</span>{" "}
-                                                <span className="points-val">+30 pkt</span>
+                                                <span className="points-name">Pakiet Premium</span>{" "}
+                                                <span className="points-val">+20%</span>
                                             </div>
                                         </div>
 
                                         {/* Summary */}
                                         <div className="rank-summary">
                                             <span className="rank-summary-dot"></span>{" "}
-                                            Łącznie <strong><span data-count="320">320</span>{" "} pkt</strong>{" "} w tym miesiącu
+                                            Wynik w rankingu: <strong><span data-count="1015">1015</span>{" "} pkt</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -1671,8 +1681,8 @@ export default function ForLawyersClientPage() {
                                         </div>
                                         <div>
                                             <h4>„Odpowiada zwykle w 24 h”</h4>
-                                            <p>Ten znacznik bierze się z tego, jak realnie działasz, a nie z tego, ile zapłaciłeś.
-                                                Dlatego masz go też na darmowym koncie. Wiarygodności u nas się nie kupuje.</p>
+                                            <p>Klient widzi, że szybko odpisujesz, i chętniej zostawia zapytanie właśnie u Ciebie,
+                                                a nie u kogoś, kto każe na siebie czekać.</p>
                                         </div>
                                     </div>
                                 </div>
