@@ -54,9 +54,9 @@ export default async function RegistrationPage() {
     >
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-playfair font-bold tracking-tight">
+          <h1 className="text-3xl font-playfair font-bold tracking-tight">
             Wybierz typ konta
-          </h2>
+          </h1>
           <p className="text-muted-foreground text-base">
             Już masz konto?{" "}
             <Link

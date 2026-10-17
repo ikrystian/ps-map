@@ -356,6 +356,8 @@ export default function SearchLawyerPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Strona nie ma widocznego tytułu — nagłówek dla czytników ekranu i wyszukiwarek */}
+        <h1 className="sr-only">Wyszukiwarka ekspertów: prawnicy, adwokaci i radcy prawni</h1>
 
         {/* Horizontal Filters */}
         <AnimatePresence>

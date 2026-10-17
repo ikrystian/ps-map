@@ -84,7 +84,7 @@ const serviceUnitLabels: Record<string, string> = {
   DO_UZGODNIENIA: "do uzgodnienia",
 }
 
-export default function LawFirmProfilePage() {
+export default function LawFirmProfilePage({ initialName }: { initialName?: string }) {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -443,6 +443,8 @@ export default function LawFirmProfilePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          {/* Dane profilu dochodzą po stronie klienta — nagłówek musi być w HTML od serwera */}
+          {initialName && <h1 className="sr-only">{initialName}</h1>}
           <p className="mt-4 text-muted-foreground">Ładowanie profilu eksperta...</p>
         </div>
       </div>

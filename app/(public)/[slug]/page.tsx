@@ -87,6 +87,8 @@ export default async function DynamicPage({ params }: PageProps) {
     }
   })
 
+  const modulesHaveH1 = modulesHtml.some((html: unknown) => typeof html === "string" && /<h1[\s>]/i.test(html))
+
   return (
     <div className="min-h-screen bg-background-sec text-foreground/80">
       {/* Breadcrumbs Banner */}
@@ -111,10 +113,12 @@ export default async function DynamicPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Page Title (optional, styled or visually hidden) */}
-      <div className="sr-only">
-        <h1>{page.title}</h1>
-      </div>
+      {/* Ukryty tytuł tylko, gdy moduły nie mają własnego <h1> (np. hero na /o-nas) — jeden h1 na stronę */}
+      {!modulesHaveH1 && (
+        <div className="sr-only">
+          <h1>{page.title}</h1>
+        </div>
+      )}
 
       {/* Render page modules using dynamic interactive content component */}
       <DynamicPageContent modulesHtml={modulesHtml} />
