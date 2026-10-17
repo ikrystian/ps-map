@@ -386,7 +386,7 @@ export default function ForLawyersClientPage() {
                 {/* Section 1: Hero */}
                 <section className="hero" id="hero">
                     <div className="hero-bg" id="heroBg">
-                        <img src="/backgrounds/1.png" alt="" className="hero-bg-img" />
+                        <img src="/backgrounds/1.webp" alt="" className="hero-bg-img" fetchPriority="high" />
                         <div className="hero-overlay"></div>
                     </div>
                     <div className="hero-decor" id="heroDecor" aria-hidden="true">
@@ -615,7 +615,7 @@ export default function ForLawyersClientPage() {
                     {/* Sub-section: Gain clients */}
                     <div className="gain-clients" id="features">
                         <div className="gain-clients-bg">
-                            <img src="/backgrounds/3.png" alt="" className="gain-bg-img" />
+                            <img src="/backgrounds/3.webp" alt="" className="gain-bg-img" loading="lazy" decoding="async" />
                             <div className="gain-overlay"></div>
                         </div>
                         <div className="container gain-clients-layout">
