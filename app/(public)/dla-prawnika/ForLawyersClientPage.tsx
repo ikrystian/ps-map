@@ -588,8 +588,8 @@ export default function ForLawyersClientPage() {
                                         </div>
                                     </div>
                                     <h3 className="benefit-title">Panel bez chaosu</h3>
-                                    <p className="benefit-text">Wszystkie sprawy, historia kontaktu i statystyki w jednym miejscu.
-                                        Czat, rozliczenia i faktury bez wychodzenia z platformy.</p>
+                                    <p className="benefit-text">Wszystkie sprawy, historia kontaktu, czat i statystyki
+                                        w jednym miejscu.</p>
                                     <span className="benefit-number">03</span>
                                 </div>
                                 {/* Card 4 */}
@@ -777,20 +777,6 @@ export default function ForLawyersClientPage() {
                                     <div className="consultation-feature-item">
                                         <div className="consultation-feature-icon">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <rect x="2" y="5" width="20" height="14" rx="2" />
-                                                <line x1="2" y1="10" x2="22" y2="10" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4>Płatność przy rezerwacji</h4>
-                                            <p>Klient płaci w chwili, gdy rezerwuje. Kto zapłacił, ten przychodzi, więc puste
-                                                okienka po kimś, kto „się rozmyślił”, praktycznie znikają.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="consultation-feature-item">
-                                        <div className="consultation-feature-icon">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                 <path d="M23 7l-7 5 7 5V7z" />
                                                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                                             </svg>
@@ -945,7 +931,6 @@ export default function ForLawyersClientPage() {
                                         {/* Mockup Summary Badges */}
                                         <div className="mockup-summary-pills">
                                             <span className="summary-pill">⚡ Automat w kalendarzu</span>{" "}
-                                            <span className="summary-pill">💳 Płatność przy rezerwacji</span>{" "}
                                             <span className="summary-pill">🔔 Przypomnienie SMS/Mail</span>
                                         </div>
                                     </div>

@@ -859,6 +859,11 @@
     margin-bottom: 32px;
 }
 
+/* Nieparzysta liczba kafelków — ostatni zajmuje cały wiersz, bez pustej komórki */
+.ps-lp .consultations-features-grid > .consultation-feature-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
 .ps-lp .consultation-feature-item {
     display: flex;
     gap: 16px;
