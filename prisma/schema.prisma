@@ -762,7 +762,12 @@ model Case {
   archivedAt                DateTime?
 
   // Zgody
+  // Akceptacja regulaminu przy dodawaniu sprawy (nazwa historyczna — klauzuli informacyjnej się nie akceptuje)
   akceptujeKlauzule         Boolean  @default(false)
+  // Wyraźna zgoda na przetwarzanie danych o zdrowiu oraz o wyrokach skazujących / czynach zabronionych
+  // podanych w opisie sprawy (podstawa wskazana w polityce prywatności)
+  zgodaDaneSzczegolne       Boolean  @default(false)
+  zgodaDaneSzczegolneAt     DateTime?
 
   // Daty
   createdAt                 DateTime @default(now())

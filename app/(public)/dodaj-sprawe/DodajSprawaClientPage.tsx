@@ -69,6 +69,7 @@ interface ContactState {
   telefonKontakt: string
   preferowanyKontakt: PreferredContact | ""
   akceptujeKlauzule: boolean
+  zgodaDaneSzczegolne: boolean
 }
 
 interface AccountState {
@@ -90,6 +91,7 @@ const initialContact: ContactState = {
   telefonKontakt: "",
   preferowanyKontakt: "EMAIL",
   akceptujeKlauzule: false,
+  zgodaDaneSzczegolne: false,
 }
 
 const initialAccount: AccountState = {
@@ -448,8 +450,8 @@ export default function DodajSprawaClientPage() {
   const stepFieldOrder: Record<number, string[]> = {
     ...caseDraftStepFieldOrder,
     6: isAuthed
-      ? ["imieNazwiskoSession", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"]
-      : ["imie", "nazwisko", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule"],
+      ? ["imieNazwiskoSession", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule", "zgodaDaneSzczegolne"]
+      : ["imie", "nazwisko", "telefonKontakt", "preferowanyKontakt", "akceptujeKlauzule", "zgodaDaneSzczegolne"],
     7: ["email", "adres", "kodPocztowy", "accountMiasto", "password", "confirmPassword", "zgodaRegulamin"],
   }
 
@@ -475,7 +477,10 @@ export default function DodajSprawaClientPage() {
         stepErrors.preferowanyKontakt = "Wybierz preferowaną formę kontaktu"
       }
       if (!contact.akceptujeKlauzule) {
-        stepErrors.akceptujeKlauzule = "Zaakceptuj klauzulę informacyjną i regulamin, aby dodać sprawę"
+        stepErrors.akceptujeKlauzule = "Zaakceptuj regulamin, aby dodać sprawę"
+      }
+      if (!contact.zgodaDaneSzczegolne) {
+        stepErrors.zgodaDaneSzczegolne = "Wyraź zgodę na przetwarzanie danych z opisu sprawy, aby dodać sprawę"
       }
       return stepErrors
     }
@@ -644,6 +649,7 @@ export default function DodajSprawaClientPage() {
         telefonKontakt: contact.telefonKontakt,
         preferowanyKontakt: contact.preferowanyKontakt,
         akceptujeKlauzule: contact.akceptujeKlauzule,
+        zgodaDaneSzczegolne: contact.zgodaDaneSzczegolne,
         ...(referralToken ? { referralToken } : {}),
         ...(otpCodeValue ? { otpCode: otpCodeValue } : {}),
       }),
@@ -971,25 +977,56 @@ export default function DodajSprawaClientPage() {
         )}
       </div>
 
-      <div
-        id="field-akceptujeKlauzule"
-        className="flex items-start space-x-3 rounded-lg border border-border/30 p-4 bg-background-sec/20 mt-6"
-      >
-        <Checkbox
-          id="akceptujeKlauzule"
-          checked={contact.akceptujeKlauzule}
-          onCheckedChange={(checked) => updateContactField("akceptujeKlauzule", checked === true)}
-          className="mt-1 h-5 w-5 border-border/50 text-primary focus:ring-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded shrink-0"
-        />
-        <div className="space-y-1.5 flex-1">
-          <Label
-            htmlFor="akceptujeKlauzule"
-            className="cursor-pointer text-xs text-muted-foreground leading-relaxed font-light block"
-          >
-            Oświadczam, że zapoznałem się i akceptuję klauzulę informacyjną oraz
-            regulamin portalu odnośnie przetwarzania danych osobowych w celu
-            realizacji zlecenia. *
-          </Label>
+      <div className="space-y-3 rounded-lg border border-border/30 p-4 bg-background-sec/20 mt-6">
+        <div id="field-akceptujeKlauzule" className="space-y-1">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="akceptujeKlauzule"
+              checked={contact.akceptujeKlauzule}
+              onCheckedChange={(checked) => updateContactField("akceptujeKlauzule", checked === true)}
+              className={cn("mt-0.5 h-5 w-5 border-border/50 text-primary focus:ring-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded shrink-0", errors.akceptujeKlauzule && "border-destructive")}
+            />
+            <Label
+              htmlFor="akceptujeKlauzule"
+              className="cursor-pointer text-xs text-muted-foreground leading-relaxed font-light block"
+            >
+              Akceptuję{" "}
+              <Link href="/regulamin" target="_blank" className="text-primary hover:underline font-normal">
+                regulamin
+              </Link>{" "}
+              serwisu. *
+            </Label>
+          </div>
+          {errors.akceptujeKlauzule && (
+            <p className="text-xs text-destructive ml-8">{errors.akceptujeKlauzule}</p>
+          )}
+        </div>
+
+        <div id="field-zgodaDaneSzczegolne" className="space-y-1">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="zgodaDaneSzczegolne"
+              checked={contact.zgodaDaneSzczegolne}
+              onCheckedChange={(checked) => updateContactField("zgodaDaneSzczegolne", checked === true)}
+              className={cn("mt-0.5 h-5 w-5 border-border/50 text-primary focus:ring-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-transparent rounded shrink-0", errors.zgodaDaneSzczegolne && "border-destructive")}
+            />
+            <Label
+              htmlFor="zgodaDaneSzczegolne"
+              className="cursor-pointer text-xs text-muted-foreground leading-relaxed font-light block"
+            >
+              Wyrażam zgodę na przetwarzanie podanych przeze mnie w opisie sprawy danych dotyczących
+              zdrowia oraz danych dotyczących wyroków skazujących, czynów zabronionych lub postępowań
+              karnych, w celu przekazania sprawy ekspertom i jej realizacji. Zgodę mogę wycofać
+              w dowolnym momencie, co nie wpływa na zgodność z prawem przetwarzania dokonanego przed
+              jej wycofaniem. *
+            </Label>
+          </div>
+          {errors.zgodaDaneSzczegolne && (
+            <p className="text-xs text-destructive ml-8">{errors.zgodaDaneSzczegolne}</p>
+          )}
+        </div>
+
+        <div className="border-t border-border/20 pt-3">
           <div className="text-muted-foreground/70 text-xs leading-relaxed font-light">
             Administratorem Twoich danych osobowych jest Polska Grupa
             Identyfikacji Firm Sp. z o.o. z siedzibą w Kielcach: Generała
@@ -1024,8 +1061,11 @@ export default function DodajSprawaClientPage() {
                 profilowaniu. Podanie danych osobowych jest dobrowolne, lecz
                 konieczne do realizacji umowy. Szczegółowe informacje o
                 sposobach przetwarzania danych, czasie ich przechowywania oraz
-                możliwości składania skarg znajdują się w naszej Polityce
-                Prywatności.{" "}
+                możliwości składania skarg znajdują się w naszej{" "}
+                <Link href="/polityka-prywatnosci" target="_blank" className="text-primary hover:underline font-normal">
+                  Polityce Prywatności
+                </Link>
+                .{" "}
                 <button
                   type="button"
                   onClick={(e) => {

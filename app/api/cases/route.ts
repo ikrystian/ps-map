@@ -267,6 +267,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    // Opis sprawy może zawierać dane o zdrowiu lub o wyrokach skazujących / czynach zabronionych —
+    // polityka prywatności wskazuje jako podstawę ich przetwarzania wyraźną zgodę klienta.
+    if (body.zgodaDaneSzczegolne !== true) {
+      return NextResponse.json(
+        { error: "Wymagana jest zgoda na przetwarzanie danych o zdrowiu i sprawach karnych podanych w opisie sprawy" },
+        { status: 400 }
+      )
+    }
+
     // Dodatkowa weryfikacja kodem email (OTP) przed utworzeniem sprawy — opcja z ustawień panelu administratora
     const otpSetting = await prisma.settings.findUnique({ where: { key: "caseCreationOtpEnabled" } })
     const caseOtpEnabled = otpSetting?.value === "true"
@@ -462,6 +471,8 @@ export async function POST(request: NextRequest) {
         voivodeshipId: voivodeship.id,
         cityId: city.id,
         akceptujeKlauzule: body.akceptujeKlauzule,
+        zgodaDaneSzczegolne: true,
+        zgodaDaneSzczegolneAt: new Date(),
         status: "NOWA",
         czekaNaAktywacjeEmail: requiresEmailActivation,
       },
