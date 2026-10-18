@@ -2,6 +2,7 @@ import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import { getSiteMapData } from "@/lib/site-map"
 import { Metadata } from "next"
 import Link from "next/link"
+import { blogCategoryPath } from "@/lib/blog-category-url"
 
 export const metadata: Metadata = {
   title: "Mapa strony",
@@ -58,7 +59,7 @@ export default async function SiteMapPage() {
               <div key={group.slug ?? "pozostale"}>
                 <h3 className="font-medium text-foreground mb-2">
                   {group.slug ? (
-                    <Link href={`/blog?category=${group.slug}`} className="hover:text-[#d7b56d] transition-colors">
+                    <Link href={blogCategoryPath(group.slug)} className="hover:text-[#d7b56d] transition-colors">
                       {group.nazwa}
                     </Link>
                   ) : (

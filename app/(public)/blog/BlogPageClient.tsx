@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { expertAvatar } from "@/lib/expert-avatar";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { BlogCategory } from "@/types";
 import { PaginationData } from "@/types/pagination";
@@ -43,6 +43,12 @@ import {
   type BlogCategoryNode,
 } from "@/lib/blog-category-tree";
 import { formatDate } from "@/lib/format"
+import {
+  BLOG_LISTING_TITLE,
+  blogCategorySlugFromPath,
+  blogCategoryTitle,
+  blogListingPath,
+} from "@/lib/blog-category-url";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Helpers                                   */
@@ -156,6 +162,16 @@ const getCategoryTheme = (categoryName?: string): CategoryTheme => {
   };
 };
 
+// Tytuł karty listingu z zachowaniem sufiksu „ | {nazwa serwisu}” z szablonu metadanych
+const setListingDocumentTitle = (categoryName: string | null) => {
+  const siteSuffix = document.title.match(/ \| [^|]+$/)?.[0] ?? "";
+  document.title = (categoryName ? blogCategoryTitle(categoryName) : BLOG_LISTING_TITLE) + siteSuffix;
+};
+
+// Zwykłe kliknięcie przejmujemy; z Ctrl/Cmd/Shift lub środkowym przyciskiem link otwiera się normalnie
+const isPlainLeftClick = (e: React.MouseEvent) =>
+  e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+
 const getPageNumbers = (current: number, total: number): (number | "…")[] => {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages: (number | "…")[] = [1];
@@ -256,9 +272,10 @@ export default function BlogPageClient({
   initialPopularPosts,
   initialTotalPublished,
 }: BlogPageClientProps) {
-  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const categorySlug = searchParams.get("category");
+  // Kategoria jest częścią ścieżki (/blog/kategoria/{slug}), tag — parametrem zapytania
+  const categorySlug = blogCategorySlugFromPath(pathname);
   const activeTag = searchParams.get("tag");
 
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
@@ -307,7 +324,7 @@ export default function BlogPageClient({
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Synchronizuj selectedCategory z parametrem category (slug) w URL
+  // Synchronizuj selectedCategory ze slugiem kategorii w ścieżce (także po Wstecz/Dalej)
   useEffect(() => {
     if (categories.length > 0) {
       if (categorySlug) {
@@ -359,32 +376,33 @@ export default function BlogPageClient({
     }
   };
 
+  const getCategorySlug = (categoryId: string | null) =>
+    categoryId ? (categories.find((c) => c.id === categoryId)?.slug ?? null) : null;
+
+  // /blog i /blog/kategoria/{slug} to osobne trasy, a router.push między nimi przemontowałby
+  // stronę (utrata wpisanej frazy, przewinięcie). History API jest zsynchronizowane z routerem
+  // Next (usePathname/useSearchParams), więc podmieniamy tylko adres, a wpisy dociąga fetchPosts.
+  const pushListingUrl = (categoryId: string | null, tag: string | null) => {
+    window.history.pushState(null, "", blogListingPath(getCategorySlug(categoryId), tag));
+  };
+
   const handleCategoryChange = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
     setPagination((prev) => ({ ...prev, page: 1 }));
+    pushListingUrl(categoryId, activeTag);
+  };
 
-    const tagSuffix = activeTag ? `tag=${encodeURIComponent(activeTag)}` : "";
-
-    if (categoryId === null) {
-      router.push(tagSuffix ? `/blog?${tagSuffix}` : "/blog", { scroll: false });
-      return;
-    }
-
-    const cat = categories.find((c) => c.id === categoryId);
-    if (cat) {
-      router.push(
-        `/blog?category=${cat.slug}${tagSuffix ? `&${tagSuffix}` : ""}`,
-        { scroll: false },
-      );
-    }
+  // Chipsy kategorii są linkami (adresy kategorii widoczne dla wyszukiwarek),
+  // a zwykłe kliknięcie zmienia kategorię bez przeładowania
+  const handleCategoryLinkClick = (e: React.MouseEvent, categoryId: string | null) => {
+    if (!isPlainLeftClick(e)) return;
+    e.preventDefault();
+    handleCategoryChange(categoryId);
   };
 
   const handleClearTag = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
-    const cat = selectedCategory
-      ? categories.find((c) => c.id === selectedCategory)
-      : null;
-    router.push(cat ? `/blog?category=${cat.slug}` : "/blog", { scroll: false });
+    pushListingUrl(selectedCategory, null);
   };
 
   const handleResetFilters = () => {
@@ -392,7 +410,7 @@ export default function BlogPageClient({
     setDebouncedSearch("");
     setSelectedCategory(null);
     setPagination((prev) => ({ ...prev, page: 1 }));
-    router.push("/blog", { scroll: false });
+    pushListingUrl(null, null);
   };
 
   const handlePageChange = (page: number) => {
@@ -422,6 +440,14 @@ export default function BlogPageClient({
     ? getCategoryPath(categories, selectedCategory)
     : [];
   const selectedPathIds = selectedPath.map((c) => c.id);
+  // Strona kategorii ma własny nagłówek (h1 i opis) zamiast ogólnego nagłówka bloga
+  const selectedCategoryData = selectedPath[selectedPath.length - 1] ?? null;
+  const selectedCategoryName = selectedCategoryData?.nazwa ?? null;
+
+  // Zmiana kategorii bez przeładowania nie odświeża metadanych — tytuł karty podmieniamy sami
+  useEffect(() => {
+    setListingDocumentTitle(selectedCategoryName);
+  }, [selectedCategoryName]);
 
   // Podział wpisów: wyróżniony vs siatka
   const hasFeatured =
@@ -487,11 +513,17 @@ export default function BlogPageClient({
                 transition={{ duration: 0.5, delay: 0.05 }}
                 className="mt-5 font-playfair text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
               >
-                Poradniki i analizy{" "}
-                <span className="relative inline-block text-primary">
-                  prawne
-                  <span className="absolute bottom-1 left-0 -z-10 h-3 w-full bg-primary/15 rounded-full" />
-                </span>
+                {selectedCategoryData ? (
+                  selectedCategoryData.nazwa
+                ) : (
+                  <>
+                    Poradniki i analizy{" "}
+                    <span className="relative inline-block text-primary">
+                      prawne
+                      <span className="absolute bottom-1 left-0 -z-10 h-3 w-full bg-primary/15 rounded-full" />
+                    </span>
+                  </>
+                )}
               </motion.h1>
 
               <motion.p
@@ -500,8 +532,10 @@ export default function BlogPageClient({
                 transition={{ duration: 0.5, delay: 0.12 }}
                 className="mt-5 max-w-xl text-base font-normal leading-relaxed text-muted-foreground sm:text-lg"
               >
-                Czytaj zweryfikowane artykuły, opracowania i porady prawne
-                przygotowywane bezpośrednio przez doświadczonych prawników i kancelarie.
+                {selectedCategoryData
+                  ? selectedCategoryData.opis?.trim() ||
+                    `Artykuły, opracowania i porady prawne z kategorii ${selectedCategoryData.nazwa}, przygotowywane przez doświadczonych prawników i kancelarie.`
+                  : "Czytaj zweryfikowane artykuły, opracowania i porady prawne przygotowywane bezpośrednio przez doświadczonych prawników i kancelarie."}
               </motion.p>
 
               {/* Pole wyszukiwania z ulepszonym UX */}
@@ -677,8 +711,10 @@ export default function BlogPageClient({
           <div className="flex items-center gap-4 py-3">
             <div className="relative min-w-0 flex-1">
               <div className="scrollbar-none flex gap-2 overflow-x-auto py-1">
-                <button
-                  onClick={() => handleCategoryChange(null)}
+                <a
+                  href={blogListingPath(null, activeTag)}
+                  onClick={(e) => handleCategoryLinkClick(e, null)}
+                  aria-current={selectedCategory === null ? "page" : undefined}
                   className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${selectedCategory === null
                     ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -692,7 +728,7 @@ export default function BlogPageClient({
                     />
                   )}
                   Wszystkie
-                </button>
+                </a>
 
                 {categoryTree.map((category) => {
                   const isSelected = selectedCategory === category.id;
@@ -700,9 +736,11 @@ export default function BlogPageClient({
                   const theme = getCategoryTheme(category.nazwa);
 
                   return (
-                    <button
+                    <a
                       key={category.id}
-                      onClick={() => handleCategoryChange(category.id)}
+                      href={blogListingPath(category.slug, activeTag)}
+                      onClick={(e) => handleCategoryLinkClick(e, category.id)}
+                      aria-current={isSelected ? "page" : undefined}
                       className={`relative z-10 flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${isSelected
                         ? "text-primary-foreground"
                         : isParentSelected
@@ -725,7 +763,7 @@ export default function BlogPageClient({
                         {theme.icon}
                       </span>
                       {category.nazwa}
-                    </button>
+                    </a>
                   );
                 })}
               </div>
@@ -755,9 +793,11 @@ export default function BlogPageClient({
                   {node.children.map((child) => {
                     const isChildSelected = selectedCategory === child.id;
                     return (
-                      <button
+                      <a
                         key={child.id}
-                        onClick={() => handleCategoryChange(child.id)}
+                        href={blogListingPath(child.slug, activeTag)}
+                        onClick={(e) => handleCategoryLinkClick(e, child.id)}
+                        aria-current={isChildSelected ? "page" : undefined}
                         className={`relative z-10 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${isChildSelected
                           ? "border-transparent text-primary-foreground"
                           : selectedPathIds.includes(child.id)
@@ -777,7 +817,7 @@ export default function BlogPageClient({
                           />
                         )}
                         {child.nazwa}
-                      </button>
+                      </a>
                     );
                   })}
                 </motion.div>

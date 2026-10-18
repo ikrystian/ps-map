@@ -15,6 +15,7 @@ import { useState, useEffect, Fragment } from "react"
 import { openCookiePreferences } from "@/components/CookieConsent"
 import { formatDateTime } from "@/lib/format"
 import { fetchShared } from "@/lib/shared-fetch"
+import { blogCategoryPath } from "@/lib/blog-category-url"
 
 // Inline lightweight gold checkmark SVG matching the mockup spec
 const GoldCheck = () => (
@@ -251,7 +252,7 @@ export default function PublicFooter() {
               <span className="font-medium text-muted-foreground mr-1">Artykuły branżowe:</span>
               {blogCategories.map((category, index) => (
                 <Fragment key={category.id}>
-                  <Link href={`/blog?category=${category.slug}`} className="hover:text-[#d7b56d] transition-colors">
+                  <Link href={blogCategoryPath(category.slug)} className="hover:text-[#d7b56d] transition-colors">
                     {category.nazwa}
                   </Link>
                   {index < blogCategories.length - 1 && (

@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { buildCategoryTree, pruneEmptyCategoryTree, type BlogCategoryNode } from "@/lib/blog-category-tree"
 import { prisma } from "@/lib/prisma"
 import type { BlogCategory } from "@/types/blog"
@@ -5,8 +6,9 @@ import type { BlogCategory } from "@/types/blog"
 /**
  * Pobiera aktywne kategorie bloga posiadające opublikowane wpisy — wspólna logika
  * używana zarówno przez /api/blog/categories?public=true, jak i server-side render strony /blog.
+ * `cache` — strona kategorii woła ją w generateMetadata i w renderze.
  */
-export async function getPublicBlogCategories(): Promise<BlogCategory[]> {
+export const getPublicBlogCategories = cache(async (): Promise<BlogCategory[]> => {
   const categories = (await prisma.blogCategory.findMany({
     where: {
       aktywna: true,
@@ -51,4 +53,4 @@ export async function getPublicBlogCategories(): Promise<BlogCategory[]> {
   collectIds(prunedTree)
 
   return categories.filter((c) => keptIds.has(c.id))
-}
+})

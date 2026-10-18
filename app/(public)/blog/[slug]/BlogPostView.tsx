@@ -15,6 +15,7 @@ import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
 import { formatDate } from "@/lib/format"
 import { BlogPostViewTracker, ParallaxHeroImage, ReadingProgressBar } from "./BlogPostInteractive";
+import { blogCategoryPath } from "@/lib/blog-category-url";
 
 interface AdSenseSettings {
   enabled: boolean;
@@ -71,7 +72,7 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
     <Fragment key={cat.id ?? index}>
       {index > 0 && <span className="text-neutral-600 text-xs">/</span>}
       {cat.slug ? (
-        <Link href={`/blog?category=${cat.slug}`}>
+        <Link href={blogCategoryPath(cat.slug)}>
           <Badge
             variant="secondary"
             className="bg-primary/10 text-primary border border-primary/20 text-sm uppercase tracking-wider font-semibold hover:bg-primary/20 px-2.5 py-0.5 cursor-pointer"

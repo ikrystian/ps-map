@@ -1,3 +1,5 @@
+import { getPublicBlogCategories } from "@/lib/blog-categories"
+import { blogCategoryPath } from "@/lib/blog-category-url"
 import { getPublishedBlogPostSlugs } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import type { MetadataRoute } from "next"
@@ -57,10 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { published: true },
       select: { slug: true, updatedAt: true },
     }),
-    prisma.blogCategory.findMany({
-      where: { aktywna: true },
-      select: { slug: true, updatedAt: true },
-    }),
+    // Te same kategorie co na liście bloga — pusta kategoria zwraca 404
+    getPublicBlogCategories(),
   ])
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
@@ -90,9 +90,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }))
 
-  // Listing bloga filtrowany kategorią — te URL-e są linkowane ze stopki
+  // Strony kategorii bloga — linkowane ze stopki, mapy strony i wpisów
   const blogCategoryEntries: MetadataRoute.Sitemap = blogCategories.map((category) => ({
-    url: `${baseUrl}/blog?category=${category.slug}`,
+    url: `${baseUrl}${blogCategoryPath(category.slug)}`,
     lastModified: category.updatedAt,
     changeFrequency: "weekly",
     priority: 0.4,
