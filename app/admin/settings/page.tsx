@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone } from "lucide-react"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone, Target } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -269,6 +269,26 @@ interface Settings {
     value: string
     description: string | null
   }
+  facebookPixelEnabled?: {
+    value: string
+    description: string | null
+  }
+  facebookPixelId?: {
+    value: string
+    description: string | null
+  }
+  linkedinInsightEnabled?: {
+    value: string
+    description: string | null
+  }
+  linkedinPartnerId?: {
+    value: string
+    description: string | null
+  }
+  linkedinRegistrationConversionId?: {
+    value: string
+    description: string | null
+  }
   comingSoonMode?: {
     value: string
     description: string | null
@@ -365,6 +385,9 @@ interface SmsApiStatus {
 }
 
 
+/** Identyfikatory pikseli marketingowych to same cyfry (patrz `sanitizePixelId`). */
+const isDigitsOnly = (value: string) => /^\d{1,32}$/.test(value.trim())
+
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null)
   const [loading, setLoading] = useState(true)
@@ -440,6 +463,13 @@ export default function AdminSettingsPage() {
   // Google Analytics
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState("")
   const [googleAnalyticsEnabled, setGoogleAnalyticsEnabled] = useState("false")
+
+  // Piksele marketingowe (Meta Pixel, LinkedIn Insight Tag)
+  const [facebookPixelEnabled, setFacebookPixelEnabled] = useState("false")
+  const [facebookPixelId, setFacebookPixelId] = useState("")
+  const [linkedinInsightEnabled, setLinkedinInsightEnabled] = useState("false")
+  const [linkedinPartnerId, setLinkedinPartnerId] = useState("")
+  const [linkedinRegistrationConversionId, setLinkedinRegistrationConversionId] = useState("")
 
   // Google AdSense (widok pojedynczego posta bloga)
   const [adsenseEnabled, setAdsenseEnabled] = useState("false")
@@ -517,6 +547,13 @@ export default function AdminSettingsPage() {
         // Google Analytics
         setGoogleAnalyticsId(data.googleAnalyticsId?.value || "")
         setGoogleAnalyticsEnabled(data.googleAnalyticsEnabled?.value || "false")
+
+        // Piksele marketingowe
+        setFacebookPixelEnabled(data.facebookPixelEnabled?.value || "false")
+        setFacebookPixelId(data.facebookPixelId?.value || "")
+        setLinkedinInsightEnabled(data.linkedinInsightEnabled?.value || "false")
+        setLinkedinPartnerId(data.linkedinPartnerId?.value || "")
+        setLinkedinRegistrationConversionId(data.linkedinRegistrationConversionId?.value || "")
 
         // Google AdSense (widok pojedynczego posta bloga)
         setAdsenseEnabled(data.adsenseEnabled?.value || "false")
@@ -923,6 +960,26 @@ export default function AdminSettingsPage() {
             googleAnalyticsEnabled: {
               value: googleAnalyticsEnabled,
               description: "Czy śledzenie Google Analytics jest włączone",
+            },
+            facebookPixelEnabled: {
+              value: facebookPixelEnabled,
+              description: "Czy Meta Pixel (Facebook) jest włączony (ładuje się tylko po zgodzie na marketingowe cookies)",
+            },
+            facebookPixelId: {
+              value: facebookPixelId.trim(),
+              description: "Identyfikator Meta Pixel (same cyfry, np. 123456789012345)",
+            },
+            linkedinInsightEnabled: {
+              value: linkedinInsightEnabled,
+              description: "Czy LinkedIn Insight Tag jest włączony (ładuje się tylko po zgodzie na marketingowe cookies)",
+            },
+            linkedinPartnerId: {
+              value: linkedinPartnerId.trim(),
+              description: "Partner ID LinkedIn Insight Tag (same cyfry)",
+            },
+            linkedinRegistrationConversionId: {
+              value: linkedinRegistrationConversionId.trim(),
+              description: "ID konwersji LinkedIn wywoływanej po udanej rejestracji specjalisty (pusty = bez konwersji)",
             },
             adsenseEnabled: {
               value: adsenseEnabled,
@@ -1397,6 +1454,119 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>Śledzenie jest włączone, ale nie podano Identyfikatora pomiaru Google Analytics. Wprowadź poprawny identyfikator G-XXXXXXXXXX i zapisz ustawienia.</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Piksele marketingowe — Meta Pixel i LinkedIn Insight Tag */}
+          <Card className="border-violet-500/20 bg-violet-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-violet-600 dark:text-violet-400 flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Piksele marketingowe (Meta, LinkedIn)
+              </CardTitle>
+              <CardDescription>
+                Skrypty ładują się wyłącznie u osób, które w banerze cookies zgodziły się na marketingowe pliki cookies
+                (nie ładują się w panelu administratora). Po udanej rejestracji specjalisty wysyłane jest zdarzenie
+                konwersji.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4 bg-background">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Włącz Meta Pixel (Facebook)</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Po rejestracji specjalisty wysyłane jest standardowe zdarzenie <strong>CompleteRegistration</strong>.
+                  </p>
+                </div>
+                <Switch
+                  checked={facebookPixelEnabled === "true"}
+                  onCheckedChange={(checked) => setFacebookPixelEnabled(checked ? "true" : "false")}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="fb-pixel-id">Identyfikator Meta Pixel</Label>
+                <Input
+                  id="fb-pixel-id"
+                  type="text"
+                  inputMode="numeric"
+                  value={facebookPixelId}
+                  onChange={(e) => setFacebookPixelId(e.target.value)}
+                  placeholder="123456789012345"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Znajdziesz go w Menedżerze zdarzeń Meta (Events Manager) przy nazwie piksela.
+                </p>
+                {facebookPixelId.trim() && !isDigitsOnly(facebookPixelId) && (
+                  <p className="text-xs text-destructive">Identyfikator piksela składa się wyłącznie z cyfr.</p>
+                )}
+              </div>
+
+              {facebookPixelEnabled === "true" && !isDigitsOnly(facebookPixelId) && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>Meta Pixel jest włączony, ale bez poprawnego identyfikatora — skrypt nie zostanie załadowany.</span>
+                </div>
+              )}
+
+              <Separator />
+
+              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4 bg-background">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Włącz LinkedIn Insight Tag</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Zlicza odwiedziny i konwersje kampanii LinkedIn Ads.
+                  </p>
+                </div>
+                <Switch
+                  checked={linkedinInsightEnabled === "true"}
+                  onCheckedChange={(checked) => setLinkedinInsightEnabled(checked ? "true" : "false")}
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="li-partner-id">Partner ID</Label>
+                  <Input
+                    id="li-partner-id"
+                    type="text"
+                    inputMode="numeric"
+                    value={linkedinPartnerId}
+                    onChange={(e) => setLinkedinPartnerId(e.target.value)}
+                    placeholder="1234567"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Campaign Manager → Analyze → Insight Tag.
+                  </p>
+                  {linkedinPartnerId.trim() && !isDigitsOnly(linkedinPartnerId) && (
+                    <p className="text-xs text-destructive">Partner ID składa się wyłącznie z cyfr.</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="li-conversion-id">ID konwersji „rejestracja specjalisty”</Label>
+                  <Input
+                    id="li-conversion-id"
+                    type="text"
+                    inputMode="numeric"
+                    value={linkedinRegistrationConversionId}
+                    onChange={(e) => setLinkedinRegistrationConversionId(e.target.value)}
+                    placeholder="12345678"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Konwersja typu „Event-specific” utworzona w Campaign Manager → Analyze → Conversion tracking. Puste = bez konwersji.
+                  </p>
+                  {linkedinRegistrationConversionId.trim() && !isDigitsOnly(linkedinRegistrationConversionId) && (
+                    <p className="text-xs text-destructive">ID konwersji składa się wyłącznie z cyfr.</p>
+                  )}
+                </div>
+              </div>
+
+              {linkedinInsightEnabled === "true" && !isDigitsOnly(linkedinPartnerId) && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>LinkedIn Insight Tag jest włączony, ale bez poprawnego Partner ID — skrypt nie zostanie załadowany.</span>
                 </div>
               )}
             </CardContent>

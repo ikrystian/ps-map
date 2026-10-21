@@ -217,6 +217,36 @@ export async function GET(request: NextRequest) {
         description: "Czy śledzenie Google Analytics jest włączone",
       }
     }
+    if (!settingsObject.facebookPixelEnabled) {
+      settingsObject.facebookPixelEnabled = {
+        value: "false",
+        description: "Czy Meta Pixel (Facebook) jest włączony (ładuje się tylko po zgodzie na marketingowe cookies)",
+      }
+    }
+    if (!settingsObject.facebookPixelId) {
+      settingsObject.facebookPixelId = {
+        value: "",
+        description: "Identyfikator Meta Pixel (same cyfry, np. 123456789012345)",
+      }
+    }
+    if (!settingsObject.linkedinInsightEnabled) {
+      settingsObject.linkedinInsightEnabled = {
+        value: "false",
+        description: "Czy LinkedIn Insight Tag jest włączony (ładuje się tylko po zgodzie na marketingowe cookies)",
+      }
+    }
+    if (!settingsObject.linkedinPartnerId) {
+      settingsObject.linkedinPartnerId = {
+        value: "",
+        description: "Partner ID LinkedIn Insight Tag (same cyfry)",
+      }
+    }
+    if (!settingsObject.linkedinRegistrationConversionId) {
+      settingsObject.linkedinRegistrationConversionId = {
+        value: "",
+        description: "ID konwersji LinkedIn wywoływanej po udanej rejestracji specjalisty (pusty = bez konwersji)",
+      }
+    }
     if (!settingsObject.comingSoonMode) {
       settingsObject.comingSoonMode = {
         value: "false",

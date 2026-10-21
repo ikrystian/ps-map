@@ -23,6 +23,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { getBrowserTelemetry } from "@/lib/browser-telemetry"
+import { trackSpecialistRegistration } from "@/lib/marketing-pixels"
 import { useEffect, useState } from "react"
 
 import { AuthLayout, PhoneVerificationDialog } from "@/components/auth"
@@ -665,6 +666,9 @@ export default function LawFirmRegistrationPage() {
       setIsInitialized(false)
       localStorage.removeItem("law_firm_registration_data")
       localStorage.removeItem("law_firm_registration_step")
+
+      // Konwersja Meta/LinkedIn — tylko przy zgodzie na marketingowe cookies
+      trackSpecialistRegistration()
 
       router.push(`/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=LAW_FIRM`)
     } catch (error) {

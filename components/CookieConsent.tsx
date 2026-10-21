@@ -38,7 +38,13 @@ export default function CookieConsentBanner() {
             reloadPage: true,
           },
         },
-        marketing: {},
+        marketing: {
+          // Wycofanie zgody usuwa pliki cookies Meta Pixel i LinkedIn Insight Tag.
+          autoClear: {
+            cookies: [{ name: /^_fbp/ }, { name: /^_fbc/ }, { name: /^li_/ }],
+            reloadPage: true,
+          },
+        },
       },
       language: {
         default: "pl",
@@ -79,7 +85,7 @@ export default function CookieConsentBanner() {
                 {
                   title: "Marketingowe pliki cookies",
                   description:
-                    "Umożliwiają wyświetlanie treści i reklam dopasowanych do Twoich zainteresowań oraz mierzenie skuteczności kampanii marketingowych.",
+                    "Umożliwiają wyświetlanie treści i reklam dopasowanych do Twoich zainteresowań oraz mierzenie skuteczności kampanii marketingowych. W tej kategorii korzystamy z narzędzi Meta Pixel (Facebook) oraz LinkedIn Insight Tag. Bez Twojej zgody narzędzia te nie są uruchamiane.",
                   linkedCategory: "marketing",
                 },
                 {

@@ -4,6 +4,8 @@ import { ChatAssistant } from "@/components/ChatAssistant";
 import CookieConsentBanner from "@/components/CookieConsent";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/Hotjar";
+import { MarketingPixels } from "@/components/MarketingPixels";
+import { sanitizePixelId } from "@/lib/marketing-pixels";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -180,12 +182,24 @@ export default async function RootLayout({
   let showChat = true;
   let gaId = "";
   let gaEnabled = false;
+  let facebookPixelId = "";
+  let linkedinPartnerId = "";
+  let linkedinRegistrationConversionId = "";
 
   try {
     const settings = await prisma.settings.findMany({
       where: {
         key: {
-          in: ["showChatAssistant", "googleAnalyticsId", "googleAnalyticsEnabled"],
+          in: [
+            "showChatAssistant",
+            "googleAnalyticsId",
+            "googleAnalyticsEnabled",
+            "facebookPixelEnabled",
+            "facebookPixelId",
+            "linkedinInsightEnabled",
+            "linkedinPartnerId",
+            "linkedinRegistrationConversionId",
+          ],
         },
       },
     });
@@ -193,6 +207,11 @@ export default async function RootLayout({
     if (map.has("showChatAssistant")) showChat = map.get("showChatAssistant") === "true";
     if (map.has("googleAnalyticsId")) gaId = map.get("googleAnalyticsId")!;
     if (map.has("googleAnalyticsEnabled")) gaEnabled = map.get("googleAnalyticsEnabled") === "true";
+    if (map.get("facebookPixelEnabled") === "true") facebookPixelId = sanitizePixelId(map.get("facebookPixelId"));
+    if (map.get("linkedinInsightEnabled") === "true") {
+      linkedinPartnerId = sanitizePixelId(map.get("linkedinPartnerId"));
+      linkedinRegistrationConversionId = sanitizePixelId(map.get("linkedinRegistrationConversionId"));
+    }
   } catch (error) {
     console.error("Error reading settings in RootLayout:", error);
   }
@@ -225,6 +244,11 @@ export default async function RootLayout({
           <BugReportWidget />
           <CookieConsentBanner />
           <HotjarAnalytics />
+          <MarketingPixels
+            facebookPixelId={facebookPixelId}
+            linkedinPartnerId={linkedinPartnerId}
+            linkedinRegistrationConversionId={linkedinRegistrationConversionId}
+          />
         </Providers>
       </body>
     </html>
