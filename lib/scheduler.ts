@@ -3,6 +3,7 @@ import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./co
 import { cleanupOldJobRuns, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { pollPendingKsefInvoices } from "./ksef"
+import { sendCaseNoOffersReminders, sendTrialEndingReminders } from "./platform-emails"
 import { expireStalePrzelewy24Orders } from "./przelewy24-resolve"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
@@ -167,6 +168,29 @@ export function getJobDefinitions(): JobDefinition[] {
       fn: async () => {
         const result = await purgeExpiredAccountRetention()
         return { purged: result.purged, filesDeleted: result.filesDeleted }
+      },
+    },
+    // 11. Mail do klienta, gdy sprawa jest 48 h bez ofert (jednorazowo na sprawę)
+    {
+      name: "case-no-offers-reminders",
+      description: "Mail do klienta o sprawie bez ofert po 48 godzinach",
+      intervalMs: HOUR,
+      options: { retries: 1, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const sent = await sendCaseNoOffersReminders()
+        return { sent }
+      },
+    },
+
+    // 12. Mail do eksperta 7 dni przed końcem bezpłatnego pakietu Biznes
+    {
+      name: "trial-ending-reminders",
+      description: "Mail do eksperta 7 dni przed końcem bezpłatnego pakietu",
+      intervalMs: 6 * HOUR,
+      options: { retries: 1, retryDelayMs: 60 * 1000 },
+      fn: async () => {
+        const sent = await sendTrialEndingReminders()
+        return { sent }
       },
     },
     {

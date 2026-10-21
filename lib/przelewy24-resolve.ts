@@ -1,4 +1,5 @@
 import { generateInvoiceForOrder } from "@/lib/invoice-generator"
+import { sendPaymentFailedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { p24Client } from "@/lib/przelewy24"
 
@@ -91,6 +92,7 @@ async function markAsCanceled(order: ResolvableOrder) {
       tresc: `Płatność za zamówienie ${order.orderNumber} nie została zaksięgowana w wyznaczonym czasie i zamówienie zostało anulowane. Możesz spróbować dokonać zakupu ponownie.`,
       linkUrl: "/panel-eksperta/punkty",
     })
+    await sendPaymentFailedEmail(order.id)
   }
 }
 

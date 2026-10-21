@@ -11,10 +11,9 @@
 
 import { decryptSecret } from "@/lib/secret-settings"
 import { EmailLogStatus, EmailType } from '@prisma/client'
-import fs from 'fs'
-import path from 'path'
 import { sendSMTPEmail } from './smtp'
 import { formatDateTime } from "@/lib/format"
+import { escapeHtml, renderEmailFrame } from "@/lib/email-layout"
 
 interface SendEmailParams {
   to: string
@@ -25,6 +24,12 @@ interface SendEmailParams {
   variables?: Record<string, string>
   /** Adres, na który trafi odpowiedź po kliknięciu "Odpowiedz" (np. nadawca formularza kontaktowego) */
   replyTo?: string
+  /**
+   * Adres zapisywany w EmailLog zamiast `to` — dla maili do kont już
+   * zanonimizowanych (np. potwierdzenie usunięcia konta). Wartości z `variables`
+   * są wtedy wycinane z treści logu, a same zmienne nie są zapisywane.
+   */
+  logTo?: string
 }
 
 /**
@@ -45,11 +50,15 @@ export async function sendEmailWithTemplate({
   templateType,
   variables,
   fallbackProvider,
+  replyTo,
+  logTo,
 }: {
   to: string
   templateType: EmailType
   variables: Record<string, string>
   fallbackProvider?: () => { subject: string; html: string; text: string }
+  replyTo?: string
+  logTo?: string
 }): Promise<boolean> {
   try {
     const { prisma } = await import('@/lib/prisma')
@@ -72,13 +81,17 @@ export async function sendEmailWithTemplate({
         const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         const regex = new RegExp(escapedKey, 'g')
 
-        subject = subject.replace(regex, value || '')
-        html = html.replace(regex, value || '')
-        text = text.replace(regex, value || '')
+        // Wartości bywają wpisywane przez użytkowników (tytuł sprawy, powód decyzji) —
+        // w HTML escapujemy je, a nowe linie zamieniamy na <br>. Funkcja zamiast stringa,
+        // żeby `$` w wartości nie był interpretowany jako wzorzec podstawienia.
+        const htmlValue = escapeHtml(value || '').replace(/\r?\n/g, '<br>')
+        subject = subject.replace(regex, () => value || '')
+        html = html.replace(regex, () => htmlValue)
+        text = text.replace(regex, () => value || '')
       })
 
-      // Automatycznie owiń w szatę graficzną ProstaSprawa
-      html = wrapInBrandLayoutIfNeeded(html, subject)
+      // Automatycznie owiń w szatę graficzną ProstaSprawa (preheader niesie sama treść szablonu)
+      html = wrapInBrandLayoutIfNeeded(html)
     } else if (fallbackProvider) {
       const fallback = fallbackProvider()
       subject = fallback.subject
@@ -89,7 +102,7 @@ export async function sendEmailWithTemplate({
       return false
     }
 
-    return await sendEmail({ to, subject, html, text, templateType, variables })
+    return await sendEmail({ to, subject, html, text, templateType, variables, replyTo, logTo })
   } catch (error) {
     console.error(`Error sending templated email (${templateType}):`, error)
     return false
@@ -102,7 +115,7 @@ export async function sendEmailWithTemplate({
  * W środowisku development bez konfiguracji SMTP - loguje do konsoli
  * W produkcji lub z konfiguracją SMTP - wysyła prawdziwy email
  */
-export async function sendEmail({ to, subject, html, text, templateType, variables, replyTo }: SendEmailParams): Promise<boolean> {
+export async function sendEmail({ to, subject, html, text, templateType, variables, replyTo, logTo }: SendEmailParams): Promise<boolean> {
   let smtpLog = ''
   let errorMessage: string | undefined = undefined
   let status: EmailLogStatus = EmailLogStatus.FAILED
@@ -212,14 +225,22 @@ export async function sendEmail({ to, subject, html, text, templateType, variabl
     // Zapisz log do bazy danych
     try {
       const { prisma } = await import('@/lib/prisma')
+      const redact = (value: string) => {
+        if (!logTo) return value
+        let result = value.split(to).join(logTo)
+        for (const secret of Object.values(variables || {})) {
+          if (secret && secret.length > 1) result = result.split(secret).join('[usunięto]')
+        }
+        return result
+      }
       await prisma.emailLog.create({
         data: {
-          to,
-          subject,
-          content: text || html.replace(/<[^>]*>/g, ''),
-          html,
+          to: logTo || to,
+          subject: redact(subject),
+          content: redact(text || html.replace(/<[^>]*>/g, '')),
+          html: redact(html),
           templateType,
-          variables: variables ? JSON.stringify(variables) : null,
+          variables: variables && !logTo ? JSON.stringify(variables) : null,
           status,
           errorMessage,
           smtpLog,
@@ -235,216 +256,7 @@ export function getBrandEmailLayout(
   contentHtml: string,
   preheaderText: string = ""
 ): string {
-  try {
-    const templatePath = path.join(process.cwd(), 'prosta_sprawa_email.html')
-    if (fs.existsSync(templatePath)) {
-      const template = fs.readFileSync(templatePath, 'utf8')
-
-      // Wstawianie treści w miejsce <!-- content here-->
-      let finalHtml = template.replace('<!-- content here-->', contentHtml)
-
-      // Dynamiczne podmienianie linków w szablonie prosta_sprawa_email.html dla poprawności działania systemu
-      const domainUrl = process.env.URL || 'https://ps-dev.com.pl/'
-
-      // Podmień logo i link "Client Portal" na rzeczywiste linki
-      finalHtml = finalHtml.replace('href="#" class="logo"', `href="${domainUrl}" class="logo"`)
-      finalHtml = finalHtml.replace('href="#" class="header-link"', `href="${domainUrl}/panel-klienta" class="header-link"`)
-
-      // Podmień linki w stopce na poprawne URL-e systemowe
-      finalHtml = finalHtml.replace('href="#">Regulamin</a>', `href="${domainUrl}/terms">Regulamin</a>`)
-      finalHtml = finalHtml.replace('href="#">Polityka prywatności</a>', `href="${domainUrl}/privacy">Polityka prywatności</a>`)
-      finalHtml = finalHtml.replace('href="#">Ustawienia cookies</a>', `href="${domainUrl}/#cookies">Ustawienia cookies</a>`)
-      finalHtml = finalHtml.replace('src="', `src="${domainUrl}`)
-      // Podmień ikony w stopce na poprawne odnośniki
-      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Website"', `href="${domainUrl}" class="footer-icon" aria-label="Website"`)
-      finalHtml = finalHtml.replace('href="#" class="footer-icon" aria-label="Email"', `href="mailto:bok@prostasprawa.pl" class="footer-icon" aria-label="Email"`)
-
-      // Dodaj preheader jeśli jest podany
-      if (preheaderText) {
-        const preheaderHtml = `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>`
-        finalHtml = finalHtml.replace('<body>', `<body>\n  ${preheaderHtml}`)
-      }
-
-      // Aktualizacja roku w stopce
-      const currentYear = new Date().getFullYear().toString()
-      finalHtml = finalHtml.replace('© 2026 Prosta Sprawa', `© ${currentYear} Prosta Sprawa`)
-
-      return finalHtml
-    }
-  } catch (err) {
-    console.error('Błąd podczas ładowania szablonu prosta_sprawa_email.html:', err)
-  }
-
-  return `
-    <!DOCTYPE html>
-    <html lang="pl">
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ProstaSprawa</title>
-        <!--[if mso]>
-        <noscript>
-          <xml>
-            <o:OfficeDocumentSettings>
-              <o:PixelsPerInch>96</o:PixelsPerInch>
-            </o:OfficeDocumentSettings>
-          </xml>
-        </noscript>
-        <![endif]-->
-        <style>
-          body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-          table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-          img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-          table { border-collapse: collapse !important; }
-          body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
-          
-          a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
-          
-          @media screen and (max-width: 600px) {
-            .email-container { width: 100% !important; max-width: 100% !important; }
-            .content-padding { padding: 25px 20px !important; }
-            .btn { display: block !important; width: auto !important; margin-left: 0 !important; margin-right: 0 !important; text-align: center !important; }
-          }
-        </style>
-      </head>
-      <body style="background-color: #0c0c0c; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; margin: 0; padding: 0; width: 100%; -webkit-font-smoothing: antialiased;">
-        <!-- Preheader text for inbox preview -->
-        ${preheaderText ? `<div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all;">${preheaderText}</div>` : ""}
-        
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0c0c0c; table-layout: fixed;">
-          <tr>
-            <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
-              <!--[if (gte mso 9)|(IE)]>
-              <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
-                <tr>
-                  <td align="center" valign="top" width="600">
-              <![endif]-->
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #121212; border: 1px solid #222222; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                
-                <!-- Brand Header -->
-                <tr>
-                  <td align="center" valign="top" style="background-color: #121212; padding: 30px 40px 10px 40px;" class="content-padding">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <!-- Left side: Brand Logo -->
-                        <td align="left" valign="middle" style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 24px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px;">
-                          <table border="0" cellpadding="0" cellspacing="0">
-                            <tr>
-                              <!-- Brand Icon -->
-                              <td style="padding-right: 12px; vertical-align: middle;">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-                                  <path d="M3 17h6l3-3H6l-3 3zm5-5h6l3-3H11l-3 3zm5-5h6l3-3H16l-3 3z" fill="#00b49e"/>
-                                </svg>
-                              </td>
-                              <td style="vertical-align: middle; line-height: 24px;">
-                                Prosta<span style="color: #00b49e; font-weight: 300;">Sprawa</span>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                        <!-- Right side: Client Portal link -->
-                        <td align="right" valign="middle" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 13px; font-weight: 600;">
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/panel-klienta" style="color: #00b49e; text-decoration: none;">Client Portal &rarr;</a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
- 
-                <!-- Content Area -->
-                <tr>
-                  <td align="left" valign="top" style="padding: 40px; background-image: radial-gradient(circle at center, rgba(0, 180, 158, 0.08) 0%, rgba(18, 18, 18, 0) 70%); background-repeat: no-repeat; background-position: center;" class="content-padding">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td align="left" style="font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 15px; line-height: 1.625; color: #e5e5e5;">
-                          ${contentHtml}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
- 
-                <!-- Divider -->
-                <tr>
-                  <td align="center" style="padding: 0 40px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td style="border-top: 1px solid #222222; line-height: 1px; font-size: 1px;">&nbsp;</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
- 
-                <!-- Premium Footer -->
-                <tr>
-                  <td align="center" valign="top" style="padding: 40px;" class="content-padding">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <!-- Brand Title in Serif -->
-                      <tr>
-                        <td align="center" style="font-family: 'Playfair Display', 'Georgia', serif; font-size: 20px; font-weight: bold; color: #ffffff; padding-bottom: 16px;">
-                          Prosta Sprawa
-                        </td>
-                      </tr>
-                      <!-- Terms / Privacy / Cookies Links -->
-                      <tr>
-                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #a3a3a3; padding-bottom: 20px;">
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/terms" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;"></a>
-                          <span style="color: #404040;">&bull;</span>
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/privacy" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Privacy Policy</a>
-                          <span style="color: #404040;">&bull;</span>
-                          <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}/cookies" style="color: #a3a3a3; text-decoration: none; margin: 0 8px;">Cookie Settings</a>
-                        </td>
-                      </tr>
-                      <!-- Copyright text -->
-                      <tr>
-                        <td align="center" style="font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; font-size: 11px; line-height: 1.6; color: #737373; padding-bottom: 20px; text-align: center;">
-                          &copy; ${new Date().getFullYear()} Prosta Sprawa. 
-                        </td>
-                      </tr>
-                      <!-- Social/Utility Icons (Globe and Envelope) -->
-                      <tr>
-                        <td align="center">
-                          <table border="0" cellpadding="0" cellspacing="0">
-                            <tr>
-                              <!-- Globe icon -->
-                              <td style="padding: 0 10px;">
-                                <a href="${process.env.NEXTAUTH_URL || 'http://localhost:4000'}" style="color: #a3a3a3; text-decoration: none;">
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                                  </svg>
-                                </a>
-                              </td>
-                              <!-- Envelope icon -->
-                              <td style="padding: 0 10px;">
-                                <a href="mailto:bok@prostasprawa.pl" style="color: #a3a3a3; text-decoration: none;">
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
-                                  </svg>
-                                </a>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
- 
-              </table>
-              <!--[if (gte mso 9)|(IE)]>
-                  </td>
-                </tr>
-              </table>
-              <![endif]-->
-            </td>
-          </tr>
-        </table>
-      </body>
-    </html>
-  `
+  return renderEmailFrame(contentHtml, preheaderText)
 }
 
 /**
@@ -997,7 +809,7 @@ Wiadomość została wysłana automatycznie, prosimy na nią nie odpowiadać.
 }
 
 /** Etykiety tematów formularza kontaktowego (enum ContactSubject) */
-const CONTACT_SUBJECT_LABELS: Record<string, string> = {
+export const CONTACT_SUBJECT_LABELS: Record<string, string> = {
   INFORMACJA: 'Zapytanie ogólne',
   WSPARCIE: 'Wsparcie techniczne',
   WSPOLPRACA: 'Współpraca',
@@ -1016,6 +828,7 @@ export function generateContactFormBokEmail({
   subject,
   message,
   messageId,
+  ticketNumber,
 }: {
   senderName: string
   senderEmail: string
@@ -1023,9 +836,11 @@ export function generateContactFormBokEmail({
   subject: string
   message: string
   messageId?: string
+  /** Numer zgłoszenia podany nadawcy w mailu potwierdzającym (ZGLOSZENIE_PRZYJETE) */
+  ticketNumber?: string
 }): { subject: string; html: string; text: string } {
   const subjectLabel = CONTACT_SUBJECT_LABELS[subject] || subject
-  const emailSubject = `[Kontakt] ${subjectLabel} - ${senderName}`
+  const emailSubject = `[Kontakt]${ticketNumber ? ` ${ticketNumber}` : ''} ${subjectLabel} - ${senderName}`
   const receivedAt = formatDateTime(new Date())
 
   const row = (label: string, value: string, first = false) => `
@@ -1045,6 +860,7 @@ export function generateContactFormBokEmail({
         ${senderPhone ? row('Telefon:', `<a href="tel:${senderPhone}" style="color: #00b49e; text-decoration: underline;">${senderPhone}</a>`) : ''}
         ${row('Temat:', subjectLabel)}
         ${row('Data zgłoszenia:', receivedAt)}
+        ${ticketNumber ? row('Numer zgłoszenia:', ticketNumber) : ''}
         ${messageId ? row('ID zgłoszenia:', messageId) : ''}
       </table>
     </div>
@@ -1068,7 +884,7 @@ Nadawca: ${senderName}
 Email: ${senderEmail}
 ${senderPhone ? `Telefon: ${senderPhone}\n` : ''}Temat: ${subjectLabel}
 Data zgłoszenia: ${receivedAt}
-${messageId ? `ID zgłoszenia: ${messageId}\n` : ''}
+${ticketNumber ? `Numer zgłoszenia: ${ticketNumber}\n` : ''}${messageId ? `ID zgłoszenia: ${messageId}\n` : ''}
 Treść wiadomości:
 ${message}
 

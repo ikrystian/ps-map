@@ -30,10 +30,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CheckCircle, Eye, Search, Star, Trash2, XCircle } from "lucide-react"
+import { Ban, CheckCircle, Eye, Search, Star, Trash2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { ReasonDialog } from "@/components/admin/ReasonDialog"
 import type { Review } from "@/types"
 import { PaginationData } from '@/types/pagination';
 import { formatDate } from "@/lib/format"
@@ -55,6 +56,7 @@ export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [rejectReview, setRejectReview] = useState<Review | null>(null)
   const [selectedReview, setSelectedReview] = useState<Review | null>(null)
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
@@ -153,6 +155,23 @@ export default function AdminReviewsPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Nie udało się zaktualizować statusu")
     }
+  }
+
+  // Odrzucenie przez moderację: opinia znika z profilu, klient dostaje mail z powodem
+  const handleReject = async (reason: string) => {
+    if (!rejectReview) return
+    const response = await fetch(`/api/admin/reviews/${rejectReview.id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ powodOdrzucenia: reason }),
+    })
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      toast.error(error.error || "Nie udało się odrzucić opinii")
+      throw new Error("reject failed")
+    }
+    toast.success("Opinia odrzucona — klient dostał mail z powodem")
+    fetchReviews(pagination.page)
   }
 
   const openDeleteDialog = (review: Review) => {
@@ -406,6 +425,15 @@ export default function AdminReviewsPage() {
                         </Button>
 
                         <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setRejectReview(review)}
+                          title="Odrzuć z powodem (mail do klienta)"
+                        >
+                          <Ban className="h-4 w-4 text-destructive" />
+                        </Button>
+
+                        <Button
                           variant="outline"
                           size="sm"
                           onClick={() => openDeleteDialog(review)}
@@ -448,6 +476,15 @@ export default function AdminReviewsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ReasonDialog
+        open={!!rejectReview}
+        onOpenChange={(open) => !open && setRejectReview(null)}
+        title="Odrzuć opinię"
+        description="Opinia zostanie ukryta, a klient dostanie mail z powodem i linkiem do poprawienia opinii."
+        confirmLabel="Odrzuć opinię"
+        onConfirm={handleReject}
+      />
 
       {/* Delete Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

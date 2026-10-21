@@ -1,0 +1,13 @@
+Temat: Twoja opinia nie została opublikowana
+
+Dzień dobry,
+
+dziękujemy za opinię. Nie możemy jej opublikować w tej formie:
+
+{powod}
+
+Możesz ją poprawić i wysłać jeszcze raz: {linkDoOceny}
+
+Jeśli uważasz, że to błąd, napisz na bok@prostasprawa.pl. Odwołanie rozpatrzymy w ciągu 14 dni.
+
+Zespół ProstaSprawa.pl

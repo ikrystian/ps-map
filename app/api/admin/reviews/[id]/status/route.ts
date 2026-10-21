@@ -1,8 +1,11 @@
 import { auth } from "@/lib/auth"
+import { sendReviewRejectedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
-// PATCH /api/admin/reviews/[id]/status - Update review status (verify/activate) (ADMIN only)
+// PATCH /api/admin/reviews/[id]/status - Update review status (verify/activate/reject) (ADMIN only)
+// `powodOdrzucenia` = odrzucenie przez moderację: opinia zostaje ukryta, a klient dostaje
+// mail OPINIA_ODRZUCONA z tym powodem.
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -17,6 +20,11 @@ export async function PATCH(
     const { id } = await params
     const body = await request.json()
     const { zweryfikowana, aktywna } = body
+    const rejectionReason =
+      typeof body.powodOdrzucenia === "string" ? body.powodOdrzucenia.trim().slice(0, 2000) : ""
+    if (body.powodOdrzucenia !== undefined && !rejectionReason) {
+      return NextResponse.json({ error: "Podaj powód odrzucenia opinii" }, { status: 400 })
+    }
 
     // Verify review exists
     const existingReview = await prisma.review.findUnique({
@@ -36,6 +44,16 @@ export async function PATCH(
 
     if (aktywna !== undefined) {
       updateData.aktywna = aktywna
+      if (aktywna) {
+        updateData.powodOdrzucenia = null
+        updateData.odrzuconoAt = null
+      }
+    }
+
+    if (rejectionReason) {
+      updateData.aktywna = false
+      updateData.powodOdrzucenia = rejectionReason
+      updateData.odrzuconoAt = new Date()
     }
 
     // Update review status
@@ -63,6 +81,10 @@ export async function PATCH(
         },
       },
     })
+
+    if (rejectionReason) {
+      await sendReviewRejectedEmail(review.id)
+    }
 
     return NextResponse.json(review)
   } catch (error) {

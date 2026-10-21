@@ -14,7 +14,9 @@ import {
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/sonner"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+
+const CONTACT_SUBJECTS = ["INFORMACJA", "WSPARCIE", "WSPOLPRACA", "REKLAMACJA", "INNE"]
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -26,6 +28,23 @@ export function ContactForm() {
     tresc: "",
     politykaPrivacy: false,
   })
+
+  // Link „Odwołaj się” z maila o decyzji moderacyjnej: /kontakt?temat=REKLAMACJA&odwolanie=<czego dotyczy>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const temat = params.get("temat")
+    const odwolanie = params.get("odwolanie")
+    if (!temat && !odwolanie) return
+    // Parametry URL są znane dopiero w przeglądarce (strona jest statyczna) — stąd efekt
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFormData((prev) => ({
+      ...prev,
+      temat: temat && CONTACT_SUBJECTS.includes(temat) ? temat : prev.temat,
+      tresc: odwolanie && !prev.tresc
+        ? `Odwołanie od decyzji moderacyjnej dotyczącej: ${odwolanie.slice(0, 300)}\n\nUzasadnienie odwołania:\n`
+        : prev.tresc,
+    }))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

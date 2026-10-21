@@ -38,6 +38,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { renderEmailFrame } from "@/lib/email-layout"
 
 interface EmailTemplate {
   id: string
@@ -83,6 +84,23 @@ const emailTypes = [
   { value: "REJESTRACJA_SUBDOMENA_KLIENT", label: "Rejestracja - klient (subdomena)" },
   { value: "REJESTRACJA_SUBDOMENA_KANCELARIA", label: "Rejestracja - ekspert (subdomena)" },
   { value: "NEWSLETTER_POTWIERDZENIE", label: "Newsletter - potwierdzenie zapisu" },
+  { value: "NOWE_ZAPYTANIE_KONSULTACJI", label: "Konsultacja - nowe zapytanie (ekspert)" },
+  { value: "NOWE_ZAINTERESOWANIE_KONSULTACJA", label: "Konsultacja - ekspert zgłosił się (klient)" },
+  { value: "ZAINTERESOWANIE_ZAAKCEPTOWANE", label: "Konsultacja - zgłoszenie wybrane (ekspert)" },
+  { value: "ZAINTERESOWANIE_ODRZUCONE", label: "Konsultacja - zgłoszenie odrzucone (ekspert)" },
+  { value: "POLECENIE_SPRAWY", label: "Polecenie sprawy (klient)" },
+  { value: "POLECENIE_SPRAWA_UTWORZONA", label: "Polecenie - klient dodał sprawę (ekspert)" },
+  { value: "KONTO_USUNIETE", label: "Konto usunięte" },
+  { value: "ZMIANA_EMAIL", label: "Zmiana adresu e-mail" },
+  { value: "OPINIA_ODRZUCONA", label: "Opinia odrzucona (klient)" },
+  { value: "SPRAWA_BEZ_OFERT", label: "Sprawa 48 h bez ofert (klient)" },
+  { value: "TRESC_ZABLOKOWANA", label: "Decyzja moderacyjna (DSA)" },
+  { value: "ZGLOSZENIE_PRZYJETE", label: "Formularz kontaktowy - zgłoszenie przyjęte" },
+  { value: "ZMIANA_REGULAMINU", label: "Zmiana regulaminu (wysyłka ręczna)" },
+  { value: "OKRES_PROBNY_KONCZY_SIE", label: "Bezpłatny pakiet kończy się za 7 dni (ekspert)" },
+  { value: "WERYFIKACJA_ZAAKCEPTOWANA", label: "Weryfikacja zaakceptowana (ekspert)" },
+  { value: "PLATNOSC_NIEUDANA", label: "Płatność nieudana (ekspert)" },
+  { value: "WERYFIKACJA_ODRZUCONA", label: "Weryfikacja odrzucona (ekspert)" },
   { value: "CUSTOM", label: "Własny szablon" },
 ]
 
@@ -115,11 +133,23 @@ const availableVariables: Record<string, string[]> = {
   REJESTRACJA_SUBDOMENA_KLIENT: ["{imie}", "{nazwisko}", "{email}", "{linkDodajSprawa}"],
   REJESTRACJA_SUBDOMENA_KANCELARIA: ["{nazwa}", "{email}", "{nip}", "{linkDoPanelu}"],
   NEWSLETTER_POTWIERDZENIE: ["{email}", "{linkPotwierdzenia}"],
+  KONTO_USUNIETE: ["{imie}"],
+  ZMIANA_EMAIL: ["{imie}", "{nowyEmail}", "{linkPotwierdzenia}"],
+  OPINIA_ODRZUCONA: ["{klient}", "{powod}", "{linkDoOceny}"],
+  SPRAWA_BEZ_OFERT: ["{klient}", "{nazwaSprawy}", "{linkDoSprawy}"],
+  TRESC_ZABLOKOWANA: ["{odbiorca}", "{decyzja}", "{tresc}", "{powod}", "{linkOdwolania}"],
+  ZGLOSZENIE_PRZYJETE: ["{imie}", "{numerZgloszenia}", "{temat}"],
+  ZMIANA_REGULAMINU: ["{odbiorca}", "{dataWejscia}", "{podsumowanieZmian}", "{linkDoRegulaminu}"],
+  OKRES_PROBNY_KONCZY_SIE: ["{nazwa}", "{dataKonca}", "{linkDoPakietow}"],
+  WERYFIKACJA_ZAAKCEPTOWANA: ["{nazwa}", "{linkDoPanelu}", "{linkDoProfilu}"],
+  PLATNOSC_NIEUDANA: ["{produkt}", "{kwota}", "{linkPonow}"],
+  WERYFIKACJA_ODRZUCONA: ["{nazwa}", "{powod}", "{linkDoPanelu}"],
   CUSTOM: [],
 }
 
 import EmailLogsTab from "@/components/admin/EmailLogsTab"
 import ScheduledEmailsTab from "@/components/admin/ScheduledEmailsTab"
+import TermsChangeMailingTab from "@/components/admin/TermsChangeMailingTab"
 
 export default function EmailManagementPage() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
@@ -210,23 +240,25 @@ export default function EmailManagementPage() {
 
       const method = selectedTemplate ? "PUT" : "POST"
 
-      // Get variables for the selected type
-      const zmienne = availableVariables[formData.typ as keyof typeof availableVariables] || []
-
-      // Create descriptions for variables (you can customize this)
-      const opisZmiennych: Record<string, string> = {}
-      zmienne.forEach((variable) => {
-        opisZmiennych[variable] = variable.replace(/[{}]/g, "")
-      })
+      // Wyzwalacze i opisy zmiennych pochodzą z seeda — przy edycji tego samego typu
+      // zostawiamy je bez zmian (wcześniej zapis czyścił je do pustych list)
+      const keepMetadata = selectedTemplate && selectedTemplate.typ === formData.typ
+      let metadata = {}
+      if (!keepMetadata) {
+        const zmienne = availableVariables[formData.typ as keyof typeof availableVariables] || []
+        const opisZmiennych: Record<string, string> = {}
+        zmienne.forEach((variable) => {
+          opisZmiennych[variable] = variable.replace(/[{}]/g, "")
+        })
+        metadata = { triggery: [], zmienne, opisZmiennych }
+      }
 
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          triggery: [],
-          zmienne,
-          opisZmiennych,
+          ...metadata,
         }),
       })
 
@@ -350,6 +382,7 @@ export default function EmailManagementPage() {
           <TabsTrigger value="templates">Szablony</TabsTrigger>
           <TabsTrigger value="logs">Logi maili</TabsTrigger>
           <TabsTrigger value="scheduled">Zaplanowane</TabsTrigger>
+          <TabsTrigger value="terms">Zmiana regulaminu</TabsTrigger>
         </TabsList>
 
         <TabsContent value="templates" className="space-y-6">
@@ -474,6 +507,10 @@ export default function EmailManagementPage() {
 
         <TabsContent value="scheduled">
           <ScheduledEmailsTab />
+        </TabsContent>
+
+        <TabsContent value="terms">
+          <TermsChangeMailingTab />
         </TabsContent>
       </Tabs>
 
@@ -649,12 +686,13 @@ export default function EmailManagementPage() {
                 </TabsContent>
 
                 <TabsContent value="html">
-                  <div className="p-4 border border-border rounded-lg bg-background overflow-auto max-h-[400px] shadow-inner">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: selectedTemplate.trescHtml }}
-                      className="prose max-w-none text-foreground dark:prose-invert [&_h2]:!text-foreground [&_h3]:!text-foreground [&_p]:!text-foreground [&_li]:!text-foreground [&_strong]:!text-foreground [&_span]:!text-foreground [&_div]:!bg-muted/30 [&_div]:!border-border/50 [&_ul]:!bg-transparent [&_a]:!text-indigo-500 [&_table]:!bg-transparent [&_td]:!bg-transparent [&_tr]:!bg-transparent [&_th]:!bg-transparent [&_td]:!text-foreground [&_th]:!text-foreground [&_*]:border-border"
-                    />
-                  </div>
+                  {/* Podgląd w ramce wysyłkowej — tak, jak mail zobaczy odbiorca */}
+                  <iframe
+                    title="Podgląd wersji HTML"
+                    sandbox=""
+                    srcDoc={renderEmailFrame(selectedTemplate.trescHtml || "")}
+                    className="w-full h-[560px] border border-border rounded-lg bg-[#181816]"
+                  />
                 </TabsContent>
               </Tabs>
             </div>

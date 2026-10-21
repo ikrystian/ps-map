@@ -1,6 +1,7 @@
 import { generateInvoiceForOrder } from "@/lib/invoice-generator"
 import { payuClient } from "@/lib/payu"
 import { claimOrderPayment } from "@/lib/points-ledger"
+import { sendPaymentFailedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -176,12 +177,14 @@ export async function POST(request: NextRequest) {
         console.error("Error generating/updating invoice in PayU notify:", invoiceErr)
       }
     } else if (status === 'CANCELED') {
-      await prisma.order.update({
-        where: { id: dbOrder.id },
+      // Warunkowo — `verify` może anulować to samo zamówienie równolegle, a mail ma pójść raz
+      const canceled = await prisma.order.updateMany({
+        where: { id: dbOrder.id, statusPlatnosci: { notIn: ['ZAPLACONE', 'ZWROT', 'ANULOWANE'] } },
         data: {
           statusPlatnosci: 'ANULOWANE'
         }
       })
+      if (canceled.count > 0) await sendPaymentFailedEmail(dbOrder.id)
     }
 
     return Response.json({ status: "OK" })

@@ -1,0 +1,13 @@
+Temat: Zmieniamy regulamin ProstaSprawa.pl od {dataWejscia}
+
+Dzień dobry,
+
+od {dataWejscia} obowiązuje nowa wersja regulaminu ProstaSprawa.pl. Najważniejsze zmiany:
+
+{podsumowanieZmian}
+
+Regulamin: {linkDoRegulaminu}
+
+Jeśli nie akceptujesz zmian, możesz przed tą datą usunąć konto. Zmiany nie naruszają praw nabytych wcześniej, w tym opłaconych pakietów.
+
+Zespół ProstaSprawa.pl

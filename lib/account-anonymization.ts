@@ -22,6 +22,7 @@
  * (patrz `purgeExpiredAccountRetention`) anonimizuje również te dane.
  */
 
+import { sendAccountDeletedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import type { Prisma, UserRole } from "@prisma/client"
 import crypto from "crypto"
@@ -816,6 +817,14 @@ export async function anonymizeUserAccount(
     },
   }).catch((error) => {
     console.error("[anonymization] Nie udało się zapisać logu systemowego:", error)
+  })
+
+  // Potwierdzenie na dotychczasowy adres — w EmailLog ląduje adres zanonimizowany,
+  // bo logi z oryginalnym adresem zostały właśnie usunięte w transakcji.
+  await sendAccountDeletedEmail({
+    originalEmail,
+    imie: user.imie,
+    logTo: anonymizedEmailFor(userId),
   })
 
   return { userId, role: user.role, retentionUntil, report, legalBasis, filesDeleted }

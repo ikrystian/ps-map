@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
@@ -133,6 +134,8 @@ export default function EditUserPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState<UserData | null>(null)
+  // Uzasadnienie blokady/zawieszenia — wypełnione wysyła użytkownikowi decyzję (mail DSA)
+  const [moderacjaPowod, setModeracjaPowod] = useState("")
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isVerifyingEmail, setIsVerifyingEmail] = useState(false)
   const [isResendingVerification, setIsResendingVerification] = useState(false)
@@ -386,6 +389,10 @@ export default function EditUserPage() {
         updateData.client = values.client
       }
 
+      if (moderacjaPowod.trim()) {
+        updateData.moderacjaPowod = moderacjaPowod.trim()
+      }
+
       const response = await fetch(`/api/admin/users/${params.id}`, {
         method: "PUT",
         headers: {
@@ -398,6 +405,8 @@ export default function EditUserPage() {
         const error = await response.json()
         throw new Error(error.error || "Błąd podczas aktualizacji użytkownika")
       }
+      setUserData((prev) => (prev ? { ...prev, status: values.status } : prev))
+      setModeracjaPowod("")
 
       // Zapisz ustawienia powiadomień jeśli rola to Ekspert
       if (values.role === "LAW_FIRM" && values.notificationSettings) {
@@ -663,6 +672,22 @@ export default function EditUserPage() {
                             </SelectContent>
                           </Select>
                           <FormMessage />
+                          {(field.value === "BLOCKED" || field.value === "SUSPENDED") &&
+                            field.value !== userData?.status && (
+                              <div className="space-y-1.5 pt-2">
+                                <FormLabel htmlFor="moderacja-powod">Uzasadnienie decyzji (opcjonalne)</FormLabel>
+                                <Textarea
+                                  id="moderacja-powod"
+                                  rows={3}
+                                  maxLength={2000}
+                                  value={moderacjaPowod}
+                                  onChange={(e) => setModeracjaPowod(e.target.value)}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                  Wypełnione = użytkownik dostanie mail z decyzją i linkiem do odwołania.
+                                </p>
+                              </div>
+                            )}
                         </FormItem>
                       )}
                     />

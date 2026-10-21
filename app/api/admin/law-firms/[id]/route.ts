@@ -6,6 +6,12 @@ import {
   anonymizeUserAccount,
 } from "@/lib/account-anonymization"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
+import {
+  isModerationStatus,
+  moderationDecisionLabel,
+  sendContentModeratedEmail,
+  sendLawFirmVerificationEmail,
+} from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import bcrypt from "bcryptjs"
@@ -457,6 +463,10 @@ export async function PUT(
     if (body.punktySaldo !== undefined) lawFirmUpdateData.punktySaldo = body.punktySaldo
     if (body.pakietSubskrypcji !== undefined) {
       lawFirmUpdateData.pakietSubskrypcji = (body.pakietSubskrypcji === "" || body.pakietSubskrypcji === "none" || body.pakietSubskrypcji === null) ? null : body.pakietSubskrypcji
+      // Ręczna zmiana pakietu kończy bezpłatny pakiet na start (brak maila o jego końcu)
+      if (lawFirmUpdateData.pakietSubskrypcji !== existingLawFirm.pakietSubskrypcji) {
+        lawFirmUpdateData.pakietProbny = false
+      }
     }
     if (body.dataPakietuOd !== undefined) {
       lawFirmUpdateData.dataPakietuOd = body.dataPakietuOd === "" ? null : new Date(body.dataPakietuOd)
@@ -494,6 +504,23 @@ export async function PUT(
 
     // Status
     if (body.zweryfikowana !== undefined) lawFirmUpdateData.zweryfikowana = body.zweryfikowana
+    const verificationAccepted = body.zweryfikowana === true && !existingLawFirm.zweryfikowana
+    if (verificationAccepted) {
+      lawFirmUpdateData.weryfikacjaOdrzuconaPowod = null
+      lawFirmUpdateData.weryfikacjaOdrzuconaAt = null
+    }
+
+    // Odrzucenie weryfikacji z powodem (mail WERYFIKACJA_ODRZUCONA)
+    const rejectionReason =
+      typeof body.odrzucenieWeryfikacjiPowod === "string" ? body.odrzucenieWeryfikacjiPowod.trim().slice(0, 2000) : ""
+    if (body.odrzucenieWeryfikacjiPowod !== undefined) {
+      if (!rejectionReason) {
+        return NextResponse.json({ error: "Podaj powód odrzucenia weryfikacji" }, { status: 400 })
+      }
+      lawFirmUpdateData.zweryfikowana = false
+      lawFirmUpdateData.weryfikacjaOdrzuconaPowod = rejectionReason
+      lawFirmUpdateData.weryfikacjaOdrzuconaAt = new Date()
+    }
     if (body.aktywna !== undefined) lawFirmUpdateData.aktywna = body.aktywna
 
     // Account Manager
@@ -640,6 +667,24 @@ export async function PUT(
 
       return updatedLawFirm
     })
+
+    if (rejectionReason) {
+      await sendLawFirmVerificationEmail(id, { accepted: false, powod: rejectionReason })
+    } else if (verificationAccepted) {
+      await sendLawFirmVerificationEmail(id, { accepted: true })
+    }
+
+    // Blokada/zawieszenie konta eksperta z uzasadnieniem (mail TRESC_ZABLOKOWANA)
+    const moderationReason = typeof body.moderacjaPowod === "string" ? body.moderacjaPowod.trim() : ""
+    if (moderationReason && isModerationStatus(body.userStatus) && body.userStatus !== existingLawFirm.user.status) {
+      await sendContentModeratedEmail({
+        userId: existingLawFirm.userId,
+        decyzja: moderationDecisionLabel(body.userStatus),
+        tresc: `Konto w serwisie ProstaSprawa.pl (${existingLawFirm.nazwa})`,
+        powod: moderationReason,
+        moderatorId: session.user.id,
+      })
+    }
 
     return NextResponse.json(flattenLawFirmUser(result))
   } catch (error) {

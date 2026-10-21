@@ -30,6 +30,7 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { ReasonDialog } from "@/components/admin/ReasonDialog"
 import { PaginatedResponse } from '@/types/pagination';
 import { userAvatar } from "@/lib/client-avatar"
 import { formatDateTime } from "@/lib/format"
@@ -74,6 +75,7 @@ export default function AdminUsersPage() {
   const currentUserId = session?.user?.id
 
   const [users, setUsers] = useState<User[]>([])
+  const [blockUser, setBlockUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isSendVerificationDialogOpen, setIsSendVerificationDialogOpen] = useState(false)
@@ -122,8 +124,8 @@ export default function AdminUsersPage() {
     fetchUsers()
   }, [currentPage, searchQuery, statusFilter])
 
-  // Toggle user block status
-  const handleToggleBlock = async (user: User) => {
+  // Toggle user block status. Blokada z uzasadnieniem wysyła użytkownikowi decyzję (mail DSA).
+  const handleToggleBlock = async (user: User, moderacjaPowod?: string) => {
     const newStatus = user.status === "BLOCKED" ? "ACTIVE" : "BLOCKED"
     try {
       const response = await fetch(`/api/admin/users/${user.id}`, {
@@ -133,11 +135,16 @@ export default function AdminUsersPage() {
         },
         body: JSON.stringify({
           status: newStatus,
+          ...(moderacjaPowod ? { moderacjaPowod } : {}),
         }),
       })
 
       if (response.ok) {
-        toast.success(newStatus === "BLOCKED" ? "User blocked successfully" : "User unblocked successfully")
+        toast.success(
+          newStatus === "BLOCKED"
+            ? moderacjaPowod ? "Użytkownik zablokowany — wysłano mail z uzasadnieniem" : "Użytkownik zablokowany"
+            : "Użytkownik odblokowany"
+        )
         fetchUsers()
       } else {
         const error = await response.json()
@@ -145,6 +152,7 @@ export default function AdminUsersPage() {
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to toggle block status")
+      throw error
     }
   }
 
@@ -440,7 +448,9 @@ export default function AdminUsersPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleToggleBlock(user)}
+                            onClick={() =>
+                              user.status === "BLOCKED" ? handleToggleBlock(user).catch(() => {}) : setBlockUser(user)
+                            }
                             title={user.status === "BLOCKED" ? "Odblokuj użytkownika" : "Zablokuj użytkownika"}
                             className={user.status === "BLOCKED" ? "text-green-600 hover:text-green-700 hover:bg-green-50" : "text-amber-600 hover:text-amber-700 hover:bg-amber-50"}
                           >
@@ -547,6 +557,18 @@ export default function AdminUsersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ReasonDialog
+        open={!!blockUser}
+        onOpenChange={(open) => !open && setBlockUser(null)}
+        title="Zablokuj użytkownika"
+        description="Jeśli wpiszesz uzasadnienie, użytkownik dostanie mail z decyzją i linkiem do odwołania (DSA). Bez uzasadnienia konto zostanie zablokowane bez powiadomienia."
+        confirmLabel="Zablokuj"
+        required={false}
+        onConfirm={async (reason) => {
+          if (blockUser) await handleToggleBlock(blockUser, reason)
+        }}
+      />
     </div>
   )
 }

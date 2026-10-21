@@ -1,0 +1,11 @@
+Temat: Profil zweryfikowany. Możesz odpowiadać na sprawy
+
+Dzień dobry,
+
+sprawdziliśmy dokumenty. Profil {nazwa} ma znaczek „Zweryfikowany” i jest widoczny dla klientów.
+
+Od teraz możesz odpowiadać na sprawy z bazy: {linkDoPanelu}
+
+Tak widzą Cię klienci: {linkDoProfilu}
+
+Zespół ProstaSprawa.pl

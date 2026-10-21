@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { payuClient } from "@/lib/payu"
 import { claimOrderPayment, creditPointsForOrder, creditSubscriptionBonus } from "@/lib/points-ledger"
+import { sendPaymentFailedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -114,12 +115,14 @@ export async function POST(request: NextRequest) {
                 message: settled ? "Order updated successfully" : "Order already paid",
             })
         } else if (status === 'CANCELED') {
-            await prisma.order.update({
-                where: { id: order.id },
+            // Warunkowo — powiadomienie `notify` może anulować to samo zamówienie równolegle
+            const canceled = await prisma.order.updateMany({
+                where: { id: order.id, statusPlatnosci: { notIn: ['ZAPLACONE', 'ZWROT', 'ANULOWANE'] } },
                 data: {
                     statusPlatnosci: 'ANULOWANE'
                 }
             })
+            if (canceled.count > 0) await sendPaymentFailedEmail(order.id)
             return Response.json({ status: "CANCELED", message: "Order canceled" })
         }
 

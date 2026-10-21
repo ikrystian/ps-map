@@ -85,6 +85,9 @@ model User {
   // Rejestr anonimizacji konta (RODO art. 17)
   accountDeletion AccountDeletion?
 
+  // Prośby o zmianę adresu e-mail (link potwierdzający na nowy adres)
+  emailChangeRequests EmailChangeRequest[]
+
   // Rejestr audytu rejestracji i zgód RODO (RODO art. 5 ust. 2 - rozliczalność)
   registrationAudit RegistrationAuditLog?
 
@@ -381,6 +384,10 @@ model LawFirm {
   pakietSubskrypcji     SubscriptionPackage?
   dataPakietuOd         DateTime?
   dataPakietuDo         DateTime?
+  // Bezpłatny pakiet na start (autoGrantBusinessPackage) — zerowany przy zakupie lub zmianie pakietu
+  pakietProbny          Boolean  @default(false)
+  // Kiedy wysłano mail „za 7 dni kończy się bezpłatny pakiet” — wysyłka jednorazowa
+  przypomnienieKoniecProbnegoAt DateTime?
   autoRenewal           Boolean  @default(false)  // Automatyczne przedłużanie pakietu
   packageDurationDays   Int?     // Liczba dni aktywności pakietu (nadpisanie w panelu admina)
 
@@ -397,6 +404,9 @@ model LawFirm {
 
   // Status konta
   zweryfikowana         Boolean  @default(false)
+  // Ostatnie odrzucenie weryfikacji przez admina (powód trafia do maila)
+  weryfikacjaOdrzuconaPowod String?
+  weryfikacjaOdrzuconaAt    DateTime?
   aktywna               Boolean  @default(true)
 
   // Opiekun eksperta
@@ -756,6 +766,9 @@ model Case {
   // faktycznie nie potwierdzi adresu e-mail. Pozostałe ścieżki tworzenia sprawy
   // (klient już zweryfikowany) mają tu zawsze false.
   czekaNaAktywacjeEmail     Boolean  @default(false)
+
+  // Kiedy wysłano klientowi mail „sprawa czeka na oferty” (48h bez ofert) — wysyłka jednorazowa
+  przypomnienieBezOfertAt   DateTime?
 
   // Archiwizacja (soft delete)
   isArchived                Boolean  @default(false)
@@ -1169,6 +1182,9 @@ model Review {
   // Status
   zweryfikowana       Boolean  @default(false)
   aktywna             Boolean  @default(true)
+  // Odrzucenie przez moderację (opinia ukryta, powód wysłany klientowi)
+  powodOdrzucenia     String?
+  odrzuconoAt         DateTime?
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -2336,6 +2352,18 @@ model EmailTemplate {
   @@unique([typ])
 }
 
+model EmailChangeRequest {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newEmail  String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 enum EmailType {
   NOWA_SPRAWA              // Email do ekspercie o nowej sprawie
   NOWA_OFERTA              // Email do klienta o nowej ofercie
@@ -2372,6 +2400,17 @@ enum EmailType {
   NEWSLETTER_POTWIERDZENIE     // Email z linkiem do potwierdzenia zapisu do newslettera
   POLECENIE_SPRAWY             // Email do klienta z linkiem polecającym od eksperta
   POLECENIE_SPRAWA_UTWORZONA   // Email do eksperta: klient z polecenia utworzył sprawę
+  KONTO_USUNIETE               // Potwierdzenie usunięcia (anonimizacji) konta
+  ZMIANA_EMAIL                 // Link potwierdzający zmianę adresu e-mail (na nowy adres)
+  OPINIA_ODRZUCONA             // Do klienta: opinia nie została opublikowana
+  SPRAWA_BEZ_OFERT             // Do klienta: sprawa 48h bez ofert
+  TRESC_ZABLOKOWANA            // Decyzja moderacyjna (DSA) z uzasadnieniem
+  ZGLOSZENIE_PRZYJETE          // Do nadawcy: potwierdzenie formularza kontaktowego
+  ZMIANA_REGULAMINU            // Informacja o zmianie regulaminu (wysyłka ręczna z panelu)
+  OKRES_PROBNY_KONCZY_SIE      // Do eksperta: 7 dni do końca bezpłatnego pakietu
+  WERYFIKACJA_ZAAKCEPTOWANA    // Do eksperta: profil zweryfikowany
+  PLATNOSC_NIEUDANA            // Do eksperta: płatność nie przeszła
+  WERYFIKACJA_ODRZUCONA        // Do eksperta: weryfikacja odrzucona z powodem
 }
 
 // ============================================================================

@@ -16,11 +16,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/sonner"
-import { AlertCircle, Archive, ArrowLeft, Building2, Clock, Edit, MessageSquare, Trash2, User } from "lucide-react"
+import { AlertCircle, Archive, ArrowLeft, Ban, Building2, Clock, Edit, MessageSquare, Trash2, User } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { ReasonDialog } from "@/components/admin/ReasonDialog"
 
 interface User {
   id: string
@@ -122,6 +123,7 @@ export default function CaseDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [deleteType, setDeleteType] = useState<"archive" | "hard">("archive")
+  const [moderateOpen, setModerateOpen] = useState(false)
 
   useEffect(() => {
     fetchCaseDetails()
@@ -143,6 +145,21 @@ export default function CaseDetailsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Wycofanie sprawy przez moderację: status ANULOWANA + mail z uzasadnieniem do klienta (DSA)
+  const handleModerate = async (reason: string) => {
+    const response = await fetch(`/api/admin/cases/${params.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "ANULOWANA", moderacjaPowod: reason }),
+    })
+    if (!response.ok) {
+      toast.error("Nie udało się wycofać sprawy")
+      throw new Error("moderation failed")
+    }
+    toast.success("Sprawa wycofana — klient dostał mail z uzasadnieniem")
+    fetchCaseDetails()
   }
 
   const handleDelete = async () => {
@@ -219,6 +236,12 @@ export default function CaseDetailsPage() {
               Edytuj
             </Link>
           </Button>
+          {caseData.status !== "ANULOWANA" && (
+            <Button variant="outline" onClick={() => setModerateOpen(true)} className="text-destructive">
+              <Ban className="h-4 w-4 mr-2" />
+              Wycofaj (moderacja)
+            </Button>
+          )}
           {!caseData.isArchived && (
             <>
               <Button variant="outline" onClick={() => openDeleteDialog("archive")} className="text-orange-600">
@@ -611,6 +634,15 @@ export default function CaseDetailsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ReasonDialog
+        open={moderateOpen}
+        onOpenChange={setModerateOpen}
+        title="Wycofaj sprawę z serwisu"
+        description="Sprawa dostanie status „Anulowana”, a klient mail z uzasadnieniem i linkiem do odwołania."
+        confirmLabel="Wycofaj sprawę"
+        onConfirm={handleModerate}
+      />
     </div>
   )
 }

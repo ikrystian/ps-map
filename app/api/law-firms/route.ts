@@ -684,6 +684,7 @@ export async function POST(request: NextRequest) {
           pakietSubskrypcji: subPackage as any,
           dataPakietuOd: pkgStart,
           dataPakietuDo: pkgEnd,
+          pakietProbny: isAutoGrantActive,
           zgodaRegulamin: body.zgodaRegulamin,
           zgodaPrzetwarzanie: body.zgodaPrzetwarzanie,
           calaPolska: body.calaPolska || body.callaPolska || false,

@@ -1,0 +1,12 @@
+Temat: Mamy Twoje zgłoszenie: {temat}
+
+Dzień dobry,
+
+dostaliśmy Twoją wiadomość i już się nią zajmujemy.
+
+Numer: {numerZgloszenia}
+Temat: {temat}
+
+Odpowiemy najpóźniej w ciągu 14 dni, zwykle dużo szybciej. Jeśli chcesz coś dopisać, odpowiedz na tę wiadomość.
+
+Zespół ProstaSprawa.pl

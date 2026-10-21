@@ -20,7 +20,11 @@ export async function processScheduledEmails(): Promise<ProcessEmailsResult> {
       scheduledAt: {
         lte: now
       }
-    }
+    },
+    // Paczki po 200 co minutę — masowa wysyłka (np. zmiana regulaminu) nie blokuje
+    // joba na długo i nie wysyła tysięcy maili do SMTP naraz
+    orderBy: { scheduledAt: "asc" },
+    take: 200,
   })
 
   let successCount = 0

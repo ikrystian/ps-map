@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { sendEmail, wrapInBrandLayoutIfNeeded } from "@/lib/email"
+import { splitPreheader } from "@/lib/email-layout"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
@@ -66,6 +67,25 @@ export async function POST(request: NextRequest) {
       "{linkPotwierdzenia}": "https://prostasprawa.pl/auth/verify-email?token=test-token",
       "{linkResetHasla}": "https://prostasprawa.pl/auth/reset-password?token=test-token",
       "{linkDoPanelu}": "https://prostasprawa.pl/panel-eksperta",
+      "{nazwaSprawy}": "Przykładowa sprawa testowa",
+      "{linkDoSprawy}": "https://prostasprawa.pl/panel-klienta/sprawy",
+      "{nowyEmail}": to,
+      "{powod}": "Przykładowe uzasadnienie decyzji.",
+      "{linkDoOceny}": "https://prostasprawa.pl/panel-klienta/sprawy",
+      "{odbiorca}": "Jan Kowalski",
+      "{decyzja}": "Ukrycie treści",
+      "{tresc}": "Sprawa „Przykładowa sprawa testowa”",
+      "{linkOdwolania}": "https://prostasprawa.pl/kontakt",
+      "{numerZgloszenia}": "ZG-TEST1234",
+      "{temat}": "Wsparcie techniczne",
+      "{dataWejscia}": "01.12.2026",
+      "{podsumowanieZmian}": "Przykładowe podsumowanie zmian w regulaminie.",
+      "{linkDoRegulaminu}": "https://prostasprawa.pl/regulamin",
+      "{dataKonca}": "28.10.2026",
+      "{linkDoPakietow}": "https://prostasprawa.pl/panel-eksperta/pakiet",
+      "{linkDoProfilu}": "https://prostasprawa.pl",
+      "{produkt}": "Pakiet Standard (12 mies.)",
+      "{linkPonow}": "https://prostasprawa.pl/panel-eksperta/pakiet",
     }
 
     // Zastąp zmienne w temacie i treści
@@ -90,8 +110,10 @@ export async function POST(request: NextRequest) {
     `
 
     if (template.trescHtml) {
-      html = testNotice + html
-      html = wrapInBrandLayoutIfNeeded(html, subject)
+      // Notka testowa za preheaderem, żeby ten został wyciągnięty na początek maila
+      const { preheaderHtml, bodyHtml } = splitPreheader(html)
+      html = preheaderHtml + testNotice + bodyHtml
+      html = wrapInBrandLayoutIfNeeded(html)
     }
 
     text = "⚠️ TO JEST EMAIL TESTOWY\n" +

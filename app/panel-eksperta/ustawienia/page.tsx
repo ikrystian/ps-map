@@ -1,6 +1,6 @@
 "use client"
 
-import { ConnectedAccountsCard, DeleteAccountSection, LoginHistory } from "@/components/auth"
+import { ChangeEmailDialog, ConnectedAccountsCard, DeleteAccountSection, LoginHistory } from "@/components/auth"
 import { NOTIFICATION_SETTINGS_CHANGED_EVENT } from "@/components/MessageNotificationSound"
 import { PageHeader } from "@/components/panel-eksperta/PageHeader"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -290,16 +290,14 @@ export default function LawFirmSettingsPage() {
                   </p>
                 </div>
 
-                {/* E-mail (Zablokowana edycja) */}
+                {/* E-mail — zmiana przez link wysłany na nowy adres */}
                 <div className="p-4 rounded-xl bg-background/30 border border-border/30 flex items-center gap-3">
                   <Mail className="h-5 w-5 text-indigo-400 shrink-0" />
                   <div className="min-w-0 flex-1">
                     <span className="text-sm text-muted-foreground uppercase tracking-wider block font-medium">Adres e-mail administratora</span>
                     <span className="text-sm font-semibold text-foreground truncate block">{userData.email}</span>
                   </div>
-                  <div title="Edycja adresu e-mail jest zablokowana" className="ml-auto shrink-0 flex items-center justify-center">
-                    <Lock className="h-4 w-4 text-muted-foreground" />
-                  </div>
+                  <ChangeEmailDialog currentEmail={userData.email} />
                 </div>
               </div>
             </CardContent>

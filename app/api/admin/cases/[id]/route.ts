@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { sendContentModeratedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -229,6 +230,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         },
       },
     })
+
+    // Anulowanie sprawy przez moderację z uzasadnieniem (mail TRESC_ZABLOKOWANA do klienta)
+    const moderationReason = typeof body.moderacjaPowod === "string" ? body.moderacjaPowod.trim() : ""
+    if (moderationReason && body.status === "ANULOWANA" && existingCase.status !== "ANULOWANA") {
+      await sendContentModeratedEmail({
+        userId: updatedCase.client.userId,
+        decyzja: "Wycofanie sprawy z serwisu",
+        tresc: `Sprawa „${updatedCase.nazwaSprawy}”${updatedCase.numerSprawy ? ` (${updatedCase.numerSprawy})` : ""}`,
+        powod: moderationReason,
+        moderatorId: session.user.id,
+      })
+    }
 
     return NextResponse.json(updatedCase)
   } catch (error) {

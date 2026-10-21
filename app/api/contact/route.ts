@@ -1,4 +1,5 @@
-import { generateContactFormBokEmail, generateContactFormEmail, sendEmail } from "@/lib/email"
+import { CONTACT_SUBJECT_LABELS, generateContactFormBokEmail, generateContactFormEmail, sendEmail } from "@/lib/email"
+import { contactTicketNumber, sendContactFormReceivedEmail } from "@/lib/platform-emails"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
@@ -130,6 +131,7 @@ export async function POST(request: NextRequest) {
         subject: subjectEnum,
         message: tresc,
         messageId: message.id,
+        ticketNumber: contactTicketNumber(message.id),
       })
 
       const sent = await sendEmail({
@@ -145,6 +147,15 @@ export async function POST(request: NextRequest) {
         // Wiadomość jest już zapisana w bazie - nie przerywamy odpowiedzi dla użytkownika
         console.error(`Nie udało się wysłać zapytania kontaktowego ${message.id} na ${BOK_EMAIL}`)
       }
+
+      // Potwierdzenie dla nadawcy z numerem zgłoszenia
+      await sendContactFormReceivedEmail({
+        to: email,
+        imie: imieNazwisko,
+        contactFormId: message.id,
+        temat: CONTACT_SUBJECT_LABELS[subjectEnum] || subjectEnum,
+        replyTo: BOK_EMAIL,
+      })
     }
 
     return Response.json(

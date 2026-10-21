@@ -1,0 +1,16 @@
+Temat: Decyzja w sprawie Twojej treści w ProstaSprawa.pl
+
+Dzień dobry,
+
+informujemy o decyzji dotyczącej Twojej treści lub konta w ProstaSprawa.pl.
+
+Decyzja: {decyzja}
+Dotyczy: {tresc}
+
+Uzasadnienie:
+{powod}
+
+Możesz się odwołać w ciągu 6 miesięcy: {linkOdwolania}
+Rozpatrzymy odwołanie w ciągu 14 dni.
+
+Zespół ProstaSprawa.pl

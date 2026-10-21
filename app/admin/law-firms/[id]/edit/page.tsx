@@ -55,6 +55,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { ReasonDialog } from "@/components/admin/ReasonDialog"
 import { motion } from "framer-motion"
 
 import {
@@ -94,7 +95,7 @@ import {
   EducationEditor
 } from "./components/InteractiveEditors"
 import { CategoriesSelector, CoverageAreaSelector } from "./components/RelationEditors"
-import { formatDate } from "@/lib/format"
+import { formatDate, formatDateTime } from "@/lib/format"
 
 export default function EditLawFirmPage() {
   const params = useParams()
@@ -133,6 +134,8 @@ export default function EditLawFirmPage() {
   const [isUploading, setIsUploading] = useState(false)
 
   const [activeTab, setActiveTab] = useState("general")
+  const [rejectVerificationOpen, setRejectVerificationOpen] = useState(false)
+  const [verificationRejection, setVerificationRejection] = useState<{ powod: string; at: string } | null>(null)
 
   const tabs = [
     { id: "general", label: "Dane podstawowe", desc: "Dane firmy, adres, godziny", icon: Building2 },
@@ -452,6 +455,11 @@ export default function EditLawFirmPage() {
         const response = await fetch(`/api/admin/law-firms/${params.id}`)
         if (response.ok) {
           const lawFirm = await response.json()
+          setVerificationRejection(
+            lawFirm.weryfikacjaOdrzuconaPowod
+              ? { powod: lawFirm.weryfikacjaOdrzuconaPowod, at: lawFirm.weryfikacjaOdrzuconaAt }
+              : null
+          )
           form.reset({
             email: lawFirm.user.email,
             password: "",
@@ -745,6 +753,24 @@ export default function EditLawFirmPage() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Odrzucenie weryfikacji: zapis powodu + mail WERYFIKACJA_ODRZUCONA do eksperta
+  const handleRejectVerification = async (reason: string) => {
+    const response = await fetch(`/api/admin/law-firms/${params.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ odrzucenieWeryfikacjiPowod: reason }),
+    })
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      toast.error(error.error || "Nie udało się odrzucić weryfikacji")
+      throw new Error("reject failed")
+    }
+    const updated = await response.json()
+    setVerificationRejection({ powod: updated.weryfikacjaOdrzuconaPowod, at: updated.weryfikacjaOdrzuconaAt })
+    form.setValue("zweryfikowana", false, { shouldDirty: false })
+    toast.success("Weryfikacja odrzucona — ekspert dostał mail z powodem")
   }
 
   if (loading) {
@@ -1757,6 +1783,17 @@ export default function EditLawFirmPage() {
                                 </FormItem>
                               )}
                             />
+                            {!form.watch("zweryfikowana") && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() => setRejectVerificationOpen(true)}
+                              >
+                                Odrzuć weryfikację
+                              </Button>
+                            )}
                             <FormField
                               control={form.control}
                               name="aktywna"
@@ -1777,6 +1814,13 @@ export default function EditLawFirmPage() {
                               )}
                             />
                           </div>
+
+                          {verificationRejection && !form.watch("zweryfikowana") && (
+                            <p className="text-sm text-muted-foreground">
+                              Ostatnie odrzucenie weryfikacji ({formatDateTime(verificationRejection.at)}):{" "}
+                              <span className="text-foreground whitespace-pre-line">{verificationRejection.powod}</span>
+                            </p>
+                          )}
 
                           <FormField
                             control={form.control}
@@ -2501,6 +2545,15 @@ export default function EditLawFirmPage() {
           open={showMainImageCropper}
         />
       )}
+
+      <ReasonDialog
+        open={rejectVerificationOpen}
+        onOpenChange={setRejectVerificationOpen}
+        title="Odrzuć weryfikację"
+        description="Ekspert dostanie mail z tym powodem i linkiem do panelu, żeby uzupełnić brakujące dane."
+        confirmLabel="Odrzuć weryfikację"
+        onConfirm={handleRejectVerification}
+      />
     </div>
   )
 }

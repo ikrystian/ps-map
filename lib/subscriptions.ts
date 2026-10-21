@@ -61,7 +61,8 @@ export async function checkExpiredSubscriptions(): Promise<number> {
       data: {
         pakietSubskrypcji: null,
         dataPakietuOd: null,
-        dataPakietuDo: null
+        dataPakietuDo: null,
+        pakietProbny: false
       }
     })
 

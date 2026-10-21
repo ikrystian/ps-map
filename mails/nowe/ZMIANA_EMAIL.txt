@@ -1,0 +1,10 @@
+Temat: Potwierdź nowy adres e-mail w ProstaSprawa.pl
+
+Dzień dobry,
+
+na Twoim koncie ma się zmienić adres e-mail na {nowyEmail}. Zmiana zadziała dopiero po potwierdzeniu:
+{linkPotwierdzenia}
+
+Link jest ważny 24 godziny. Jeśli nie zmieniasz adresu, zignoruj tę wiadomość i napisz do nas na bok@prostasprawa.pl.
+
+Zespół ProstaSprawa.pl

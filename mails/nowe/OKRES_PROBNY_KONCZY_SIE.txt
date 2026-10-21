@@ -1,0 +1,13 @@
+Temat: Za 7 dni kończy się bezpłatny pakiet Biznes
+
+Dzień dobry,
+
+bezpłatny pakiet Biznes dla {nazwa} działa do {dataKonca}. Potem nic nie przedłuża się samo i niczego nie pobierzemy.
+
+Jeśli chcesz zachować szerszy zasięg i promowanie profilu, wybierz pakiet:
+Podstawowy 39 zł / mies., Standard 80 zł / mies., Premium 120 zł / mies., Biznes 180 zł / mies.
+Na 6 i 12 miesięcy wychodzi taniej.
+
+Pakiety: {linkDoPakietow}
+
+Zespół ProstaSprawa.pl

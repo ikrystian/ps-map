@@ -5,6 +5,7 @@ import {
   anonymizeUserAccount,
 } from "@/lib/account-anonymization"
 import { auth } from "@/lib/auth"
+import { isModerationStatus, moderationDecisionLabel, sendContentModeratedEmail } from "@/lib/platform-emails"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
@@ -260,6 +261,18 @@ export async function PUT(
         deletedAt: true,
       },
     })
+
+    // Blokada/zawieszenie z uzasadnieniem — użytkownik dostaje decyzję (mail TRESC_ZABLOKOWANA)
+    const moderationReason = typeof body.moderacjaPowod === "string" ? body.moderacjaPowod.trim() : ""
+    if (moderationReason && isModerationStatus(status) && status !== existingUser.status) {
+      await sendContentModeratedEmail({
+        userId: id,
+        decyzja: moderationDecisionLabel(status),
+        tresc: "Konto w serwisie ProstaSprawa.pl",
+        powod: moderationReason,
+        moderatorId: session.user.id,
+      })
+    }
 
     return NextResponse.json(updatedUser)
   } catch (error) {

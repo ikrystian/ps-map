@@ -1,4 +1,5 @@
 export { AuthLayout } from "./auth-layout"
+export { ChangeEmailDialog } from "./change-email-dialog"
 export { ConnectedAccountsCard } from "./connected-accounts-card"
 export { DeleteAccountSection } from "./delete-account-section"
 export { LoginHistory } from "./login-history"

@@ -5,6 +5,7 @@ import { caseTemplates } from './email-templates/case-templates'
 import { consultationTemplates } from './email-templates/consultation-templates'
 import { newsletterTemplates } from './email-templates/newsletter-templates'
 import { notificationTemplates } from './email-templates/notification-templates'
+import { platformTemplates } from './email-templates/platform-templates'
 import { referralTemplates } from './email-templates/referral-templates'
 
 export async function seedEmailTemplates(prisma: PrismaClient) {
@@ -18,6 +19,7 @@ export async function seedEmailTemplates(prisma: PrismaClient) {
     ...notificationTemplates,
     ...newsletterTemplates,
     ...referralTemplates,
+    ...platformTemplates,
   ]
 
   await prisma.$transaction(

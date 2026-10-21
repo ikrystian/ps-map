@@ -1,0 +1,11 @@
+Temat: Płatność nie przeszła: {produkt}
+
+Dzień dobry,
+
+płatność za {produkt} ({kwota}) nie została zakończona, bo operator jej nie potwierdził. Nic nie zostało pobrane.
+
+Spróbuj jeszcze raz: {linkPonow}
+
+Jeśli pieniądze zniknęły z konta, a zamówienie dalej jest nieopłacone, napisz na bok@prostasprawa.pl.
+
+Zespół ProstaSprawa.pl

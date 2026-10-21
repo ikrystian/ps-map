@@ -1,0 +1,28 @@
+
+1. ramka.html
+   Nowa wspólna ramka maila zamiast obecnej (obecna ma logo w SVG, którego Gmail i Outlook nie pokazują, i układ na divach, który rozsypuje Outlook).
+   Dwa miejsca do podstawienia: {{PREHEADER}} (może zostać puste) i {{TRESC}} (pole Treść HTML z panelu).
+
+2. logo-mail.png
+   Logo do maili. Proszę wgrać pod https://prostasprawa.pl/images/logo-mail.png (tak jest w ramce).
+
+3. nowe/
+   11 nowych maili, do których trzeba dodać wyzwalacze w kodzie. W każdym pliku .txt jest temat i treść tekstowa, w .html treść do pola Treść HTML.
+   - KONTO_USUNIETE: account_deleted, zmienne {imie}
+   - ZMIANA_EMAIL: email_change_requested, zmienne {imie} {nowyEmail} {linkPotwierdzenia}
+   - OPINIA_ODRZUCONA: review_rejected, zmienne {klient} {powod} {linkDoOceny}
+   - SPRAWA_BEZ_OFERT: case_no_offers_48h, zmienne {klient} {nazwaSprawy} {linkDoSprawy}
+   - TRESC_ZABLOKOWANA: content_moderated, zmienne {odbiorca} {decyzja} {tresc} {powod} {linkOdwolania}
+   - ZGLOSZENIE_PRZYJETE: contact_form_submitted, zmienne {imie} {numerZgloszenia} {temat}
+   - ZMIANA_REGULAMINU: terms_changed (propozycja, wysyłka ręczna z panelu), zmienne {odbiorca} {dataWejscia} {podsumowanieZmian} {linkDoRegulaminu}
+   - OKRES_PROBNY_KONCZY_SIE: trial_ending_7d, zmienne {nazwa} {dataKonca} {linkDoPakietow}
+   - WERYFIKACJA_ZAAKCEPTOWANA: law_firm_verified, zmienne {nazwa} {linkDoPanelu} {linkDoProfilu}
+   - PLATNOSC_NIEUDANA: payment_failed, zmienne {produkt} {kwota} {linkPonow}
+   - WERYFIKACJA_ODRZUCONA: law_firm_verification_rejected, zmienne {nazwa} {powod} {linkDoPanelu}
+
+4. Przy okazji:
+   - Przy dodaniu sprawy klient dostaje dwa maile: szablon i drugi, „Sprawa dodana pomyślnie”, z kodu. Ten drugi do wyłączenia.
+   - Mail consultation_payment_confirmed: klient płaci specjaliście bezpośrednio, więc treść mówi o rezerwacji, nie o płatności. Wyzwalacz do zmiany albo szablon do wyłączenia.
+
+Treści 28 obecnych maili wgram sam w panelu, jak ramka będzie na serwerze.
+Bartosz

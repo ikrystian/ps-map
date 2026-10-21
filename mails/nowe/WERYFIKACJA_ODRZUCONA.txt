@@ -1,0 +1,11 @@
+Temat: Weryfikacja profilu: potrzebujemy jeszcze jednej rzeczy
+
+Dzień dobry,
+
+nie możemy jeszcze zweryfikować profilu {nazwa}:
+
+{powod}
+
+Uzupełnij to w panelu, a sprawdzimy profil ponownie: {linkDoPanelu}
+
+Zespół ProstaSprawa.pl

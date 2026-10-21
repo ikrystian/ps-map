@@ -1,0 +1,14 @@
+Temat: Sprawa „{nazwaSprawy}” czeka na oferty
+
+Dzień dobry,
+
+Twoja sprawa „{nazwaSprawy}” jest w serwisie od dwóch dni i nie ma jeszcze ofert. To się zdarza, zwłaszcza w rzadszych kategoriach.
+
+Co zwykle pomaga:
+1. Napisz, jakie dokumenty masz i do kiedy masz termin (np. na odpowiedź do sądu).
+2. Podaj widełki budżetu. Specjaliści chętniej odpowiadają, gdy wiedzą, na co się umawiają.
+3. Sprawdź, czy kategoria i lokalizacja pasują.
+
+Zobacz swoją sprawę: {linkDoSprawy}
+
+Zespół ProstaSprawa.pl
