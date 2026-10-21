@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { generateInvoiceForOrder, resolveInvoiceBuyer } from "@/lib/invoice-generator"
+import { sendPaymentFailedEmail } from "@/lib/platform-emails"
 import { creditPointsForOrder } from "@/lib/points-ledger"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
@@ -122,12 +123,15 @@ export async function PUT(
       updateData.externalOrderId = externalOrderId
     }
 
+    let previousStatus: string | null = null
+
     const updatedOrder = await prisma.$transaction(async (tx) => {
       const before = await tx.order.findUnique({
         where: { id },
         select: { statusPlatnosci: true, zaplaconoData: true },
       })
       if (!before) return null
+      previousStatus = before.statusPlatnosci
 
       const updated = await tx.order.update({
         where: { id },
@@ -192,6 +196,11 @@ export async function PUT(
           })
         }
       }
+    }
+
+    // Ręczne anulowanie w panelu — ten sam mail co po odrzuceniu płatności przez operatora
+    if (statusPlatnosci === "ANULOWANE" && previousStatus !== "ANULOWANE") {
+      await sendPaymentFailedEmail(updatedOrder.id)
     }
 
     return NextResponse.json(updatedOrder)

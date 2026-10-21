@@ -200,8 +200,9 @@ export async function sendLawFirmVerificationEmail(
 // ============================================================================
 
 /**
- * Mail po odrzuceniu płatności przez operatora. Wołać tylko wtedy, gdy wywołujący
- * faktycznie zmienił status zamówienia na ANULOWANE (inaczej przyjdzie dwa razy).
+ * Mail po zmianie statusu zamówienia na ANULOWANE — przez operatora płatności
+ * (PayU, Przelewy24) albo ręcznie w panelu admina. Wołać tylko wtedy, gdy wywołujący
+ * faktycznie zmienił status na ANULOWANE (inaczej przyjdzie dwa razy).
  */
 export async function sendPaymentFailedEmail(orderId: string): Promise<void> {
   try {
