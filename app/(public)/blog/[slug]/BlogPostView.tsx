@@ -94,7 +94,7 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
   const isUnpublished = Boolean(post.isUnpublished);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
+    <article className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
       {/* Draft Preview Banner */}
       {isUnpublished && (
         <div className="bg-amber-500/15 border-b border-amber-500/30 text-amber-300 py-3 px-4 text-center text-xs font-semibold flex items-center justify-center gap-2 backdrop-blur-md sticky top-[65px] z-40">
@@ -312,7 +312,7 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Article Content */}
           <div className="lg:col-span-2 space-y-8">
-            <article className="bg-card border border-border/70 rounded-3xl p-6 md:p-10 shadow-md backdrop-blur-sm" id="post-content">
+            <div className="bg-card border border-border/70 rounded-3xl p-6 md:p-10 shadow-md backdrop-blur-sm" id="post-content">
               <div
                 className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: post.tresc || "" }}
@@ -361,7 +361,7 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
                   </span>
                 </div>
               </div>
-            </article>
+            </div>
 
             {/* Reklama AdSense — pod treścią posta */}
             <AdSenseUnit
@@ -694,6 +694,6 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
           </aside>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
