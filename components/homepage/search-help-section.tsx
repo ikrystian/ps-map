@@ -132,7 +132,7 @@ export function SearchHelpSection() {
         </>
       ),
       description:
-        "Dzięki naszej platformie masz bezpośredni dostęp do szerokiej sieci doświadczonych prawników i ekspertów z całego kraju.",
+        "Prawnicy i nie tylko. Adwokaci, radcowie, doradcy podatkowi, księgowi, rzeczoznawcy, architekci. 44 kategorie spraw.",
     },
     {
       number: "02",

@@ -125,12 +125,7 @@ export function CategoriesGrid({ categories }: CategoriesGridProps) {
             {/* Left side: Paragraph */}
             <div className="flex-1 flex items-center lg:pr-8">
               <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed  max-w-xl">
-                Prosta Sprawa to nie tylko portal – to Twój partner w
-                rozwiązywaniu problemów prawnych. Dołącz do grona zadowolonych
-                klientów, którzy z nami wygrywają. Spróbuj, a przekonasz się,
-                jak łatwo i skutecznie możemy rozwiązać{" "}
-                <strong className="text-foreground font-semibold">
-                  Twoją sprawę!
+                ProstaSprawa.pl powstała z prostego pytania: dlaczego szukanie prawnika musi zajmować tydzień? Po jednej stronie jest człowiek z konkretną sprawą, po drugiej specjalista, który zajmuje się dokładnie takimi sprawami. Zbudowaliśmy miejsce, w którym się spotykają.                <strong className="text-foreground font-semibold">
                 </strong>
               </p>
             </div>

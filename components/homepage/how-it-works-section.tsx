@@ -153,7 +153,7 @@ export function HowItWorksSection() {
                                         </li>
                                         <li className="flex gap-2 items-start">
                                             <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />
-                                            <span><span className="font-bold text-foreground">Bezpieczne rozliczenia</span> – płacisz dopiero po akceptacji oferty.</span>
+                                            <span><span className="font-bold text-foreground">Bezpieczne rozliczenia</span> – Płacisz bezpośrednio specjaliście, bez prowizji dla serwisu, i dopiero po zaakceptowaniu oferty..</span>
                                         </li>
                                         <li className="flex gap-2 items-start">
                                             <Check className="w-4 h-4 text-foreground mt-1 shrink-0" />

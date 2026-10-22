@@ -491,8 +491,7 @@ export default function ClientRegistrationPage() {
 
       // Przekieruj na stronę sukcesu rejestracji z e-mailem w parametrze
       router.push(
-        `/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=CLIENT${
-          referralToken ? `&referral=${referralToken}` : ""
+        `/rejestracja/sukces?email=${encodeURIComponent(formData.email)}&role=CLIENT${referralToken ? `&referral=${referralToken}` : ""
         }`
       )
     } catch (error) {
@@ -503,12 +502,12 @@ export default function ClientRegistrationPage() {
 
   return (
     <AuthLayout
-      heroTitle="Dołącz do tysięcy zadowolonych klientów"
-      heroDescription="Znajdź najlepszych prawników w Polsce. Szybko, łatwo i bezpiecznie rozwiąż swoje problemy prawne."
+      heroTitle="Opisz sprawę i porównaj oferty"
+      heroDescription="Rejestracja i dodanie sprawy nic nie kosztują. Specjaliści sami zgłoszą się z ofertą."
       heroStats={[
-        { value: 10, unit: " min", label: "Średni czas odpowiedzi" },
-        { value: 5000, unit: "+", label: "Rozwiązanych spraw" },
-        { value: 4.8, unit: "/5", label: "Średnia ocena" },
+        { value: 0, unit: "zł", label: "za dodanie sprawy" },
+        { value: 0, unit: "%", label: "prowizji" },
+        { value: 44, unit: "", label: "kategorie spraw" },
       ]}
     >
       <Card className="border-none shadow-none bg-transparent">

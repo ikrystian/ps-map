@@ -101,7 +101,7 @@ export default function RankingClientPage() {
               Oficjalny Ranking Serwisu
             </motion.div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair tracking-tight text-foreground">
-              Najlepsi Prawnicy & Eksperci
+              Ranking specjalistów
             </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto font-light leading-relaxed">
               Zestawienie top 100 najbardziej aktywnych i najwyżej ocenianych ekspertów prawnych w Polsce w oparciu o rzetelne statystyki aktywności.

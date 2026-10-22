@@ -120,8 +120,7 @@ export default function CategoriesPage({ initialCategories }: CategoriesClientPa
             Znajdź <span className="text-primary">właściwą</span> pomoc
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-foreground/80 md:text-xl">
-            Od spraw codziennych po skomplikowane procesy biznesowe.
-            Wybierz kategorię i połącz się z najlepszymi specjalistami w Polsce.
+            Od rozwodu i spadku po RODO i spory z pracownikami. Wybierz kategorię, opisz problem i porównaj oferty.
           </p>
 
           {/* Search Bar in Hero */}

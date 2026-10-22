@@ -3,25 +3,25 @@
 import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { motion } from "framer-motion"
 import type { LegalPageContent } from "@/lib/legal-pages/types"
-import { 
-  Search, 
-  FileText, 
-  Printer, 
-  Download, 
-  Copy, 
-  Check, 
-  BookOpen, 
-  User, 
-  CreditCard, 
-  Scale, 
-  MessageSquare, 
-  Cookie, 
-  ShieldAlert, 
-  Undo2, 
-  AlertTriangle, 
-  Gavel, 
-  Clock, 
-  ExternalLink, 
+import {
+  Search,
+  FileText,
+  Printer,
+  Download,
+  Copy,
+  Check,
+  BookOpen,
+  User,
+  CreditCard,
+  Scale,
+  MessageSquare,
+  Cookie,
+  ShieldAlert,
+  Undo2,
+  AlertTriangle,
+  Gavel,
+  Clock,
+  ExternalLink,
   ShieldCheck,
   ChevronRight,
   Sparkles,
@@ -98,7 +98,7 @@ Miejscowość, Data: `
       const scrollPosition = window.scrollY
       const windowHeight = window.innerHeight
       const docHeight = document.documentElement.scrollHeight
-      
+
       // Update progress bar
       const totalScroll = docHeight - windowHeight
       if (totalScroll > 0) {
@@ -151,7 +151,7 @@ Miejscowość, Data: `
     return sections.map(section => {
       const titleMatches = section.title.toLowerCase().includes(query)
       const matchingParagraphs = section.paragraphs.filter(p => p.toLowerCase().includes(query))
-      
+
       if (titleMatches || matchingParagraphs.length > 0) {
         return {
           ...section,
@@ -187,7 +187,7 @@ Miejscowość, Data: `
     const parts = text.split(new RegExp(`(${search})`, "gi"))
     return (
       <>
-        {parts.map((part, i) => 
+        {parts.map((part, i) =>
           part.toLowerCase() === search.toLowerCase() ? (
             <mark key={i} className="bg-primary/30 text-white font-semibold rounded px-0.5 border border-primary/20">
               {part}
@@ -202,19 +202,19 @@ Miejscowość, Data: `
 
   return (
     <div className="bg-background min-h-[calc(100vh-65px)] text-white pb-20 relative font-poppins selection:bg-primary/20 selection:text-primary-foreground">
-      
+
       {/* Scroll Progress Bar (Only visible in full view) */}
       {activeTab === "full" && (
         <div className="fixed top-[65px] left-0 right-0 h-1 bg-card z-50 print:hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-primary to-primary-hover transition-all duration-100" 
+          <div
+            className="h-full bg-gradient-to-r from-primary to-primary-hover transition-all duration-100"
             style={{ width: `${scrollProgress}%` }}
           />
         </div>
       )}
 
       {/* Hero Banner Header */}
-      <div 
+      <div
         className="relative w-full h-[180px] md:h-[240px] flex items-center bg-cover bg-center overflow-hidden border-b border-border/60 print:bg-white print:border-b print:text-black print:h-auto print:py-6 on-dark"
         style={{ backgroundImage: "url('/images/lady-justice-banner.png')" }}
       >
@@ -247,27 +247,25 @@ Miejscowość, Data: `
       {/* Interactive Controls & View Selection */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10 print:mt-2">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-card/90 border border-border/80 rounded-2xl p-4 backdrop-blur-md mb-8 print:hidden">
-          
+
           {/* Tab Selector */}
           <div className="flex bg-background p-1.5 rounded-xl border border-border w-full md:w-auto">
             <button
               onClick={() => setActiveTab("tldr")}
-              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                activeTab === "tldr"
-                  ? "bg-primary text-white shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "tldr"
+                ? "bg-primary text-white shadow-md shadow-primary/20"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               <Sparkles className="w-4 h-4" />
               Podsumowanie w pigułce
             </button>
             <button
               onClick={() => setActiveTab("full")}
-              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                activeTab === "full"
-                  ? "bg-primary text-white shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "full"
+                ? "bg-primary text-white shadow-md shadow-primary/20"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               <FileText className="w-4 h-4" />
               Pełny dokument prawny
@@ -315,7 +313,7 @@ Miejscowość, Data: `
 
             {/* TLDR Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              
+
               {/* Card 1: Dla Klientów */}
               <div className="bg-card/70 border border-border/80 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 flex flex-col justify-between">
                 <div className="space-y-4">
@@ -330,7 +328,7 @@ Miejscowość, Data: `
                     <li><strong className="text-foreground">Bezpieczeństwo</strong> – Administrator nie bierze udziału w zawieraniu umów.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("zasady-korzystania"), 100) }}
                   className="mt-6 text-xs text-primary hover:text-primary-hover flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -347,13 +345,13 @@ Miejscowość, Data: `
                   </div>
                   <h3 className="font-semibold text-lg text-foreground">Dla Wykonawców</h3>
                   <ul className="space-y-2.5 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
-                    <li><strong className="text-foreground">Płatny profil</strong> – korzystanie z serwisu wymaga uiszczenia Abonamentu.</li>
+                    <li><strong className="text-foreground">Bezpłatny profil</strong> – korzystanie z serwisu nie wymaga uiszczenia Abonamentu.</li>
                     <li><strong className="text-foreground">Okres próbny</strong> – zasady bezpłatnego okresu próbnego określa aktualny Cennik lub komunikat w Serwisie.</li>
                     <li><strong className="text-foreground">System Punktowy</strong> – możesz kupować punkty do pozycjonowania (1 pkt = 1 PLN).</li>
-                    <li><strong className="text-foreground">Weryfikacja</strong> – musisz posiadać uprawnienia zawodowe (adwokat, radca itp.).</li>
+                    <li><strong className="text-foreground">Weryfikacja</strong> – każdy profil sprawdza administrator. Prawnicy potwierdzają wpis na listę adwokatów lub radców prawnych, pozostali specjaliści uprawnienia właściwe dla swojego zawodu.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("oplaty-i-rozliczenia"), 100) }}
                   className="mt-6 text-xs text-primary hover:text-primary-hover flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -376,7 +374,7 @@ Miejscowość, Data: `
                     <li><strong className="text-foreground">30 dni na decyzję</strong> – Administrator odpowie w ciągu 30 dni.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("odstapienie"), 100) }}
                   className="mt-6 text-xs text-primary hover:text-primary-hover flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -399,7 +397,7 @@ Miejscowość, Data: `
                     <li><strong className="text-foreground">Zapobieganie oszustwom</strong> – profilowanie urządzeń dla wykrywania spamu.</li>
                   </ul>
                 </div>
-                <button 
+                <button
                   onClick={() => { setActiveTab("full"); setTimeout(() => scrollToSection("cookies"), 100) }}
                   className="mt-6 text-xs text-primary hover:text-primary-hover flex items-center gap-1 font-semibold group cursor-pointer"
                 >
@@ -416,9 +414,9 @@ Miejscowość, Data: `
                 <Info className="w-5 h-5 text-primary" />
                 Szybkie odpowiedzi na najważniejsze pytania
               </h3>
-              
+
               <div className="space-y-4">
-                
+
                 {/* FAQ 1 */}
                 <div className="bg-card/40 border border-border rounded-xl p-5">
                   <h4 className="font-semibold text-sm sm:text-base text-foreground mb-2">Czy ProstaSprawa.pl bierze prowizję od załatwionych spraw?</h4>
@@ -488,7 +486,7 @@ Miejscowość, Data: `
         {/* Tab 2: Full Terms Document */}
         {activeTab === "full" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Sidebar Navigation (TOC) */}
             <aside className="lg:col-span-4 sticky top-[100px] h-[calc(100vh-140px)] overflow-y-auto pr-4 hidden lg:flex flex-col space-y-4 print:hidden custom-scrollbar">
               <div className="bg-card/80 border border-border/80 rounded-2xl p-5 backdrop-blur-md">
@@ -500,17 +498,15 @@ Miejscowość, Data: `
                     <button
                       key={section.id}
                       onClick={() => scrollToSection(section.id)}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${
-                        activeSection === section.id
-                          ? "bg-primary text-white font-semibold shadow-md shadow-primary/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-card/50"
-                      }`}
+                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${activeSection === section.id
+                        ? "bg-primary text-white font-semibold shadow-md shadow-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+                        }`}
                     >
-                      <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${
-                        activeSection === section.id
-                          ? "bg-white/20 text-white"
-                          : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
-                      }`}>
+                      <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${activeSection === section.id
+                        ? "bg-white/20 text-white"
+                        : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
+                        }`}>
                         {section.number}
                       </span>
                       <span className="truncate">{section.title}</span>
@@ -541,7 +537,7 @@ Miejscowość, Data: `
 
             {/* Document Content Column */}
             <main className="lg:col-span-8 space-y-8 print:col-span-12">
-              
+
               {/* Live Search and Match Stats */}
               <div className="bg-card/70 border border-border/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md print:hidden space-y-4">
                 <div className="relative">
@@ -562,7 +558,7 @@ Miejscowość, Data: `
                     </button>
                   )}
                 </div>
-                
+
                 {/* Search Match Stats Banner */}
                 {searchQuery.trim() && (
                   <div className="flex items-center justify-between text-xs text-muted-foreground bg-card/60 p-2.5 rounded-lg border border-border">
@@ -603,7 +599,7 @@ Miejscowość, Data: `
                     }}
                     className="bg-card/70 border border-border/80 rounded-2xl p-6 sm:p-8 scroll-mt-28 shadow-xl transition-all duration-300 hover:border-border/60 print:bg-white print:border-none print:shadow-none print:p-0"
                   >
-                    
+
                     {/* Section Header */}
                     <div className="flex items-center gap-3.5 pb-4 border-b border-border/60 mb-6 print:border-b-2 print:border-black print:mb-3">
                       <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center flex-shrink-0 print:hidden">
@@ -621,13 +617,13 @@ Miejscowość, Data: `
 
                     {/* Section Paragraphs */}
                     <div className="space-y-4 text-xs sm:text-sm text-foreground/80 leading-relaxed font-light print:text-black print:text-xs">
-                      
+
                       {/* Section II Interactive Dictionary */}
                       {section.id === "definicje" && !searchQuery && content.definitions.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 mb-6 print:hidden">
                           {content.definitions.map((def, idx) => (
-                            <div 
-                              key={idx} 
+                            <div
+                              key={idx}
                               className="bg-card/40 border border-border rounded-xl p-4 hover:border-input transition-colors"
                             >
                               <span className="font-semibold text-sm text-primary block mb-1">
@@ -680,10 +676,10 @@ Podpis Użytkownika (wymagany tylko w wersji papierowej).`}
                       {section.paragraphs.map((para, paraIdx) => {
                         // Skip rendering first sentence in defs as paragraph if dictionary is already loaded, keeping it clean
                         if (section.id === "definicje" && paraIdx === 0 && !searchQuery && content.definitions.length > 0) return null;
-                        
+
                         return (
-                          <p 
-                            key={paraIdx} 
+                          <p
+                            key={paraIdx}
                             className="text-foreground/80 hover:text-foreground transition-colors duration-200 leading-relaxed print:text-black"
                           >
                             {highlightText(para, searchQuery)}

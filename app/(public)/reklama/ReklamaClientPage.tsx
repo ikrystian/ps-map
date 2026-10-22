@@ -49,7 +49,7 @@ const AD_FORMATS = [
     title: "Sponsorowany Baner Poziomy",
     badge: "Premium",
     dimensions: "970x90 px / 728x90 px",
-    description: "Zajmij najbardziej eksponowane miejsce na samej górze wyników wyszukiwania oraz podstron kategorii. Gwarantuje to maksymalną liczbę wyświetleń.",
+    description: "Zajmij najbardziej eksponowane miejsce na samej górze wyników wyszukiwania oraz podstron kategorii. To miejsce, które użytkownik widzi jako pierwsze.",
     benefits: ["Maksymalny zasięg i świadomość marki", "Pierwsza rzecz, którą widzi użytkownik", "Możliwość targetowania regionalnego"],
     ctr: "4.8%",
     icon: LayoutIcon
@@ -340,8 +340,7 @@ ${formData.tresc}`
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-muted-foreground text-lg md:text-xl max-w-2xl leading-relaxed"
               >
-                ProstaSprawa.pl to wiodąca platforma łącząca klientów z kancelariami w całej Polsce.
-                Pokaż się tam, gdzie Twoi przyszli klienci aktywnie szukają wsparcia. Zwiększ widoczność, zbuduj zaufanie i generuj zlecenia.
+ProstaSprawa.pl to platforma, na której ludzie opisują swoje sprawy i szukają specjalisty, który się nimi zajmie. Pokaż się tam, gdzie Twoi przyszli klienci szukają pomocy. Banery, wyróżnienia profilu i artykuły sponsorowane, z targetowaniem na województwo i kategorię.
               </motion.p>
 
               <motion.div
@@ -376,12 +375,12 @@ ${formData.tresc}`
                 className="grid grid-cols-3 gap-6 pt-8 border-t border-border/60 max-w-xl"
               >
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-foreground">100%</div>
-                  <div className="text-xs text-muted-foreground">Grupa docelowa (intencyjna)</div>
+                  <div className="text-2xl font-bold text-foreground">44</div>
+                  <div className="text-xs text-muted-foreground">kategorie spraw do targetowania</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-foreground">&lt; 0.60 zł</div>
-                  <div className="text-xs text-muted-foreground">Szacowany koszt kliknięcia</div>
+                  <div className="text-2xl font-bold text-foreground">16</div>
+                  <div className="text-xs text-muted-foreground">województw do targetowania</div>
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-foreground">Elastycznie</div>
@@ -414,7 +413,7 @@ ${formData.tresc}`
       </section>
 
       {/* SECTION 2: STATS TICKER */}
-      <section className="relative z-10 py-12 bg-muted/40 border-b border-border/40">
+      <section className="relative z-10 py-12 bg-muted/40 border-b border-border/40 hidden">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 
@@ -566,7 +565,7 @@ ${formData.tresc}`
                             <span className="w-2 h-2 rounded-full bg-green-500/80" />
                           </div>
                           <div className="bg-background/80 text-[9px] text-muted-foreground/75 px-3 py-0.5 rounded-sm mx-auto w-48 text-center truncate font-mono">
-                            ProstaSprawa.pl/wyszukiwarka
+                            ProstaSprawa.pl/szukaj-prawnika
                           </div>
                         </div>
                         {/* Browser Window Body */}
@@ -744,8 +743,7 @@ ${formData.tresc}`
               </div>
 
               <p className="text-muted-foreground leading-relaxed">
-                Jesteśmy jedynym w Polsce portalem prawniczym, który łączy w sobie bazę realnych spraw ze strefą wyszukiwania prawników.
-                Użytkownicy trafiają do nas z konkretnymi problemami i pilną potrzebą zatrudnienia profesjonalisty.
+                Łączymy dwie rzeczy, które zwykle są osobno: bazę realnych spraw i wyszukiwarkę specjalistów. Użytkownik nie przegląda katalogu z ciekawości, tylko przychodzi z konkretnym problemem.
               </p>
 
               <div className="space-y-4 pt-4">
@@ -988,7 +986,7 @@ ${formData.tresc}`
 
                 <div className="pt-4 border-t border-border">
                   <p className="text-[10px] text-muted-foreground leading-normal mb-4">
-                    * Przedstawione wyliczenia są szacunkami opartymi o dotychczasowe statystyki serwisu. Rzeczywiste wyniki zależą m.in. od atrakcyjności kreacji graficznej, popytu w danej kategorii i wybranego targetowania.
+                  * Wyliczenia są orientacyjne i nie opierają się jeszcze na statystykach serwisu. Dokładną prognozę przygotujemy po rozmowie.
                   </p>
                   <Button
                     onClick={() => {

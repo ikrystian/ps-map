@@ -22,7 +22,7 @@ interface AuthLayoutProps {
 export function AuthLayout({
   children,
   heroTitle = "Twoja droga do rozwiązania problemów prawnych",
-  heroDescription = "Połącz się z najlepszymi ekspertami prawnymi w Polsce. Znajdź pomoc prawną dostosowaną do Twoich potrzeb.",
+  heroDescription = "Twoje sprawy, oferty i wiadomości w jednym miejscu.",
   heroStats = [
     { value: 100, unit: "%", label: "ONLINE" },
     { value: 0, unit: "%", label: "PROWIZJI" },
@@ -108,7 +108,7 @@ export function AuthLayout({
                         value={stat.value}
                         decimalPlaces={0}
                         delay={index * 0.2}
-                        className="text-foreground"
+                        className="text-foreground text-bold"
                       />
                       {stat.unit}
                     </div>

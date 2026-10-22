@@ -81,7 +81,7 @@ export function HeroSection() {
             className="mb-8 flex justify-center"
           >
             <Badge variant="outline" className="font-light px-5 py-2 border-primary/40 text-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs tracking-widest uppercase text-center">
-              Twoje <span className="font-bold mx-1"> wsparcie prawne </span>  w zasięgu ręki
+              Opisz sprawę. <span className="font-bold mx-1"> Specjaliści </span>  zgłoszą się sami.
             </Badge>
           </motion.div>
 
