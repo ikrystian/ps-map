@@ -3,7 +3,7 @@ import SearchLawyerClientPage from "./SearchLawyerClientPage"
 
 export const metadata: Metadata = {
   title: "Wyszukiwarka Ekspertów",
-  description: "Znajdź prawnika, adwokata lub radcę prawnego. Filtruj według specjalizacji, miasta, województwa i opinii.",
+  description: "Zobacz ranking prawników i ekspertów ProstaSprawa.pl i sprawdź, jak liczymy pozycję: weryfikacja profilu, opinie klientów, wyświetlenia i promocje.",
 }
 
 export default function SearchLawyerPage() {

@@ -32,8 +32,8 @@ export function blogCategorySlugFromPath(pathname: string | null | undefined): s
 
 // Tytuły listingu (bez sufiksu z nazwą serwisu, który dokleja szablon w app/layout.tsx).
 // Wspólne dla metadanych stron i dla document.title po zmianie kategorii bez przeładowania.
-export const BLOG_LISTING_TITLE = "Pełnoprawnik - Porady, Artykuły i Analizy Prawne"
+export const BLOG_LISTING_TITLE = "Pełnoprawnik: "
 
 export function blogCategoryTitle(categoryName: string): string {
-  return `${categoryName} – artykuły i porady prawne`
+  return `${categoryName}`
 }

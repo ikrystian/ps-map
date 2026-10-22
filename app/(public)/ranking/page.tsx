@@ -3,7 +3,7 @@ import RankingClientPage from "./RankingClientPage"
 
 export const metadata: Metadata = {
   title: "Ranking Ekspertów Prawnych w Polsce",
-  description: "Sprawdź top 100 najlepszych i najbardziej aktywnych ekspertów prawnych i prawników w naszym serwisie.",
+  description: "Zobacz ranking prawników i ekspertów ProstaSprawa.pl i sprawdź, jak liczymy pozycję: weryfikacja profilu, opinie klientów, wyświetlenia i promocje.",
 }
 
 export default function RankingPage() {

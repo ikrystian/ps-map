@@ -2,8 +2,8 @@ import { Metadata } from "next"
 import ReklamaClientPage from "./ReklamaClientPage"
 
 export const metadata: Metadata = {
-  title: "Zareklamuj się u nas | Zasięg i Nowi Klienci dla Twojego Biznesu",
-  description: "Zwiększ widoczność swojej kancelarii lub firmy. Dotrzyj bezpośrednio do osób poszukujących pomocy prawnej. Banery reklamowe, wyróżnienia profili oraz artykuły sponsorowane z pełnym geotargetowaniem.",
+  title: "Reklama dla kancelarii i firm",
+  description: "Reklama dla kancelarii i firm: banery, wyróżnione profile i artykuły sponsorowane. Docieraj do osób, które opisują swoje sprawy, z targetowaniem na województwo.",
   alternates: {
     canonical: "/reklama",
   },

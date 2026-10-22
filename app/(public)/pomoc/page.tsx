@@ -5,7 +5,7 @@ import { Metadata } from "next"
 import PomocClientPage from "./PomocClientPage"
 
 export const metadata: Metadata = {
-  title: "Centrum Pomocy - Najczęściej Zadawane Pytania (FAQ)",
+  title: "Centrum pomocy i FAQ",
   description:
     "Odpowiedzi na najczęściej zadawane pytania o Prosta Sprawa - dodawanie sprawy, wybór eksperta, płatności i konto. Nie znalazłeś odpowiedzi? Skontaktuj się z nami.",
 }

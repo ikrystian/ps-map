@@ -6,7 +6,7 @@ import { blogCategoryPath } from "@/lib/blog-category-url"
 
 export const metadata: Metadata = {
   title: "Mapa strony",
-  description: "Pełna lista ekspertów oraz artykułów bloga dostępnych w serwisie ProstaSprawa.pl.",
+  description: "Mapa strony ProstaSprawa.pl: wszystkie kategorie spraw prywatnych i firmowych, poradniki z bloga oraz najważniejsze podstrony serwisu w jednym miejscu.",
 }
 
 export default async function SiteMapPage() {

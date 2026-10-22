@@ -6,7 +6,7 @@ import { BLOG_LISTING_TITLE, blogListingPath } from "@/lib/blog-category-url"
 
 export const metadata: Metadata = {
   title: BLOG_LISTING_TITLE,
-  description: "Baza wiedzy prawnej. Czytaj artykuły, analizy i porady przygotowane przez profesjonalnych ekspertów.",
+  description: "Jak odrzucić spadek, ile wynoszą alimenty, co zrobić z nakazem zapłaty? Praktyczne poradniki prawne z konkretnymi terminami i kosztami. Czytaj za darmo",
 }
 
 interface BlogPageProps {
