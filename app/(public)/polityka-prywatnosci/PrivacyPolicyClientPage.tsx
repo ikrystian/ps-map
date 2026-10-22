@@ -236,8 +236,8 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             <button
               onClick={() => setActiveTab("tldr")}
               className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "tldr"
-                  ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               <Sparkles className="w-4 h-4" />
@@ -246,8 +246,8 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
             <button
               onClick={() => setActiveTab("full")}
               className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === "full"
-                  ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "bg-teal-600 text-white shadow-md shadow-teal-900/20"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               <FileText className="w-4 h-4" />
@@ -402,8 +402,8 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                   <h3 className="font-semibold text-lg text-foreground">Pliki Cookies (Ciasteczka)</h3>
                   <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
                     <li><strong className="text-foreground">Rodzaje</strong> – pliki sesyjne (tymczasowe) oraz stałe.</li>
-                    <li><strong className="text-foreground">Partnerzy zewnętrzni</strong> – Google Analytics (statystyki), Facebook Pixels (analiza) oraz HotJar.</li>
-                    <li><strong className="text-foreground">Kontrola</strong> – możesz samodzielnie zmienić ustawienia plików cookies w swojej przeglądarce w dowolnym momencie.</li>
+                    <li><strong className="text-foreground">Partnerzy zewnętrzni</strong> – Google Analytics (statystyki), Meta Pixels (analiza) oraz HotJar.</li>
+                    <li><strong className="text-foreground">Kontrola</strong> – Zgody zmienisz w każdej chwili w panelu „Ustawienia cookies” na dole strony.</li>
                   </ul>
                 </div>
                 <button
@@ -541,13 +541,13 @@ export default function PrivacyPolicyClientPage({ content }: { content: LegalPag
                       key={section.id}
                       onClick={() => scrollToSection(section.id)}
                       className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-xs font-medium transition-all duration-200 cursor-pointer group ${activeSection === section.id
-                          ? "bg-teal-600 text-white font-semibold shadow-md shadow-teal-900/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+                        ? "bg-teal-600 text-white font-semibold shadow-md shadow-teal-900/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-card/50"
                         }`}
                     >
                       <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-colors duration-200 ${activeSection === section.id
-                          ? "bg-white/20 text-white"
-                          : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
+                        ? "bg-white/20 text-white"
+                        : "bg-muted/60 text-muted-foreground group-hover:bg-muted/60 group-hover:text-foreground"
                         }`}>
                         {section.number}
                       </span>
