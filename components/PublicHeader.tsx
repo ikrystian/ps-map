@@ -790,7 +790,7 @@ export default function PublicHeader({
                 <AddCaseButton href="/dodaj-sprawe" className="flex lg:hidden" />
                 <AddMenuButton className="hidden lg:flex" />
                 <Link href="/logowanie" className="hidden xl:flex">
-                  <InteractiveHoverButton>Zaloguj</InteractiveHoverButton>
+                  <InteractiveHoverButton>Moje konto</InteractiveHoverButton>
                 </Link>
               </div>
             )}
@@ -839,7 +839,7 @@ export default function PublicHeader({
                         />
                         <Link href="/logowanie" onClick={() => setMobileMenuOpen(false)} className="w-full">
                           <Button className="w-full cursor-pointer bg-primary hover:bg-primary-hover text-primary-foreground font-semibold h-11 border-0" size="lg">
-                            Zaloguj się
+                            Moje konto
                           </Button>
                         </Link>
                         <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
