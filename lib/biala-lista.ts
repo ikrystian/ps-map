@@ -42,6 +42,14 @@ export interface CompanyDataFields {
   COMPANY_requestId: string | null
   COMPANY_requestDateTime: string | null
   COMPANY_rawResponse: string | null
+  // Uzupełnienie z rejestrów KRS / CEIDG (lib/company-lookup.ts)
+  COMPANY_sources: string | null
+  COMPANY_legalForm: string | null
+  COMPANY_businessStatus: string | null
+  COMPANY_startDate: string | null
+  COMPANY_mainPkd: string | null
+  COMPANY_krsResponse: string | null
+  COMPANY_ceidgResponse: string | null
 }
 
 /**
@@ -74,6 +82,13 @@ export const COMPANY_DATA_FIELD_KEYS: (keyof CompanyDataFields)[] = [
   "COMPANY_requestId",
   "COMPANY_requestDateTime",
   "COMPANY_rawResponse",
+  "COMPANY_sources",
+  "COMPANY_legalForm",
+  "COMPANY_businessStatus",
+  "COMPANY_startDate",
+  "COMPANY_mainPkd",
+  "COMPANY_krsResponse",
+  "COMPANY_ceidgResponse",
 ]
 
 /**
@@ -200,6 +215,13 @@ export function mapSubjectToCompanyData(
     COMPANY_requestId: s(requestId),
     COMPANY_requestDateTime: s(requestDateTime),
     COMPANY_rawResponse: JSON.stringify(subject),
+    COMPANY_sources: "MF_WL",
+    COMPANY_legalForm: null,
+    COMPANY_businessStatus: null,
+    COMPANY_startDate: null,
+    COMPANY_mainPkd: null,
+    COMPANY_krsResponse: null,
+    COMPANY_ceidgResponse: null,
   }
 }
 

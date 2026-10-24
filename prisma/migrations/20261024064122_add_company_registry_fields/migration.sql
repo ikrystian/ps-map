@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_businessStatus" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_ceidgResponse" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_krsResponse" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_legalForm" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_mainPkd" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_sources" TEXT;
+ALTER TABLE "CompanyData" ADD COLUMN "COMPANY_startDate" TEXT;
+

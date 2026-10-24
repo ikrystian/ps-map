@@ -102,13 +102,17 @@ const steps = [
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
 
-// Etykiety pól danych firmy z Wykazu podatników VAT (klucze z przedrostkiem COMPANY_).
+// Etykiety pól danych firmy z Wykazu podatników VAT, KRS i CEIDG (klucze z przedrostkiem COMPANY_).
 // Kolejność tablicy = kolejność wyświetlania danych jako tekst.
 const COMPANY_FIELD_LABELS: { key: string; label: string }[] = [
   { key: "COMPANY_name", label: "Nazwa" },
   { key: "COMPANY_nip", label: "NIP" },
   { key: "COMPANY_regon", label: "REGON" },
   { key: "COMPANY_krs", label: "KRS" },
+  { key: "COMPANY_legalForm", label: "Forma prawna" },
+  { key: "COMPANY_businessStatus", label: "Status w rejestrze" },
+  { key: "COMPANY_startDate", label: "Data rejestracji / rozpoczęcia" },
+  { key: "COMPANY_mainPkd", label: "Przeważające PKD" },
   { key: "COMPANY_statusVat", label: "Status VAT" },
   { key: "COMPANY_workingAddress", label: "Adres działalności" },
   { key: "COMPANY_residenceAddress", label: "Adres siedziby" },
@@ -116,7 +120,15 @@ const COMPANY_FIELD_LABELS: { key: string; label: string }[] = [
   { key: "COMPANY_removalDate", label: "Data wykreślenia z VAT" },
   { key: "COMPANY_requestId", label: "ID zapytania (MF)" },
   { key: "COMPANY_requestDateTime", label: "Data weryfikacji" },
+  { key: "COMPANY_sources", label: "Źródła danych" },
 ]
+
+// Czytelne nazwy rejestrów dla pola COMPANY_sources ("MF_WL,KRS")
+const COMPANY_SOURCE_LABELS: Record<string, string> = {
+  MF_WL: "Biała lista MF",
+  KRS: "KRS",
+  CEIDG: "CEIDG",
+}
 
 export default function LawFirmRegistrationPage() {
   const router = useRouter()
@@ -147,7 +159,7 @@ export default function LawFirmRegistrationPage() {
     regon: "",
     krs: "",
 
-    // Rejestracja "jako firma" – wyszukiwanie danych w CEIDG DataStore (COMPANY_)
+    // Rejestracja "jako firma" – dane z Białej listy MF, KRS i CEIDG (COMPANY_)
     rejestracjaJakoFirma: false,
     companyNip: "",
     companyData: null as Record<string, string | null> | null,
@@ -650,7 +662,7 @@ export default function LawFirmRegistrationPage() {
           voivodeshipsIds: formData.voivodeshipId ? [formData.voivodeshipId] : [],
           categoriesIds: selectedCategoryIds,
           isSocialRegistration: !!session?.user,
-          // Dane firmy z CEIDG DataStore (tylko gdy rejestracja "jako firma")
+          // Dane firmy z Białej listy MF / KRS / CEIDG (tylko gdy rejestracja "jako firma")
           companyData: formData.rejestracjaJakoFirma ? formData.companyData : null,
         }),
       })
@@ -1276,7 +1288,7 @@ export default function LawFirmRegistrationPage() {
                 </div>
               </div>
 
-              {/* Wyszukiwanie danych firmy po NIP (CEIDG DataStore) */}
+              {/* Wyszukiwanie danych firmy po NIP (Biała lista MF + KRS / CEIDG) */}
               {formData.rejestracjaJakoFirma && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
@@ -1284,7 +1296,7 @@ export default function LawFirmRegistrationPage() {
                   className="space-y-3 bg-muted/40 p-4 rounded-xl border border-border/60"
                 >
                   <p className="text-sm text-muted-foreground">
-                    Wpisz NIP firmy, aby automatycznie pobrać dane z Wykazu podatników VAT.
+                    Wpisz NIP firmy, aby automatycznie pobrać dane z Wykazu podatników VAT, KRS i CEIDG.
                   </p>
                   <div className="space-y-2">
                     <Label htmlFor="companyNip" className="hidden">COMPANY_NIP</Label>
@@ -1324,8 +1336,11 @@ export default function LawFirmRegistrationPage() {
                       </p>
                       <dl className="grid grid-cols-1 gap-1 text-sm">
                         {COMPANY_FIELD_LABELS.map(({ key, label }) => {
-                          const value = formData.companyData?.[key]
-                          if (!value) return null
+                          const raw = formData.companyData?.[key]
+                          if (!raw) return null
+                          const value = key === "COMPANY_sources"
+                            ? raw.split(",").map(s => COMPANY_SOURCE_LABELS[s] ?? s).join(", ")
+                            : raw
                           return (
                             <div key={key} className="flex flex-col sm:flex-row sm:gap-2">
                               <dt className="text-muted-foreground sm:w-56 shrink-0">{label}:</dt>

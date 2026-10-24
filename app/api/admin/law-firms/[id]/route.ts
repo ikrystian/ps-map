@@ -55,6 +55,10 @@ export async function GET(
                 COMPANY_statusVat: true,
                 COMPANY_residenceAddress: true,
                 COMPANY_workingAddress: true,
+                COMPANY_legalForm: true,
+                COMPANY_businessStatus: true,
+                COMPANY_mainPkd: true,
+                COMPANY_sources: true,
               },
             },
             // Audyt rejestracji i zgód RODO — podgląd w panelu admina

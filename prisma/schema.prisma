@@ -55,7 +55,7 @@ model User {
   // Relacje
   client        Client?
   lawFirm       LawFirm?
-  companyData   CompanyData?  // Dane firmy pobrane z CEIDG DataStore (przedrostek COMPANY_)
+  companyData   CompanyData?  // Dane firmy z Białej listy MF + KRS/CEIDG (przedrostek COMPANY_)
   sentMessages  Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
@@ -516,6 +516,15 @@ model CompanyData {
 
   // Pełna, surowa odpowiedź (subject) z API w formacie JSON (audyt)
   COMPANY_rawResponse String?
+
+  // Uzupełnienie z KRS (spółki) albo CEIDG (JDG) — lib/company-lookup.ts
+  COMPANY_sources        String?  // np. "MF_WL,KRS" / "MF_WL,CEIDG" / "CEIDG"
+  COMPANY_legalForm      String?  // forma prawna
+  COMPANY_businessStatus String?  // KRS: AKTYWNY/W LIKWIDACJI/WYKREŚLONY; CEIDG: AKTYWNY/ZAWIESZONY/...
+  COMPANY_startDate      String?  // data rejestracji w KRS / rozpoczęcia działalności (YYYY-MM-DD)
+  COMPANY_mainPkd        String?  // przeważające PKD
+  COMPANY_krsResponse    String?  // pełny odpis aktualny KRS (JSON, audyt)
+  COMPANY_ceidgResponse  String?  // wpis CEIDG (JSON, audyt)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

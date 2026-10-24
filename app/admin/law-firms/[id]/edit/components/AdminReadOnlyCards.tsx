@@ -8,7 +8,7 @@ import { formatDate, formatDateTime } from "@/lib/format"
 const formatDay = (value?: string | Date | null) =>
   value ? formatDate(value) : "—"
 
-// --- DANE FIRMY Z BIAŁEJ LISTY (COMPANY_*) ---
+// --- DANE FIRMY Z BIAŁEJ LISTY / KRS / CEIDG (COMPANY_*) ---
 export interface CompanyData {
   COMPANY_name?: string | null
   COMPANY_nip?: string | null
@@ -17,6 +17,10 @@ export interface CompanyData {
   COMPANY_statusVat?: string | null
   COMPANY_residenceAddress?: string | null
   COMPANY_workingAddress?: string | null
+  COMPANY_legalForm?: string | null
+  COMPANY_businessStatus?: string | null
+  COMPANY_mainPkd?: string | null
+  COMPANY_sources?: string | null
 }
 
 export function CompanyDataCard({ companyData }: { companyData: CompanyData | null }) {
@@ -26,9 +30,13 @@ export function CompanyDataCard({ companyData }: { companyData: CompanyData | nu
         ["NIP", companyData.COMPANY_nip],
         ["REGON", companyData.COMPANY_regon],
         ["KRS", companyData.COMPANY_krs],
+        ["Forma prawna", companyData.COMPANY_legalForm],
+        ["Status w rejestrze", companyData.COMPANY_businessStatus],
+        ["Przeważające PKD", companyData.COMPANY_mainPkd],
         ["Status VAT", companyData.COMPANY_statusVat],
         ["Adres siedziby", companyData.COMPANY_residenceAddress],
         ["Adres działalności", companyData.COMPANY_workingAddress],
+        ["Źródła danych", companyData.COMPANY_sources],
       ]
     : []
 
@@ -37,9 +45,9 @@ export function CompanyDataCard({ companyData }: { companyData: CompanyData | nu
       <CardHeader className="flex flex-row items-center gap-3 border-b py-4">
         <Building className="h-5 w-5 text-primary" />
         <div>
-          <CardTitle className="text-lg">Dane firmy do faktury (Biała lista)</CardTitle>
+          <CardTitle className="text-lg">Dane firmy do faktury (Biała lista / KRS / CEIDG)</CardTitle>
           <CardDescription>
-            Pobrane z wykazu podatników VAT przy rejestracji — tylko do odczytu
+            Pobrane z rejestrów publicznych przy rejestracji — tylko do odczytu
           </CardDescription>
         </div>
       </CardHeader>

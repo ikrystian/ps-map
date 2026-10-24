@@ -1,9 +1,9 @@
-import { lookupCompanyByNip } from "@/lib/biala-lista"
+import { lookupCompanyInRegistries } from "@/lib/company-lookup"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
- * Wyszukiwanie danych firmy po numerze NIP w Wykazie podatników VAT
- * (Biała lista Ministerstwa Finansów) — REST, bez klucza.
+ * Wyszukiwanie danych firmy po numerze NIP: Wykaz podatników VAT (Biała lista MF),
+ * uzupełniony danymi z KRS albo CEIDG — patrz lib/company-lookup.ts.
  *
  * Endpoint publiczny (używany w trakcie rejestracji eksperta "jako firma",
  * zanim powstanie konto). Zwraca komplet pól z przedrostkiem COMPANY_.
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Brak numeru NIP." }, { status: 400 })
   }
 
-  const result = await lookupCompanyByNip(nip)
+  const result = await lookupCompanyInRegistries(nip)
 
   if (!result.ok) {
     const status =

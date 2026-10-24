@@ -695,7 +695,7 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      // Zapisz dane firmy pobrane z CEIDG DataStore (przedrostek COMPANY_).
+      // Zapisz dane firmy z Białej listy MF / KRS / CEIDG (przedrostek COMPANY_).
       // Osobny model przypisany do użytkownika — pola NIE są łączone z nip/regon/nazwa.
       const companyData = pickCompanyDataFields(body.companyData)
       if (Object.keys(companyData).length > 0) {
