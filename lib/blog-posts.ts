@@ -273,11 +273,13 @@ export const RELATED_BLOG_POSTS_INCLUDE = {
 } as const
 
 /**
- * Zapisuje ręcznie wybrane powiązane artykuły wpisu (w podanej kolejności).
+ * Normalizuje ręcznie wybrane powiązane artykuły z body requestu do wierszy
+ * `BlogPostRelated` (w podanej kolejności) — do zagnieżdżonego zapisu razem
+ * z samym wpisem, żeby wpis i jego powiązania zapisywały się atomowo.
  * Nieistniejące ID, duplikaty i sam wpis są pomijane. `undefined` = bez zmian.
  */
-export async function setRelatedBlogPosts(postId: string, relatedIds: unknown) {
-  if (relatedIds === undefined) return
+export async function resolveRelatedBlogPosts(relatedIds: unknown, postId?: string) {
+  if (relatedIds === undefined) return undefined
   const ids = Array.isArray(relatedIds)
     ? Array.from(new Set(relatedIds.filter((id): id is string => typeof id === "string" && id !== postId)))
       .slice(0, MAX_RELATED_BLOG_POSTS)
@@ -288,14 +290,9 @@ export async function setRelatedBlogPosts(postId: string, relatedIds: unknown) {
     : []
   const existingIds = new Set(existing.map((post) => post.id))
 
-  await prisma.$transaction([
-    prisma.blogPostRelated.deleteMany({ where: { postId } }),
-    prisma.blogPostRelated.createMany({
-      data: ids
-        .filter((id) => existingIds.has(id))
-        .map((relatedPostId, kolejnosc) => ({ postId, relatedPostId, kolejnosc })),
-    }),
-  ])
+  return ids
+    .filter((id) => existingIds.has(id))
+    .map((relatedPostId, kolejnosc) => ({ relatedPostId, kolejnosc }))
 }
 
 function parseTags(tagi?: string | null): string[] {

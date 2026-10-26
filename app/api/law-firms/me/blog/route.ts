@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { setRelatedBlogPosts } from "@/lib/blog-posts"
+import { resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -139,6 +139,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const relatedPosts = await resolveRelatedBlogPosts(powiazaneWpisy)
+
     // Utwórz wpis
     const post = await prisma.blogPost.create({
       data: {
@@ -153,6 +155,7 @@ export async function POST(request: NextRequest) {
         metaDescription,
         opublikowany: opublikowany || false,
         dataPublikacji: opublikowany ? new Date() : null,
+        powiazaneWpisy: relatedPosts?.length ? { create: relatedPosts } : undefined,
       },
       include: {
         category: true,
@@ -165,8 +168,6 @@ export async function POST(request: NextRequest) {
         },
       },
     })
-
-    await setRelatedBlogPosts(post.id, powiazaneWpisy)
 
     return NextResponse.json(post, { status: 201 })
   } catch (error) {

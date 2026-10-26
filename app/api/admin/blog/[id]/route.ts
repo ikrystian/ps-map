@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { RELATED_BLOG_POSTS_INCLUDE, setRelatedBlogPosts } from "@/lib/blog-posts"
+import { RELATED_BLOG_POSTS_INCLUDE, resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -227,6 +227,11 @@ export async function PATCH(
       data.sponsoredLawFirmId = activeSponsored ? (sponsoredLawFirmId || null) : null
     }
 
+    const relatedPosts = await resolveRelatedBlogPosts(powiazaneWpisy, id)
+    if (relatedPosts) {
+      data.powiazaneWpisy = { deleteMany: {}, create: relatedPosts }
+    }
+
     const updatedPost = await prisma.blogPost.update({
       where: { id },
       data,
@@ -247,8 +252,6 @@ export async function PATCH(
         },
       },
     })
-
-    await setRelatedBlogPosts(id, powiazaneWpisy)
 
     return NextResponse.json(updatedPost)
   } catch (error) {
