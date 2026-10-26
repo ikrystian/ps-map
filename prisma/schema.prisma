@@ -1325,12 +1325,28 @@ model BlogPost {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // Powiązane artykuły wybrane ręcznie w edycji wpisu
+  powiazaneWpisy        BlogPostRelated[] @relation("BlogPostRelatedFrom")
+  powiazanyZ            BlogPostRelated[] @relation("BlogPostRelatedTo")
+
   // Relacje
   @@index([lawFirmId])
   @@index([sponsoredLawFirmId])
   @@index([categoryId])
   @@index([slug])
   @@index([opublikowany])
+}
+
+// Ręcznie wybrane powiązane artykuły wpisu (w kolejności wyświetlania)
+model BlogPostRelated {
+  postId                String
+  post                  BlogPost @relation("BlogPostRelatedFrom", fields: [postId], references: [id], onDelete: Cascade)
+  relatedPostId         String
+  relatedPost           BlogPost @relation("BlogPostRelatedTo", fields: [relatedPostId], references: [id], onDelete: Cascade)
+  kolejnosc             Int      @default(0)
+
+  @@id([postId, relatedPostId])
+  @@index([relatedPostId])
 }
 
 // ============================================================================

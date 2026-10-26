@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft,
+  BookOpen,
   Building2,
   Calendar,
   Eye,
@@ -14,8 +15,10 @@ import { Fragment } from "react";
 import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
 import { formatDate } from "@/lib/format"
-import { BlogPostViewTracker, ParallaxHeroImage, ReadingProgressBar } from "./BlogPostInteractive";
+import { BlogPostToc, BlogPostViewTracker, ParallaxHeroImage, ReadingProgressBar } from "./BlogPostInteractive";
 import { blogCategoryPath } from "@/lib/blog-category-url";
+import { buildBlogToc } from "@/lib/blog-toc";
+import type { RelatedBlogPost } from "@/lib/blog-posts";
 
 interface AdSenseSettings {
   enabled: boolean;
@@ -28,11 +31,12 @@ interface AdSenseSettings {
 interface BlogPostViewProps {
   post: BlogPost & { isUnpublished?: boolean };
   adsense?: AdSenseSettings;
+  relatedPosts?: RelatedBlogPost[];
 }
 
 // Komponent serwerowy — cała treść wpisu trafia do HTML-a z serwera; interaktywne
 // dodatki (licznik odsłon, pasek postępu, paralaksa) są w BlogPostInteractive.
-export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
+export default function BlogPostView({ post, adsense, relatedPosts = [] }: BlogPostViewProps) {
   const formatViews = (views?: number): string => {
     if (!views || views === 1) return views === 1 ? "1 wyświetlenie" : "0 wyświetleń";
     const lastDigit = views % 10;
@@ -92,6 +96,10 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
   ));
 
   const isUnpublished = Boolean(post.isUnpublished);
+
+  // Spis treści z nagłówków treści — nagłówki dostają id, do których linkuje spis
+  const { html: contentHtml, toc } = buildBlogToc(post.tresc || "");
+  const showToc = toc.length >= 2;
 
   return (
     <article className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground antialiased pb-20">
@@ -312,10 +320,18 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Article Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Spis treści na mobile — panel boczny ląduje tam dopiero pod treścią */}
+            {showToc && (
+              <div className="lg:hidden bg-card border border-border/70 rounded-3xl p-6 shadow-md">
+                <BlogPostToc items={toc} contentId="post-body" />
+              </div>
+            )}
+
             <div className="bg-card border border-border/70 rounded-3xl p-6 md:p-10 shadow-md backdrop-blur-sm" id="post-content">
               <div
-                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
-                dangerouslySetInnerHTML={{ __html: post.tresc || "" }}
+                id="post-body"
+                className="prose prose-lg dark:prose-invert max-w-none [&_:is(h1,h2,h3,h4)]:scroll-mt-[96px] prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
 
               <Separator className="my-10 bg-border/60" />
@@ -480,6 +496,12 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
 
           {/* Sticky Editorial Sidebar */}
           <aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-[95px] h-fit">
+            {showToc && (
+              <div className="hidden lg:block bg-card/60 border border-border/80 rounded-3xl p-6 shadow-xl backdrop-blur-md">
+                <BlogPostToc items={toc} contentId="post-body" />
+              </div>
+            )}
+
             {post.isSponsored && post.sponsoredLawFirm ? (
               /* About Sponsor card */
               <div className="bg-card/60 border border-amber-500/20 rounded-3xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden group">
@@ -694,6 +716,50 @@ export default function BlogPostView({ post, adsense }: BlogPostViewProps) {
           </aside>
         </div>
       </div>
+
+      {relatedPosts.length > 0 && (
+        <section aria-labelledby="related-posts-title" className="container mx-auto px-4 pt-4">
+          <div className="flex items-center gap-6 mb-10">
+            <h2 id="related-posts-title" className="font-playfair text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              Powiązane artykuły
+            </h2>
+            <div className="h-px bg-border flex-grow" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {relatedPosts.map((related, index) => (
+              <Link key={related.id} href={`/blog/${related.slug}`} className="group flex flex-col">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-md">
+                  {related.obrazekWyrozniajacy ? (
+                    <img
+                      src={related.obrazekWyrozniajacy}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.07]"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-muted">
+                      <BookOpen className="h-10 w-10 text-primary/50" />
+                    </div>
+                  )}
+                  <span className="absolute bottom-0 left-0 translate-y-full rounded-tr-xl bg-primary px-3 py-1.5 text-xs font-bold tracking-[0.1em] text-primary-foreground transition-transform duration-[400ms] group-hover:translate-y-0">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="pt-5">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {related.category?.nazwa && <span className="text-primary">{related.category.nazwa}</span>}
+                    <span>{formatDate(related.dataPublikacji ?? related.createdAt)}</span>
+                  </div>
+                  <h3 className="mt-3 text-base md:text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary line-clamp-3">
+                    {related.tytul}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }

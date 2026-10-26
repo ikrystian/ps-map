@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye, Image as ImageIcon } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye, Image as ImageIcon, Link2 } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -36,6 +36,8 @@ import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
 import { BlogCategoryPicker } from "@/components/admin/blog-category-picker"
+import { BlogRelatedPostsPicker } from "@/components/admin/blog-related-posts-picker"
+import { MAX_RELATED_BLOG_POSTS } from "@/lib/blog-related"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -58,6 +60,7 @@ const postFormSchema = z.object({
   dataPublikacji: z.string().optional(),
   isSponsored: z.boolean().default(false),
   sponsoredLawFirmId: z.string().optional(),
+  powiazaneWpisy: z.array(z.object({ id: z.string(), tytul: z.string() })).default([]),
 })
 
 type PostFormValues = z.infer<typeof postFormSchema>
@@ -151,6 +154,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
       dataPublikacji: "",
       isSponsored: false,
       sponsoredLawFirmId: "",
+      powiazaneWpisy: [],
     },
   })
 
@@ -239,6 +243,9 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
           dataPublikacji: isScheduled ? toDatetimeLocal(post.dataPublikacji) : "",
           isSponsored: post.isSponsored || false,
           sponsoredLawFirmId: post.sponsoredLawFirmId || "",
+          powiazaneWpisy: (post.powiazaneWpisy || []).map(
+            (row: { relatedPost: { id: string; tytul: string } }) => ({ id: row.relatedPost.id, tytul: row.relatedPost.tytul })
+          ),
         })
 
         // If the loaded post is sponsored, open the sponsored section automatically for convenience
@@ -330,6 +337,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
             ? new Date(values.dataPublikacji).toISOString()
             : null,
           sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
+          powiazaneWpisy: values.powiazaneWpisy.map((post) => post.id),
         }),
       })
 
@@ -391,6 +399,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
             ? new Date(values.dataPublikacji).toISOString()
             : null,
           sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
+          powiazaneWpisy: values.powiazaneWpisy.map((post) => post.id),
         }),
       })
 
@@ -789,6 +798,40 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </Card>
+              </motion.div>
+
+              {/* Powiązane artykuły */}
+              <motion.div variants={itemVariants}>
+                <Card className="border shadow-sm">
+                  <CardHeader className="py-5 px-6 border-b">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                      <Link2 className="h-4 w-4 text-primary" />
+                      Powiązane artykuły
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Wybierz artykuły polecane pod tym wpisem (maks. {MAX_RELATED_BLOG_POSTS}).
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <FormField
+                      control={form.control}
+                      name="powiazaneWpisy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <BlogRelatedPostsPicker
+                              value={field.value}
+                              onChange={field.onChange}
+                              excludeId={currentPostId || postId}
+                              max={MAX_RELATED_BLOG_POSTS}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
                 </Card>
               </motion.div>
 

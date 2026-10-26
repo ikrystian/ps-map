@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { setRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -98,6 +99,7 @@ export async function POST(request: NextRequest) {
       metaTitle,
       metaDescription,
       opublikowany,
+      powiazaneWpisy,
     } = body
 
     // Walidacja
@@ -163,6 +165,8 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
+    await setRelatedBlogPosts(post.id, powiazaneWpisy)
 
     return NextResponse.json(post, { status: 201 })
   } catch (error) {

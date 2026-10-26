@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { RELATED_BLOG_POSTS_INCLUDE, setRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -34,6 +35,7 @@ export async function GET(
       where: { id },
       include: {
         category: true,
+        ...RELATED_BLOG_POSTS_INCLUDE,
       },
     })
 
@@ -110,6 +112,7 @@ export async function PUT(
       metaTitle,
       metaDescription,
       opublikowany,
+      powiazaneWpisy,
     } = body
 
     // Walidacja
@@ -180,6 +183,8 @@ export async function PUT(
         },
       },
     })
+
+    await setRelatedBlogPosts(id, powiazaneWpisy)
 
     return NextResponse.json(post)
   } catch (error) {

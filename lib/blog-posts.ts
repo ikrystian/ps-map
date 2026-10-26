@@ -1,6 +1,7 @@
 import { cache } from "react"
 import { auth } from "@/auth"
 import { getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
+import { MAX_RELATED_BLOG_POSTS } from "@/lib/blog-related"
 import { prisma } from "@/lib/prisma"
 import { PaginationData } from "@/types/pagination"
 import { BlogPost } from "@/types/blog"
@@ -242,3 +243,106 @@ export const getPublicBlogPostBySlug = cache(async (slug: string) => {
     isUnpublished,
   } as unknown as BlogPost & { isUnpublished: boolean }
 })
+
+/** Ile artykułów dobieramy automatycznie, gdy autor nie wybrał żadnego. */
+const AUTO_RELATED_BLOG_POSTS = 3
+
+const RELATED_BLOG_POST_SELECT = {
+  id: true,
+  tytul: true,
+  slug: true,
+  obrazekWyrozniajacy: true,
+  dataPublikacji: true,
+  createdAt: true,
+  category: { select: { id: true, nazwa: true, slug: true } },
+} as const
+
+/**
+ * Wybór powiązanych artykułów w edycji wpisu — format zwracany przez GET
+ * endpointów edycji i przyjmowany przez formularz.
+ */
+export const RELATED_BLOG_POSTS_INCLUDE = {
+  powiazaneWpisy: {
+    orderBy: { kolejnosc: "asc" },
+    select: {
+      relatedPost: {
+        select: { id: true, tytul: true, slug: true, opublikowany: true, dataPublikacji: true },
+      },
+    },
+  },
+} as const
+
+/**
+ * Zapisuje ręcznie wybrane powiązane artykuły wpisu (w podanej kolejności).
+ * Nieistniejące ID, duplikaty i sam wpis są pomijane. `undefined` = bez zmian.
+ */
+export async function setRelatedBlogPosts(postId: string, relatedIds: unknown) {
+  if (relatedIds === undefined) return
+  const ids = Array.isArray(relatedIds)
+    ? Array.from(new Set(relatedIds.filter((id): id is string => typeof id === "string" && id !== postId)))
+      .slice(0, MAX_RELATED_BLOG_POSTS)
+    : []
+
+  const existing = ids.length
+    ? await prisma.blogPost.findMany({ where: { id: { in: ids } }, select: { id: true } })
+    : []
+  const existingIds = new Set(existing.map((post) => post.id))
+
+  await prisma.$transaction([
+    prisma.blogPostRelated.deleteMany({ where: { postId } }),
+    prisma.blogPostRelated.createMany({
+      data: ids
+        .filter((id) => existingIds.has(id))
+        .map((relatedPostId, kolejnosc) => ({ postId, relatedPostId, kolejnosc })),
+    }),
+  ])
+}
+
+function parseTags(tagi?: string | null): string[] {
+  if (!tagi) return []
+  try {
+    const parsed = JSON.parse(tagi)
+    return Array.isArray(parsed) ? parsed.filter((tag): tag is string => typeof tag === "string" && tag.trim() !== "") : []
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Powiązane artykuły do sekcji pod wpisem: ręcznie wybrane w edycji wpisu,
+ * a gdy autor nie wybrał żadnego (opublikowanego) — najnowsze wpisy z tej
+ * samej kategorii lub z co najmniej jednym wspólnym słowem kluczowym.
+ */
+export async function getRelatedBlogPosts(post: { id: string; categoryId?: string | null; tagi?: string | null }) {
+  const now = new Date()
+  const isPublished = (related: { opublikowany: boolean; dataPublikacji: Date | null }) =>
+    related.opublikowany && (!related.dataPublikacji || related.dataPublikacji <= now)
+
+  const manual = await prisma.blogPostRelated.findMany({
+    where: { postId: post.id },
+    orderBy: { kolejnosc: "asc" },
+    select: { relatedPost: { select: { ...RELATED_BLOG_POST_SELECT, opublikowany: true } } },
+  })
+  const manualPublished = manual.map((row) => row.relatedPost).filter(isPublished)
+  if (manualPublished.length > 0) return manualPublished
+
+  const tags = parseTags(post.tagi)
+  const matchers = [
+    ...(post.categoryId ? [{ categoryId: post.categoryId }] : []),
+    ...tags.map((tag) => ({ tagi: { contains: JSON.stringify(tag) } })),
+  ]
+  if (matchers.length === 0) return []
+
+  return prisma.blogPost.findMany({
+    where: {
+      ...publishedBlogPostWhere(),
+      id: { not: post.id },
+      AND: [{ OR: matchers }],
+    },
+    select: RELATED_BLOG_POST_SELECT,
+    orderBy: { dataPublikacji: "desc" },
+    take: AUTO_RELATED_BLOG_POSTS,
+  })
+}
+
+export type RelatedBlogPost = Awaited<ReturnType<typeof getRelatedBlogPosts>>[number]

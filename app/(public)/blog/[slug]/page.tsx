@@ -1,4 +1,4 @@
-import { getPublicBlogPostBySlug, getPublishedBlogPostSlugs } from "@/lib/blog-posts"
+import { getPublicBlogPostBySlug, getPublishedBlogPostSlugs, getRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
@@ -58,6 +58,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
+  const relatedPostsPromise = getRelatedBlogPosts(post).catch((error) => {
+    console.error("Error fetching related blog posts:", error)
+    return []
+  })
+
   let adsense = {
     enabled: false,
     clientId: "",
@@ -92,6 +97,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     console.error("Error reading AdSense settings for blog post:", error)
   }
 
+  const relatedPosts = await relatedPostsPromise
+
   return (
     <>
       {/* Podglądu szkicu nie opisujemy dla wyszukiwarek */}
@@ -110,7 +117,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           })}
         />
       )}
-      <BlogPostView post={post} adsense={adsense} />
+      <BlogPostView post={post} adsense={adsense} relatedPosts={relatedPosts} />
     </>
   )
 }

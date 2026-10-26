@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { RELATED_BLOG_POSTS_INCLUDE, setRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -34,6 +35,7 @@ export async function GET(
             slug: true,
           },
         },
+        ...RELATED_BLOG_POSTS_INCLUDE,
       },
     })
 
@@ -122,6 +124,7 @@ export async function PATCH(
       dataPublikacji,
       isSponsored,
       sponsoredLawFirmId,
+      powiazaneWpisy,
     } = body
 
     // Sprawdź czy wpis istnieje
@@ -244,6 +247,8 @@ export async function PATCH(
         },
       },
     })
+
+    await setRelatedBlogPosts(id, powiazaneWpisy)
 
     return NextResponse.json(updatedPost)
   } catch (error) {
