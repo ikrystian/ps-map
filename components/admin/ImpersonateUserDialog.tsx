@@ -22,7 +22,7 @@ interface ImpersonateUser {
   name?: string | null
   email: string
   image?: string | null
-  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  role: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR"
   status: string
   imie?: string | null
   nazwisko?: string | null
@@ -35,10 +35,12 @@ const roleLabels: Record<string, string> = {
   CLIENT: "Klient",
   LAW_FIRM: "Ekspert",
   ADMIN: "Admin",
+  MODERATOR: "Moderator",
 }
 
 const roleBadgeVariant: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   ADMIN: "destructive",
+  MODERATOR: "outline",
   LAW_FIRM: "default",
   CLIENT: "secondary",
 }
@@ -47,6 +49,7 @@ const panelByRole: Record<string, string> = {
   CLIENT: "/panel-klienta",
   LAW_FIRM: "/panel-eksperta",
   ADMIN: "/admin",
+  MODERATOR: "/admin/blog",
 }
 
 function displayName(user: ImpersonateUser): string {

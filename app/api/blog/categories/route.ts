@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { canManageBlog } from "@/lib/roles"
 import { getPublicBlogCategories } from "@/lib/blog-categories"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
@@ -55,12 +56,12 @@ export async function GET(request: Request) {
   }
 }
 
-// POST /api/blog/categories - Tworzy nową kategorię (tylko ADMIN)
+// POST /api/blog/categories - Tworzy nową kategorię (ADMIN i MODERATOR)
 export async function POST(request: Request) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

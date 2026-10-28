@@ -31,7 +31,7 @@ export default async function PublicLayout({
     <div className="min-h-screen flex flex-col selection:bg-primary/20 selection:text-primary-foreground">
       <PublicHeader
         isAuthenticated={!!session}
-        userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}
+        userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR" | null}
         userName={session?.user?.name}
         userImage={session?.user?.image}
         punktySaldo={punktySaldo}

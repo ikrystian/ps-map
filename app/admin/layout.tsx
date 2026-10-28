@@ -5,6 +5,8 @@ import { SiteLogo } from "@/components/site-logo"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { isModeratorAdminPath } from "@/lib/roles"
 
 import AdminNotificationBell from "@/components/AdminNotificationBell"
 import AdminPageTitle from "@/components/admin/AdminPageTitle"
@@ -354,6 +356,15 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname()
   const [impersonateOpen, setImpersonateOpen] = useState(false)
+  const { data: session } = useSession()
+  const isModerator = session?.user?.role === "MODERATOR"
+
+  // Moderator widzi wyłącznie sekcję bloga
+  const visibleNavigation = isModerator
+    ? navigation
+        .map((group) => ({ ...group, items: group.items.filter((item) => isModeratorAdminPath(item.href)) }))
+        .filter((group) => group.items.length > 0)
+    : navigation
 
   // Podstrony "Stron" z własnymi pozycjami w podmenu
   const legalPagesRoutes = ["/admin/pages/polityka-prywatnosci", "/admin/pages/regulamin"]
@@ -402,7 +413,7 @@ export default function AdminLayout({
           <SidebarContent>
             <SidebarGroup className="p-2">
               <SidebarMenu>
-                {navigation.map((group) => (
+                {visibleNavigation.map((group) => (
                   <CollapsibleNavGroup
                     key={group.title}
                     group={group}
@@ -427,8 +438,8 @@ export default function AdminLayout({
 
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <AdminNotificationBell />
-              <UserMenu userRole="ADMIN" />
+              {!isModerator && <AdminNotificationBell />}
+              <UserMenu userRole={isModerator ? "MODERATOR" : "ADMIN"} />
             </div>
           </header>
 

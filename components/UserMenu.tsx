@@ -29,7 +29,7 @@ import Link from "next/link"
 import { userAvatar } from "@/lib/client-avatar"
 
 interface UserMenuProps {
-  userRole: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  userRole: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR"
   userName?: string | null
   userEmail?: string | null
   userImage?: string | null
@@ -231,6 +231,38 @@ export default function UserMenu({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+    )
+  }
+
+  // MODERATOR Menu — tylko blog
+  if (userRole === "MODERATOR") {
+    return (
+      <DropdownMenu>
+        <Trigger image={userImage} alt="Moderator" />
+        <DropdownMenuContent align="end" className="w-64 p-0 overflow-hidden">
+          <ProfileHeader image={userImage} alt="Moderator" />
+
+          <div className="py-1">
+            <DropdownMenuItem asChild>
+              <Link href="/admin/blog" className="px-4 py-2.5 text-sm cursor-pointer flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Blog
+              </Link>
+            </DropdownMenuItem>
+          </div>
+
+          <DropdownMenuSeparator />
+
+          <div className="py-1">
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="px-4 py-2.5 text-sm cursor-pointer"
+            >
+              Wyloguj
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 

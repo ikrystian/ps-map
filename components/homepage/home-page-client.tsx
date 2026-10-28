@@ -103,7 +103,7 @@ export default function HomePageClient() {
     <div className="min-h-screen">
       <PublicHeader
         isAuthenticated={!!session}
-        userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | null}
+        userRole={session?.user?.role as "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR" | null}
         userName={session?.user?.name}
         userImage={session?.user?.image}
       />

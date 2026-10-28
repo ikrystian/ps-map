@@ -14,18 +14,6 @@ export async function GET(request: NextRequest) {
 
     const accountManagers = await prisma.accountManager.findMany({
       include: {
-        lawFirms: {
-          select: {
-            id: true,
-            nazwa: true,
-            user: {
-              select: {
-                numerTelefonu: true,
-                miasto: true
-              }
-            }
-          }
-        },
         voivodeships: {
           select: { id: true, nazwa: true },
           orderBy: { nazwa: 'asc' }
@@ -37,18 +25,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     })
 
-    // Spłaszcz dane kontaktowe kancelarii (przeniesione do modelu User)
-    const result = accountManagers.map((am) => ({
-      ...am,
-      lawFirms: am.lawFirms.map((lf) => ({
-        id: lf.id,
-        nazwa: lf.nazwa,
-        numerTelefonu: lf.user?.numerTelefonu ?? "",
-        miasto: lf.user?.miasto ?? "",
-      })),
-    }))
-
-    return NextResponse.json(result)
+    return NextResponse.json(accountManagers)
   } catch (error) {
     console.error('Error fetching account managers:', error)
     return NextResponse.json(

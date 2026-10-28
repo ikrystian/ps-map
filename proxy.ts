@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
+import { adminHomePath, canAccessAdminPanel, isModeratorAdminPath } from "@/lib/roles"
 
 // CORS dla statycznego landing page (katalog ps-landing), który żyje na innym
 // origin niż ta aplikacja Next.js, a pobiera dane słownikowe i pre-rejestruje
@@ -82,8 +83,8 @@ export default auth((req) => {
     if (userRole === "LAW_FIRM") {
       return NextResponse.redirect(new URL("/panel-eksperta", nextUrl))
     }
-    if (userRole === "ADMIN") {
-      return NextResponse.redirect(new URL("/admin", nextUrl))
+    if (canAccessAdminPanel(userRole)) {
+      return NextResponse.redirect(new URL(adminHomePath(userRole), nextUrl))
     }
   }
 
@@ -109,14 +110,17 @@ export default auth((req) => {
     }
   }
 
-  // Panel admin - tylko dla ADMIN
+  // Panel admin - dla ADMIN; MODERATOR wyłącznie w sekcji bloga
   if (nextUrl.pathname.startsWith("/admin")) {
     if (!isLoggedIn) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname)
       return NextResponse.redirect(new URL(`/logowanie?callbackUrl=${callbackUrl}`, nextUrl))
     }
-    if (userRole !== "ADMIN") {
+    if (!canAccessAdminPanel(userRole)) {
       return NextResponse.redirect(new URL("/", nextUrl))
+    }
+    if (userRole === "MODERATOR" && !isModeratorAdminPath(nextUrl.pathname)) {
+      return NextResponse.redirect(new URL(adminHomePath(userRole), nextUrl))
     }
   }
 

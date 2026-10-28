@@ -31,7 +31,7 @@ const createUserSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
-  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
+  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN", "MODERATOR"]),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   image: z.string().optional(),
   // Client fields
@@ -346,6 +346,7 @@ export default function NewUserPage() {
                           <SelectItem value="CLIENT">Klient</SelectItem>
                           <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
                           <SelectItem value="ADMIN">Administrator</SelectItem>
+                          <SelectItem value="MODERATOR">Moderator (blog)</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

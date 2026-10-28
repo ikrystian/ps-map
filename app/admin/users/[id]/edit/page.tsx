@@ -40,7 +40,7 @@ const userSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków").or(z.literal("")).optional(),
-  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN"]),
+  role: z.enum(["CLIENT", "LAW_FIRM", "ADMIN", "MODERATOR"]),
   status: z.enum(["ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "BLOCKED"]),
   image: z.string().optional(),
   // Client fields
@@ -107,7 +107,7 @@ interface UserData {
   id: string
   name?: string | null
   email: string
-  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  role: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR"
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED" | "PENDING"
   emailVerified?: string | Date | null
   image?: string | null
@@ -645,6 +645,7 @@ export default function EditUserPage() {
                               <SelectItem value="CLIENT">Klient</SelectItem>
                               <SelectItem value="LAW_FIRM">Ekspert</SelectItem>
                               <SelectItem value="ADMIN">Administrator</SelectItem>
+                              <SelectItem value="MODERATOR">Moderator (blog)</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth"
+import { canManageBlog } from "@/lib/roles"
 import { RELATED_BLOG_POSTS_INCLUDE, resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/admin/blog/[id] - Pobiera konkretny wpis (tylko ADMIN)
+// GET /api/admin/blog/[id] - Pobiera konkretny wpis (ADMIN i MODERATOR)
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -12,7 +13,7 @@ export async function GET(
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -50,7 +51,7 @@ export async function GET(
   }
 }
 
-// DELETE /api/admin/blog/[id] - Usuwa wpis (tylko ADMIN)
+// DELETE /api/admin/blog/[id] - Usuwa wpis (ADMIN i MODERATOR)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -58,7 +59,7 @@ export async function DELETE(
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -96,7 +97,7 @@ export async function DELETE(
   }
 }
 
-// PATCH /api/admin/blog/[id] - Aktualizuje wpis (tylko ADMIN)
+// PATCH /api/admin/blog/[id] - Aktualizuje wpis (ADMIN i MODERATOR)
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -104,7 +105,7 @@ export async function PATCH(
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

@@ -35,7 +35,7 @@ import { fetchShared } from "@/lib/shared-fetch"
 
 interface PublicHeaderProps {
   isAuthenticated?: boolean
-  userRole?: "CLIENT" | "LAW_FIRM" | "ADMIN" | null
+  userRole?: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR" | null
   userName?: string | null
   userImage?: string | null
   punktySaldo?: number

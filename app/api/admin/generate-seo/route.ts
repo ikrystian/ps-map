@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { canManageBlog } from "@/lib/roles"
 import { NextRequest, NextResponse } from "next/server"
 
 const OPENROUTER_MODEL = "deepseek/deepseek-v4-flash"
@@ -33,12 +34,12 @@ function parseModelJson(content: string): unknown {
   return JSON.parse(match[0])
 }
 
-// POST /api/admin/blog/generate-seo - Generuje metadane SEO na podstawie treści artykułu (tylko ADMIN)
+// POST /api/admin/blog/generate-seo - Generuje metadane SEO na podstawie treści artykułu (ADMIN i MODERATOR)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

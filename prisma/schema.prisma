@@ -245,6 +245,7 @@ enum UserRole {
   CLIENT      // Klient
   LAW_FIRM    // Ekspert
   ADMIN       // Administrator
+  MODERATOR   // Moderator — dostęp do panelu admina wyłącznie w sekcji bloga
 }
 
 enum UserStatus {

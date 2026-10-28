@@ -179,7 +179,7 @@ export async function PUT(
 
     // Validate role if provided
     if (role) {
-      const validRoles = ["CLIENT", "LAW_FIRM", "ADMIN"]
+      const validRoles = ["CLIENT", "LAW_FIRM", "ADMIN", "MODERATOR"]
       if (!validRoles.includes(role)) {
         return NextResponse.json({ error: "Invalid role" }, { status: 400 })
       }

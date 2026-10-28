@@ -11,6 +11,7 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { adminHomePath, canAccessAdminPanel } from "@/lib/roles"
 import { FaFacebook, FaGoogle, FaLinkedinIn } from "react-icons/fa"
 
 export default function LoginPage() {
@@ -89,8 +90,8 @@ export default function LoginPage() {
           router.push("/panel-eksperta")
           return
         }
-        if (userRole === "ADMIN") {
-          router.push("/admin")
+        if (canAccessAdminPanel(userRole)) {
+          router.push(adminHomePath(userRole))
           return
         }
       }

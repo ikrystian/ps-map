@@ -23,7 +23,7 @@ import { formatDate } from "@/lib/format"
 const CONFIRMATION_PHRASE = "USUWAM KONTO"
 
 interface RetentionSummary {
-  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  role: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR"
   invoices: number
   paidOrders: number
   cases: number

@@ -1,15 +1,16 @@
 import { auth } from "@/lib/auth"
+import { canManageBlog } from "@/lib/roles"
 import { resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/admin/blog - Pobiera wszystkie wpisy (tylko ADMIN) z filtrami i statystykami
+// GET /api/admin/blog - Pobiera wszystkie wpisy (ADMIN i MODERATOR) z filtrami i statystykami
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -116,12 +117,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/admin/blog - Tworzy nowy wpis (tylko ADMIN)
+// POST /api/admin/blog - Tworzy nowy wpis (ADMIN i MODERATOR)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

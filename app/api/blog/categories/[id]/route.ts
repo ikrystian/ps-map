@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { canManageBlog } from "@/lib/roles"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextResponse } from "next/server"
@@ -42,7 +43,7 @@ export async function GET(
   }
 }
 
-// PUT /api/blog/categories/[id] - Aktualizuje kategorię (tylko ADMIN)
+// PUT /api/blog/categories/[id] - Aktualizuje kategorię (ADMIN i MODERATOR)
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -50,7 +51,7 @@ export async function PUT(
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -167,7 +168,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/blog/categories/[id] - Usuwa kategorię (tylko ADMIN)
+// DELETE /api/blog/categories/[id] - Usuwa kategorię (ADMIN i MODERATOR)
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -175,7 +176,7 @@ export async function DELETE(
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canManageBlog(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

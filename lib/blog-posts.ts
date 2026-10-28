@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
 import { MAX_RELATED_BLOG_POSTS } from "@/lib/blog-related"
 import { prisma } from "@/lib/prisma"
+import { canManageBlog } from "@/lib/roles"
 import { PaginationData } from "@/types/pagination"
 import { BlogPost } from "@/types/blog"
 
@@ -208,7 +209,7 @@ export const getPublicBlogPostBySlug = cache(async (slug: string) => {
     let isAuthor = false
 
     if (session?.user) {
-      if (session.user.role === "ADMIN") {
+      if (canManageBlog(session.user.role)) {
         isAuthor = true
       } else if (session.user.role === "LAW_FIRM") {
         const lawFirm = await prisma.lawFirm.findUnique({

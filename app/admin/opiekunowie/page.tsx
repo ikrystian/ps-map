@@ -27,6 +27,7 @@ import {
 import { Pencil, Plus, Trash2, Upload, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AdminHeaderSetter } from '@/components/admin/AdminTitleContext'
+import { AccountManagerExpertsDialog } from '@/components/admin/AccountManagerExpertsDialog'
 
 interface AccountManager {
   id: string
@@ -37,12 +38,6 @@ interface AccountManager {
   avatar: string | null
   aktywny: boolean
   createdAt: string
-  lawFirms: {
-    id: string
-    nazwa: string
-    numerTelefonu: string
-    miasto: string
-  }[]
   voivodeships: Voivodeship[]
   _count: {
     lawFirms: number
@@ -60,7 +55,8 @@ export default function AccountManagersPage() {
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingManager, setEditingManager] = useState<AccountManager | null>(null)
-  const [viewingFirmsFor, setViewingFirmsFor] = useState<AccountManager | null>(null)
+  const [viewingFirmsForId, setViewingFirmsForId] = useState<string | null>(null)
+  const viewingFirmsFor = accountManagers.find((m) => m.id === viewingFirmsForId) ?? null
   const [uploading, setUploading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -408,47 +404,12 @@ export default function AccountManagersPage() {
           </DialogContent>
         </Dialog>
 
-        {/* Dialog for viewing assigned experts (law firms) */}
-        <Dialog open={!!viewingFirmsFor} onOpenChange={(open) => !open && setViewingFirmsFor(null)}>
-          <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>Eksperci przypisani do opiekuna</DialogTitle>
-              <DialogDescription>
-                {viewingFirmsFor?.imie} {viewingFirmsFor?.nazwisko} ({viewingFirmsFor?.email})
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex-1 overflow-y-auto mt-4">
-              {viewingFirmsFor?.lawFirms && viewingFirmsFor.lawFirms.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nazwa</TableHead>
-                      <TableHead>Telefon</TableHead>
-                      <TableHead>Miasto</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {viewingFirmsFor.lawFirms.map((firm) => (
-                      <TableRow key={firm.id}>
-                        <TableCell className="font-medium">{firm.nazwa}</TableCell>
-
-                        <TableCell>{firm.numerTelefonu}</TableCell>
-                        <TableCell>{firm.miasto}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center text-muted-foreground py-8">
-                  Brak przypisanych ekspertów
-                </div>
-              )}
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button onClick={() => setViewingFirmsFor(null)}>Zamknij</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AccountManagerExpertsDialog
+          manager={viewingFirmsFor}
+          managers={accountManagers}
+          onOpenChange={(open) => !open && setViewingFirmsForId(null)}
+          onChanged={fetchAccountManagers}
+        />
       </div>
 
       <Card>
@@ -513,10 +474,14 @@ export default function AccountManagersPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-1">
+                      <button
+                        type="button"
+                        className="flex items-center space-x-1 hover:underline"
+                        onClick={() => setViewingFirmsForId(manager.id)}
+                      >
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <span>{manager._count.lawFirms}</span>
-                      </div>
+                      </button>
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -530,8 +495,8 @@ export default function AccountManagersPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          title="Zobacz przypisanych ekspertów"
-                          onClick={() => setViewingFirmsFor(manager)}
+                          title="Zarządzaj przypisanymi ekspertami"
+                          onClick={() => setViewingFirmsForId(manager.id)}
                         >
                           <Users className="h-4 w-4" />
                         </Button>
@@ -547,6 +512,11 @@ export default function AccountManagersPage() {
                           size="sm"
                           onClick={() => handleDelete(manager.id)}
                           disabled={manager._count.lawFirms > 0}
+                          title={
+                            manager._count.lawFirms > 0
+                              ? 'Najpierw przenieś lub odepnij przypisanych ekspertów'
+                              : 'Usuń opiekuna'
+                          }
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

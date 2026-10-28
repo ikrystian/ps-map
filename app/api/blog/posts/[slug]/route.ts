@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { canManageBlog } from "@/lib/roles"
 import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/blog/posts/[slug] - Pobiera pojedynczy opublikowany wpis (lub podgląd nieopublikowanego dla autora/admina)
@@ -73,7 +74,7 @@ export async function GET(
       let isAuthor = false
 
       if (session?.user) {
-        if (session.user.role === "ADMIN") {
+        if (canManageBlog(session.user.role)) {
           isAuthor = true
         } else if (session.user.role === "LAW_FIRM") {
           const lawFirm = await prisma.lawFirm.findUnique({

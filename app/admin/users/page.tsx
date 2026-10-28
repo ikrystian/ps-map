@@ -40,7 +40,7 @@ interface User {
   name?: string | null
   email: string
   image?: string | null
-  role: "CLIENT" | "LAW_FIRM" | "ADMIN"
+  role: "CLIENT" | "LAW_FIRM" | "ADMIN" | "MODERATOR"
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "BLOCKED" | "PENDING"
   emailVerified?: Date | null
   createdAt: string
@@ -83,6 +83,7 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
+  const [roleFilter, setRoleFilter] = useState<"CLIENT" | "MODERATOR">("CLIENT")
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState({
     total: 0,
@@ -102,7 +103,7 @@ export default function AdminUsersPage() {
       })
 
       if (searchQuery) params.append("search", searchQuery)
-      params.append("role", "CLIENT")
+      params.append("role", roleFilter)
       if (statusFilter) params.append("status", statusFilter)
 
       const response = await fetch(`/api/admin/users?${params.toString()}`)
@@ -122,7 +123,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     fetchUsers()
-  }, [currentPage, searchQuery, statusFilter])
+  }, [currentPage, searchQuery, statusFilter, roleFilter])
 
   // Toggle user block status. Blokada z uzasadnieniem wysyła użytkownikowi decyzję (mail DSA).
   const handleToggleBlock = async (user: User, moderacjaPowod?: string) => {
@@ -219,6 +220,8 @@ export default function AdminUsersPage() {
     switch (role) {
       case "ADMIN":
         return "destructive"
+      case "MODERATOR":
+        return "outline"
       case "LAW_FIRM":
         return "default"
       case "CLIENT":
@@ -249,6 +252,7 @@ export default function AdminUsersPage() {
       CLIENT: "Client",
       LAW_FIRM: "Law Firm",
       ADMIN: "Admin",
+      MODERATOR: "Moderator",
     }
     return roleMap[role] || role
   }
@@ -342,6 +346,18 @@ export default function AdminUsersPage() {
                 />
               </div>
             </div>
+            <Select value={roleFilter} onValueChange={(value) => {
+              setRoleFilter(value as "CLIENT" | "MODERATOR")
+              setCurrentPage(1)
+            }}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filtruj po roli" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="CLIENT">Klienci</SelectItem>
+                <SelectItem value="MODERATOR">Moderatorzy</SelectItem>
+              </SelectContent>
+            </Select>
             <Select value={statusFilter} onValueChange={(value) => {
               setStatusFilter(value === "all" ? "" : value)
               setCurrentPage(1)

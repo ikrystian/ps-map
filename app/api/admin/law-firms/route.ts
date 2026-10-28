@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { canAccessAdminPanel } from "@/lib/roles"
 import { EXPERTISE_CATEGORY_PATH_SELECT } from "@/lib/expertise-category"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
@@ -10,11 +11,23 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user || !canAccessAdminPanel(session.user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const searchParams = request.nextUrl.searchParams
+
+    // Moderator potrzebuje listy ekspertów wyłącznie do wyboru autora wpisu na blogu —
+    // zwracamy same nazwy, bez danych kontaktowych i statystyk.
+    if (session.user.role === "MODERATOR") {
+      const lawFirms = await prisma.lawFirm.findMany({
+        where: searchParams.get("active") === "true" ? { aktywna: true } : undefined,
+        select: { id: true, nazwa: true },
+        orderBy: { nazwa: "asc" },
+      })
+      return NextResponse.json({ lawFirms })
+    }
+
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "20")
     const skip = (page - 1) * limit
