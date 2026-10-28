@@ -1,3 +1,4 @@
+import { findAccountManagerIdForVoivodeship } from "@/lib/account-managers"
 import { pickCompanyDataFields } from "@/lib/biala-lista"
 import { cleanCityName } from "@/lib/city-name"
 import { generateEmailVerificationEmail, generateLandingWelcomeEmail, sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
@@ -692,6 +693,8 @@ export async function POST(request: NextRequest) {
           bieglySadowy: body.bieglySadowy || false,
           bieglySadowyNazwaSadu: body.bieglySadowyNazwaSadu || null,
           mainCategoryId: mainCategoryId,
+          // Opiekun przypisany automatycznie na podstawie województwa siedziby
+          accountManagerId: await findAccountManagerIdForVoivodeship(user.voivodeshipId, tx),
         },
       })
 

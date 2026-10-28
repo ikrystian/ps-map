@@ -18,6 +18,7 @@ export async function GET(request: Request) {
                 ],
               }
             : undefined,
+          select: { id: true, nazwa: true, slug: true },
           orderBy: {
             nazwa: "asc",
           },

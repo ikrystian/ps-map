@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
@@ -42,13 +43,20 @@ interface AccountManager {
     numerTelefonu: string
     miasto: string
   }[]
+  voivodeships: Voivodeship[]
   _count: {
     lawFirms: number
   }
 }
 
+interface Voivodeship {
+  id: string
+  nazwa: string
+}
+
 export default function AccountManagersPage() {
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
+  const [voivodeships, setVoivodeships] = useState<Voivodeship[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingManager, setEditingManager] = useState<AccountManager | null>(null)
@@ -62,11 +70,32 @@ export default function AccountManagersPage() {
     telefon: '',
     avatar: '',
     aktywny: true,
+    voivodeshipIds: [] as string[],
   })
 
   useEffect(() => {
     fetchAccountManagers()
+    fetch('/api/voivodeships')
+      .then((response) => (response.ok ? response.json() : []))
+      .then(setVoivodeships)
+      .catch((error) => console.error('Error fetching voivodeships:', error))
   }, [])
+
+  // Który opiekun obsługuje dane województwo (jedno województwo = jeden opiekun)
+  const voivodeshipOwners = new Map(
+    accountManagers.flatMap((manager) =>
+      manager.voivodeships.map((v) => [v.id, manager] as const)
+    )
+  )
+
+  const toggleVoivodeship = (id: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      voivodeshipIds: checked
+        ? [...prev.voivodeshipIds, id]
+        : prev.voivodeshipIds.filter((v) => v !== id),
+    }))
+  }
 
   const fetchAccountManagers = async () => {
     try {
@@ -181,6 +210,7 @@ export default function AccountManagersPage() {
       telefon: manager.telefon || '',
       avatar: manager.avatar || '',
       aktywny: manager.aktywny,
+      voivodeshipIds: manager.voivodeships.map((v) => v.id),
     })
     setDialogOpen(true)
   }
@@ -194,6 +224,7 @@ export default function AccountManagersPage() {
       telefon: '',
       avatar: '',
       aktywny: true,
+      voivodeshipIds: [],
     })
   }
 
@@ -224,7 +255,7 @@ export default function AccountManagersPage() {
               Dodaj opiekuna
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingManager ? 'Edytuj opiekuna' : 'Dodaj opiekuna'}
@@ -325,6 +356,42 @@ export default function AccountManagersPage() {
                 <Label htmlFor="aktywny">Aktywny</Label>
               </div>
 
+              <div className="space-y-2">
+                <Label>Obsługiwane województwa</Label>
+                <p className="text-xs text-muted-foreground">
+                  Nowo zarejestrowani eksperci z tych województw zostaną automatycznie przypisani do opiekuna.
+                  Województwo może mieć tylko jednego opiekuna — zaznaczenie województwa innego opiekuna przeniesie je do tego.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-md border p-3">
+                  {voivodeships.map((voivodeship) => {
+                    const owner = voivodeshipOwners.get(voivodeship.id)
+                    const ownedByOther = owner && owner.id !== editingManager?.id
+                    return (
+                      <label
+                        key={voivodeship.id}
+                        className="flex items-start gap-2 text-sm cursor-pointer"
+                      >
+                        <Checkbox
+                          checked={formData.voivodeshipIds.includes(voivodeship.id)}
+                          onCheckedChange={(checked) =>
+                            toggleVoivodeship(voivodeship.id, checked === true)
+                          }
+                          className="mt-0.5"
+                        />
+                        <span>
+                          {voivodeship.nazwa}
+                          {ownedByOther && (
+                            <span className="block text-xs text-muted-foreground">
+                              obecnie: {owner.imie} {owner.nazwisko}
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div className="flex justify-end space-x-2">
                 <Button
                   type="button"
@@ -398,6 +465,7 @@ export default function AccountManagersPage() {
                 <TableHead>Opiekun</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Telefon</TableHead>
+                <TableHead>Województwa</TableHead>
                 <TableHead>Eksperci</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
@@ -406,7 +474,7 @@ export default function AccountManagersPage() {
             <TableBody>
               {accountManagers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground">
                     Brak opiekunów
                   </TableCell>
                 </TableRow>
@@ -431,6 +499,19 @@ export default function AccountManagersPage() {
                     </TableCell>
                     <TableCell>{manager.email}</TableCell>
                     <TableCell>{manager.telefon || '-'}</TableCell>
+                    <TableCell>
+                      {manager.voivodeships.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {manager.voivodeships.map((v) => (
+                            <Badge key={v.id} variant="outline">
+                              {v.nazwa}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        '-'
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-1">
                         <Users className="h-4 w-4 text-muted-foreground" />

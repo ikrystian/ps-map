@@ -1,4 +1,5 @@
 import { auth } from '@/auth'
+import { setAccountManagerVoivodeships } from '@/lib/account-managers'
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -25,6 +26,10 @@ export async function GET(
             slug: true,
             logo: true
           }
+        },
+        voivodeships: {
+          select: { id: true, nazwa: true },
+          orderBy: { nazwa: 'asc' }
         },
         _count: {
           select: { lawFirms: true }
@@ -63,7 +68,14 @@ export async function PATCH(
 
     const { id } = await params
     const body = await request.json()
-    const { imie, nazwisko, email, telefon, avatar, aktywny } = body
+    const { imie, nazwisko, email, telefon, avatar, aktywny, voivodeshipIds } = body
+
+    if (voivodeshipIds !== undefined && (!Array.isArray(voivodeshipIds) || voivodeshipIds.some((v) => typeof v !== 'string'))) {
+      return NextResponse.json(
+        { error: 'Nieprawidłowa lista województw' },
+        { status: 400 }
+      )
+    }
 
     // Sprawdzenie czy opiekun istnieje
     const existing = await prisma.accountManager.findUnique({
@@ -91,21 +103,28 @@ export async function PATCH(
       }
     }
 
-    const accountManager = await prisma.accountManager.update({
-      where: { id },
-      data: {
-        ...(imie !== undefined && { imie }),
-        ...(nazwisko !== undefined && { nazwisko }),
-        ...(email !== undefined && { email }),
-        ...(telefon !== undefined && { telefon }),
-        ...(avatar !== undefined && { avatar }),
-        ...(aktywny !== undefined && { aktywny })
-      },
-      include: {
-        _count: {
-          select: { lawFirms: true }
-        }
+    const accountManager = await prisma.$transaction(async (tx) => {
+      if (voivodeshipIds !== undefined) {
+        await setAccountManagerVoivodeships(id, voivodeshipIds, tx)
       }
+
+      return tx.accountManager.update({
+        where: { id },
+        data: {
+          ...(imie !== undefined && { imie }),
+          ...(nazwisko !== undefined && { nazwisko }),
+          ...(email !== undefined && { email }),
+          ...(telefon !== undefined && { telefon }),
+          ...(avatar !== undefined && { avatar }),
+          ...(aktywny !== undefined && { aktywny })
+        },
+        include: {
+          voivodeships: { select: { id: true, nazwa: true } },
+          _count: {
+            select: { lawFirms: true }
+          }
+        }
+      })
     })
 
     return NextResponse.json(accountManager)

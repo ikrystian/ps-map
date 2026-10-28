@@ -1,4 +1,5 @@
 import { auth } from '@/auth'
+import { setAccountManagerVoivodeships } from '@/lib/account-managers'
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -24,6 +25,10 @@ export async function GET(request: NextRequest) {
               }
             }
           }
+        },
+        voivodeships: {
+          select: { id: true, nazwa: true },
+          orderBy: { nazwa: 'asc' }
         },
         _count: {
           select: { lawFirms: true }
@@ -63,12 +68,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { imie, nazwisko, email, telefon, avatar, aktywny } = body
+    const { imie, nazwisko, email, telefon, avatar, aktywny, voivodeshipIds } = body
 
     // Walidacja
     if (!imie || !nazwisko || !email) {
       return NextResponse.json(
         { error: 'Imię, nazwisko i email są wymagane' },
+        { status: 400 }
+      )
+    }
+
+    if (voivodeshipIds !== undefined && (!Array.isArray(voivodeshipIds) || voivodeshipIds.some((v) => typeof v !== 'string'))) {
+      return NextResponse.json(
+        { error: 'Nieprawidłowa lista województw' },
         { status: 400 }
       )
     }
@@ -85,20 +97,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const accountManager = await prisma.accountManager.create({
-      data: {
-        imie,
-        nazwisko,
-        email,
-        telefon: telefon || null,
-        avatar: avatar || null,
-        aktywny: aktywny !== undefined ? aktywny : true
-      },
-      include: {
-        _count: {
-          select: { lawFirms: true }
+    const accountManager = await prisma.$transaction(async (tx) => {
+      const created = await tx.accountManager.create({
+        data: {
+          imie,
+          nazwisko,
+          email,
+          telefon: telefon || null,
+          avatar: avatar || null,
+          aktywny: aktywny !== undefined ? aktywny : true
         }
+      })
+
+      if (voivodeshipIds) {
+        await setAccountManagerVoivodeships(created.id, voivodeshipIds, tx)
       }
+
+      return tx.accountManager.findUniqueOrThrow({
+        where: { id: created.id },
+        include: {
+          voivodeships: { select: { id: true, nazwa: true } },
+          _count: {
+            select: { lawFirms: true }
+          }
+        }
+      })
     })
 
     return NextResponse.json(accountManager, { status: 201 })

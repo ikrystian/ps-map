@@ -1665,6 +1665,10 @@ model Voivodeship {
   nazwa           String   @unique
   slug            String   @unique
 
+  // Opiekun obsługujący województwo (jedno województwo = max jeden opiekun)
+  accountManagerId String?
+  accountManager   AccountManager? @relation(fields: [accountManagerId], references: [id], onDelete: SetNull)
+
   // Relacje
   counties        County[]
   cities          City[]
@@ -1674,6 +1678,7 @@ model Voivodeship {
   caseReferrals   CaseReferral[]
 
   @@index([slug])
+  @@index([accountManagerId])
 }
 
 // ============================================================================
@@ -2348,6 +2353,7 @@ model AccountManager {
 
   // Relacje
   lawFirms              LawFirm[]
+  voivodeships          Voivodeship[]  // Województwa obsługiwane przez opiekuna
 
   @@index([email])
   @@index([aktywny])

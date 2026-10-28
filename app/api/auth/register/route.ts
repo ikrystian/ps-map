@@ -1,3 +1,4 @@
+import { findAccountManagerIdForVoivodeship } from "@/lib/account-managers"
 import { isReferralUsable } from "@/lib/case-referrals"
 import { cleanCityName } from "@/lib/city-name"
 import { generateEmailVerificationEmail, sendEmailWithTemplate } from "@/lib/email"
@@ -361,6 +362,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      const voivodeshipId = (await resolveVoivodeshipId(userData.lawFirm.voivodeshipId)) || defaultVoivodeship.id
+
       // Dane kontaktowe i adresowe należą do użytkownika (model User)
       await prisma.user.update({
         where: { id: user.id },
@@ -373,7 +376,7 @@ export async function POST(request: NextRequest) {
           adres: userData.lawFirm.adres,
           kodPocztowy: userData.lawFirm.kodPocztowy || null,
           miasto: cleanCityName(userData.lawFirm.miasto) || userData.lawFirm.miasto,
-          voivodeshipId: (await resolveVoivodeshipId(userData.lawFirm.voivodeshipId)) || defaultVoivodeship.id,
+          voivodeshipId,
         },
       })
 
@@ -392,6 +395,8 @@ export async function POST(request: NextRequest) {
           dataPakietuDo: pkgEnd,
           zgodaRegulamin: userData.lawFirm.zgodaRegulamin || false,
           zgodaPrzetwarzanie: userData.lawFirm.zgodaPrzetwarzanie || false,
+          // Opiekun przypisany automatycznie na podstawie województwa siedziby
+          accountManagerId: await findAccountManagerIdForVoivodeship(voivodeshipId),
         },
       })
 
