@@ -114,6 +114,7 @@
     "react-markdown": "^10.1.0",
     "react-tsparticles": "^2.12.2",
     "recharts": "3.9.2",
+    "sharp": "^0.34.5",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "supercluster": "^9.1.0",
