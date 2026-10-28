@@ -3,6 +3,7 @@
 import type { LawFirm } from "@/types/lawfirms"
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
+import { OraBadge } from "@/components/ora-badge"
 import Link from "next/link"
 import { useRef } from "react"
 
@@ -109,6 +110,9 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                     {/* Dark bottom-fade gradient blending into the card background */}
                     <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
+
+                    {/* Chamber badge (ORA/OIRP) */}
+                    <OraBadge lawFirm={firm} className="absolute top-4 right-0 z-10" />
                   </div>
 
                   {/* Center floating up-right diagonal arrow button */}
@@ -120,15 +124,15 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
                   </span>
 
                   {/* Content Section */}
-                  <div className="pt-8 pb-3 md:pb-6 px-2 md:px-4 flex flex-col items-center text-center flex-grow">
+                  <div className="pt-8 pb-3 md:pb-6 px-2 md:px-1 flex flex-col items-center text-center flex-grow">
                     {/* Profession Subtitle */}
-                    <span className="text-[11px] font-bold text-muted-foreground tracking-[0.18em] uppercase block">
+                    <span className="text-[12px] mb-1.5 font-bold text-muted-foreground tracking-[0.18em] uppercase  line-clamp-1" title={profession}>
                       {profession}
                     </span>
 
                     {/* Name */}
-                    <h3 className="font-playfair font-medium text-[18px] leading-tight text-foreground mb-2 max-w-[90%] line-clamp-2 min-h-[2.8rem] flex items-center justify-center group-hover:text-primary-dark transition-colors duration-200">
-                      <span>
+                    <h3 className="font-playfair font-medium text-[18px] leading-tight text-foreground mb-2 max-w-[90%] min-h-[2.8rem] flex items-center justify-center group-hover:text-primary-dark transition-colors duration-200">
+                      <span className="line-clamp-2" title={firm.nazwa}>
                         {firm.nazwa}
                       </span>
                     </h3>

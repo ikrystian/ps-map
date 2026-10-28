@@ -593,6 +593,29 @@ export default function LawFirmProfilePage({ initialName }: { initialName?: stri
                         </Badge>
                       )}
 
+                      {/* Wpisy do rejestrów zawodowych */}
+                      {lawFirm.oirpStatus && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-primary/10 text-primary border border-primary/30 px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-sm"
+                          title={lawFirm.oirpWpis ? `Numer wpisu: ${lawFirm.oirpWpis}` : undefined}
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          Radca prawny{lawFirm.oirpMiasto ? ` · OIRP ${lawFirm.oirpMiasto}` : " (OIRP)"}
+                        </Badge>
+                      )}
+
+                      {lawFirm.oraStatus && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-primary/10 text-primary border border-primary/30 px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-sm"
+                          title={lawFirm.oraWpis ? `Numer wpisu: ${lawFirm.oraWpis}` : undefined}
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          Adwokat{lawFirm.oraMiasto ? ` · ORA ${lawFirm.oraMiasto}` : " (ORA)"}
+                        </Badge>
+                      )}
+
                       {lawFirm.pakietSubskrypcji && (
                         <PackageBadge
                           packageType={lawFirm.pakietSubskrypcji as "PODSTAWOWY" | "STANDARD" | "PREMIUM" | "BIZNES" | null}

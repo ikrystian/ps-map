@@ -20,6 +20,7 @@ import {
   Star,
 } from "lucide-react";
 import { CategoryIcon } from "@/components/category-icon";
+import { OraBadge } from "@/components/ora-badge";
 import { useSession } from "next-auth/react";
 import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar";
 import Link from "next/link";
@@ -307,7 +308,7 @@ export function MostConsultedCategories({
                     key={`${firm.id}-${index}`}
                     className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
-                    <div className="relative h-65 w-full overflow-hidden bg-card">
+                    <div className="relative aspect-square w-full overflow-hidden bg-card">
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
@@ -341,14 +342,19 @@ export function MostConsultedCategories({
                           </div>
                         </div>
                       )}
+
+                      <OraBadge
+                        lawFirm={firm}
+                        className="absolute top-4 right-0 z-101"
+                      />
                     </div>
 
-                    <div className="p-6 text-center flex-grow flex flex-col justify-between">
+                    <div className="p-6 pt-2 text-center flex-grow flex flex-col justify-between">
                       <div>
                         <span className="text-[11px] font-bold text-muted-foreground tracking-widest uppercase block mb-1.5 line-clamp-1">
                           {getSubtitle(firm)}
                         </span>
-                        <h3 className="text-[19px] font-playfair text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors duration-200">
+                        <h3 className="text-[19px] font-playfair text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-200">
                           <span>
                             {firm.nazwa}
                           </span>
@@ -362,7 +368,7 @@ export function MostConsultedCategories({
                         </p>
                       </div>
 
-                      <div className="flex justify-center items-center w-full pt-6 border-t border-border/80">
+                      <div className="flex justify-center items-center w-full pt-3 border-t border-border/80">
                         <div className="flex gap-2">
 
 

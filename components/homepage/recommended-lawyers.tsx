@@ -19,6 +19,7 @@ import {
   Star
 } from "lucide-react"
 import { useSession } from "next-auth/react"
+import { OraBadge } from "@/components/ora-badge"
 import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
@@ -347,7 +348,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                   className="w-[290px] sm:w-[340px] md:w-[calc(25%-12px)] shrink-0 snap-start flex flex-col h-full bg-card rounded-xl border border-border overflow-hidden  hover:shadow-xl transition-all duration-300 group"
                 >
                   {/* Image Container with Rating Overlay */}
-                  <div className="relative h-65 w-full overflow-hidden aspect-[6/2] bg-card">
+                  <div className="relative w-full overflow-hidden aspect-[1/1] bg-card">
                     <img
                       src={getFirmImage(firm, index)}
                       alt={firm.nazwa}
@@ -385,6 +386,9 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                         </div>
                       </div>
                     )}
+
+                    {/* Chamber badge (ORA/OIRP) */}
+                    <OraBadge lawFirm={firm} className="absolute top-4 right-0 z-10" />
                   </div>
 
                   {/* Card Content and Metadata */}
@@ -395,7 +399,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                         {categoriesList[safeActiveIdx]}
                       </span>
                       {/* Lawyer / Firm Name */}
-                      <h3 className="text-[19px] font-bold font-playfair text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors duration-200">
+                      <h3 className="text-[19px] font-bold font-playfair text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-200">
                         <span>
                           {firm.nazwa}
                         </span>

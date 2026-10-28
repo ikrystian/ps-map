@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { OraBadge } from "@/components/ora-badge";
 import { PackageBadge, PackageType } from "@/components/permissions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -229,37 +230,6 @@ const AwardEmblem = () => (
   </div>
 );
 
-const OraIcon = () => (
-  <svg
-    className="w-4 h-4 text-foreground"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-    <circle
-      cx="12"
-      cy="12"
-      r="8"
-      stroke="currentColor"
-      strokeWidth="0.5"
-      strokeDasharray="1 1"
-    />
-    <path
-      d="M12 7V17M9 17H15M8 10H16"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-    />
-    <path
-      d="M10 10.5C10 12 9 13.5 9 13.5M14 10.5C14 12 15 13.5 15 13.5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
 export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
   const { status } = useSession();
   const [isMounted, setIsMounted] = useState(false);
@@ -289,12 +259,6 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
     : lawFirm.oirpStatus
       ? "Radca prawny"
       : lawFirm.expertiseCategory?.nazwa || lawFirm.categories[0]?.nazwa || "Ekspert";
-  const chamberText =
-    lawFirm.oraStatus && lawFirm.oraMiasto
-      ? `ORA ${lawFirm.oraMiasto}`
-      : lawFirm.oirpStatus && lawFirm.oirpMiasto
-        ? `OIRP ${lawFirm.oirpMiasto}`
-        : null;
 
   const [isCardHovered, setIsCardHovered] = useState(true);
 
@@ -316,8 +280,8 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Column - Image */}
-          <div className="relative w-full md:w-[320px] lg:w-[450px] h-[360px] md:h-auto flex-shrink-0 bg-background border-r border-border">
-            <div className="absolute inset-0 bg-gradient-to-br from-card to-background flex items-center justify-center overflow-hidden">
+          <div className="relative w-full md:w-[290px] h-[290px] flex-shrink-0 bg-card border-r-0 border-border">
+            <div className="absolute inset-4 bg-gradient-to-br from-card to-background flex items-center justify-center overflow-hidden">
 
               <div className="absolute inset-0 z-10">
                 <Image
@@ -325,7 +289,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                   alt="Logo"
                   width={512}
                   height={512}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full rounded-md object-cover"
                 />
               </div>
 
@@ -436,14 +400,7 @@ export function LawFirmListItem({ lawFirm }: LawFirmListItemProps) {
                 </div>
 
                 {/* Teal badge (Regional Chamber) — tylko gdy ekspert ma wpis ORA/OIRP */}
-                {chamberText && (
-                <div className="flex items-center gap-1.5 md:gap-2.5 bg-[#172e2b] border border-[#0d5c54]/30 text-white pl-1.5 pr-2.5 md:pl-2 md:pr-4 py-1 md:py-1.5 rounded-lg text-xs md:text-sm font-medium shadow-md transition-all duration-300 group-hover:border-[#0d5c54]/60">
-                  <div className="bg-primary-dark p-1 md:p-1.5 rounded-md flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
-                    <OraIcon />
-                  </div>
-                  <span className="text-foreground">{chamberText}</span>
-                </div>
-                )}
+                <OraBadge lawFirm={lawFirm} />
               </div>
             </div>
 
