@@ -44,6 +44,48 @@ export function MostConsultedCategories({
   const [activeIdx, setActiveIdx] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  // Id kategorii wraz z id wszystkich jej podkategorii — ekspert przypisany do
+  // podkategorii należy też do kategorii głównej wybranej w ustawieniach.
+  const categoryFamilyIds = useMemo(() => {
+    const childrenByParent = new Map<string, string[]>();
+    categories.forEach((c) => {
+      if (!c.parentId) return;
+      childrenByParent.set(c.parentId, [
+        ...(childrenByParent.get(c.parentId) ?? []),
+        c.id,
+      ]);
+    });
+
+    const collect = (id: string, ids: Set<string>) => {
+      if (ids.has(id)) return ids;
+      ids.add(id);
+      childrenByParent.get(id)?.forEach((childId) => collect(childId, ids));
+      return ids;
+    };
+
+    return new Map(
+      categories.map((c) => [c.id, collect(c.id, new Set<string>())]),
+    );
+  }, [categories]);
+
+  const getFamilyIds = (categoryId: string) =>
+    categoryFamilyIds.get(categoryId) ?? new Set([categoryId]);
+
+  const isFirmInCategory = (firm: LawFirm, categoryId: string) => {
+    const ids = getFamilyIds(categoryId);
+    return !!firm.categories?.some((c) => ids.has(c.category?.id || c.id || ""));
+  };
+
+  const getPromotedFirms = (categoryId: string) => {
+    const promoted: LawFirm[] = [];
+    getFamilyIds(categoryId).forEach((id) => {
+      consultedData?.[id]?.forEach((firm) => {
+        if (!promoted.some((f) => f.id === firm.id)) promoted.push(firm);
+      });
+    });
+    return promoted;
+  };
+
   // Filtrujemy zakładki po aktywnych ID z ustawień
   const activeTabs = useMemo(() => {
     let tabs = categories.filter((c) => consultedCategoryIds?.includes(c.id));
@@ -52,22 +94,13 @@ export function MostConsultedCategories({
       tabs = categories.slice(0, 6);
     }
     // Only show tabs that have either active promotions or some law firms matching
-    return tabs.filter((tab) => {
-      if (
-        consultedData &&
-        consultedData[tab.id] &&
-        consultedData[tab.id].length > 0
-      )
-        return true;
-      const hasFirms = lawFirms?.some((firm) =>
-        firm.categories?.some((c) => {
-          const catId = c.category?.id || c.id;
-          return catId === tab.id;
-        }),
-      );
-      return hasFirms;
-    });
-  }, [categories, consultedCategoryIds, consultedData, lawFirms]);
+    return tabs.filter(
+      (tab) =>
+        getPromotedFirms(tab.id).length > 0 ||
+        lawFirms?.some((firm) => isFirmInCategory(firm, tab.id)),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories, consultedCategoryIds, consultedData, lawFirms, categoryFamilyIds]);
 
   if (activeTabs.length === 0) {
     return null;
@@ -98,42 +131,19 @@ export function MostConsultedCategories({
     if (activeTabs.length === 0) return [];
     const tab = activeTabs[catIdx];
 
-    let list: LawFirm[] = [];
-
     // Priorytet dla firm z wykupioną promocją
-    if (consultedData && consultedData[tab.id]) {
-      list = [...consultedData[tab.id]];
-    }
+    const list = getPromotedFirms(tab.id);
 
-    // Dobieranie pozostałych firm z danej kategorii
-    if (list.length < 5 && lawFirms && lawFirms.length > 0) {
-      const filtered = lawFirms.filter((firm) => {
-        if (!firm.categories) return false;
-        return firm.categories.some((cat) => {
-          const catId = cat.category?.id || cat.id;
-          return catId === tab.id;
-        });
-      });
-
-      filtered.forEach((firm) => {
-        if (list.length < 5 && !list.some((f) => f.id === firm.id)) {
-          list.push(firm);
-        }
-      });
-    }
-
-    // Fallback jeśli nadal brakuje firm
-    if (list.length < 5 && lawFirms && lawFirms.length > 0) {
-      let i = 0;
-      while (list.length < 5 && i < lawFirms.length * 2) {
-        const firmIdx = (catIdx * 1 + i) % lawFirms.length;
-        const firm = lawFirms[firmIdx];
-        if (!list.some((f) => f.id === firm.id)) {
-          list.push(firm);
-        }
-        i++;
+    // Dobieranie pozostałych firm wyłącznie z danej kategorii
+    lawFirms?.forEach((firm) => {
+      if (
+        list.length < 5 &&
+        !list.some((f) => f.id === firm.id) &&
+        isFirmInCategory(firm, tab.id)
+      ) {
+        list.push(firm);
       }
-    }
+    });
 
     return list.slice(0, 5);
   };

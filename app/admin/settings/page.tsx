@@ -595,7 +595,8 @@ export default function AdminSettingsPage() {
         const catRes = await fetch("/api/categories")
         if (catRes.ok) {
           const cats = await catRes.json()
-          setAvailableCategories(cats.filter((c: Category) => c.aktywna && c.typ === "SPRAWY_PRYWATNE"))
+          // Te same kategorie główne (bez rodzica), które widać w /admin/categories
+          setAvailableCategories(cats.filter((c: Category) => !c.parentId))
         }
 
         // Pobierz drzewo typów działalności ekspertów (/admin/expertise-categories)
@@ -1919,6 +1920,9 @@ export default function AdminSettingsPage() {
                       />
                       <Label htmlFor={`cat-${cat.id}`} className="font-normal cursor-pointer">
                         {cat.nazwa}
+                        {!cat.aktywna && (
+                          <span className="ml-1 text-xs text-muted-foreground">(nieaktywna)</span>
+                        )}
                       </Label>
                     </div>
                   ))}
