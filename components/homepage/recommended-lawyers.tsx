@@ -399,7 +399,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                         {categoriesList[safeActiveIdx]}
                       </span>
                       {/* Lawyer / Firm Name */}
-                      <h3 className="text-[19px] font-bold font-playfair text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                      <h3 className="text-[18px] min-h-[56px] font-bold font-playfair text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-200">
                         <span>
                           {firm.nazwa}
                         </span>
