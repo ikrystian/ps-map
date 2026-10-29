@@ -181,7 +181,7 @@ export function MostConsultedCategories({
         </div>
 
         <div
-          className="flex md:grid md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-6 md:mb-12 px-4 max-w-8xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar"
+          className="most-consulted-cats flex md:grid md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-6 md:mb-12 px-4 max-w-8xl mx-auto overflow-x-auto md:overflow-visible pb-2 md:pb-0 scroll-smooth custom-scrollbar"
           style={{ scrollbarWidth: "thin" }}
         >
           {activeTabs.map((tab, idx) => {
@@ -203,8 +203,10 @@ export function MostConsultedCategories({
                 <div className="mb-1 md:mb-4">
                   <CategoryIcon
                     ikona={tab.ikona}
+                    ikonaUrl={tab.ikonaUrl}
                     fallback={Star}
                     className={`w-9 h-9 transition-colors duration-300 ${isActive ? "text-white" : "text-[#0da192]"}`}
+                    imageClassName={isActive ? "brightness-0 invert" : undefined}
                   />
                 </div>
                 <span className="text-xs font-light tracking-wider leading-tight uppercase">
