@@ -62,6 +62,8 @@ import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { BlogPost } from '@/types/blog';
 import { PaginationData } from '@/types/pagination';
 import { formatDate, formatNumber } from "@/lib/format"
+import { editorRoleLabelForAdmin } from "@/lib/roles"
+import { BlogPostEditHistoryDialog } from "@/components/admin/blog-post-edit-history"
 
 
 
@@ -75,6 +77,7 @@ export default function AdminBlogPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+  const [historyPost, setHistoryPost] = useState<BlogPost | null>(null)
 
   // Filtry, wyszukiwanie i sortowanie
   const [searchTerm, setSearchTerm] = useState("")
@@ -294,6 +297,7 @@ export default function AdminBlogPage() {
           <TableCell><div className="h-4 bg-muted rounded w-1/3 animate-pulse" /></TableCell>
           <TableCell><div className="h-6 bg-muted rounded-full w-20 animate-pulse" /></TableCell>
           <TableCell><div className="h-4 bg-muted rounded w-24 animate-pulse" /></TableCell>
+          <TableCell><div className="h-4 bg-muted rounded w-28 animate-pulse" /></TableCell>
           <TableCell><div className="h-4 bg-muted rounded w-12 animate-pulse" /></TableCell>
           <TableCell><div className="h-8 bg-muted rounded w-20 ml-auto animate-pulse" /></TableCell>
         </TableRow>
@@ -478,6 +482,7 @@ export default function AdminBlogPage() {
                 <TableHead>Kategoria</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Utworzono</TableHead>
+                <TableHead>Ostatnia edycja</TableHead>
                 <TableHead>Wyświetlenia</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
               </TableRow>
@@ -487,7 +492,7 @@ export default function AdminBlogPage() {
                 <TableSkeleton />
               ) : posts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     Brak wpisów pasujących do wybranych filtrów.
                   </TableCell>
                 </TableRow>
@@ -547,6 +552,21 @@ export default function AdminBlogPage() {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(post.createdAt)}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {post.lastEditedAt ? (
+                        <button
+                          type="button"
+                          onClick={() => setHistoryPost(post)}
+                          title="Pokaż historię edycji"
+                          className="block rounded-md text-left transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          {formatDate(post.lastEditedAt)}
+                          <span className="block text-xs">{editorRoleLabelForAdmin(post.lastEditedByRole)}</span>
+                        </button>
+                      ) : (
+                        "—"
+                      )}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       <div className="flex items-center gap-1.5">
@@ -830,6 +850,13 @@ export default function AdminBlogPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Historia edycji wpisu */}
+      <BlogPostEditHistoryDialog
+        post={historyPost}
+        mode="admin"
+        onClose={() => setHistoryPost(null)}
+      />
     </div>
   )
 }

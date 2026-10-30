@@ -1,5 +1,6 @@
 "use client"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -23,7 +24,7 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye, Image as ImageIcon, Link2 } from "lucide-react"
+import { ArrowLeft, Save, Sparkles, Loader2, ChevronDown, AlertCircle, CalendarClock, CheckCircle2, Code, Eye, History, Image as ImageIcon, Link2 } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -34,6 +35,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { cn } from "@/lib/utils"
+import { formatDateTime } from "@/lib/format"
+import { editorRoleLabel, editorRoleLabelForAdmin } from "@/lib/roles"
+import { BlogPostEditHistoryList } from "@/components/admin/blog-post-edit-history"
 import { flattenCategoryTree } from "@/lib/blog-category-tree"
 import { BlogCategoryPicker } from "@/components/admin/blog-category-picker"
 import { BlogRelatedPostsPicker } from "@/components/admin/blog-related-posts-picker"
@@ -112,6 +116,12 @@ const itemVariants = {
   },
 }
 
+interface LastEdit {
+  at: string
+  role: "ADMIN" | "MODERATOR" | "LAW_FIRM" | null
+  name: string | null
+}
+
 interface BlogPostFormProps {
   postId?: string
   mode?: "admin" | "expert"
@@ -133,6 +143,8 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   const [seoOpen, setSeoOpen] = useState(false)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
   const [generatingSeo, setGeneratingSeo] = useState(false)
+  const [lastEdit, setLastEdit] = useState<LastEdit | null>(null)
+  const [postCreatedAt, setPostCreatedAt] = useState<string | null>(null)
 
   // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
   const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
@@ -247,6 +259,13 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
             (row: { relatedPost: { id: string; tytul: string } }) => ({ id: row.relatedPost.id, tytul: row.relatedPost.tytul })
           ),
         })
+
+        setPostCreatedAt(post.createdAt ?? null)
+        setLastEdit(
+          post.lastEditedAt
+            ? { at: post.lastEditedAt, role: post.lastEditedByRole ?? null, name: post.lastEditedByName ?? null }
+            : null
+        )
 
         // If the loaded post is sponsored, open the sponsored section automatically for convenience
         if (post.isSponsored) {
@@ -423,6 +442,10 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
     }
   }
 
+  // W panelu admina rola eksperta to „Ekspert" (a nie „Ty", jak w jego własnym panelu)
+  const adminEditorRole = editorRoleLabelForAdmin(lastEdit?.role)
+  const adminEditorLabel = lastEdit?.name ? `${lastEdit.name} (${adminEditorRole})` : adminEditorRole
+
   if (postId && loadingPost) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
@@ -456,6 +479,26 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
           </p>
         </div>
       </div>
+
+      {postId && lastEdit && (
+        isExpert && lastEdit.role !== "LAW_FIRM" ? (
+          <Alert variant="warning">
+            <History className="h-4 w-4" />
+            <AlertTitle>Ten artykuł został zmodyfikowany przez zespół portalu</AlertTitle>
+            <AlertDescription>
+              {editorRoleLabel(lastEdit.role)} wprowadził zmiany w Twoim artykule — {formatDateTime(lastEdit.at)}.
+              Sprawdź aktualną treść przed dalszą edycją.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <History className="h-3.5 w-3.5" />
+            {isExpert
+              ? `Ostatnia edycja: Ty, ${formatDateTime(lastEdit.at)}`
+              : `Ostatnia edycja: ${adminEditorLabel}, ${formatDateTime(lastEdit.at)}`}
+          </p>
+        )
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -628,29 +671,31 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-lg font-semibold">Optymalizacja SEO</CardTitle>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          disabled={generatingSeo}
-                          className="h-7 px-2.5 text-xs shrink-0"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleGenerateSeo()
-                          }}
-                        >
-                          {generatingSeo ? (
-                            <>
-                              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                              Generowanie...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
-                              Generuj
-                            </>
-                          )}
-                        </Button>
+                        {!isExpert && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={generatingSeo}
+                            className="h-7 px-2.5 text-xs shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleGenerateSeo()
+                            }}
+                          >
+                            {generatingSeo ? (
+                              <>
+                                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                                Generowanie...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
+                                Generuj
+                              </>
+                            )}
+                          </Button>
+                        )}
                       </div>
                       <CardDescription className="text-xs">
                         Wprowadź tagi i metadane pod wyszukiwarki internetowe.
@@ -835,116 +880,118 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                 </Card>
               </motion.div>
 
-              {/* Wpis Sponsorowany */}
-              <motion.div variants={itemVariants}>
-                <Card className="border shadow-sm overflow-hidden relative">
-                  {form.watch("isSponsored") && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500" />
-                  )}
-                  <CardHeader
-                    className="py-5 px-6 border-b cursor-pointer flex flex-row items-center justify-between select-none hover:bg-muted/5 transition-colors"
-                    onClick={() => setSponsoredOpen(!sponsoredOpen)}
-                  >
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                        <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                        Wpis sponsorowany
-                      </CardTitle>
-                      <CardDescription className="text-xs">
-                        Oznacz ten wpis jako sponsorowany i przypisz do niego eksperta lub eksperta.
-                      </CardDescription>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-transparent"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSponsoredOpen(!sponsoredOpen)
-                      }}
-                    >
-                      <ChevronDown className={cn("h-5 w-5 transition-transform duration-200", sponsoredOpen && "rotate-180")} />
-                    </Button>
-                  </CardHeader>
-                  <AnimatePresence initial={false}>
-                    {sponsoredOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
-                        <CardContent className="p-6 space-y-4">
-                          <FormField
-                            control={form.control}
-                            name="isSponsored"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
-                                <div className="space-y-0.5">
-                                  <FormLabel className="text-sm font-semibold">Oznacz jako wpis sponsorowany</FormLabel>
-                                  <FormDescription className="text-xs text-muted-foreground max-w-sm">
-                                    Na blogu pojawi się specjalna sekcja reklamowa z linkiem do profilu wybranego eksperta.
-                                  </FormDescription>
-                                </div>
-                                <FormControl>
-                                  <Switch
-                                    checked={field.value}
-                                    onCheckedChange={(checked) => {
-                                      field.onChange(checked)
-                                      if (!checked) {
-                                        form.setValue("sponsoredLawFirmId", "")
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-
-                          {form.watch("isSponsored") && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              className="pt-2 space-y-2 overflow-hidden"
-                            >
-                              <FormField
-                                control={form.control}
-                                name="sponsoredLawFirmId"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-xs font-semibold">Wybierz eksperta / eksperta (opcjonalnie)</FormLabel>
-                                    <Select
-                                      onValueChange={field.onChange}
-                                      value={field.value}
-                                      disabled={loadingLawFirms}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="h-11">
-                                          <SelectValue placeholder="Wybierz eksperta lub eksperta" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        {lawFirms.map((firm) => (
-                                          <SelectItem key={firm.id} value={firm.id}>
-                                            {firm.nazwa} {firm.nazwa && firm.nazwa !== firm.nazwa ? `(${firm.nazwa})` : ""}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </motion.div>
-                          )}
-                        </CardContent>
-                      </motion.div>
+              {/* Wpis Sponsorowany — tylko dla administracji, ekspert nie oznacza wpisów jako sponsorowanych */}
+              {!isExpert && (
+                <motion.div variants={itemVariants}>
+                  <Card className="border shadow-sm overflow-hidden relative">
+                    {form.watch("isSponsored") && (
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500" />
                     )}
-                  </AnimatePresence>
-                </Card>
-              </motion.div>
+                    <CardHeader
+                      className="py-5 px-6 border-b cursor-pointer flex flex-row items-center justify-between select-none hover:bg-muted/5 transition-colors"
+                      onClick={() => setSponsoredOpen(!sponsoredOpen)}
+                    >
+                      <div className="space-y-1">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                          <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                          Wpis sponsorowany
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Oznacz ten wpis jako sponsorowany i przypisz do niego eksperta lub eksperta.
+                        </CardDescription>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-transparent"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSponsoredOpen(!sponsoredOpen)
+                        }}
+                      >
+                        <ChevronDown className={cn("h-5 w-5 transition-transform duration-200", sponsoredOpen && "rotate-180")} />
+                      </Button>
+                    </CardHeader>
+                    <AnimatePresence initial={false}>
+                      {sponsoredOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <CardContent className="p-6 space-y-4">
+                            <FormField
+                              control={form.control}
+                              name="isSponsored"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-sm font-semibold">Oznacz jako wpis sponsorowany</FormLabel>
+                                    <FormDescription className="text-xs text-muted-foreground max-w-sm">
+                                      Na blogu pojawi się specjalna sekcja reklamowa z linkiem do profilu wybranego eksperta.
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={(checked) => {
+                                        field.onChange(checked)
+                                        if (!checked) {
+                                          form.setValue("sponsoredLawFirmId", "")
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                            {form.watch("isSponsored") && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                className="pt-2 space-y-2 overflow-hidden"
+                              >
+                                <FormField
+                                  control={form.control}
+                                  name="sponsoredLawFirmId"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-xs font-semibold">Wybierz eksperta / eksperta (opcjonalnie)</FormLabel>
+                                      <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                        disabled={loadingLawFirms}
+                                      >
+                                        <FormControl>
+                                          <SelectTrigger className="h-11">
+                                            <SelectValue placeholder="Wybierz eksperta lub eksperta" />
+                                          </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                          {lawFirms.map((firm) => (
+                                            <SelectItem key={firm.id} value={firm.id}>
+                                              {firm.nazwa} {firm.nazwa && firm.nazwa !== firm.nazwa ? `(${firm.nazwa})` : ""}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </motion.div>
+                            )}
+                          </CardContent>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </motion.div>
+              )}
 
               {/* Publikacja */}
               <motion.div variants={itemVariants}>
@@ -1052,6 +1099,29 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Historia edycji */}
+              {postId && (
+                <motion.div variants={itemVariants}>
+                  <Card className="border shadow-sm">
+                    <CardHeader className="py-5 px-6 border-b">
+                      <CardTitle className="text-lg font-semibold">Historia edycji</CardTitle>
+                      <CardDescription className="text-xs">
+                        {isExpert
+                          ? "Kto i kiedy zapisał zmiany w tym artykule."
+                          : "Konta, które zapisały zmiany w tym artykule, od najnowszej edycji."}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-6 max-h-96 overflow-y-auto">
+                      <BlogPostEditHistoryList
+                        postId={postId}
+                        mode={isExpert ? "expert" : "admin"}
+                        createdAt={postCreatedAt}
+                      />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
 
             </div>
           </motion.div>

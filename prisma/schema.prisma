@@ -59,6 +59,7 @@ model User {
   sentMessages  Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
+  blogPostEdits BlogPostEdit[] @relation("BlogPostEditor")
   notificationSettings NotificationSettings?
   loginHistory  LoginHistory[]
 
@@ -1326,6 +1327,12 @@ model BlogPost {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  // Ostatnia edycja treści — w odróżnieniu od updatedAt nie zmienia się przy zliczaniu wyświetleń
+  lastEditedAt          DateTime?
+  lastEditedById        String?   // User.id (bez FK, żeby nie przebudowywać tabeli); domyślnie pomijane w zapytaniach (lib/prisma.ts)
+  lastEditedByRole      UserRole?
+  edits                 BlogPostEdit[]    // pełna historia edycji (lastEdited* to jej ostatni wpis, zdenormalizowany pod listy)
+
   // Powiązane artykuły wybrane ręcznie w edycji wpisu
   powiazaneWpisy        BlogPostRelated[] @relation("BlogPostRelatedFrom")
   powiazanyZ            BlogPostRelated[] @relation("BlogPostRelatedTo")
@@ -1336,6 +1343,20 @@ model BlogPost {
   @@index([categoryId])
   @@index([slug])
   @@index([opublikowany])
+}
+
+// Historia edycji wpisu — jeden wiersz na każdy zapis wpisu (przez eksperta, administratora lub moderatora)
+model BlogPostEdit {
+  id          String   @id @default(uuid())
+  postId      String
+  post        BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  editorId    String?
+  editor      User?    @relation("BlogPostEditor", fields: [editorId], references: [id], onDelete: SetNull)
+  editorRole  UserRole
+  createdAt   DateTime @default(now())
+
+  @@index([postId, createdAt])
+  @@index([editorId])
 }
 
 // Ręcznie wybrane powiązane artykuły wpisu (w kolejności wyświetlania)

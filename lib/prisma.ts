@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 
 import path from 'path'
 
-const getPrismaInstance = () => {
+const getPrismaInstance = (): PrismaClient => {
   const rawUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
   const dbUrl = rawUrl.startsWith('file:') && !rawUrl.startsWith('file:/')
     ? 'file:' + path.resolve(process.cwd(), rawUrl.slice(5))
@@ -17,10 +17,15 @@ const getPrismaInstance = () => {
     url: dbUrl,
   })
 
+  // Rzutowanie na domyślny PrismaClient — globalny omit zmienia typ klienta i przestaje on
+  // pasować do TransactionClient / PrismaClient użytych w reszcie kodu.
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+    // ID edytującego wpis nie może trafiać do publicznych ani eksperckich odpowiedzi API.
+    // Zapytania, które go potrzebują, włączają je jawnie: omit: { lastEditedById: false }.
+    omit: { blogPost: { lastEditedById: true } },
+  }) as unknown as PrismaClient
 }
 
 export const prisma = globalForPrisma.prisma ?? getPrismaInstance()

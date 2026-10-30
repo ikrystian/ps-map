@@ -69,4 +69,8 @@ export interface BlogPost {
   isSponsored?: boolean;
   sponsoredLawFirm?: any;
   tagi?: string | null;
+  lastEditedAt?: string | Date | null;
+  lastEditedByRole?: "ADMIN" | "MODERATOR" | "LAW_FIRM" | null;
+  /** Tylko w odpowiedzi panelu admina — ekspert nie dostaje danych osobowych edytującego. */
+  lastEditedByName?: string | null;
 }

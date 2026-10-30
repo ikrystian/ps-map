@@ -1,6 +1,12 @@
 import { auth } from "@/lib/auth"
 import { canManageBlog } from "@/lib/roles"
-import { RELATED_BLOG_POSTS_INCLUDE, resolveRelatedBlogPosts } from "@/lib/blog-posts"
+import {
+  RELATED_BLOG_POSTS_INCLUDE,
+  blogEditStamp,
+  editorDisplayName,
+  notifyExpertOfStaffEdit,
+  resolveRelatedBlogPosts,
+} from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -19,8 +25,10 @@ export async function GET(
 
     const { id } = await params
 
-    const post = await prisma.blogPost.findUnique({
+    const found = await prisma.blogPost.findUnique({
       where: { id },
+      // Panel admina jako jedyny widzi, które konto edytowało wpis
+      omit: { lastEditedById: false },
       include: {
         category: true,
         lawFirm: {
@@ -40,11 +48,20 @@ export async function GET(
       },
     })
 
-    if (!post) {
+    if (!found) {
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    return NextResponse.json(post)
+    const { lastEditedById, ...post } = found
+
+    const editor = lastEditedById
+      ? await prisma.user.findUnique({
+          where: { id: lastEditedById },
+          select: { name: true, imie: true, nazwisko: true, email: true },
+        })
+      : null
+
+    return NextResponse.json({ ...post, lastEditedByName: editorDisplayName(editor) })
   } catch (error) {
     console.error("Error fetching admin blog post details:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -137,7 +154,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Wpis nie znaleziony" }, { status: 404 })
     }
 
-    const data: any = {}
+    const data: any = { ...blogEditStamp(session.user) }
 
     if (tytul !== undefined) {
       data.tytul = tytul
@@ -252,6 +269,13 @@ export async function PATCH(
           },
         },
       },
+    })
+
+    await notifyExpertOfStaffEdit({
+      id: updatedPost.id,
+      tytul: updatedPost.tytul,
+      lawFirmId: updatedPost.lawFirmId,
+      editorRole: session.user.role,
     })
 
     return NextResponse.json(updatedPost)

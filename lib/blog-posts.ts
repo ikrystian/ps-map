@@ -1,9 +1,11 @@
 import { cache } from "react"
+import type { UserRole } from "@prisma/client"
 import { auth } from "@/auth"
 import { getCategoryWithDescendantIds } from "@/lib/blog-category-tree"
 import { MAX_RELATED_BLOG_POSTS } from "@/lib/blog-related"
+import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
-import { canManageBlog } from "@/lib/roles"
+import { canManageBlog, editorRoleLabel } from "@/lib/roles"
 import { PaginationData } from "@/types/pagination"
 import { BlogPost } from "@/types/blog"
 
@@ -344,3 +346,66 @@ export async function getRelatedBlogPosts(post: { id: string; categoryId?: strin
 }
 
 export type RelatedBlogPost = Awaited<ReturnType<typeof getRelatedBlogPosts>>[number]
+
+/**
+ * Znacznik edycji wpisu — do dołączenia do `data` przy zapisie przez API.
+ * Aktualizuje „ostatnią edycję" i dopisuje wiersz do historii w tym samym zapisie (atomowo).
+ */
+export function blogEditStamp(user: { id: string; role: UserRole }) {
+  const now = new Date()
+  return {
+    lastEditedAt: now,
+    lastEditedById: user.id,
+    lastEditedByRole: user.role,
+    edits: { create: { editorId: user.id, editorRole: user.role, createdAt: now } },
+  }
+}
+
+/** Nazwa konta edytującego widoczna wyłącznie w panelu admina. */
+export function editorDisplayName(
+  user?: { name: string | null; imie: string | null; nazwisko: string | null; email: string } | null
+) {
+  if (!user) return null
+  return user.name || [user.imie, user.nazwisko].filter(Boolean).join(" ") || user.email
+}
+
+
+/**
+ * Powiadamia w panelu eksperta, że zespół portalu zmodyfikował jego wpis.
+ * Kolejne zapisy nie tworzą duplikatów, dopóki poprzednie powiadomienie jest nieprzeczytane.
+ * Błędy są tylko logowane — powiadomienie nie może blokować zapisu wpisu.
+ */
+export async function notifyExpertOfStaffEdit(post: {
+  id: string
+  tytul: string
+  lawFirmId: string | null
+  editorRole: UserRole
+}) {
+  if (!post.lawFirmId) return
+
+  try {
+    const lawFirm = await prisma.lawFirm.findUnique({
+      where: { id: post.lawFirmId },
+      select: { userId: true },
+    })
+    if (!lawFirm) return
+
+    const linkUrl = `/panel-eksperta/blog/${post.id}`
+    const pending = await prisma.notification.findFirst({
+      where: { userId: lawFirm.userId, typ: "SYSTEM", linkUrl, przeczytane: false },
+      select: { id: true },
+    })
+    if (pending) return
+
+    await sendSystemNotification({
+      userId: lawFirm.userId,
+      typ: "SYSTEM",
+      tytul: "Twój artykuł został zmodyfikowany",
+      tresc: `${editorRoleLabel(post.editorRole)} zmodyfikował Twój artykuł „${post.tytul}”.`,
+      linkUrl,
+      skipEmail: true,
+    })
+  } catch (error) {
+    console.error("Error notifying expert about blog post edit:", error)
+  }
+}

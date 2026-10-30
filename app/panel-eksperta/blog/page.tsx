@@ -18,13 +18,15 @@ import {
 } from "@/components/ui/table"
 import { usePermissions } from "@/hooks/usePermissions"
 import { motion } from "framer-motion"
-import { Edit, Eye, FileText, Plus, Trash2, Loader2, Calendar } from "lucide-react"
+import { Edit, Eye, FileText, History, Plus, Trash2, Loader2, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PaginationData } from '@/types/pagination';
 import { BlogPost } from '@/types/blog';
 import { formatDateTime } from "@/lib/format"
+import { editorRoleLabel } from "@/lib/roles"
+import { BlogPostEditHistoryDialog } from "@/components/admin/blog-post-edit-history"
 
 
 
@@ -53,11 +55,40 @@ const itemVariants = {
   },
 }
 
+// Data ostatniej edycji (z rolą edytującego, gdy zmiany wprowadził zespół portalu); klik otwiera historię edycji
+function LastEditInfo({ post, onOpen }: { post: BlogPost; onOpen: () => void }) {
+  if (!post.lastEditedAt) {
+    return <span className="text-muted-foreground text-xs font-light italic">Brak edycji</span>
+  }
+
+  const editedByStaff = post.lastEditedByRole === "ADMIN" || post.lastEditedByRole === "MODERATOR"
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      title="Pokaż historię edycji"
+      className="block space-y-1 rounded-md text-left transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    >
+      <span className="flex items-center gap-1.5">
+        <History className="h-3.5 w-3.5 text-muted-foreground" />
+        {formatDateTime(post.lastEditedAt)}
+      </span>
+      {editedByStaff && (
+        <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-md font-medium">
+          Edytował: {editorRoleLabel(post.lastEditedByRole)}
+        </Badge>
+      )}
+    </button>
+  )
+}
+
 export default function LawFirmBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null)
+  const [historyPost, setHistoryPost] = useState<BlogPost | null>(null)
   const [isDeletingPost, setIsDeletingPost] = useState(false)
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
@@ -213,6 +244,7 @@ export default function LawFirmBlogPage() {
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-40">Kategoria</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-36">Status</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-48">Data utworzenia</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-56">Ostatnia edycja</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-32">Wyświetlenia</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
                       </TableRow>
@@ -248,6 +280,9 @@ export default function LawFirmBlogPage() {
                               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                               {formatDateTime(post.createdAt)}
                             </div>
+                          </TableCell>
+                          <TableCell className="py-4 px-6 text-xs font-light text-muted-foreground">
+                            <LastEditInfo post={post} onOpen={() => setHistoryPost(post)} />
                           </TableCell>
                           <TableCell className="py-4 px-6 text-xs">
                             <div className="flex items-center gap-1.5 text-foreground/80">
@@ -336,6 +371,13 @@ export default function LawFirmBlogPage() {
                         </div>
                       </div>
 
+                      <div className="border-t border-border/5 pt-2 text-sm">
+                        <span className="text-muted-foreground block font-light mb-1">Ostatnia edycja</span>
+                        <div className="text-foreground/80 font-medium">
+                          <LastEditInfo post={post} onOpen={() => setHistoryPost(post)} />
+                        </div>
+                      </div>
+
                       <div className="flex gap-2 justify-end border-t border-border/5 pt-2.5">
                         <Button
                           variant="outline"
@@ -403,6 +445,13 @@ export default function LawFirmBlogPage() {
         description={`Czy na pewno chcesz usunąć wpis "${selectedPost?.tytul}"? Ta operacja jest nieodwracalna, a artykuł zniknie z Twojego bloga.`}
         confirmText="Usuń artykuł"
         cancelText="Anuluj"
+      />
+
+      {/* Historia edycji wpisu */}
+      <BlogPostEditHistoryDialog
+        post={historyPost}
+        mode="expert"
+        onClose={() => setHistoryPost(null)}
       />
     </div>
   )

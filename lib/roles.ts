@@ -11,6 +11,25 @@ export function canManageBlog(role?: string | null): boolean {
   return role === "ADMIN" || role === "MODERATOR"
 }
 
+/** Nazwa roli osoby, która ostatnio edytowała wpis — pokazywana ekspertowi zamiast danych osobowych. */
+export function editorRoleLabel(role?: string | null): string {
+  switch (role) {
+    case "ADMIN":
+      return "Administrator portalu"
+    case "MODERATOR":
+      return "Moderator portalu"
+    case "LAW_FIRM":
+      return "Ty"
+    default:
+      return "Nieznany"
+  }
+}
+
+/** To samo co editorRoleLabel, ale z perspektywy panelu admina — edytujący ekspert to „Ekspert", a nie „Ty". */
+export function editorRoleLabelForAdmin(role?: string | null): string {
+  return role === "LAW_FIRM" ? "Ekspert" : editorRoleLabel(role)
+}
+
 /** Ścieżki panelu admina dostępne dla moderatora. */
 export const MODERATOR_ADMIN_PATHS = ["/admin/blog"]
 

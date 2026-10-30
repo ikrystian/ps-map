@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { RELATED_BLOG_POSTS_INCLUDE, resolveRelatedBlogPosts } from "@/lib/blog-posts"
+import { RELATED_BLOG_POSTS_INCLUDE, blogEditStamp, resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
@@ -174,6 +174,7 @@ export async function PUT(
             ? new Date()
             : existingPost.dataPublikacji,
         powiazaneWpisy: relatedPosts ? { deleteMany: {}, create: relatedPosts } : undefined,
+        ...blogEditStamp(session.user),
       },
       include: {
         category: true,
