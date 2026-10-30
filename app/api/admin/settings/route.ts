@@ -1,5 +1,6 @@
 import { SECRET_SETTING_KEYS, decryptSecret, encryptSecret } from "@/lib/secret-settings"
 import { auth } from "@/lib/auth"
+import { CUSTOM_CSS_SETTING_KEY, MAX_CUSTOM_CSS_LENGTH } from "@/lib/custom-css"
 import {
   DEFAULT_MIN_CUSTOM_POINTS,
   DEFAULT_POINT_PACKAGES,
@@ -401,6 +402,17 @@ export async function PUT(request: NextRequest) {
     if (!settings || typeof settings !== "object") {
       return NextResponse.json(
         { error: "Nieprawidłowe dane" },
+        { status: 400 }
+      )
+    }
+
+    const customCss = (settings as Record<string, { value?: unknown } | undefined>)[CUSTOM_CSS_SETTING_KEY]?.value
+    if (
+      customCss !== undefined &&
+      (typeof customCss !== "string" || customCss.length > MAX_CUSTOM_CSS_LENGTH)
+    ) {
+      return NextResponse.json(
+        { error: `Własny CSS może mieć maksymalnie ${MAX_CUSTOM_CSS_LENGTH} znaków` },
         { status: 400 }
       )
     }

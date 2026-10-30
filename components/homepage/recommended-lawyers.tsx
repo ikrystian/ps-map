@@ -49,7 +49,7 @@ interface RecommendedLawyersProps {
    * Podkategorie kategorii wybranej przez administratora w ustawieniach
    * (drzewo z /admin/expertise-categories) — źródło zakładek sekcji.
    */
-  recommendedCategories?: { id: string; nazwa: string }[]
+  recommendedCategories?: { id: string; nazwa: string; descendantIds?: string[] }[]
   lawFirms: LawFirm[]
 }
 
@@ -99,16 +99,47 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
 
   // Zakładki pochodzą z konfiguracji administratora; gdy jej brak — z kategorii
   // wykupionych promocji, żeby opłacone wyróżnienia nie zniknęły ze strony.
-  const categoriesList = recommendedCategories && recommendedCategories.length > 0
-    ? recommendedCategories.map(c => c.nazwa)
-    : Object.keys(recommendedData || {}).sort()
+  const configuredTabs = recommendedCategories && recommendedCategories.length > 0
+    ? recommendedCategories.map(c => ({
+        nazwa: c.nazwa,
+        categoryIds: new Set([c.id, ...(c.descendantIds ?? [])]),
+      }))
+    : Object.keys(recommendedData || {}).sort().map(nazwa => ({
+        nazwa,
+        categoryIds: new Set<string>(),
+      }))
 
-  // Bez skonfigurowanych kategorii albo bez jakichkolwiek ekspertów nie ma czego pokazać
-  const hasAnyFirms =
-    (lawFirms?.length ?? 0) > 0 ||
-    Object.values(recommendedData || {}).some(list => list.length > 0)
+  // Ekspert należy do zakładki, gdy jego specjalizacja jest tą kategorią albo
+  // czymkolwiek z jej poddrzewa (admin może wskazać wyższy poziom drzewa).
+  const isFirmInTab = (firm: LawFirm, tab: { nazwa: string; categoryIds: Set<string> }) => {
+    const expertiseId = firm.expertiseCategory?.id ?? firm.expertiseCategoryId
+    return (
+      (!!expertiseId && tab.categoryIds.has(expertiseId)) ||
+      firm.expertiseCategory?.nazwa === tab.nazwa
+    )
+  }
 
-  if (categoriesList.length === 0 || !hasAnyFirms) {
+  // Najpierw eksperci z wykupioną promocją, potem pozostali — wyłącznie z danej
+  // kategorii. Brakujących miejsc nie uzupełniamy ekspertami z innych kategorii.
+  const getTabFirms = (tab: { nazwa: string; categoryIds: Set<string> }) => {
+    const list: LawFirm[] = [...(recommendedData?.[tab.nazwa] ?? [])]
+
+    lawFirms?.forEach(firm => {
+      if (list.length < 4 && !list.some(f => f.id === firm.id) && isFirmInTab(firm, tab)) {
+        list.push(firm)
+      }
+    })
+
+    return list.slice(0, 4)
+  }
+
+  // Zakładka bez ekspertów byłaby pusta, więc jej nie pokazujemy.
+  const tabs = configuredTabs
+    .map(tab => ({ nazwa: tab.nazwa, firms: getTabFirms(tab) }))
+    .filter(tab => tab.firms.length > 0)
+  const categoriesList = tabs.map(tab => tab.nazwa)
+
+  if (categoriesList.length === 0) {
     return null
   }
 
@@ -151,49 +182,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
     handleCategoryChange(nextIdx)
   }
 
-  // Gets law firms dynamically based on category index, displaying exactly 10 items.
-  const getCategoryFirms = (catIdx: number) => {
-    const currentCategory = categoriesList[catIdx]
-    let list: LawFirm[] = []
-
-    if (recommendedData && recommendedData[currentCategory]) {
-      list = [...recommendedData[currentCategory]]
-    }
-
-    // Uzupełnij ekspertami z tej samej specjalizacji, zanim sięgniemy po dowolnych
-    if (list.length < 4 && lawFirms && lawFirms.length > 0) {
-      lawFirms
-        .filter(firm => firm.expertiseCategory?.nazwa === currentCategory)
-        .forEach(firm => {
-          if (list.length < 4 && !list.some(f => f.id === firm.id)) {
-            list.push(firm)
-          }
-        })
-    }
-
-    // Pad with other general lawFirms up to 4 items if we have fewer
-    if (list.length < 4 && lawFirms && lawFirms.length > 0) {
-      let i = 0
-      while (list.length < 4 && i < lawFirms.length * 2) {
-        const firmIdx = (catIdx + i) % lawFirms.length
-        const firm = lawFirms[firmIdx]
-        if (!list.some(f => f.id === firm.id)) {
-          list.push(firm)
-        }
-        i++
-      }
-    }
-
-    // Fallback if list is still empty or directly populated from fallback
-    if (list.length === 0 && lawFirms && lawFirms.length > 0) {
-      for (let i = 0; i < 4; i++) {
-        const firmIdx = (catIdx + i) % lawFirms.length
-        list.push(lawFirms[firmIdx])
-      }
-    }
-
-    return list.slice(0, 4)
-  }
+  const getCategoryFirms = (catIdx: number) => tabs[catIdx]?.firms ?? []
 
   // Returns a premium image for the lawyer, falling back to unsplash headshots if missing or placeholder
   const getFirmImage = (firm: LawFirm, index: number) => {

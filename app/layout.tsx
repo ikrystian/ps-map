@@ -5,6 +5,7 @@ import CookieConsentBanner from "@/components/CookieConsent";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/Hotjar";
 import { MarketingPixels } from "@/components/MarketingPixels";
+import { CUSTOM_CSS_SETTING_KEY, isCustomCssEnabledForPath, sanitizeCustomCss } from "@/lib/custom-css";
 import { sanitizePixelId } from "@/lib/marketing-pixels";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -185,6 +186,7 @@ export default async function RootLayout({
   let facebookPixelId = "";
   let linkedinPartnerId = "";
   let linkedinRegistrationConversionId = "";
+  let customCss = "";
 
   try {
     const settings = await prisma.settings.findMany({
@@ -199,6 +201,7 @@ export default async function RootLayout({
             "linkedinInsightEnabled",
             "linkedinPartnerId",
             "linkedinRegistrationConversionId",
+            CUSTOM_CSS_SETTING_KEY,
           ],
         },
       },
@@ -212,6 +215,9 @@ export default async function RootLayout({
       linkedinPartnerId = sanitizePixelId(map.get("linkedinPartnerId"));
       linkedinRegistrationConversionId = sanitizePixelId(map.get("linkedinRegistrationConversionId"));
     }
+    if (isCustomCssEnabledForPath((await headers()).get("x-pathname") || "/")) {
+      customCss = sanitizeCustomCss(map.get(CUSTOM_CSS_SETTING_KEY));
+    }
   } catch (error) {
     console.error("Error reading settings in RootLayout:", error);
   }
@@ -220,6 +226,9 @@ export default async function RootLayout({
   // Nie hardkodujemy tu „dark", bo blokowałoby to przełącznik motywu.
   return (
     <html lang="pl" suppressHydrationWarning>
+      <head>
+        {customCss ? <style id="custom-css" dangerouslySetInnerHTML={{ __html: customCss }} /> : null}
+      </head>
       <body
         className={`${poppins.variable} ${geistMono.variable} ${playfairDisplay.variable} selection:bg-primary/20 selection:text-foreground antialiased font-poppins`}
         suppressHydrationWarning

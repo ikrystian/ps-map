@@ -16,8 +16,11 @@ export const RECOMMENDED_CATEGORY_SETTING_KEY = "homepageRecommendedCategory"
 export interface RecommendedCategoryScope {
   /** ID kategorii wybranej przez administratora (null = format wyłączony) */
   parentId: string | null
-  /** Bezpośrednie podkategorie — zakładki sekcji i kategorie promocji */
-  categories: { id: string; nazwa: string }[]
+  /**
+   * Bezpośrednie podkategorie — zakładki sekcji i kategorie promocji.
+   * `descendantIds` to ich dzieci: eksperci przypisani niżej też należą do zakładki.
+   */
+  categories: { id: string; nazwa: string; descendantIds: string[] }[]
   /** Kategoria + całe jej poddrzewo — do sprawdzania uprawnień eksperta */
   eligibleIds: string[]
 }
@@ -52,7 +55,11 @@ export async function getRecommendedCategoryScope(): Promise<RecommendedCategory
 
   return {
     parentId,
-    categories: children.map(({ id, nazwa }) => ({ id, nazwa })),
+    categories: children.map(({ id, nazwa, children: grandchildren }) => ({
+      id,
+      nazwa,
+      descendantIds: grandchildren.map((g) => g.id),
+    })),
     eligibleIds: [
       parentId,
       ...children.map((c) => c.id),

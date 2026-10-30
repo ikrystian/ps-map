@@ -9,7 +9,8 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone, Target } from "lucide-react"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone, Target, Code } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Category } from "@/types/categories"
+import { MAX_CUSTOM_CSS_LENGTH } from "@/lib/custom-css"
 import {
   DEFAULT_MIN_CUSTOM_POINTS,
   getPackagePricePerPoint,
@@ -33,6 +35,12 @@ import {
   type PointPackage,
   type PointPriceTier,
 } from "@/lib/points-pricing"
+
+// Edytor CodeMirror jest ciężki i działa tylko w przeglądarce — ładujemy go dopiero przy wejściu na stronę.
+const CssEditor = dynamic(() => import("@/components/admin/css-editor").then((m) => m.CssEditor), {
+  ssr: false,
+  loading: () => <div className="h-[320px] animate-pulse rounded-md border bg-muted/30" />,
+})
 
 /** Węzeł drzewa z /admin/expertise-categories (API zwraca zagnieżdżone dzieci). */
 type ExpertiseCategoryNode = {
@@ -452,6 +460,9 @@ export default function AdminSettingsPage() {
   const [homepageRecommendedCategory, setHomepageRecommendedCategory] = useState("")
   const [expertiseParents, setExpertiseParents] = useState<ExpertiseParentOption[]>([])
 
+  // Własny kod CSS wstrzykiwany na stronach serwisu
+  const [customCss, setCustomCss] = useState("")
+
   // Favicon i Open Graph (SEO)
   const [favicon, setFavicon] = useState("/favicon.png")
   const [ogTitle, setOgTitle] = useState("Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi")
@@ -544,6 +555,8 @@ export default function AdminSettingsPage() {
 
         setPromoteConsultedImmediately(data.promoteConsultedImmediately?.value || "false")
 
+        setCustomCss(data.customCss?.value ?? "")
+
         // Google Analytics
         setGoogleAnalyticsId(data.googleAnalyticsId?.value || "")
         setGoogleAnalyticsEnabled(data.googleAnalyticsEnabled?.value || "false")
@@ -616,6 +629,11 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     // Walidacja
+    if (customCss.length > MAX_CUSTOM_CSS_LENGTH) {
+      toast.error(`Własny CSS może mieć maksymalnie ${MAX_CUSTOM_CSS_LENGTH.toLocaleString("pl-PL")} znaków`)
+      return
+    }
+
     const maxCategoriesNum = parseInt(maxCategories)
     if (isNaN(maxCategoriesNum) || maxCategoriesNum < 1 || maxCategoriesNum > 100) {
       toast.error("Maksymalna liczba kategorii musi być liczbą od 1 do 100")
@@ -929,6 +947,10 @@ export default function AdminSettingsPage() {
             promoteConsultedImmediately: {
               value: promoteConsultedImmediately,
               description: "Tryb testowy: promocje 'Najczęściej konsultowane kategorie' są aktywowane natychmiast (od teraz) zamiast od pierwszego dnia kolejnego miesiąca",
+            },
+            customCss: {
+              value: customCss,
+              description: "Własny kod CSS wstrzykiwany do <head> na wszystkich stronach poza panelem /admin",
             },
             footerCopyrightText: {
               value: footerCopyrightText,
@@ -2110,6 +2132,36 @@ export default function AdminSettingsPage() {
                     placeholder="https://instagram.com/prostasprawa"
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Własny kod CSS */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5" />
+                Własny kod CSS
+              </CardTitle>
+              <CardDescription>
+                Kod jest wstawiany w znaczniku &lt;style&gt; w sekcji &lt;head&gt; na wszystkich podstronach serwisu
+                (strony publiczne oraz panele klienta i eksperta), po standardowych stylach strony.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <CssEditor
+                value={customCss}
+                onChange={setCustomCss}
+                placeholder={"/* Np. zmiana koloru głównego przycisków */\n.btn-primary {\n  background: #0da192;\n}"}
+              />
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                <p>
+                  Zmiany zaczną działać po zapisaniu ustawień. Własny CSS nie jest ładowany w panelu administratora
+                  (<code>/admin</code>), żeby błędna reguła nie zablokowała dostępu do tego edytora.
+                </p>
+                <span className={customCss.length > MAX_CUSTOM_CSS_LENGTH ? "text-destructive" : undefined}>
+                  {customCss.length.toLocaleString("pl-PL")} / {MAX_CUSTOM_CSS_LENGTH.toLocaleString("pl-PL")} znaków
+                </span>
               </div>
             </CardContent>
           </Card>
