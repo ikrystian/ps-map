@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table"
 import { usePermissions } from "@/hooks/usePermissions"
 import { motion } from "framer-motion"
-import { Edit, Eye, FileText, History, Plus, Trash2, Loader2, Calendar } from "lucide-react"
+import { Edit, Eye, FileText, History, Plus, ThumbsUp, Trash2, Loader2, Calendar } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -246,6 +246,7 @@ export default function LawFirmBlogPage() {
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-48">Data utworzenia</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-56">Ostatnia edycja</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-32">Wyświetlenia</TableHead>
+                        <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider w-32">Polecenia</TableHead>
                         <TableHead className="text-muted-foreground font-semibold bg-background/20 text-xs py-3.5 px-6 uppercase tracking-wider text-right w-36">Akcje</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -288,6 +289,12 @@ export default function LawFirmBlogPage() {
                             <div className="flex items-center gap-1.5 text-foreground/80">
                               <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                               <span className="font-medium">{post.wyswietlenia}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-4 px-6 text-xs">
+                            <div className="flex items-center gap-1.5 text-foreground/80" title="Liczba poleceń Twojego artykułu przez czytelników">
+                              <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
+                              <span className="font-medium">{post.polecenia ?? 0}</span>
                             </div>
                           </TableCell>
                           <TableCell className="py-4 px-6 text-right">
@@ -367,6 +374,13 @@ export default function LawFirmBlogPage() {
                           <span className="text-foreground/80 font-medium flex items-center gap-1 justify-end">
                             <Eye className="h-3 w-3 text-muted-foreground animate-pulse" />
                             {post.wyswietlenia}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-muted-foreground block font-light">Polecenia</span>
+                          <span className="text-foreground/80 font-medium flex items-center gap-1 justify-end">
+                            <ThumbsUp className="h-3 w-3 text-muted-foreground" />
+                            {post.polecenia ?? 0}
                           </span>
                         </div>
                       </div>

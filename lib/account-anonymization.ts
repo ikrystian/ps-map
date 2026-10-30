@@ -404,6 +404,11 @@ export async function anonymizeUserAccount(
       )
       addToReport(
         report,
+        "blogPostLikes",
+        (await tx.blogPostLike.deleteMany({ where: { userId } })).count
+      )
+      addToReport(
+        report,
         "notificationSettings",
         (await tx.notificationSettings.deleteMany({ where: { userId } })).count
       )

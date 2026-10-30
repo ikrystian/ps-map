@@ -69,6 +69,8 @@ export interface BlogPost {
   isSponsored?: boolean;
   sponsoredLawFirm?: any;
   tagi?: string | null;
+  /** Liczba poleceń wpisu przez czytelników (listy w panelach admina i eksperta). */
+  polecenia?: number;
   lastEditedAt?: string | Date | null;
   lastEditedByRole?: "ADMIN" | "MODERATOR" | "LAW_FIRM" | null;
   /** Tylko w odpowiedzi panelu admina — ekspert nie dostaje danych osobowych edytującego. */

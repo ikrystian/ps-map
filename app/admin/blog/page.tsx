@@ -47,6 +47,7 @@ import {
   Edit,
   ExternalLink,
   Eye,
+  ThumbsUp,
   FileText,
   FolderOpen,
   Globe,
@@ -299,6 +300,7 @@ export default function AdminBlogPage() {
           <TableCell><div className="h-4 bg-muted rounded w-24 animate-pulse" /></TableCell>
           <TableCell><div className="h-4 bg-muted rounded w-28 animate-pulse" /></TableCell>
           <TableCell><div className="h-4 bg-muted rounded w-12 animate-pulse" /></TableCell>
+          <TableCell><div className="h-4 bg-muted rounded w-12 animate-pulse" /></TableCell>
           <TableCell><div className="h-8 bg-muted rounded w-20 ml-auto animate-pulse" /></TableCell>
         </TableRow>
       ))}
@@ -484,6 +486,7 @@ export default function AdminBlogPage() {
                 <TableHead>Utworzono</TableHead>
                 <TableHead>Ostatnia edycja</TableHead>
                 <TableHead>Wyświetlenia</TableHead>
+                <TableHead>Polecenia</TableHead>
                 <TableHead className="text-right">Akcje</TableHead>
               </TableRow>
             </TableHeader>
@@ -492,7 +495,7 @@ export default function AdminBlogPage() {
                 <TableSkeleton />
               ) : posts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                     Brak wpisów pasujących do wybranych filtrów.
                   </TableCell>
                 </TableRow>
@@ -572,6 +575,12 @@ export default function AdminBlogPage() {
                       <div className="flex items-center gap-1.5">
                         <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                         {post.wyswietlenia}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1.5" title="Liczba poleceń wpisu przez czytelników">
+                        <ThumbsUp className="h-3.5 w-3.5 text-muted-foreground" />
+                        {post.polecenia ?? 0}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

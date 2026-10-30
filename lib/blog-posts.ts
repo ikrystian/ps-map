@@ -11,7 +11,7 @@ import { BlogPost } from "@/types/blog"
 
 // Funkcja, nie stała — `new Date()` musi być liczone przy każdym zapytaniu,
 // inaczej zaplanowane wpisy nie trafiałyby do sitemapy aż do restartu procesu.
-function publishedBlogPostWhere() {
+export function publishedBlogPostWhere() {
   return {
     opublikowany: true,
     OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: new Date() } }],

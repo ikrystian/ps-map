@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { canManageBlog } from "@/lib/roles"
+import { BLOG_LIKE_COUNT_INCLUDE, withLikeCount } from "@/lib/blog-likes"
 import {
   RELATED_BLOG_POSTS_INCLUDE,
   blogEditStamp,
@@ -254,6 +255,7 @@ export async function PATCH(
       where: { id },
       data,
       include: {
+        ...BLOG_LIKE_COUNT_INCLUDE,
         category: true,
         lawFirm: {
           select: {
@@ -278,7 +280,7 @@ export async function PATCH(
       editorRole: session.user.role,
     })
 
-    return NextResponse.json(updatedPost)
+    return NextResponse.json(withLikeCount(updatedPost))
   } catch (error) {
     console.error("Error updating blog post:", error)
     return NextResponse.json(

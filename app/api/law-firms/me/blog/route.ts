@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { BLOG_LIKE_COUNT_INCLUDE, withLikeCount } from "@/lib/blog-likes"
 import { resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
           lawFirmId: lawFirm.id,
         },
         include: {
+          ...BLOG_LIKE_COUNT_INCLUDE,
           category: true,
         },
         orderBy: {
@@ -53,7 +55,7 @@ export async function GET(request: NextRequest) {
     ])
 
     return NextResponse.json({
-      posts,
+      posts: posts.map(withLikeCount),
       pagination: {
         total,
         page,

@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { canManageBlog } from "@/lib/roles"
+import { BLOG_LIKE_COUNT_INCLUDE, withLikeCount } from "@/lib/blog-likes"
 import { resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
@@ -64,6 +65,7 @@ export async function GET(request: NextRequest) {
       prisma.blogPost.findMany({
         where,
         include: {
+          ...BLOG_LIKE_COUNT_INCLUDE,
           category: true,
           lawFirm: {
             select: {
@@ -102,7 +104,7 @@ export async function GET(request: NextRequest) {
     ])
 
     return NextResponse.json({
-      posts,
+      posts: posts.map(withLikeCount),
       stats,
       pagination: {
         total,

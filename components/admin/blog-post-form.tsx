@@ -140,7 +140,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   const [loadingLawFirms, setLoadingLawFirms] = useState(false)
 
   // Collapse/Expand state for right column boxes (default to collapsed/false)
-  const [seoOpen, setSeoOpen] = useState(false)
+  const [seoOpen, setSeoOpen] = useState(isExpert)
   const [sponsoredOpen, setSponsoredOpen] = useState(false)
   const [generatingSeo, setGeneratingSeo] = useState(false)
   const [lastEdit, setLastEdit] = useState<LastEdit | null>(null)

@@ -60,6 +60,7 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
   blogPostEdits BlogPostEdit[] @relation("BlogPostEditor")
+  blogPostLikes BlogPostLike[] @relation("BlogPostLikes")
   notificationSettings NotificationSettings?
   loginHistory  LoginHistory[]
 
@@ -1332,6 +1333,7 @@ model BlogPost {
   lastEditedById        String?   // User.id (bez FK, żeby nie przebudowywać tabeli); domyślnie pomijane w zapytaniach (lib/prisma.ts)
   lastEditedByRole      UserRole?
   edits                 BlogPostEdit[]    // pełna historia edycji (lastEdited* to jej ostatni wpis, zdenormalizowany pod listy)
+  likes                 BlogPostLike[]    // polecenia wpisu przez czytelników
 
   // Powiązane artykuły wybrane ręcznie w edycji wpisu
   powiazaneWpisy        BlogPostRelated[] @relation("BlogPostRelatedFrom")
@@ -1357,6 +1359,22 @@ model BlogPostEdit {
 
   @@index([postId, createdAt])
   @@index([editorId])
+}
+
+// Polecenie wpisu ("like") — jedno na czytelnika: zalogowanego identyfikuje konto,
+// niezalogowanego zahashowany adres IP (surowego IP nie zapisujemy). Dokładnie jedno z userId/ipHash jest ustawione.
+model BlogPostLike {
+  id        String   @id @default(uuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation("BlogPostLikes", fields: [userId], references: [id], onDelete: Cascade)
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@unique([postId, ipHash])
+  @@index([userId])
 }
 
 // Ręcznie wybrane powiązane artykuły wpisu (w kolejności wyświetlania)

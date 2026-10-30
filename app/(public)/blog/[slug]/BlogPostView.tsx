@@ -16,6 +16,7 @@ import { BlogPost } from '@/types/blog';
 import { AdSenseUnit } from "@/components/AdSenseUnit";
 import { formatDate } from "@/lib/format"
 import { BlogPostToc, BlogPostViewTracker, ParallaxHeroImage, ReadingProgressBar } from "./BlogPostInteractive";
+import { BlogPostLikeButton } from "./BlogPostLikeButton";
 import { blogCategoryPath } from "@/lib/blog-category-url";
 import { buildBlogToc } from "@/lib/blog-toc";
 import type { RelatedBlogPost } from "@/lib/blog-posts";
@@ -333,6 +334,9 @@ export default function BlogPostView({ post, adsense, relatedPosts = [] }: BlogP
                 className="prose prose-lg dark:prose-invert max-w-none [&_:is(h1,h2,h3,h4)]:scroll-mt-[96px] prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
+
+              {/* Polecenie wpisu — tylko dla opublikowanych (w podglądzie szkicu nie ma czego polecać) */}
+              {!isUnpublished && <BlogPostLikeButton slug={post.slug} />}
 
               <Separator className="my-10 bg-border/60" />
 
