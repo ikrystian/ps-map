@@ -9,7 +9,8 @@ import { toast } from "@/components/ui/sonner"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone, Target, Code } from "lucide-react"
+import { generateBlogApiSecret, MIN_BLOG_API_SECRET_LENGTH } from "@/lib/blog-api-secret"
+import { Loader2, Save, Upload, Mail, MessageSquare, AlertCircle, CheckCircle2, Globe, Palette, Users, Star, CreditCard, BarChart3, Coins, Plus, Trash2, Settings as SettingsIcon, Megaphone, Target, Code, KeyRound, RefreshCw } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
@@ -165,6 +166,10 @@ interface Settings {
     description: string | null
   }
   smsapiToken?: {
+    value: string
+    description: string | null
+  }
+  blogApiSecret?: {
     value: string
     description: string | null
   }
@@ -443,6 +448,10 @@ export default function AdminSettingsPage() {
   const [smsapiToken, setSmsapiToken] = useState("")
   const [smsapiStatus, setSmsapiStatus] = useState<SmsApiStatus | null>(null)
 
+  // API bloga (POST /api/external/blog)
+  const [blogApiSecret, setBlogApiSecret] = useState("")
+  const [showBlogApiSecret, setShowBlogApiSecret] = useState(false)
+
   // Stopka — dolny pasek
   const [footerCopyrightText, setFooterCopyrightText] = useState("2026 © ProstaSprawa.pl")
   const [footerSocialFacebook, setFooterSocialFacebook] = useState("https://facebook.com")
@@ -547,6 +556,7 @@ export default function AdminSettingsPage() {
         setSmsMode(data.smsMode?.value || "auto")
         setSmsapiSender(data.smsapiSender?.value || "Test")
         setSmsapiToken(data.smsapiToken?.value || "")
+        setBlogApiSecret(data.blogApiSecret?.value || "")
         try {
           setSmsapiStatus(data.smsapiStatus ? JSON.parse(data.smsapiStatus.value) : null)
         } catch {
@@ -750,6 +760,11 @@ export default function AdminSettingsPage() {
       }
     }
 
+    if (blogApiSecret.trim() && blogApiSecret.trim().length < MIN_BLOG_API_SECRET_LENGTH) {
+      toast.error(`Sekret API bloga musi mieć co najmniej ${MIN_BLOG_API_SECRET_LENGTH} znaków (użyj przycisku „Generuj”)`)
+      return
+    }
+
     // Tryb produkcyjny bez tokenu = zablokowana rejestracja (SMS nie wyjdzie).
     // Token może pochodzić z ENV, więc bierzemy pod uwagę też stan z serwera.
     const smsTokenAvailable = Boolean(smsapiToken.trim()) || smsapiStatus?.tokenSource === "env"
@@ -935,6 +950,10 @@ export default function AdminSettingsPage() {
             smsapiToken: {
               value: smsapiToken.trim(),
               description: "Token OAuth z panelu SMSAPI (pusty = używany jest SMSAPI_TOKEN z ENV)",
+            },
+            blogApiSecret: {
+              value: blogApiSecret.trim(),
+              description: "Tajny klucz autoryzujący dodawanie wpisów bloga przez API (pusty = API wyłączone)",
             },
             homepageConsultedCategories: {
               value: JSON.stringify(homepageConsultedCategories),
@@ -1256,6 +1275,10 @@ export default function AdminSettingsPage() {
             <TabsTrigger value="payments" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
               <CreditCard className="h-4 w-4" />
               <span>Płatności i KSeF</span>
+            </TabsTrigger>
+            <TabsTrigger value="blogApi" className="gap-2 px-3 py-2 data-[state=active]:bg-background">
+              <KeyRound className="h-4 w-4" />
+              <span>API bloga</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -2821,6 +2844,59 @@ export default function AdminSettingsPage() {
                   </ul>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ============== TAB 8: API BLOGA ============== */}
+        <TabsContent value="blogApi" className="space-y-6 m-0">
+          <Card className="border-violet-500/20 bg-violet-500/[0.01]">
+            <CardHeader>
+              <CardTitle className="text-violet-600 dark:text-violet-400 flex items-center gap-2">
+                <KeyRound className="h-5 w-5" />
+                Dodawanie wpisów bloga przez API
+              </CardTitle>
+              <CardDescription>
+                Tajny klucz autoryzuje żądania <span className="font-mono">POST /api/external/blog</span>.
+                Autorem wpisu jest moderator, którego ID przekazuje się w żądaniu (<span className="font-mono">authorId</span>).
+                Format żądania opisuje plik <span className="font-mono">docs/blog-api.md</span>.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="blogApiSecret" className="font-semibold text-foreground">
+                  Tajny klucz API
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="blogApiSecret"
+                    type={showBlogApiSecret ? "text" : "password"}
+                    value={blogApiSecret}
+                    onChange={(e) => setBlogApiSecret(e.target.value)}
+                    placeholder="Pusty = API wyłączone"
+                    autoComplete="off"
+                    className="font-mono"
+                  />
+                  <Button type="button" variant="outline" onClick={() => setShowBlogApiSecret((visible) => !visible)}>
+                    {showBlogApiSecret ? "Ukryj" : "Pokaż"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setBlogApiSecret(generateBlogApiSecret())
+                      setShowBlogApiSecret(true)
+                    }}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Generuj
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Minimum {MIN_BLOG_API_SECRET_LENGTH} znaków. Zmiana klucza natychmiast unieważnia poprzedni,
+                  a wyczyszczenie pola wyłącza API (żądania dostają 503). Zapisz ustawienia, aby zmiana zadziałała.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

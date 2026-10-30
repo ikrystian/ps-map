@@ -7,7 +7,7 @@ import { decryptMessage, encryptMessage } from "@/lib/encryption"
  * Wartości jawne (sprzed zmiany) są odczytywane bez zmian, więc migracja jest łagodna —
  * zaszyfrują się przy najbliższym zapisie w panelu admina.
  */
-export const SECRET_SETTING_KEYS = new Set(["emailServerPassword", "ksefToken", "smsapiToken"])
+export const SECRET_SETTING_KEYS = new Set(["emailServerPassword", "ksefToken", "smsapiToken", "blogApiSecret"])
 
 const PREFIX = "enc:v1:"
 

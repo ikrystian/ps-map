@@ -1,5 +1,6 @@
 import { SECRET_SETTING_KEYS, decryptSecret, encryptSecret } from "@/lib/secret-settings"
 import { auth } from "@/lib/auth"
+import { BLOG_API_SECRET_SETTING_KEY, MIN_BLOG_API_SECRET_LENGTH } from "@/lib/blog-api-secret"
 import { CUSTOM_CSS_SETTING_KEY, MAX_CUSTOM_CSS_LENGTH } from "@/lib/custom-css"
 import {
   DEFAULT_MIN_CUSTOM_POINTS,
@@ -340,6 +341,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ---- API bloga (POST /api/external/blog) ----
+    if (!settingsObject.blogApiSecret) {
+      settingsObject.blogApiSecret = {
+        value: "",
+        description: "Tajny klucz autoryzujący dodawanie wpisów bloga przez API (pusty = API wyłączone)",
+      }
+    }
+
     // ---- Weryfikacja SMS (SMSAPI) ----
     if (!settingsObject.smsMode) {
       settingsObject.smsMode = {
@@ -413,6 +422,18 @@ export async function PUT(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: `Własny CSS może mieć maksymalnie ${MAX_CUSTOM_CSS_LENGTH} znaków` },
+        { status: 400 }
+      )
+    }
+
+    const blogApiSecret = (settings as Record<string, { value?: unknown } | undefined>)[BLOG_API_SECRET_SETTING_KEY]?.value
+    if (
+      blogApiSecret !== undefined &&
+      (typeof blogApiSecret !== "string" ||
+        (blogApiSecret.trim() !== "" && blogApiSecret.trim().length < MIN_BLOG_API_SECRET_LENGTH))
+    ) {
+      return NextResponse.json(
+        { error: `Sekret API bloga musi mieć co najmniej ${MIN_BLOG_API_SECRET_LENGTH} znaków (puste pole wyłącza API)` },
         { status: 400 }
       )
     }

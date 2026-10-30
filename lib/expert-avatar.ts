@@ -9,7 +9,17 @@
  */
 export const EXPERT_AVATAR_FALLBACK = "/default.jpg"
 
-/** Zwraca logo eksperta albo domyślny avatar. Puste stringi traktuje jak brak. */
+/** Zwraca logo eksperta albo domyślny avatar. Puste stringi oraz domyślne placeholdery użytkownika traktuje jak brak. */
 export function expertAvatar(logo?: string | null): string {
-  return logo && logo.trim() !== "" ? logo : EXPERT_AVATAR_FALLBACK
+  if (
+    !logo ||
+    logo.trim() === "" ||
+    logo === "/images/defailt-user.jpg" ||
+    logo === "/images/default-user.jpg" ||
+    logo.endsWith("defailt-user.jpg") ||
+    logo.endsWith("default-user.jpg")
+  ) {
+    return EXPERT_AVATAR_FALLBACK
+  }
+  return logo
 }

@@ -180,6 +180,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
+                tabIndex={1}
                 id="email"
                 type="email"
                 placeholder="Wprowadź adres email"
@@ -204,6 +205,7 @@ export default function LoginPage() {
               </div>
               <div className="relative">
                 <Input
+                  tabIndex={1}
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Wprowadź hasło"
