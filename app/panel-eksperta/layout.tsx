@@ -283,11 +283,9 @@ export default function LawFirmPanelLayout({
           </Avatar>
           <div className="text-center flex flex-col items-center gap-1">
             <p className="text-md font-semibold">{session.user.name}</p>
-            {expertiseSegments.length > 0 && (
-              <p className="text-sm font-medium text-primary">{expertiseSegments[0]}</p>
-            )}
+
             {expertiseSegments.length > 1 && (
-              <p className="text-xs text-muted-foreground">{expertiseSegments[expertiseSegments.length - 1]}</p>
+              <p className="text-sm font-medium text-primary">{expertiseSegments[expertiseSegments.length - 1]}</p>
             )}
           </div>
           <ImpersonationNotice className="mt-2" />
