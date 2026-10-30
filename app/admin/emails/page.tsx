@@ -379,7 +379,12 @@ export default function EmailManagementPage() {
 
       <Tabs defaultValue="templates" className="w-full">
         <TabsList className="mb-4">
-          <TabsTrigger value="templates">Szablony</TabsTrigger>
+          <TabsTrigger value="templates">
+            Szablony
+            {(!loading || templates.length > 0) && (
+              <span className="ml-1.5 text-xs text-muted-foreground">({templates.length})</span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="logs">Logi maili</TabsTrigger>
           <TabsTrigger value="scheduled">Zaplanowane</TabsTrigger>
           <TabsTrigger value="terms">Zmiana regulaminu</TabsTrigger>
