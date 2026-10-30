@@ -1,5 +1,6 @@
 import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 import { auth } from "@/lib/auth"
+import { EXPERTISE_CATEGORY_PATH_SELECT } from "@/lib/expertise-category"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
             category: true,
           },
         },
+        expertiseCategory: EXPERTISE_CATEGORY_PATH_SELECT,
       },
     })
 

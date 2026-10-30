@@ -28,6 +28,7 @@ import UserMenu from "@/components/UserMenu"
 import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { expertAvatar } from "@/lib/expert-avatar"
+import { expertisePathSegments } from "@/lib/expertise-category"
 import {
   Award,
   BarChart3,
@@ -122,6 +123,8 @@ export default function LawFirmPanelLayout({
   const [lawFirmSlug, setLawFirmSlug] = useState<string>("")
   const [subscriptionType, setSubscriptionType] = useState<string | null>(null)
   const [expertLogo, setExpertLogo] = useState<string>("")
+  // Ścieżka specjalizacji z rejestracji: [gałąź, ..., specjalizacja]
+  const [expertiseSegments, setExpertiseSegments] = useState<string[]>([])
   const [showExpiredModal, setShowExpiredModal] = useState(false)
   const [showNotificationModal, setShowNotificationModal] = useState(false)
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
@@ -171,6 +174,7 @@ export default function LawFirmPanelLayout({
           setLawFirmSlug(data.slug || "")
           setSubscriptionType(data.pakietSubskrypcji || null)
           setExpertLogo(data.logo || "")
+          setExpertiseSegments(expertisePathSegments(data.expertiseCategory))
         }
       } catch (error) {
         console.error("Error fetching law firm data:", error)
@@ -279,7 +283,12 @@ export default function LawFirmPanelLayout({
           </Avatar>
           <div className="text-center flex flex-col items-center gap-1">
             <p className="text-md font-semibold">{session.user.name}</p>
-            <p className="text-sm text-primary">Ekspert prawny</p>
+            {expertiseSegments.length > 0 && (
+              <p className="text-sm font-medium text-primary">{expertiseSegments[0]}</p>
+            )}
+            {expertiseSegments.length > 1 && (
+              <p className="text-xs text-muted-foreground">{expertiseSegments[expertiseSegments.length - 1]}</p>
+            )}
           </div>
           <ImpersonationNotice className="mt-2" />
         </div>
