@@ -8,6 +8,7 @@ import { expireStalePrzelewy24Orders } from "./przelewy24-resolve"
 import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
+import { getLastDailyOccurrence, getNextDailyOccurrence } from "./daily-schedule"
 import { backupDbToGCS } from "./gcs-backup"
 
 
@@ -22,6 +23,12 @@ export interface JobDefinition {
   /** Czytelny opis prezentowany w panelu admina. */
   description: string
   intervalMs: number
+  /**
+   * Jeśli ustawione, zadanie uruchamia się raz na dobę o tej pełnej godzinie
+   * (czas polski, `SCHEDULE_TIME_ZONE`) zamiast co `intervalMs`.
+   * `intervalMs` oznacza wtedy nominalny okres (24 h).
+   */
+  dailyAtHour?: number
   fn: () => Promise<unknown>
   options?: RunJobOptions
 }
@@ -195,8 +202,9 @@ export function getJobDefinitions(): JobDefinition[] {
     },
     {
       name: "db-backup-gcs",
-      description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (2x dziennie)",
-      intervalMs: 12 * HOUR,
+      description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (raz dziennie o 4:00)",
+      intervalMs: 24 * HOUR,
+      dailyAtHour: 4,
       options: { retries: 2, retryDelayMs: 60 * 1000 },
       fn: async () => {
         const result = await backupDbToGCS()
@@ -207,14 +215,42 @@ export function getJobDefinitions(): JobDefinition[] {
 }
 
 /**
+ * Uruchamia zadanie codziennie o pełnej godzinie `hour` (czas polski).
+ * Po każdym odpaleniu planuje kolejne na następną dobę, dzięki czemu godzina
+ * nie "dryfuje" jak przy `setInterval` i poprawnie znosi zmianę czasu.
+ */
+function scheduleDailyJob(job: JobDefinition, hour: number, after: Date = new Date()) {
+  const slot = getNextDailyOccurrence(hour, after)
+
+  setTimeout(() => {
+    void runJob(job.name, job.fn, job.options)
+    // Liczymy od slotu, żeby zbyt wczesne odpalenie timera nie zdublowało zadania.
+    scheduleDailyJob(job, hour, new Date(Math.max(Date.now(), slot.getTime())))
+  }, slot.getTime() - Date.now())
+}
+
+/**
  * Rejestruje zadanie:
  *  - przy starcie nadrabia uruchomienie pominięte podczas wyłączenia serwera
  *    (stan czasu ostatniego runu jest utrwalony w bazie),
- *  - następnie uruchamia je cyklicznie z lockiem, monitoringiem i retry
- *    (logika w `runJob`).
+ *  - następnie uruchamia je cyklicznie (co `intervalMs` lub codziennie o stałej
+ *    godzinie) z lockiem, monitoringiem i retry (logika w `runJob`).
  */
-async function registerJob({ name, intervalMs, fn, options }: JobDefinition) {
+async function registerJob(job: JobDefinition) {
+  const { name, intervalMs, dailyAtHour, fn, options } = job
+
   try {
+    if (dailyAtHour !== undefined) {
+      // Zaległe, jeśli od ostatniego planowego terminu (np. dziś 4:00) nie było udanego runu.
+      const sinceLastSlotMs = Date.now() - getLastDailyOccurrence(dailyAtHour).getTime()
+      if (await isJobDue(name, sinceLastSlotMs)) {
+        void runJob(name, fn, options)
+      }
+
+      scheduleDailyJob(job, dailyAtHour)
+      return
+    }
+
     if (await isJobDue(name, intervalMs)) {
       void runJob(name, fn, options)
     }

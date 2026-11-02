@@ -52,6 +52,7 @@ interface SchedulerJob {
   name: string
   description: string
   intervalMs: number | null
+  dailyAtHour: number | null
   registered: boolean
   lastRunAt: string | null
   lastStatus: JobRunStatus | null
@@ -81,7 +82,8 @@ const statusConfig: Record<JobRunStatus, { label: string; color: string; icon: t
   FAILED: { label: "Błąd", color: "bg-red-500", icon: XCircle },
 }
 
-function formatInterval(ms: number | null): string {
+function formatInterval(ms: number | null, dailyAtHour: number | null): string {
+  if (dailyAtHour != null) return `codziennie o ${dailyAtHour}:00`
   if (!ms) return "—"
   const minutes = ms / 60000
   if (minutes < 60) return `co ${minutes} min`
@@ -363,7 +365,7 @@ export default function AdminSchedulerPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <span className="text-muted-foreground">Harmonogram: </span>
-                    {formatInterval(job.intervalMs)}
+                    {formatInterval(job.intervalMs, job.dailyAtHour)}
                   </div>
                   <div>
                     <span className="text-muted-foreground">Ostatnio: </span>
