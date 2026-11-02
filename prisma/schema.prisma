@@ -2824,12 +2824,30 @@ model BugReport {
   adminNotatka    String?           // Opcjonalny komentarz admina przy odrzuceniu
   punktyPrzyznane Boolean           @default(false) // Zabezpieczenie przed podwójną wypłatą punktów
 
+  replies         BugReportReply[]
+
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+}
+
+// Odpowiedzi admina na zgłoszenie błędu — każda wysyłana mailem do zgłaszającego
+model BugReportReply {
+  id          String    @id @default(uuid())
+  bugReportId String
+  bugReport   BugReport @relation(fields: [bugReportId], references: [id], onDelete: Cascade)
+
+  adminId     String    // Bez relacji — wpis historii ma przetrwać usunięcie konta admina
+  adminName   String    // Imię i nazwisko (lub e-mail) admina w chwili wysyłki
+  tresc       String    // Treść odpowiedzi wysłanej mailem
+  wyslanoNa   String    // Adres e-mail, na który wysłano odpowiedź
+
+  createdAt   DateTime  @default(now())
+
+  @@index([bugReportId])
 }
 
 enum BugReportCategory {

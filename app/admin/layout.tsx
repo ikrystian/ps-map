@@ -7,6 +7,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { isModeratorAdminPath } from "@/lib/roles"
+import { useNewBugReportsCount } from "@/hooks/useNewBugReportsCount"
 
 import AdminNotificationBell from "@/components/AdminNotificationBell"
 import AdminPageTitle from "@/components/admin/AdminPageTitle"
@@ -209,16 +210,36 @@ const navigation: NavGroup[] = [
 
 const flatNavigation = navigation.flatMap(group => group.items)
 
+function NavCountBadge({ count, className }: { count: number; className?: string }) {
+  if (count <= 0) return null
+  return (
+    <span
+      className={cn(
+        "flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-rose-600 px-1 text-[11px] font-bold text-white",
+        className
+      )}
+      title={`Nowe: ${count}`}
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  )
+}
+
 function CollapsibleNavGroup({
   group,
   isNavItemActive,
   setImpersonateOpen,
+  badges,
 }: {
   group: NavGroup
   isNavItemActive: (href: string) => boolean
   setImpersonateOpen: (open: boolean) => void
+  /** Liczniki przy pozycjach menu, kluczem jest href pozycji */
+  badges: Record<string, number>
 }) {
   const isGroupActive = group.items.some((item) => isNavItemActive(item.href))
+  // Zwinięta grupa chowa pozycje, więc pokazuje sumę ich liczników na nagłówku
+  const groupBadgeCount = group.items.reduce((sum, item) => sum + (badges[item.href] ?? 0), 0)
   const [isOpen, setIsOpen] = useState(true)
 
   useEffect(() => {
@@ -268,6 +289,7 @@ function CollapsibleNavGroup({
             )}>
               {group.title}
             </span>
+            {!isOpen && <NavCountBadge count={groupBadgeCount} className="ml-2" />}
             <motion.div
               animate={{ rotate: isOpen ? 90 : 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -315,6 +337,8 @@ function CollapsibleNavGroup({
                       )
                     }
 
+                    const badgeCount = badges[item.href] ?? 0
+
                     return (
                       <SidebarMenuSubItem key={item.name}>
                         <SidebarMenuSubButton
@@ -331,8 +355,9 @@ function CollapsibleNavGroup({
                               isActive && "text-foreground"
                             )} />
                             <span>{item.name}</span>
+                            <NavCountBadge count={badgeCount} className="ml-auto" />
                             {isActive && (
-                              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white/80" />
+                              <span className={cn("h-1.5 w-1.5 rounded-full bg-white/80", badgeCount > 0 ? "ml-1.5" : "ml-auto")} />
                             )}
                           </Link>
                         </SidebarMenuSubButton>
@@ -358,6 +383,8 @@ export default function AdminLayout({
   const [impersonateOpen, setImpersonateOpen] = useState(false)
   const { data: session } = useSession()
   const isModerator = session?.user?.role === "MODERATOR"
+  const newBugReportsCount = useNewBugReportsCount(session?.user?.role === "ADMIN")
+  const navBadges = { "/admin/bug-reports": newBugReportsCount }
 
   // Moderator widzi wyłącznie sekcję bloga
   const visibleNavigation = isModerator
@@ -419,6 +446,7 @@ export default function AdminLayout({
                     group={group}
                     isNavItemActive={isNavItemActive}
                     setImpersonateOpen={setImpersonateOpen}
+                    badges={navBadges}
                   />
                 ))}
               </SidebarMenu>

@@ -14,6 +14,7 @@ import { EmailLogStatus, EmailType } from '@prisma/client'
 import { sendSMTPEmail } from './smtp'
 import { formatDateTime } from "@/lib/format"
 import { escapeHtml, renderEmailFrame } from "@/lib/email-layout"
+import { bugReportTicketNumber } from "@/types/bug-reports"
 
 interface SendEmailParams {
   to: string
@@ -890,6 +891,90 @@ ${message}
 
 ---
 Odpowiedź na tę wiadomość zostanie wysłana bezpośrednio na adres nadawcy (${senderEmail}).
+  `.trim()
+
+  return { subject: emailSubject, html, text }
+}
+
+/**
+ * Generuje e-mail z odpowiedzią admina na zgłoszenie błędu wysłane przez eksperta.
+ * Treść odpowiedzi i zgłoszenia pochodzi od użytkowników, więc jest escapowana.
+ */
+export function generateBugReportReplyEmail({
+  recipientName,
+  replyMessage,
+  reportId,
+  reportDescription,
+  reportUrl,
+  reportCategory,
+  reportedAt,
+}: {
+  recipientName?: string | null
+  replyMessage: string
+  reportId: string
+  reportDescription: string
+  reportUrl: string
+  reportCategory: string
+  reportedAt: Date | string
+}): { subject: string; html: string; text: string } {
+  const ticketNumber = bugReportTicketNumber(reportId)
+  const emailSubject = `Odpowiedź na Twoje zgłoszenie błędu ${ticketNumber} - ProstaSprawa`
+  const reportedAtLabel = formatDateTime(reportedAt)
+  const greetingText = recipientName ? `Dzień dobry ${recipientName},` : 'Dzień dobry,'
+  // Adres URL zgłasza użytkownik — link tylko dla http(s), reszta jako zwykły tekst
+  const urlHtml = /^https?:\/\//i.test(reportUrl)
+    ? `<a href="${escapeHtml(reportUrl)}" style="color: #00b49e; text-decoration: underline;">${escapeHtml(reportUrl)}</a>`
+    : escapeHtml(reportUrl)
+
+  const row = (label: string, value: string, first = false) => `
+        <tr>
+          <td style="padding: 6px 0; font-size: 14px; color: #a3a3a3; font-weight: 500;${first ? '' : ' border-top: 1px solid #222222;'}" width="30%">${label}</td>
+          <td style="padding: 6px 0; font-size: 14px; color: #ffffff; font-weight: 600;${first ? '' : ' border-top: 1px solid #222222;'}" width="70%">${value}</td>
+        </tr>`
+
+  const contentHtml = `
+    <h2 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 22px; font-weight: bold; color: #ffffff; margin-top: 0; margin-bottom: 16px;">Odpowiedź na Twoje zgłoszenie błędu</h2>
+    <p style="margin: 0 0 20px 0;">${escapeHtml(greetingText)}</p>
+    <p style="margin: 0 0 12px 0;">Zespół ProstaSprawa odpowiedział na zgłoszenie, które do nas wysłałeś:</p>
+
+    <div style="background-color: #122421; border-left: 4px solid #00b49e; border-radius: 4px; padding: 20px; margin: 16px 0; color: #e5e5e5; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(replyMessage)}</div>
+
+    <h3 style="font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif; font-size: 18px; font-weight: 600; color: #ffffff; margin-top: 28px; margin-bottom: 12px;">Twoje zgłoszenie</h3>
+    <div style="background-color: #122421; border: 1px solid #222222; border-radius: 8px; padding: 20px; margin: 16px 0;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        ${row('Numer zgłoszenia:', ticketNumber, true)}
+        ${row('Kategoria:', escapeHtml(reportCategory))}
+        ${row('Strona:', urlHtml)}
+        ${row('Data zgłoszenia:', reportedAtLabel)}
+      </table>
+    </div>
+    <div style="color: #a3a3a3; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(reportDescription)}</div>
+
+    <p style="margin: 24px 0 0 0; font-size: 13px; color: #a3a3a3;">Jeśli masz dodatkowe pytania, odpowiedz na tę wiadomość — trafi ona do naszego Biura Obsługi Klienta.</p>
+  `
+
+  const html = getBrandEmailLayout(contentHtml, `Odpowiedź na Twoje zgłoszenie błędu ${ticketNumber}`)
+
+  const text = `
+Odpowiedź na Twoje zgłoszenie błędu - ProstaSprawa
+
+${greetingText}
+
+Zespół ProstaSprawa odpowiedział na zgłoszenie, które do nas wysłałeś:
+
+${replyMessage}
+
+---
+Twoje zgłoszenie
+Numer zgłoszenia: ${ticketNumber}
+Kategoria: ${reportCategory}
+Strona: ${reportUrl}
+Data zgłoszenia: ${reportedAtLabel}
+
+${reportDescription}
+
+---
+Jeśli masz dodatkowe pytania, odpowiedz na tę wiadomość — trafi ona do naszego Biura Obsługi Klienta.
   `.trim()
 
   return { subject: emailSubject, html, text }

@@ -1,6 +1,8 @@
 "use client"
 
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
+import { BugReportDetailsDialog } from "@/components/admin/BugReportDetailsDialog"
+import { notifyBugReportsChanged } from "@/hooks/useNewBugReportsCount"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,19 +34,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { bugReportCategoryLabels, type BugReport } from "@/types/bug-reports"
+import { bugReportCategoryLabels, bugReportStatusLabels, type BugReport } from "@/types/bug-reports"
 import type { PaginationData } from "@/types/pagination"
-import { CheckCircle, ExternalLink, Search, XCircle } from "lucide-react"
+import { CheckCircle, ExternalLink, Eye, Search, XCircle } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import { formatDateTime } from "@/lib/format"
-
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
-  NOWE: { label: "Nowe", variant: "secondary" },
-  ZAAKCEPTOWANE: { label: "Zaakceptowane", variant: "default" },
-  ODRZUCONE: { label: "Odrzucone", variant: "destructive" },
-}
 
 export default function AdminBugReportsPage() {
   const [bugReports, setBugReports] = useState<BugReport[]>([])
@@ -60,6 +56,7 @@ export default function AdminBugReportsPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [kategoriaFilter, setKategoriaFilter] = useState("all")
 
+  const [previewReport, setPreviewReport] = useState<BugReport | null>(null)
   const [rejectDialogReport, setRejectDialogReport] = useState<BugReport | null>(null)
   const [rejectNote, setRejectNote] = useState("")
   const [processingId, setProcessingId] = useState<string | null>(null)
@@ -113,6 +110,7 @@ export default function AdminBugReportsPage() {
             : "Zgłoszenie zostało odrzucone"
         )
         fetchBugReports(pagination.page)
+        notifyBugReportsChanged()
       } else {
         const error = await response.json()
         throw new Error(error.error || "Błąd aktualizacji statusu")
@@ -187,7 +185,7 @@ export default function AdminBugReportsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Wszystkie statusy</SelectItem>
-                {Object.entries(statusLabels).map(([value, { label }]) => (
+                {Object.entries(bugReportStatusLabels).map(([value, { label }]) => (
                   <SelectItem key={value} value={value}>
                     {label}
                   </SelectItem>
@@ -241,9 +239,14 @@ export default function AdminBugReportsPage() {
                 bugReports.map((report) => (
                   <TableRow key={report.id}>
                     <TableCell className="max-w-xs">
-                      <div className="text-sm truncate" title={report.opis}>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewReport(report)}
+                        className="block w-full text-left text-sm truncate hover:underline"
+                        title={report.opis}
+                      >
                         {report.opis}
-                      </div>
+                      </button>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
@@ -277,34 +280,44 @@ export default function AdminBugReportsPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={statusLabels[report.status].variant}>
-                        {statusLabels[report.status].label}
+                      <Badge variant={bugReportStatusLabels[report.status].variant}>
+                        {bugReportStatusLabels[report.status].label}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm">{formatDateTime(report.createdAt)}</TableCell>
                     <TableCell className="text-right">
-                      {report.status === "NOWE" && (
-                        <div className="flex items-center gap-1 justify-end">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => updateStatus(report.id, "ZAAKCEPTOWANE")}
-                            disabled={processingId === report.id}
-                            title="Zaakceptuj (+20 pkt dla eksperta)"
-                          >
-                            <CheckCircle className="h-4 w-4 text-green-600" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setRejectDialogReport(report)}
-                            disabled={processingId === report.id}
-                            title="Odrzuć"
-                          >
-                            <XCircle className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 justify-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setPreviewReport(report)}
+                          title="Podgląd i odpowiedź"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {report.status === "NOWE" && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => updateStatus(report.id, "ZAAKCEPTOWANE")}
+                              disabled={processingId === report.id}
+                              title="Zaakceptuj (+20 pkt dla eksperta)"
+                            >
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setRejectDialogReport(report)}
+                              disabled={processingId === report.id}
+                              title="Odrzuć"
+                            >
+                              <XCircle className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -363,6 +376,8 @@ export default function AdminBugReportsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <BugReportDetailsDialog report={previewReport} onClose={() => setPreviewReport(null)} />
 
       <Lightbox
         open={lightboxOpen}
