@@ -122,6 +122,21 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error("[ADMIN:scheduler] GET failed:", error)
+    await db.systemLog
+      .create({
+        data: {
+          level: "ERROR",
+          action: "SCHEDULER_API_ERROR",
+          message: `Błąd pobierania danych harmonogramu: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          metadata: JSON.stringify({
+            error: error instanceof Error ? error.stack || error.message : String(error),
+            endpoint: "GET /api/admin/scheduler",
+          }),
+        },
+      })
+      .catch(() => {})
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -169,6 +184,21 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("[ADMIN:scheduler] POST failed:", error)
+    await db.systemLog
+      .create({
+        data: {
+          level: "ERROR",
+          action: "SCHEDULER_API_ERROR",
+          message: `Błąd API harmonogramu: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          metadata: JSON.stringify({
+            error: error instanceof Error ? error.stack || error.message : String(error),
+            endpoint: "POST /api/admin/scheduler",
+          }),
+        },
+      })
+      .catch(() => {})
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

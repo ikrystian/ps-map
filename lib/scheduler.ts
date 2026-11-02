@@ -1,6 +1,6 @@
 import { purgeExpiredAccountRetention } from "./account-anonymization"
 import { sendConsultationReminders, generateUpcomingGoogleMeetLinks } from "./consultations"
-import { cleanupOldJobRuns, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
+import { cleanupOldJobRuns, handleJobFailure, isJobDue, runJob, RunJobOptions, RunJobResult } from "./job-runner"
 import { deactivateExpiredPromotions, renewExpiredPromotions } from "./promotions"
 import { pollPendingKsefInvoices } from "./ksef"
 import { sendCaseNoOffersReminders, sendTrialEndingReminders } from "./platform-emails"
@@ -214,13 +214,24 @@ export function getJobDefinitions(): JobDefinition[] {
  *    (logika w `runJob`).
  */
 async function registerJob({ name, intervalMs, fn, options }: JobDefinition) {
-  if (await isJobDue(name, intervalMs)) {
-    void runJob(name, fn, options)
-  }
+  try {
+    if (await isJobDue(name, intervalMs)) {
+      void runJob(name, fn, options)
+    }
 
-  setInterval(() => {
-    void runJob(name, fn, options)
-  }, intervalMs)
+    setInterval(() => {
+      void runJob(name, fn, options)
+    }, intervalMs)
+  } catch (error) {
+    console.error(`[SCHEDULER] Failed to register job '${name}':`, error)
+    await handleJobFailure({
+      jobName: name,
+      error,
+      attempts: 0,
+      durationMs: 0,
+      forceNotify: true,
+    })
+  }
 }
 
 /**
@@ -234,7 +245,7 @@ async function registerJob({ name, intervalMs, fn, options }: JobDefinition) {
 export async function triggerJob(name: string): Promise<RunJobResult<unknown> | null> {
   const def = getJobDefinitions().find((job) => job.name === name)
   if (!def) return null
-  return runJob(def.name, def.fn, def.options)
+  return runJob(def.name, def.fn, { ...def.options, forceNotify: true })
 }
 
 /**
@@ -249,11 +260,22 @@ export async function triggerJob(name: string): Promise<RunJobResult<unknown> | 
 export async function initScheduler() {
   console.log("[SCHEDULER] Initializing persistent background job scheduler...")
 
-  const jobs = getJobDefinitions()
+  try {
+    const jobs = getJobDefinitions()
 
-  for (const job of jobs) {
-    await registerJob(job)
+    for (const job of jobs) {
+      await registerJob(job)
+    }
+
+    console.log(`[SCHEDULER] Background scheduler initialized with ${jobs.length} jobs.`)
+  } catch (error) {
+    console.error("[SCHEDULER] Fatal error initializing scheduler:", error)
+    await handleJobFailure({
+      jobName: "initScheduler",
+      error,
+      attempts: 0,
+      durationMs: 0,
+      forceNotify: true,
+    })
   }
-
-  console.log(`[SCHEDULER] Background scheduler initialized with ${jobs.length} jobs.`)
 }

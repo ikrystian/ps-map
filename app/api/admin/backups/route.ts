@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
 import { deleteBackup, listBackups, restoreBackup } from "@/lib/gcs-backup"
 
 async function requireAdmin() {
@@ -17,10 +18,43 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const backups = await listBackups()
-    return NextResponse.json({ backups })
-  } catch (error: any) {
-    console.error("[ADMIN:backups] GET failed:", error)
+    const searchParams = request.nextUrl.searchParams
+    const allBackups = await listBackups()
+    const total = allBackups.length
+
+    const isAll = searchParams.get("all") === "true" || searchParams.get("limit") === "all"
+    if (isAll) {
+      return NextResponse.json({
+        backups: allBackups,
+        pagination: {
+          page: 1,
+          limit: total,
+          total,
+          totalPages: total > 0 ? 1 : 0,
+        },
+      })
+    }
+
+    const pageParam = parseInt(searchParams.get("page") || "1", 10)
+    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
+    const limitParam = parseInt(searchParams.get("limit") || "10", 10)
+    const limit = Number.isInteger(limitParam) && limitParam > 0 ? Math.min(100, limitParam) : 10
+    const totalPages = total > 0 ? Math.ceil(total / limit) : 0
+    const skip = (page - 1) * limit
+    const backups = allBackups.slice(skip, skip + limit)
+
+    return NextResponse.json({
+      backups,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    })
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error("[ADMIN:backups] GET failed:", err)
     return NextResponse.json({ error: "Wystąpił błąd podczas pobierania listy kopii zapasowych." }, { status: 500 })
   }
 }
@@ -68,10 +102,21 @@ export async function POST(request: NextRequest) {
       { error: "Nieprawidłowa akcja. Dozwolone: 'restore' lub 'delete'." },
       { status: 400 }
     )
-  } catch (error: any) {
-    console.error("[ADMIN:backups] POST failed:", error)
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error("[ADMIN:backups] POST failed:", err)
+    await db.systemLog
+      .create({
+        data: {
+          level: "ERROR",
+          action: "BACKUP_OPERATION_ERROR",
+          message: `Błąd operacji na kopii zapasowej: ${err.message || String(error)}`,
+          metadata: JSON.stringify({ error: err.stack || String(error), endpoint: "POST /api/admin/backups" }),
+        },
+      })
+      .catch(() => {})
     return NextResponse.json(
-      { error: `Błąd podczas operacji na kopii zapasowej: ${error.message || error}` },
+      { error: `Błąd podczas operacji na kopii zapasowej: ${err.message || String(error)}` },
       { status: 500 }
     )
   }
@@ -109,10 +154,21 @@ export async function DELETE(request: NextRequest) {
       message: `Kopia zapasowa ${fileName} została usunięta (lokalnie: ${result.deletedLocal ? "tak" : "nie"}, GCS: ${result.deletedGCS ? "tak" : "nie"}).`,
       details: result,
     })
-  } catch (error: any) {
-    console.error("[ADMIN:backups] DELETE failed:", error)
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error("[ADMIN:backups] DELETE failed:", err)
+    await db.systemLog
+      .create({
+        data: {
+          level: "ERROR",
+          action: "BACKUP_OPERATION_ERROR",
+          message: `Błąd usuwania kopii zapasowej: ${err.message || String(error)}`,
+          metadata: JSON.stringify({ error: err.stack || String(error), endpoint: "DELETE /api/admin/backups" }),
+        },
+      })
+      .catch(() => {})
     return NextResponse.json(
-      { error: `Błąd podczas usuwania kopii zapasowej: ${error.message || error}` },
+      { error: `Błąd podczas usuwania kopii zapasowej: ${err.message || String(error)}` },
       { status: 500 }
     )
   }

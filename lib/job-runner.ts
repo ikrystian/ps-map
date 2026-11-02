@@ -1,8 +1,10 @@
 import { randomUUID } from "crypto"
 
-import { JobRunStatus } from "@prisma/client"
+import { JobRunStatus, LogLevel } from "@prisma/client"
 
+import { sendSystemNotification } from "./notifications"
 import { prisma } from "./prisma"
+import { emitNewNotification } from "./socket"
 
 /**
  * Identyfikator tej instancji procesu. Pozwala odróżnić, która instancja
@@ -16,11 +18,22 @@ const INSTANCE_ID = randomUUID()
  */
 const LOCK_STALE_MS = 15 * 60 * 1000 // 15 minut
 
+/**
+ * Pamięć podręczna czasu wysłania ostatniego powiadomienia o błędzie dla danego zadania.
+ * Zapobiega zalewaniu administratorów powiadomieniami przy częstych, powtarzających się błędach.
+ */
+const lastFailureNotificationTime = new Map<string, number>()
+
+/** Minimalny odstęp między kolejnymi powiadomieniami o powtarzającym się błędzie tego samego zadania (15 minut). */
+export const NOTIFICATION_COOLDOWN_MS = 15 * 60 * 1000
+
 export interface RunJobOptions {
   /** Liczba dodatkowych prób po pierwszym niepowodzeniu (domyślnie 0). */
   retries?: number
   /** Bazowe opóźnienie między próbami w ms (backoff liniowy: delay * nr_próby). */
   retryDelayMs?: number
+  /** Wymusza wysłanie powiadomienia do admina nawet w trakcie trwania cooldownu (np. przy ręcznym uruchomieniu). */
+  forceNotify?: boolean
 }
 
 export type RunJobResult<T> =
@@ -34,11 +47,12 @@ async function withDbRetry<T>(fn: () => Promise<T>, attempts = 4, baseDelayMs = 
   for (let i = 0; i < attempts; i++) {
     try {
       return await fn()
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { code?: string; message?: string } | null | undefined
       const isTransient =
-        err?.code === "P1008" || // Operations timed out
-        err?.code === "P2024" || // Connection pool timed out
-        /timeout|SQLITE_BUSY/i.test(err?.message ?? "")
+        errorObj?.code === "P1008" || // Operations timed out
+        errorObj?.code === "P2024" || // Connection pool timed out
+        /timeout|SQLITE_BUSY/i.test(errorObj?.message ?? "")
       if (!isTransient || i === attempts - 1) throw err
       await sleep(baseDelayMs * 2 ** i)
     }
@@ -117,6 +131,117 @@ async function releaseLock(jobName: string, status: JobRunStatus): Promise<void>
   }
 }
 
+function onJobSuccess(jobName: string) {
+  // Jeśli zadanie zakończyło się sukcesem, czyścimy czas ostatniego powiadomienia o błędzie.
+  // Dzięki temu kolejny ewentualny błąd wyśle powiadomienie natychmiast bez czekania na cooldown.
+  lastFailureNotificationTime.delete(jobName)
+}
+
+export interface HandleJobFailureParams {
+  jobName: string
+  error: unknown
+  attempts: number
+  durationMs: number
+  forceNotify?: boolean
+}
+
+/**
+ * Zapisuje błąd wykonania zadania harmonogramu w SystemLog (/admin/logs)
+ * oraz powiadamia zalogowanych administratorów w panelu admina.
+ */
+export async function handleJobFailure({
+  jobName,
+  error,
+  attempts,
+  durationMs,
+  forceNotify = false,
+}: HandleJobFailureParams): Promise<void> {
+  const errorDetails = errorMessage(error)
+  const shortError =
+    error instanceof Error ? error.message : typeof error === "string" ? error : "Nieznany błąd zadania"
+
+  // 1. Zapis błędu do SystemLog (będzie widoczny w /admin/logs z poziomem ERROR)
+  try {
+    await prisma.systemLog.create({
+      data: {
+        level: LogLevel.ERROR,
+        action: "SCHEDULER_JOB_ERROR",
+        message: `Błąd zadania harmonogramu '${jobName}': ${shortError}`,
+        metadata: JSON.stringify({
+          jobName,
+          attempts,
+          durationMs,
+          error: errorDetails,
+          instanceId: INSTANCE_ID,
+        }),
+      },
+    })
+  } catch (logError) {
+    console.error(`[JOB:${jobName}] Nie udało się zapisać błędu do SystemLog:`, logError)
+  }
+
+  // 2. Wysłanie powiadomienia do administratorów
+  try {
+    const now = Date.now()
+    const lastNotified = lastFailureNotificationTime.get(jobName) || 0
+
+    // Ochrona przed spamem: jeśli zadanie cykliczne powtarza się często i ciągle zawodzi,
+    // ograniczamy częstość powiadomień do jednego na NOTIFICATION_COOLDOWN_MS (chyba że wymuszono ręcznie)
+    if (!forceNotify && now - lastNotified < NOTIFICATION_COOLDOWN_MS) {
+      console.log(
+        `[JOB:${jobName}] Powiadomienie do admina pominięte (cooldown, ostatnie wysłane ${Math.round(
+          (now - lastNotified) / 1000
+        )}s temu)`
+      )
+      return
+    }
+
+    lastFailureNotificationTime.set(jobName, now)
+
+    const admins = await prisma.user.findMany({
+      where: {
+        role: "ADMIN",
+        status: "ACTIVE",
+      },
+      select: { id: true, email: true },
+    })
+
+    if (admins.length === 0) {
+      console.warn(`[JOB:${jobName}] Brak aktywnych administratorów do powiadomienia o błędzie`)
+      return
+    }
+
+    const title = `Błąd harmonogramu: ${jobName}`
+    const content = `Zadanie "${jobName}" zakończyło się błędem (${attempts} ${
+      attempts === 1 ? "próba" : "próby"
+    }): ${shortError}`
+
+    for (const admin of admins) {
+      try {
+        const { notification } = await sendSystemNotification({
+          userId: admin.id,
+          typ: "SYSTEM",
+          tytul: title,
+          tresc: content,
+          linkUrl: "/admin/scheduler",
+          force: true,
+        })
+
+        if (notification) {
+          await emitNewNotification(admin.id, notification)
+        }
+      } catch (adminNotifErr) {
+        console.error(
+          `[JOB:${jobName}] Nie udało się wysłać powiadomienia do admina ${admin.id}:`,
+          adminNotifErr
+        )
+      }
+    }
+  } catch (notifError) {
+    console.error(`[JOB:${jobName}] Błąd podczas wysyłania powiadomień do adminów:`, notifError)
+  }
+}
+
 /**
  * Uruchamia zadanie w tle z:
  *  - rozproszonym lockiem (bezpieczne przy wielu instancjach / skalowaniu),
@@ -141,6 +266,8 @@ export async function runJob<T>(
 
   let attempt = 0
   let finalStatus: JobRunStatus = JobRunStatus.FAILED
+  let lastError: unknown = null
+  const totalStartedAt = Date.now()
 
   try {
     while (attempt <= retries) {
@@ -172,8 +299,10 @@ export async function runJob<T>(
         )
 
         finalStatus = JobRunStatus.SUCCESS
+        onJobSuccess(jobName)
         return { skipped: false, status: JobRunStatus.SUCCESS, result }
       } catch (error) {
+        lastError = error
         await withDbRetry(() =>
           prisma.scheduledJobRun.update({
             where: { id: run.id },
@@ -200,7 +329,15 @@ export async function runJob<T>(
       }
     }
 
-    // Wszystkie próby się nie powiodły.
+    // Wszystkie próby się nie powiodły — rejestrujemy błąd w logach systemowych i powiadamiamy admina.
+    await handleJobFailure({
+      jobName,
+      error: lastError,
+      attempts: attempt,
+      durationMs: Date.now() - totalStartedAt,
+      forceNotify: options.forceNotify,
+    })
+
     return { skipped: false, status: JobRunStatus.FAILED }
   } finally {
     // Zwalnia lock i utrwala czas oraz status ostatniego uruchomienia.

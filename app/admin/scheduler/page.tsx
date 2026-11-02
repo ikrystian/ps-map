@@ -1,7 +1,6 @@
 "use client"
 
-import { format } from "date-fns"
-import { pl } from "date-fns/locale/pl"
+import { formatDateTimeSeconds } from "@/lib/format"
 import {
   AlertCircle,
   CheckCircle2,
@@ -17,7 +16,9 @@ import {
   RotateCcw,
   Database,
   Trash2,
+  FileText,
 } from "lucide-react"
+import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
 
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
@@ -120,29 +121,53 @@ export default function AdminSchedulerPage() {
 
   const [backups, setBackups] = useState<BackupInfo[]>([])
   const [loadingBackups, setLoadingBackups] = useState(true)
+  const [backupPagination, setBackupPagination] = useState<Pagination>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  })
   const [restoring, setRestoring] = useState<string | null>(null)
   const [confirmRestore, setConfirmRestore] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const fetchBackups = useCallback(async () => {
-    setLoadingBackups(true)
     try {
-      const response = await fetch("/api/admin/backups")
+      const params = new URLSearchParams({
+        page: backupPagination.page.toString(),
+        limit: "10",
+      })
+      const response = await fetch(`/api/admin/backups?${params}`)
       if (!response.ok) throw new Error("Failed to fetch backups")
       const data = await response.json()
-      setBackups(data.backups)
+
+      if (data.pagination && backupPagination.page > 1 && (!data.backups || data.backups.length === 0) && data.pagination.total > 0) {
+        setBackupPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+        return
+      }
+
+      setBackups(data.backups || [])
+      if (data.pagination) {
+        setBackupPagination(data.pagination)
+      }
     } catch (error) {
       console.error("Error fetching backups:", error)
       toast.error("Nie udało się pobrać listy kopii zapasowych")
     } finally {
       setLoadingBackups(false)
     }
-  }, [])
+  }, [backupPagination.page])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchBackups()
   }, [fetchBackups])
+
+  const handleBackupPageChange = (newPage: number) => {
+    setLoadingBackups(true)
+    setBackupPagination((prev) => ({ ...prev, page: newPage }))
+  }
 
   const handleRestore = async (backup: BackupInfo) => {
     setRestoring(backup.name)
@@ -200,7 +225,11 @@ export default function AdminSchedulerPage() {
       }
 
       toast.success(data.message || "Kopia zapasowa została pomyślnie usunięta")
-      fetchBackups()
+      if (backups.length === 1 && backupPagination.page > 1) {
+        setBackupPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+      } else {
+        fetchBackups()
+      }
     } catch (error) {
       console.error("Error deleting backup:", error)
       toast.error("Nie udało się usunąć kopii zapasowej")
@@ -236,9 +265,6 @@ export default function AdminSchedulerPage() {
   }, [pagination.page, jobFilter, statusFilter])
 
   useEffect(() => {
-    // Pobranie danych synchronizuje stan komponentu z API po zmianie filtrów/strony.
-    // Reguła set-state-in-effect to znany false-positive dla pobierania danych w efekcie.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData()
   }, [fetchData])
 
@@ -279,9 +305,6 @@ export default function AdminSchedulerPage() {
     setPagination((prev) => ({ ...prev, page: newPage }))
   }
 
-  const formatDate = (dateString: string | null) =>
-    dateString ? format(new Date(dateString), "dd.MM.yyyy HH:mm:ss", { locale: pl }) : "—"
-
   return (
     <div className="space-y-6">
       <AdminHeaderSetter
@@ -289,17 +312,24 @@ export default function AdminSchedulerPage() {
         subtitle="Monitoruj zadania cykliczne w tle, historię uruchomień i błędy"
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" asChild>
+          <Link href="/admin/logs?search=SCHEDULER">
+            <FileText className="h-4 w-4 mr-2" />
+            Logi błędów (/admin/logs)
+          </Link>
+        </Button>
         <Button
           variant="outline"
           onClick={() => {
             setLoading(true)
+            setLoadingBackups(true)
             fetchData()
             fetchBackups()
           }}
-          disabled={loading}
+          disabled={loading || loadingBackups}
         >
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading || loadingBackups ? "animate-spin" : ""}`} />
           Odśwież
         </Button>
       </div>
@@ -337,7 +367,7 @@ export default function AdminSchedulerPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Ostatnio: </span>
-                    {formatDate(job.lastRunAt)}
+                    {formatDateTimeSeconds(job.lastRunAt)}
                   </div>
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
@@ -378,7 +408,10 @@ export default function AdminSchedulerPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={fetchBackups}
+              onClick={() => {
+                setLoadingBackups(true)
+                fetchBackups()
+              }}
               disabled={loadingBackups}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loadingBackups ? "animate-spin" : ""}`} />
@@ -397,7 +430,8 @@ export default function AdminSchedulerPage() {
               Brak utworzonych kopii zapasowych
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -442,7 +476,7 @@ export default function AdminSchedulerPage() {
                           </div>
                         </TableCell>
                         <TableCell className="text-xs whitespace-nowrap">
-                          {formatDate(backup.createdTime || null)}
+                          {formatDateTimeSeconds(backup.createdTime || null)}
                         </TableCell>
                         <TableCell className="text-xs whitespace-nowrap">
                           {formatBytes(backup.sizeBytes)}
@@ -537,7 +571,71 @@ export default function AdminSchedulerPage() {
                 </TableBody>
               </Table>
             </div>
-          )}
+
+            {/* Paginacja kopii zapasowych */}
+            {backupPagination.totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t mt-4">
+                <span className="text-sm text-muted-foreground">
+                  Strona {backupPagination.page} z {backupPagination.totalPages} (łącznie {backupPagination.total}{" "}
+                  {backupPagination.total === 1
+                    ? "kopia"
+                    : backupPagination.total % 10 >= 2 &&
+                      backupPagination.total % 10 <= 4 &&
+                      (backupPagination.total % 100 < 10 || backupPagination.total % 100 >= 20)
+                    ? "kopie"
+                    : "kopii"})
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={backupPagination.page <= 1 || loadingBackups}
+                    onClick={() => handleBackupPageChange(backupPagination.page - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Poprzednia
+                  </Button>
+                  {Array.from({ length: backupPagination.totalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (backupPagination.totalPages <= 7) return true
+                      return (
+                        p === 1 ||
+                        p === backupPagination.totalPages ||
+                        Math.abs(p - backupPagination.page) <= 1
+                      )
+                    })
+                    .map((p, idx, arr) => {
+                      const prev = arr[idx - 1]
+                      const showEllipsis = prev && p - prev > 1
+                      return (
+                        <span key={p} className="flex items-center">
+                          {showEllipsis && <span className="px-1 text-xs text-muted-foreground">…</span>}
+                          <Button
+                            variant={p === backupPagination.page ? "default" : "outline"}
+                            size="sm"
+                            className="h-8 w-8 p-0 text-xs"
+                            disabled={loadingBackups}
+                            onClick={() => handleBackupPageChange(p)}
+                          >
+                            {p}
+                          </Button>
+                        </span>
+                      )
+                    })}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={backupPagination.page >= backupPagination.totalPages || loadingBackups}
+                    onClick={() => handleBackupPageChange(backupPagination.page + 1)}
+                  >
+                    Następna
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
         </CardContent>
       </Card>
 
@@ -620,13 +718,22 @@ export default function AdminSchedulerPage() {
                         <Badge className={cfg.color}>{cfg.label}</Badge>
                       </TableCell>
                       <TableCell>{run.attempt}</TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(run.startedAt)}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatDateTimeSeconds(run.startedAt)}</TableCell>
                       <TableCell>{formatDuration(run.durationMs)}</TableCell>
                       <TableCell className="max-w-[320px]">
                         {run.error ? (
-                          <span className="text-red-500 break-words line-clamp-3" title={run.error}>
-                            {run.error}
-                          </span>
+                          <div className="space-y-1">
+                            <span className="text-red-500 break-words line-clamp-3 block" title={run.error}>
+                              {run.error}
+                            </span>
+                            <Link
+                              href={`/admin/logs?search=${encodeURIComponent(run.jobName)}`}
+                              className="inline-flex items-center text-[11px] text-primary hover:underline font-medium"
+                            >
+                              <FileText className="h-3 w-3 mr-1" />
+                              Pokaż w logach
+                            </Link>
+                          </div>
                         ) : run.result ? (
                           <span className="text-muted-foreground break-words line-clamp-2" title={run.result}>
                             {run.result}

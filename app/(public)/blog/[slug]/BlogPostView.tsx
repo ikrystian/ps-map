@@ -331,7 +331,7 @@ export default function BlogPostView({ post, adsense, relatedPosts = [] }: BlogP
             <div className="bg-card border border-border/70 rounded-3xl p-6 md:p-10 shadow-md backdrop-blur-sm" id="post-content">
               <div
                 id="post-body"
-                className="prose prose-lg dark:prose-invert max-w-none [&_:is(h1,h2,h3,h4)]:scroll-mt-[96px] prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
+                className="prose blog-prose prose-lg dark:prose-invert max-w-none [&_:is(h1,h2,h3,h4)]:scroll-mt-[96px] prose-headings:font-playfair prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:text-foreground prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground/90 prose-img:rounded-2xl prose-img:shadow-xl prose-li:text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
 

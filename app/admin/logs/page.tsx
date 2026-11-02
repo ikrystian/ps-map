@@ -15,7 +15,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { AlertCircle, AlertTriangle, Bug, ChevronLeft, ChevronRight, FileText, Filter, Info, Loader2, Search, XCircle } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
+import { Suspense, useCallback, useEffect, useState } from "react"
 import { AdminHeaderSetter } from "@/components/admin/AdminTitleContext"
 import { Pagination } from '@/types/pagination';
 import { formatDateTimeSeconds } from "@/lib/format"
@@ -58,7 +59,11 @@ const levelLabels = {
   CRITICAL: "Krytyczny",
 }
 
-export default function AdminLogsPage() {
+function AdminLogsContent() {
+  const searchParams = useSearchParams()
+  const qLevel = searchParams.get("level")
+  const qSearch = searchParams.get("search")
+
   const [logs, setLogs] = useState<SystemLog[]>([])
   const [levelCounts, setLevelCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
@@ -69,16 +74,18 @@ export default function AdminLogsPage() {
     totalPages: 0,
   })
 
-  // Filtry
-  const [levelFilter, setLevelFilter] = useState<string>("all")
-  const [searchFilter, setSearchFilter] = useState<string>("")
-  const [searchInput, setSearchInput] = useState<string>("")
+  // Filtry (URL query params lub wybór użytkownika)
+  const [userLevel, setUserLevel] = useState<string | null>(null)
+  const [userSearch, setUserSearch] = useState<string | null>(null)
+  const [searchInput, setSearchInput] = useState<string>(qSearch || "")
 
-  useEffect(() => {
-    fetchLogs()
-  }, [pagination.page, levelFilter, searchFilter])
+  const levelFilter = userLevel ?? (qLevel || "all")
+  const searchFilter = userSearch ?? (qSearch || "")
 
-  const fetchLogs = async () => {
+  const setLevelFilter = (val: string) => setUserLevel(val)
+  const setSearchFilter = (val: string) => setUserSearch(val)
+
+  const fetchLogs = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({
@@ -110,7 +117,12 @@ export default function AdminLogsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [pagination.page, pagination.limit, levelFilter, searchFilter])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchLogs()
+  }, [fetchLogs])
 
   const handleSearch = () => {
     setSearchFilter(searchInput)
@@ -335,5 +347,19 @@ export default function AdminLogsPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function AdminLogsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <AdminLogsContent />
+    </Suspense>
   )
 }

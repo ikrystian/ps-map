@@ -320,7 +320,7 @@ export function MostConsultedCategories({
                     key={`${firm.id}-${index}`}
                     className="slider-card w-[300px] md:w-[340px] shrink-0 snap-start flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden shadow-xl hover:shadow-2xl transition-all relative duration-300 group"
                   >
-                    <div className="relative aspect-square w-full overflow-hidden bg-card">
+                    <div className="relative aspect-[3/2] md:aspect-square w-full overflow-hidden bg-card">
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
                       <img
                         src={getFirmImage(firm)}
