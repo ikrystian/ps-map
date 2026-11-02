@@ -14,7 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { generateBannerHtml, generateBannerScript } from "@/lib/partner-banner"
+import { BannerPicker } from "@/components/panel-eksperta/BannerPicker"
+import {
+  DEFAULT_BANNER_SELECTION,
+  generateBannerHtml,
+  generateBannerScript,
+  type BannerSelection,
+} from "@/lib/partner-banner"
 import {
   AlertCircle,
   Award,
@@ -25,6 +31,7 @@ import {
   ExternalLink,
   Gift,
   Globe,
+  Image as ImageIcon,
   Loader2,
   RefreshCw,
   TrendingUp,
@@ -63,6 +70,7 @@ interface PartnerStatus {
   joinedAt?: Date
   pointsHistory?: PointsHistory[]
   lawFirmName?: string
+  slug?: string
   websiteUrl?: string
   hasWebsite?: boolean
   hasValidAddress?: boolean
@@ -84,6 +92,7 @@ export default function KlubPartnerskiPage() {
   const [partnerStatus, setPartnerStatus] = useState<PartnerStatus | null>(null)
   const [copiedCode, setCopiedCode] = useState(false)
   const [copiedScript, setCopiedScript] = useState(false)
+  const [bannerSelection, setBannerSelection] = useState<BannerSelection>(DEFAULT_BANNER_SELECTION)
   const [verificationMessage, setVerificationMessage] = useState<{
     type: 'success' | 'error'
     message: string
@@ -346,8 +355,12 @@ export default function KlubPartnerskiPage() {
   }
 
   // Uczestnik programu partnerskiego - panel główny
-  const bannerHtml = partnerStatus.bannerCode ? generateBannerHtml(partnerStatus.bannerCode) : ""
-  const bannerScript = partnerStatus.bannerCode ? generateBannerScript(partnerStatus.bannerCode) : ""
+  const bannerHtml = partnerStatus.bannerCode
+    ? generateBannerHtml(partnerStatus.bannerCode, bannerSelection, partnerStatus.slug)
+    : ""
+  const bannerScript = partnerStatus.bannerCode
+    ? generateBannerScript(partnerStatus.bannerCode, bannerSelection, partnerStatus.slug)
+    : ""
 
   const layoutVariants = {
     hidden: { opacity: 0, y: 15 },
@@ -529,6 +542,22 @@ export default function KlubPartnerskiPage() {
                 <AlertDescription className="text-xs font-light">{verificationMessage.message}</AlertDescription>
               </Alert>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Banner Picker */}
+        <Card variant="glass" className="rounded-2xl overflow-hidden">
+          <CardHeader className="p-6 pb-4">
+            <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2.5">
+              <ImageIcon className="h-5 w-5 text-primary" />
+              Wybierz banner
+            </CardTitle>
+            <CardDescription className="text-muted-foreground text-xs font-light">
+              Dopasuj rozmiar i wygląd do swojej strony — kod poniżej zaktualizuje się automatycznie
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
+            <BannerPicker value={bannerSelection} onChange={setBannerSelection} />
           </CardContent>
         </Card>
 

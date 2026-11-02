@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
         createdAt: h.createdAt
       })),
       lawFirmName: lawFirm.nazwa,
+      slug: lawFirm.slug,
       websiteUrl: lawFirm.stronaWww,
       hasWebsite: !!lawFirm.stronaWww
     })
