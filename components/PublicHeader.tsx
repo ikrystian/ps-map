@@ -717,7 +717,20 @@ export default function PublicHeader({
                               isDlaPrawnikaActive && "text-primary"
                             )}
                           >
-                            dla Prawnika i Eksperta
+                            dla Prawnika
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/dla-eksperta"
+                            className={cn(
+                              "block rounded-md px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors",
+                              isDlaPrawnikaActive && "text-primary"
+                            )}
+                          >
+                            dla Eksperta
                           </Link>
                         </NavigationMenuLink>
                       </li>
@@ -1062,7 +1075,17 @@ export default function PublicHeader({
                                 isDlaPrawnikaActive ? "text-primary font-medium" : "text-muted-foreground"
                               )}
                             >
-                              dla Prawnika i Eksperta
+                              dla Prawnika
+                            </Link>
+                            <Link
+                              href="/dla-eksperta"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={cn(
+                                "block text-sm hover:text-primary transition-colors",
+                                isDlaPrawnikaActive ? "text-primary font-medium" : "text-muted-foreground"
+                              )}
+                            >
+                              dla Eksperta
                             </Link>
                             <Link
                               href="/z-nami-wygrywasz"
