@@ -201,7 +201,7 @@ const navigation: NavGroup[] = [
     icon: Settings,
     items: [
       { name: "Zaloguj jako", href: "#", icon: LogIn, action: "impersonate" },
-      { name: "Zgłoszenia błędów", href: "/admin/bug-reports", icon: Bug },
+      { name: "Zgłoszenia", href: "/admin/bug-reports", icon: Bug },
       { name: "Harmonogram zadań", href: "/admin/scheduler", icon: Clock },
       { name: "Ustawienia", href: "/admin/settings", icon: Settings },
     ],
@@ -389,8 +389,8 @@ export default function AdminLayout({
   // Moderator widzi wyłącznie sekcję bloga
   const visibleNavigation = isModerator
     ? navigation
-        .map((group) => ({ ...group, items: group.items.filter((item) => isModeratorAdminPath(item.href)) }))
-        .filter((group) => group.items.length > 0)
+      .map((group) => ({ ...group, items: group.items.filter((item) => isModeratorAdminPath(item.href)) }))
+      .filter((group) => group.items.length > 0)
     : navigation
 
   // Podstrony "Stron" z własnymi pozycjami w podmenu
