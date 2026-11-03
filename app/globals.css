@@ -450,9 +450,9 @@ a .bg-card {
 
 /* Premium typography for about-description */
 .about-description {
-  font-size: 1.0625rem;
+  font-size: 0.875rem;
   /* 17px for superior readability */
-  line-height: 1.8;
+  line-height: 1.5625;
   color: color-mix(in srgb, var(--foreground) 88%, transparent);
   letter-spacing: -0.01em;
 }
@@ -1434,6 +1434,7 @@ a .bg-card {
 }
 
 @media (max-width: 640px) {
+
   #post-content .prose,
   .blog-prose {
     font-size: 1rem;
@@ -1626,6 +1627,7 @@ a .bg-card {
 }
 
 @media (min-width: 640px) {
+
   #post-content .prose nav[aria-label="Spis treści"] ol,
   .blog-prose nav[aria-label="Spis treści"] ol {
     display: grid;
@@ -2222,6 +2224,7 @@ a .bg-card {
 }
 
 @media (max-width: 768px) {
+
   #post-content .prose table,
   .blog-prose table {
     display: block;
@@ -2240,8 +2243,8 @@ a .bg-card {
   align-items: center;
 }
 
-#post-content .prose figure > *,
-.blog-prose figure > * {
+#post-content .prose figure>*,
+.blog-prose figure>* {
   max-width: 100%;
 }
 
@@ -2376,8 +2379,8 @@ a .bg-card {
   transform: rotate(-135deg);
 }
 
-#post-content .prose details[open] > *:not(summary),
-.blog-prose details[open] > *:not(summary) {
+#post-content .prose details[open]>*:not(summary),
+.blog-prose details[open]>*:not(summary) {
   margin-top: 1rem;
   padding-top: 0.75rem;
   border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
