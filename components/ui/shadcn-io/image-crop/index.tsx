@@ -49,12 +49,36 @@ const centerAspectCrop = (
     mediaHeight
   );
 
-const getCroppedPngImage = async (
-  imageSrc: HTMLImageElement,
-  scaleFactor: number,
-  pixelCrop: PixelCrop,
-  maxImageSize: number
-): Promise<string> => {
+// Kadr liczony w pikselach oryginału (naturalWidth/naturalHeight), a nie w rozmiarze
+// podglądu na ekranie — inaczej zdjęcie 1920 px zapisywało się np. jako 408×204 px.
+const getCropSourceSize = (
+  natural: { width: number; height: number },
+  crop: PercentCrop
+): { width: number; height: number } => ({
+  width: Math.round((crop.width / 100) * natural.width),
+  height: Math.round((crop.height / 100) * natural.height),
+});
+
+const dataUrlBytes = (dataUrl: string) =>
+  Math.ceil(((dataUrl.length - dataUrl.indexOf(',') - 1) * 3) / 4);
+
+const getCroppedImage = (
+  image: HTMLImageElement,
+  crop: PercentCrop,
+  maxOutputWidth: number,
+  maxImageSize: number,
+  sourceType: string
+): string => {
+  const sx = (crop.x / 100) * image.naturalWidth;
+  const sy = (crop.y / 100) * image.naturalHeight;
+  const source = getCropSourceSize(
+    { width: image.naturalWidth, height: image.naturalHeight },
+    crop
+  );
+
+  // Bez powiększania — co najwyżej zmniejszamy do maxOutputWidth
+  let scale = Math.min(1, maxOutputWidth / source.width);
+
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -62,44 +86,51 @@ const getCroppedPngImage = async (
     throw new Error('Context is null, this should never happen.');
   }
 
-  const scaleX = imageSrc.naturalWidth / imageSrc.width;
-  const scaleY = imageSrc.naturalHeight / imageSrc.height;
+  // WebP trzyma przezroczystość (logo) i jest małe; przeglądarki bez enkodera WebP
+  // zwracają PNG, wtedy zdjęcia zapisujemy jako JPEG.
+  const fallbackType = sourceType === 'image/png' ? 'image/png' : 'image/jpeg';
+  const qualities = [0.92, 0.85, 0.78];
 
-  ctx.imageSmoothingEnabled = false;
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-
-  ctx.drawImage(
-    imageSrc,
-    pixelCrop.x * scaleX,
-    pixelCrop.y * scaleY,
-    pixelCrop.width * scaleX,
-    pixelCrop.height * scaleY,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  const croppedImageUrl = canvas.toDataURL('image/png');
-  const response = await fetch(croppedImageUrl);
-  const blob = await response.blob();
-
-  if (blob.size > maxImageSize) {
-    return await getCroppedPngImage(
-      imageSrc,
-      scaleFactor * 0.9,
-      pixelCrop,
-      maxImageSize
+  let result = '';
+  while (true) {
+    canvas.width = Math.max(1, Math.round(source.width * scale));
+    canvas.height = Math.max(1, Math.round(source.height * scale));
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(
+      image,
+      sx,
+      sy,
+      source.width,
+      source.height,
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
-  }
 
-  return croppedImageUrl;
+    for (const quality of qualities) {
+      result = canvas.toDataURL('image/webp', quality);
+      if (!result.startsWith('data:image/webp')) {
+        result = canvas.toDataURL(fallbackType, quality);
+      }
+      if (dataUrlBytes(result) <= maxImageSize) {
+        return result;
+      }
+    }
+
+    if (canvas.width <= 400) {
+      return result;
+    }
+    scale *= 0.85;
+  }
 };
 
 type ImageCropContextType = {
   file: File;
   maxImageSize: number;
+  cropSourceSize: { width: number; height: number } | null;
   imgSrc: string;
   crop: PercentCrop | undefined;
   completedCrop: PixelCrop | null;
@@ -118,7 +149,7 @@ type ImageCropContextType = {
 
 const ImageCropContext = createContext<ImageCropContextType | null>(null);
 
-const useImageCrop = () => {
+export const useImageCrop = () => {
   const context = useContext(ImageCropContext);
   if (!context) {
     throw new Error('ImageCrop components must be used within ImageCrop');
@@ -129,6 +160,8 @@ const useImageCrop = () => {
 export type ImageCropProps = {
   file: File;
   maxImageSize?: number;
+  /** Maksymalna szerokość zapisanego kadru w px (kadr jest zapisywany w pikselach oryginału). */
+  maxOutputWidth?: number;
   onCrop?: (croppedImage: string) => void;
   children: ReactNode;
   onChange?: ReactCropProps['onChange'];
@@ -138,6 +171,7 @@ export type ImageCropProps = {
 export const ImageCrop = ({
   file,
   maxImageSize = 1024 * 1024 * 5,
+  maxOutputWidth = 2560,
   onCrop,
   children,
   onChange,
@@ -149,6 +183,7 @@ export const ImageCrop = ({
   const [crop, setCrop] = useState<PercentCrop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const [initialCrop, setInitialCrop] = useState<PercentCrop>();
+  const [naturalSize, setNaturalSize] = useState<{ width: number; height: number } | null>(null);
 
   useEffect(() => {
     const reader = new FileReader();
@@ -160,7 +195,8 @@ export const ImageCrop = ({
 
   const onImageLoad = useCallback(
     (e: SyntheticEvent<HTMLImageElement>) => {
-      const { width, height } = e.currentTarget;
+      const { width, height, naturalWidth, naturalHeight } = e.currentTarget;
+      setNaturalSize({ width: naturalWidth, height: naturalHeight });
       const newCrop = centerAspectCrop(width, height, reactCropProps.aspect);
       setCrop(newCrop);
       setInitialCrop(newCrop);
@@ -182,20 +218,27 @@ export const ImageCrop = ({
     onComplete?.(pixelCrop, percentCrop);
   };
 
+  // Procentowy kadr jest ustawiony od razu po wczytaniu obrazka, więc „Kadruj” działa
+  // także bez ruszania ramki (completedCrop pojawia się dopiero po interakcji).
+  // biome-ignore lint/suspicious/useAwait: "applyCrop is async"
   const applyCrop = async () => {
-    if (!(imgRef.current && completedCrop)) {
+    if (!(imgRef.current && crop && crop.width > 0 && crop.height > 0)) {
       return;
     }
 
-    const croppedImage = await getCroppedPngImage(
+    const croppedImage = getCroppedImage(
       imgRef.current,
-      1,
-      completedCrop,
-      maxImageSize
+      crop,
+      maxOutputWidth,
+      maxImageSize,
+      file.type
     );
 
     onCrop?.(croppedImage);
   };
+
+  const cropSourceSize =
+    naturalSize && crop ? getCropSourceSize(naturalSize, crop) : null;
 
   const resetCrop = () => {
     if (initialCrop) {
@@ -207,6 +250,7 @@ export const ImageCrop = ({
   const contextValue: ImageCropContextType = {
     file,
     maxImageSize,
+    cropSourceSize,
     imgSrc,
     crop,
     completedCrop,

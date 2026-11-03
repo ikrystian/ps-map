@@ -5,6 +5,7 @@ import { mkdir, writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server"
 import { join } from "path"
 import { optimizeImage } from "@/lib/image-processor"
+import { IMAGE_VARIANTS, isImageVariant } from "@/lib/image-variants"
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,10 +42,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 })
     }
 
+    // Okładka/logo z croppera — większy limit wymiarów niż domyślne 1600 px
+    const variant = formData.get("variant")
+    const variantConfig = isImageVariant(variant) ? IMAGE_VARIANTS[variant] : null
+
     const { buffer, filename: optimizedFilename } = await optimizeImage(
       originalBuffer,
       file.name,
-      file.type
+      file.type,
+      variantConfig ? { maxDimension: variantConfig.maxWidth, quality: variantConfig.quality } : undefined
     )
 
     // Generate unique filename

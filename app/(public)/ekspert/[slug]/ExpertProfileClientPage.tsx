@@ -73,6 +73,8 @@ import { BlogPostsSlider } from "@/components/ekspert/BlogPostsSlider"
 import { ExpertCityLinks } from "@/components/ekspert/ExpertCityLinks"
 import type { BlogPost } from "@/types/blog"
 import { formatDate } from "@/lib/format"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { COVER_IMAGE_QUALITY, COVER_IMAGE_SIZES } from "./cover-image"
 
 // Client-side cache for city searches to avoid redundant api queries
 const clientCitiesCache: Record<string, any[]> = {}
@@ -99,6 +101,8 @@ export default function LawFirmProfilePage({ initialName }: { initialName?: stri
   const { scrollY } = useScroll()
   const imageY = useTransform(scrollY, [0, 440], [0, 120])
   const imageScale = useTransform(scrollY, [0, 440], [1.05, 1.15])
+  // Na telefonie bez powiększenia — okładka ma te same proporcje co kontener, więc boki zostają widoczne
+  const isMobile = useIsMobile()
   const isOwnProfile = !!(session?.user?.lawFirm?.id && lawFirm?.id && session.user.lawFirm.id === lawFirm.id)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -478,11 +482,19 @@ export default function LawFirmProfilePage({ initialName }: { initialName?: stri
   }
 
   const youtubeVideoId = lawFirm?.filmYouTube ? getYouTubeVideoId(lawFirm.filmYouTube) : null
+  const hasCoverPhoto = !youtubeVideoId && !!lawFirm.zdjecieGlowne
 
   return (
     <div className="min-h-screen bg-background-sec pb-16">
       {/* Header Image / Video Banner */}
-      <div className="relative h-[280px] md:h-[380px] lg:h-[640px] w-full flex items-end overflow-hidden" id="ekspert-header">
+      {/* Z okładką na telefonie trzymamy jej proporcje 2:1 (kadr z panelu), żeby nie ucinać boków */}
+      <div
+        className={cn(
+          "relative md:h-[380px] lg:h-[640px] w-full flex items-end overflow-hidden",
+          hasCoverPhoto ? "aspect-[2/1] md:aspect-auto" : "h-[280px]"
+        )}
+        id="ekspert-header"
+      >
         {youtubeVideoId ? (
           <>
             <iframe
@@ -506,14 +518,19 @@ export default function LawFirmProfilePage({ initialName }: { initialName?: stri
         ) : lawFirm.zdjecieGlowne ? (
           <motion.div
             className="absolute inset-0 z-[2] will-change-transform"
-            style={{ y: imageY, scale: imageScale }}
+            style={{ y: imageY, scale: isMobile ? 1 : imageScale }}
           >
+            {/* sizes/quality muszą zgadzać się z preloadem w page.tsx */}
             <Image
               src={lawFirm.zdjecieGlowne}
               alt={lawFirm.nazwa}
               fill
+              sizes={COVER_IMAGE_SIZES}
+              quality={COVER_IMAGE_QUALITY}
+              loading="eager"
+              fetchPriority="high"
               id="cover-photo"
-              className="object-cover opacity-75"
+              className="object-cover"
             />
           </motion.div>
         ) : (
@@ -525,11 +542,15 @@ export default function LawFirmProfilePage({ initialName }: { initialName?: stri
             (!lawFirm.pakietSubskrypcji || lawFirm.pakietSubskrypcji === "PODSTAWOWY") && "bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10"
           )} />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-background-sec/60 to-background-sec z-[3]" />
+        {/* Przejście w tło tylko na dole nagłówka */}
+        <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-b from-background-sec/0 to-background-sec z-[3] pointer-events-none" />
       </div>
 
       {/* Overlapping Hero Card Container */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-24 md:-mt-36">
+      <div className={cn(
+        "container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 md:-mt-36",
+        hasCoverPhoto ? "-mt-8" : "-mt-24"
+      )}>
 
         {/* Floating Profile Info Card */}
         <div className={cn(

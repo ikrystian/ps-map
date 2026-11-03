@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
+import { getImageProps } from "next/image"
 import { notFound } from "next/navigation"
 import { cache } from "react"
+import { preload } from "react-dom"
 import ExpertProfileClientPage from "./ExpertProfileClientPage"
+import { COVER_IMAGE_QUALITY, COVER_IMAGE_SIZES } from "./cover-image"
 
 interface PageProps {
   params: Promise<{
@@ -20,6 +23,8 @@ const getPublicExpert = cache((slug: string) =>
     select: {
       nazwa: true,
       opis: true,
+      zdjecieGlowne: true,
+      filmYouTube: true,
       user: { select: { miasto: true } },
     },
   })
@@ -60,6 +65,24 @@ export default async function ExpertProfilePage({ params }: PageProps) {
   // Nieistniejący lub nieaktywny profil — prawdziwe 404 zamiast komunikatu błędu ze statusem 200
   if (!lawFirm) {
     notFound()
+  }
+
+  // Dane profilu dochodzą po stronie klienta, więc bez tego okładka zaczynałaby się pobierać
+  // dopiero po odpowiedzi API. Preload w <head> startuje pobieranie od razu (film ma pierwszeństwo).
+  if (lawFirm.zdjecieGlowne && !lawFirm.filmYouTube) {
+    const { props: cover } = getImageProps({
+      src: lawFirm.zdjecieGlowne,
+      alt: "",
+      fill: true,
+      sizes: COVER_IMAGE_SIZES,
+      quality: COVER_IMAGE_QUALITY,
+    })
+    preload(cover.src, {
+      as: "image",
+      imageSrcSet: cover.srcSet,
+      imageSizes: cover.sizes,
+      fetchPriority: "high",
+    })
   }
 
   return <ExpertProfileClientPage initialName={lawFirm.nazwa} />

@@ -49,6 +49,7 @@ import {
   AlertCircle
 } from "lucide-react"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { CROP_SOURCE_MAX_BYTES, IMAGE_VARIANTS } from "@/lib/image-variants"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
@@ -229,9 +230,9 @@ export default function EditLawFirmPage() {
       return
     }
 
-    const maxSize = 5 * 1024 * 1024
+    const maxSize = CROP_SOURCE_MAX_BYTES
     if (file.size > maxSize) {
-      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 20MB")
       return
     }
 
@@ -257,6 +258,7 @@ export default function EditLawFirmPage() {
 
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
+      formDataToSend.append("variant", "logo")
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -297,9 +299,9 @@ export default function EditLawFirmPage() {
       return
     }
 
-    const maxSize = 5 * 1024 * 1024
+    const maxSize = CROP_SOURCE_MAX_BYTES
     if (file.size > maxSize) {
-      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 20MB")
       return
     }
 
@@ -325,6 +327,7 @@ export default function EditLawFirmPage() {
 
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
+      formDataToSend.append("variant", "cover")
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -2351,7 +2354,7 @@ export default function EditLawFirmPage() {
                                                   <span className="font-semibold">Kliknij aby wgrać</span> logo
                                                 </p>
                                                 <p className="text-[10px] text-muted-foreground">
-                                                  PNG, JPG, WEBP (max 5MB, format kwadratu)
+                                                  PNG, JPG, WEBP (max 20MB, format kwadratu, min. 800 px)
                                                 </p>
                                               </>
                                             )}
@@ -2452,7 +2455,7 @@ export default function EditLawFirmPage() {
                                                   <span className="font-semibold">Kliknij aby wgrać</span> banner
                                                 </p>
                                                 <p className="text-[10px] text-muted-foreground">
-                                                  PNG, JPG, WEBP (max 5MB, format panoramiczny)
+                                                  PNG, JPG, WEBP (max 20MB, proporcje 2:1, min. 2400 px)
                                                 </p>
                                               </>
                                             )}
@@ -2615,6 +2618,8 @@ export default function EditLawFirmPage() {
           image={selectedLogoFile}
           aspectRatio={1}
           onCropComplete={handleLogoCropComplete}
+          minRecommendedWidth={IMAGE_VARIANTS.logo.minRecommendedWidth}
+          maxOutputWidth={IMAGE_VARIANTS.logo.maxWidth}
           onCancel={handleLogoCropCancel}
           open={showLogoCropper}
         />
@@ -2625,6 +2630,8 @@ export default function EditLawFirmPage() {
           image={selectedMainImageFile}
           aspectRatio={2}
           onCropComplete={handleMainImageCropComplete}
+          minRecommendedWidth={IMAGE_VARIANTS.cover.minRecommendedWidth}
+          maxOutputWidth={IMAGE_VARIANTS.cover.maxWidth}
           onCancel={handleMainImageCropCancel}
           open={showMainImageCropper}
         />

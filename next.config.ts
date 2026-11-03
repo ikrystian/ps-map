@@ -31,6 +31,8 @@ const nextConfig: NextConfig = {
     BUILD_TIME: new Date().toISOString(),
   },
   images: {
+    // 90 — okładka profilu eksperta (pełna szerokość ekranu, 75 daje widoczne artefakty)
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",

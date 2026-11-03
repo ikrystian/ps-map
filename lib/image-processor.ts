@@ -7,15 +7,21 @@ interface OptimizationResult {
   isOptimized: boolean
 }
 
+interface OptimizationOptions {
+  maxDimension?: number
+  quality?: number
+}
+
 /**
  * Optimizes an uploaded image by converting it to WebP format and resizing it
- * if it exceeds 1600px in width or height (maintaining aspect ratio).
+ * if it exceeds maxDimension (default 1600px) in width or height (maintaining aspect ratio).
  * Non-image files or unsupported formats (like SVG or GIF) are passed through without modification.
  */
 export async function optimizeImage(
   buffer: Buffer,
   originalFilename: string,
-  mimeType: string
+  mimeType: string,
+  { maxDimension = 1600, quality = 80 }: OptimizationOptions = {}
 ): Promise<OptimizationResult> {
   // Check if it is a common image format that we want to optimize (JPEG, PNG, WebP)
   const isOptimizableImage =
@@ -38,17 +44,16 @@ export async function optimizeImage(
     let pipeline = sharp(buffer)
 
     // Resize image maintaining proportions:
-    // - fit: "inside" ensures it fits within 1600x1600 box while maintaining aspect ratio
-    // - withoutEnlargement: true ensures we don't upscale images smaller than 1600x1600
+    // - fit: "inside" ensures it fits within maxDimension x maxDimension box while maintaining aspect ratio
+    // - withoutEnlargement: true ensures we don't upscale smaller images
     pipeline = pipeline.resize({
-      width: 1600,
-      height: 1600,
+      width: maxDimension,
+      height: maxDimension,
       fit: "inside",
       withoutEnlargement: true,
     })
 
-    // Convert to webp with standard quality level (80)
-    const optimizedBuffer = await pipeline.webp({ quality: 80 }).toBuffer()
+    const optimizedBuffer = await pipeline.webp({ quality }).toBuffer()
 
     // Replace or append .webp extension
     const dotIndex = originalFilename.lastIndexOf(".")

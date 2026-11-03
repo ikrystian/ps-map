@@ -376,7 +376,7 @@ export function BasicTab({
                 <div>
                   <Label className="text-foreground font-semibold text-base">Zdjęcie profilowe (Avatar)</Label>
                   <p className="text-xs text-muted-foreground font-light mt-1">
-                    Zdjęcie widoczne w wynikach wyszukiwania. Zalecany rozmiar: 400x400px (kwadratowe).
+                    Zdjęcie widoczne w wynikach wyszukiwania. Zalecany rozmiar: min. 800×800 px (kwadratowe).
                   </p>
                 </div>
 
@@ -446,7 +446,7 @@ export function BasicTab({
                               <span className="font-semibold text-primary">Kliknij aby przesłać</span>
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              PNG, JPG, WEBP (max 5MB)
+                              PNG, JPG, WEBP (max 20MB)
                             </p>
                           </>
                         )}
@@ -469,7 +469,7 @@ export function BasicTab({
                 <div>
                   <Label className="text-foreground font-semibold text-base">Zdjęcie główne (Banner)</Label>
                   <p className="text-xs text-muted-foreground font-light mt-1">
-                    Zdjęcie panoramiczne jako nagłówek profilu. Zalecany rozmiar: 1920x600px.
+                    Zdjęcie panoramiczne jako nagłówek profilu. Zalecany rozmiar: min. 2400×1200 px (proporcje 2:1).
                   </p>
                 </div>
 
@@ -557,7 +557,7 @@ export function BasicTab({
                                 <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                PNG, JPG, WEBP (max 5MB)
+                                PNG, JPG, WEBP (max 20MB)
                               </p>
                             </>
                           )}

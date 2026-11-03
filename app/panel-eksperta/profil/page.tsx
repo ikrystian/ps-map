@@ -10,6 +10,7 @@ import { ProfileScoreCard } from "@/components/panel-eksperta/profil/ProfileScor
 import { SpecializationTab } from "@/components/panel-eksperta/profil/SpecializationTab"
 import { Button } from "@/components/ui/button"
 import { ImageCropper } from "@/components/ui/image-cropper"
+import { CROP_SOURCE_MAX_BYTES, IMAGE_VARIANTS } from "@/lib/image-variants"
 import { toast } from "@/components/ui/sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2, Save, User, MapPin, Award, Image as ImageIcon, Clock } from "lucide-react"
@@ -476,9 +477,9 @@ function LawFirmProfilePageContent() {
     }
 
     // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024
+    const maxSize = CROP_SOURCE_MAX_BYTES
     if (file.size > maxSize) {
-      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 20MB")
       return
     }
 
@@ -505,6 +506,7 @@ function LawFirmProfilePageContent() {
 
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
+      formDataToSend.append("variant", "logo")
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -547,9 +549,9 @@ function LawFirmProfilePageContent() {
     }
 
     // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024
+    const maxSize = CROP_SOURCE_MAX_BYTES
     if (file.size > maxSize) {
-      toast.error("Plik jest za duży. Maksymalny rozmiar to 5MB")
+      toast.error("Plik jest za duży. Maksymalny rozmiar to 20MB")
       return
     }
 
@@ -576,6 +578,7 @@ function LawFirmProfilePageContent() {
 
       const formDataToSend = new FormData()
       formDataToSend.append("file", file)
+      formDataToSend.append("variant", "cover")
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -770,6 +773,8 @@ function LawFirmProfilePageContent() {
           image={selectedLogoFile}
           aspectRatio={1}
           onCropComplete={handleLogoCropComplete}
+          minRecommendedWidth={IMAGE_VARIANTS.logo.minRecommendedWidth}
+          maxOutputWidth={IMAGE_VARIANTS.logo.maxWidth}
           onCancel={handleLogoCropCancel}
           open={showLogoCropper}
         />
@@ -780,6 +785,8 @@ function LawFirmProfilePageContent() {
           image={selectedMainImageFile}
           aspectRatio={2}
           onCropComplete={handleMainImageCropComplete}
+          minRecommendedWidth={IMAGE_VARIANTS.cover.minRecommendedWidth}
+          maxOutputWidth={IMAGE_VARIANTS.cover.maxWidth}
           onCancel={handleMainImageCropCancel}
           open={showMainImageCropper}
         />
