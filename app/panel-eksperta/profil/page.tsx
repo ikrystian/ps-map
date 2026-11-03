@@ -123,6 +123,10 @@ function LawFirmProfilePageContent() {
     oraMiasto: "",
     oraWpis: "",
     oraStatus: false,
+    // Aplikacja (zastępstwa procesowe na upoważnienie)
+    aplikantRodzaj: "",
+    aplikantIzba: "",
+    aplikacjaOd: "",
 
     // Specjalizacje
     unikatowyOpisUslugi: "",
@@ -199,6 +203,8 @@ function LawFirmProfilePageContent() {
             ...lawFirmData,
             // Email konta użytkownika (tylko do wyświetlenia)
             emailKontakt: lawFirmData.user?.email || session?.user?.email || "",
+            // Pole daty w formularzu przyjmuje YYYY-MM-DD
+            aplikacjaOd: lawFirmData.aplikacjaOd ? String(lawFirmData.aplikacjaOd).slice(0, 10) : "",
             voivodeshipsIds: lawFirmData.voivodeships?.map((v: any) => v.voivodeship.id) || [],
             citiesIds: lawFirmData.cities?.map((c: any) => c.city.id) || [],
             categoriesIds: lawFirmData.categories?.map((c: any) => c.category.id) || [],

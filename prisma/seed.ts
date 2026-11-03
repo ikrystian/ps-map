@@ -21,6 +21,7 @@ import { seedCommunications } from './seeds/communications'
 import { seedMarketing } from './seeds/marketing'
 import { seedSurveys } from './seeds/surveys'
 import { seedSystem } from './seeds/system'
+import { clearSubstitutions, seedSubstitutions } from './seeds/substitutions'
 
 async function main() {
   console.log('🚀 Rozpoczynanie kompleksowego seedowania bazy ProstaSprawa...')
@@ -56,6 +57,9 @@ async function main() {
   await prisma.document.deleteMany()
   await prisma.conversation.deleteMany()
   await prisma.message.deleteMany()
+
+  // Zastępstwa procesowe (zlecenia, oferty, dane poufne, pliki w .substitutions/, ustawienia)
+  await clearSubstitutions(prisma)
 
   // Konsultacje
   await prisma.consultationInterest.deleteMany()
@@ -165,7 +169,7 @@ async function main() {
   // ==========================================================================
   // 2. DANE SŁOWNIKOWE I KONFIGURACYJNE (idempotentne)
   // ==========================================================================
-  console.log('\n📚 [KROK 1/6] Seedowanie słowników i konfiguracji...')
+  console.log('\n📚 [KROK 1/7] Seedowanie słowników i konfiguracji...')
   await seedVoivodeships(prisma)
   await seedCategories(prisma)
   await seedBlogCategories(prisma)
@@ -182,34 +186,40 @@ async function main() {
   // ==========================================================================
   // 3. OPIEKUNOWIE, UŻYTKOWNICY I KANCELARIE
   // ==========================================================================
-  console.log('\n👥 [KROK 2/6] Seedowanie opiekunów, użytkowników, klientów i kancelarii...')
+  console.log('\n👥 [KROK 2/7] Seedowanie opiekunów, użytkowników, klientów i kancelarii...')
   await seedAccountManagers(prisma)
   const { adminUser, moderatorUser, clients, lawFirms } = await seedUsersAndFirms(prisma)
 
   // ==========================================================================
   // 4. FINANSE, SUBSKRYPCJE I PUNKTY
   // ==========================================================================
-  console.log('\n💳 [KROK 3/6] Seedowanie finansów, zamówień, faktur KSeF i historii punktów...')
+  console.log('\n💳 [KROK 3/7] Seedowanie finansów, zamówień, faktur KSeF i historii punktów...')
   await seedFinances(prisma, lawFirms)
 
   // ==========================================================================
   // 5. GIEŁDA SPRAW, OFERTY I KONSULTACJE
   // ==========================================================================
-  console.log('\n⚖️ [KROK 4/6] Seedowanie spraw, kategorii, poleceń, ofert i negocjacji...')
+  console.log('\n⚖️ [KROK 4/7] Seedowanie spraw, kategorii, poleceń, ofert i negocjacji...')
   await seedCasesAndOffers(prisma, clients, lawFirms)
 
-  console.log('\n📅 [KROK 5/6] Seedowanie konsultacji (dostępność, rezerwacje, giełda zapytań)...')
+  console.log('\n📅 [KROK 5/7] Seedowanie konsultacji (dostępność, rezerwacje, giełda zapytań)...')
   await seedConsultations(prisma, clients, lawFirms)
 
   // ==========================================================================
   // 6. OPINIE, KOMUNIKACJA, MARKETING I SYSTEM
   // ==========================================================================
-  console.log('\n🌟 [KROK 6/6] Seedowanie opinii, czatu na żywo, marketingu, bloga i schedulerów...')
+  console.log('\n🌟 [KROK 6/7] Seedowanie opinii, czatu na żywo, marketingu, bloga i schedulerów...')
   await seedReviews(prisma, clients, lawFirms)
   await seedCommunications(prisma, clients, lawFirms)
   await seedMarketing(prisma, clients, lawFirms)
   await seedSurveys(prisma, lawFirms)
   await seedSystem(prisma, adminUser, clients, lawFirms)
+
+  // ==========================================================================
+  // 7. ZASTĘPSTWA PROCESOWE (panel eksperta)
+  // ==========================================================================
+  console.log('\n🤝 [KROK 7/7] Seedowanie zastępstw procesowych (giełda, zlecenia, oferty, rozliczenia)...')
+  await seedSubstitutions(prisma)
 
   const durationSec = Math.round((Date.now() - startTime) / 1000)
   console.log(`\n🎉 ✅ KOMPLEKSOWY SEEDING ZAKOŃCZONY POMYŚLNIE W ${durationSec}s!`)
@@ -223,6 +233,9 @@ async function main() {
   console.log('   • Ekspert:     radca.kowalczyk@ps-dev.com.pl    (hasło: Ekspert123!)')
   console.log('   • Ekspert:     podatki.wojcik@ps-dev.com.pl     (hasło: Ekspert123!)')
   console.log('   • Ekspert:     krystian@bpcoders.pl       (hasło: Ekspert123!)')
+  console.log('   • Aplikanci:   aplikantka.kaminska@ps-dev.com.pl, aplikantka.wrobel@ps-dev.com.pl,')
+  console.log('                  aplikant.lewandowski@ps-dev.com.pl (hasło: Ekspert123!)')
+  console.log('   • Bez weryfikacji: adwokat.nowicki@ps-dev.com.pl (hasło: Ekspert123!)')
   console.log('------------------------------------------------------------')
 }
 

@@ -18,6 +18,7 @@ export const POINT_TRANSACTION_LABELS: Record<PointTransactionType, string> = {
   REVIEW_DELETE: "Usunięcie opinii",
   SURVEY_REWARD: "Nagroda za ankietę",
   BUG_REPORT_REWARD: "Nagroda za zgłoszenie błędu",
+  SUBSTITUTION_URGENT: "Pilne zastępstwo",
 }
 
 /** Nazwa typu wpisu; dla nieznanej wartości zwraca ją bez zmian. */

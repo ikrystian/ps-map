@@ -9,6 +9,7 @@ import { calculateRankings } from "./rankings"
 import { processScheduledEmails } from "./scheduled-emails"
 import { checkExpiredSubscriptions } from "./subscriptions"
 import { getLastDailyOccurrence, getNextDailyOccurrence } from "./daily-schedule"
+import { runSubstitutionMaintenance } from "./substitutions/jobs"
 import { backupDbToGCS } from "./gcs-backup"
 
 
@@ -200,6 +201,18 @@ export function getJobDefinitions(): JobDefinition[] {
         return { sent }
       },
     },
+    // 13. Zastępstwa procesowe: zapytania bez odpowiedzi trafiają na giełdę (13 h),
+    //     raporty bez potwierdzenia zamykają się po 48 h, zlecenia bez zastępcy
+    //     wygasają po terminie, przypomnienia dzień przed terminem (18:00),
+    //     poranne zestawienie (7:30) i usuwanie plików 30 dni po zamknięciu.
+    {
+      name: "substitutions",
+      description: "Zastępstwa procesowe: terminy, przypomnienia, zestawienia i usuwanie plików",
+      intervalMs: isDev ? MINUTE : 5 * MINUTE,
+      options: { retries: 1, retryDelayMs: 30 * 1000 },
+      fn: async () => runSubstitutionMaintenance(),
+    },
+
     {
       name: "db-backup-gcs",
       description: "Tworzenie kopii zapasowej bazy danych i wysyłanie na Google Cloud Storage (raz dziennie o 4:00)",

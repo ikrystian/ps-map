@@ -196,6 +196,8 @@ export function NotificationBell() {
         return "text-destructive"
       case "KONIEC_SUBSKRYPCJI":
         return "text-orange-500"
+      case "ZASTEPSTWO":
+        return "text-primary"
       default:
         return "text-muted-foreground"
     }

@@ -443,6 +443,14 @@ export async function PUT(
     if (body.oraMiasto !== undefined) lawFirmUpdateData.oraMiasto = body.oraMiasto
     if (body.oraWpis !== undefined) lawFirmUpdateData.oraWpis = body.oraWpis
     if (body.oraStatus !== undefined) lawFirmUpdateData.oraStatus = body.oraStatus
+    if (body.aplikantRodzaj !== undefined) {
+      lawFirmUpdateData.aplikantRodzaj = ["ADWOKACKA", "RADCOWSKA"].includes(body.aplikantRodzaj) ? body.aplikantRodzaj : null
+    }
+    if (body.aplikantIzba !== undefined) lawFirmUpdateData.aplikantIzba = body.aplikantIzba || null
+    if (body.aplikacjaOd !== undefined) {
+      const aplikacjaOd = body.aplikacjaOd ? new Date(body.aplikacjaOd) : null
+      lawFirmUpdateData.aplikacjaOd = aplikacjaOd && !Number.isNaN(aplikacjaOd.getTime()) ? aplikacjaOd : null
+    }
 
     // Services
     if (body.unikatowyOpisUslugi !== undefined) lawFirmUpdateData.unikatowyOpisUslugi = body.unikatowyOpisUslugi

@@ -328,6 +328,16 @@ export async function PUT(
     if (body.oraWpis !== undefined) updateData.oraWpis = body.oraWpis
     if (body.oraStatus !== undefined) updateData.oraStatus = body.oraStatus
 
+    // Aplikacja — aplikant przyjmuje zastępstwa na upoważnienie po 6 miesiącach (data sprawdzana przy weryfikacji)
+    if (body.aplikantRodzaj !== undefined) {
+      updateData.aplikantRodzaj = ["ADWOKACKA", "RADCOWSKA"].includes(body.aplikantRodzaj) ? body.aplikantRodzaj : null
+    }
+    if (body.aplikantIzba !== undefined) updateData.aplikantIzba = body.aplikantIzba || null
+    if (body.aplikacjaOd !== undefined) {
+      const aplikacjaOd = body.aplikacjaOd ? new Date(body.aplikacjaOd) : null
+      updateData.aplikacjaOd = aplikacjaOd && !Number.isNaN(aplikacjaOd.getTime()) ? aplikacjaOd : null
+    }
+
     // Specjalizacje
     if (body.unikatowyOpisUslugi !== undefined) updateData.unikatowyOpisUslugi = body.unikatowyOpisUslugi
     if (body.slowaKluczowe !== undefined) {

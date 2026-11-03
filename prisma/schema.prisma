@@ -378,6 +378,12 @@ model LawFirm {
   bieglySadowy          Boolean  @default(false)
   bieglySadowyNazwaSadu String?  // np. "Sąd Okręgowy w Warszawie"
 
+  // Aplikacja adwokacka/radcowska — data sprawdzana przy weryfikacji profilu.
+  // Aplikant przyjmuje zastępstwa (na upoważnienie zlecającego) po 6 miesiącach aplikacji.
+  aplikantRodzaj        String?  // ADWOKACKA | RADCOWSKA (null = nie aplikant)
+  aplikantIzba          String?  // np. "Warszawa"
+  aplikacjaOd           DateTime?
+
   // Obszar działania
   calaPolska            Boolean  @default(false)
   onlineOnly            Boolean  @default(false)
@@ -448,6 +454,13 @@ model LawFirm {
   orderOverrides             OrderOverride[]
   surveyResponses            SurveyResponse[]
   contactForms               ContactForm[]         // Wiadomości z formularza na profilu eksperta
+
+  // Zastępstwa procesowe
+  substitutionsOrdered       Substitution[]        @relation("SubstitutionsOrdered")
+  substitutionsTaken         Substitution[]        @relation("SubstitutionsTaken")
+  substitutionDirectRequests Substitution[]        @relation("SubstitutionsDirectRequests")
+  substitutionOffers         SubstitutionOffer[]   @relation("SubstitutionOffers")
+  substitutionSettings       SubstitutionSettings?
 
   @@index([userId])
   @@index([nip])
@@ -1498,6 +1511,7 @@ enum PointTransactionType {
   REVIEW_DELETE            // Usunięcie opinii przez eksperta za punkty
   SURVEY_REWARD            // Nagroda za wypełnienie ankiety
   BUG_REPORT_REWARD        // Nagroda za zaakceptowane zgłoszenie błędu
+  SUBSTITUTION_URGENT      // Oznaczenie zlecenia zastępstwa jako pilne (SMS + góra listy)
 }
 
 // ============================================================================
@@ -1645,6 +1659,7 @@ enum NotificationType {
   NOWE_ZAINTERESOWANIE_KONSULTACJA // Do klienta: ekspert zgłosił zainteresowanie
   ZAINTERESOWANIE_ZAAKCEPTOWANE    // Do eksperta: klient wybrał jego zgłoszenie
   POLECENIE_WYKORZYSTANE           // Do eksperta: klient z polecenia utworzył sprawę
+  ZASTEPSTWO                       // Zastępstwa procesowe: nowe zlecenia, oferty, wybór, raporty
   SYSTEM
 }
 
@@ -3066,3 +3081,215 @@ model SurveyAnswer {
 }
 
 
+
+// ============================================================================
+// ZASTĘPSTWA PROCESOWE
+// ----------------------------------------------------------------------------
+// Giełda substytucji między prawnikami. Zlecający (zweryfikowany adwokat albo
+// radca prawny) opisuje czynność, zweryfikowani prawnicy zgłaszają się, zlecający
+// wybiera zastępcę. Dane, po których da się rozpoznać klienta (sygnatura, strony,
+// instrukcja, pliki), leżą osobno (SubstitutionConfidential, SubstitutionFile) —
+// API oddaje je wyłącznie zlecającemu i wybranemu zastępcy. Platforma nie
+// pośredniczy w płatnościach: strony rozliczają się bezpośrednio.
+// ============================================================================
+
+model Substitution {
+  id                  String   @id @default(uuid())
+  // Numer widoczny w UI, np. ZAS/2026/0149 — nadawany przy pierwszej publikacji
+  numer               String?  @unique
+  zlecajacyId         String
+  zlecajacy           LawFirm  @relation("SubstitutionsOrdered", fields: [zlecajacyId], references: [id], onDelete: Cascade)
+  // Wybrany zastępca (po wyborze oferty albo przyjęciu zapytania)
+  zastepcaId          String?
+  zastepca            LawFirm? @relation("SubstitutionsTaken", fields: [zastepcaId], references: [id], onDelete: SetNull)
+
+  status              SubstitutionStatus @default(SZKIC)
+
+  // Czynność (publiczne) — klucze słowników z lib/substitutions/constants.ts
+  tytul               String   @default("")
+  czynnosc            String   @default("ROZPRAWA")
+  dziedzina           String   @default("CYWILNA")
+  rolaZastepcy        String   @default("PELNOMOCNIK_POWODA")
+  ktoryTermin         String   @default("PIERWSZY") // PIERWSZY | KOLEJNY | NIE_DOTYCZY
+  opis                String?
+
+  // Miejsce i termin (publiczne)
+  typMiejsca          String   @default("SAD") // SAD | PROKURATURA | POLICJA | ZAKLAD_KARNY | ORGAN | ZDALNIE
+  miejsce             String?  // nazwa sądu lub jednostki
+  wydzial             String?  // wydział, sala
+  miasto              String?
+  wojewodztwo         String?
+  latitude            Float?   // geokodowane miasto — do promienia z ustawień zastępcy
+  longitude           Float?
+  termin              DateTime?
+  terminMaGodzine     Boolean  @default(true)
+  terminDoUstalenia   Boolean  @default(false)
+  ofertyDoTryb        String   @default("DZIEN_PRZED") // DZIEN_PRZED | PO_2H | PO_12H | DO_TERMINU
+  ofertyDo            DateTime? // liczone przy publikacji z ofertyDoTryb
+
+  // Kogo i za ile
+  dlaAdwokatow        Boolean  @default(true)
+  dlaRadcow           Boolean  @default(true)
+  dlaAplikantow       Boolean  @default(false)
+  stawka              Int?     // zł netto; null = „czekam na propozycje”
+  fakturaVat          Boolean  @default(true)
+  trybWyboru          SubstitutionSelectionMode @default(WYBIERAM)
+  pilne               Boolean  @default(false)
+  pilnePunkty         Int?     // punkty pobrane za „Pilne”
+
+  // „Najpierw zapytaj konkretną osobę” — po odmowie albo czasie zlecenie trafia na giełdę
+  zapytanieDoId       String?
+  zapytanieDo         LawFirm? @relation("SubstitutionsDirectRequests", fields: [zapytanieDoId], references: [id], onDelete: SetNull)
+  zapytanieWazneDo    DateTime?
+  zapytanieOdpowiedz  String?  // PRZYJETE | ODRZUCONE | BRAK_ODPOWIEDZI
+
+  // Przebieg
+  opublikowanoAt      DateTime?
+  wybranoAt           DateTime?
+  potwierdzenieDo     DateTime?
+  potwierdzonoAt      DateTime?
+  naMiejscuAt         DateTime?
+  wykonanoAt          DateTime? // zastępca wysłał raport
+  zamknietoAt         DateTime?
+  zamknietoAutomatycznie Boolean @default(false) // 48 h bez potwierdzenia zlecającego
+  anulowanoAt         DateTime?
+  powodAnulowania     String?
+  problemZgloszonoAt  DateTime? // wstrzymuje automatyczne zamknięcie
+  problemOpis         String?
+  przypomnienieWyslanoAt DateTime? // przypomnienie dla zastępcy dzień przed terminem
+
+  // Raport zastępcy
+  raportPrzebieg      String?
+  raportKolejnyTermin DateTime?
+  raportNotatka       String?
+
+  // Ocena zastępcy — widoczna tylko dla prawników w module zastępstw
+  ocena               Int?
+  ocenaKomentarz      String?
+
+  // Rozliczenie (płatność poza platformą, status faktury zmienia zastępca)
+  stawkaUzgodniona    Int?
+  fakturaStatus       SubstitutionInvoiceStatus @default(DO_WYSTAWIENIA)
+
+  zarchiwizowane      Boolean  @default(false)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  poufne              SubstitutionConfidential?
+  pliki               SubstitutionFile[]
+  oferty              SubstitutionOffer[]
+
+  @@index([zlecajacyId])
+  @@index([zastepcaId])
+  @@index([zapytanieDoId])
+  @@index([status])
+  @@index([termin])
+  @@index([opublikowanoAt])
+}
+
+enum SubstitutionStatus {
+  SZKIC         // Szkic zapisywany przez kreator
+  ZAPYTANIE     // Zapytanie do konkretnej osoby (13 h), potem giełda
+  OPUBLIKOWANE  // Na giełdzie, zbiera oferty
+  PRZYDZIELONE  // Wybrano zastępcę, czeka na potwierdzenie przyjęcia
+  POTWIERDZONE  // Zastępca potwierdził przyjęcie
+  WYKONANE      // Zastępca wysłał raport, zlecający potwierdza (albo zamknięcie po 48 h)
+  ZAMKNIETE     // Zamknięte, trafia do rozliczeń
+  WYGASLO       // Termin minął bez zastępcy
+  ANULOWANE     // Anulowane przez zlecającego
+}
+
+enum SubstitutionSelectionMode {
+  WYBIERAM      // Zlecający wybiera sam spośród ofert
+  PIERWSZY      // Zlecenie bierze pierwsza osoba, która przyjmie stawkę
+}
+
+enum SubstitutionInvoiceStatus {
+  DO_WYSTAWIENIA
+  WYSTAWIONA
+  OPLACONA
+}
+
+/// Dane poufne zlecenia — tylko dla zlecającego i wybranego zastępcy.
+model SubstitutionConfidential {
+  id              String   @id @default(uuid())
+  substitutionId  String   @unique
+  substitution    Substitution @relation(fields: [substitutionId], references: [id], onDelete: Cascade)
+  // JSON { sygnatura, strony, instrukcja } — zaszyfrowany (AES-256-CBC, lib/encryption.ts),
+  // gdy ustawiono ENCRYPTION_KEY; puste daneIv = zapis jawny (brak klucza w środowisku)
+  dane            String
+  daneIv          String
+  updatedAt       DateTime @updatedAt
+}
+
+/// Pliki zlecenia: dokumenty zlecającego i załącznik raportu zastępcy.
+/// Usuwane 30 dni po zamknięciu, anulowaniu albo wygaśnięciu zlecenia.
+model SubstitutionFile {
+  id              String   @id @default(uuid())
+  substitutionId  String
+  substitution    Substitution @relation(fields: [substitutionId], references: [id], onDelete: Cascade)
+  dodalId         String   // LawFirm.id osoby, która dodała plik
+  rodzaj          String   @default("DOKUMENT") // DOKUMENT | PELNOMOCNICTWO | RAPORT
+  nazwa           String   // oryginalna nazwa pliku
+  sciezka         String   // względem katalogu .substitutions (lib/substitutions/files.ts)
+  rozmiar         Int
+  mime            String
+  createdAt       DateTime @default(now())
+
+  @@index([substitutionId])
+}
+
+model SubstitutionOffer {
+  id              String   @id @default(uuid())
+  substitutionId  String
+  substitution    Substitution @relation(fields: [substitutionId], references: [id], onDelete: Cascade)
+  lawFirmId       String
+  lawFirm         LawFirm  @relation("SubstitutionOffers", fields: [lawFirmId], references: [id], onDelete: Cascade)
+  stawka          Int      // zł netto
+  notatka         String?
+  fakturaVat      Boolean  @default(false)
+  status          SubstitutionOfferStatus @default(OCZEKUJE)
+  // Rezygnacja wybranego zastępcy; poniżej 24 h przed terminem zostaje w jego statystyce
+  rezygnacjaAt    DateTime?
+  rezygnacjaPozno Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([substitutionId, lawFirmId])
+  @@index([lawFirmId])
+  @@index([status])
+}
+
+enum SubstitutionOfferStatus {
+  OCZEKUJE      // Czeka na decyzję zlecającego
+  WYBRANA       // Zlecający wybrał tę ofertę
+  ODRZUCONA     // Zlecenie obsadzone kimś innym albo anulowane
+  WYCOFANA      // Zgłaszający wycofał ofertę przed wyborem
+  REZYGNACJA    // Wybrany zastępca zrezygnował
+}
+
+/// Ustawienia zastępcy: jakie zlecenia do niego trafiają i jak go powiadamiamy.
+model SubstitutionSettings {
+  id                 String   @id @default(uuid())
+  lawFirmId          String   @unique
+  lawFirm            LawFirm  @relation(fields: [lawFirmId], references: [id], onDelete: Cascade)
+  przyjmuje          Boolean  @default(true)
+  miasto             String?
+  latitude           Float?
+  longitude          Float?
+  promienKm          Int      @default(30)
+  sady               String?  // JSON: nazwy wybranych sądów i jednostek
+  zdalne             Boolean  @default(true)
+  czynnosci          String?  // JSON: klucze czynności (null = wszystkie)
+  dziedziny          String?  // JSON: klucze dziedzin (null = wszystkie)
+  minStawka          Int?     // zł netto; „czekam na propozycje” przychodzą zawsze
+  niedostepnosc      String?  // JSON: [{ "od": "2026-12-24", "do": "2027-01-02" }]
+  emailOdRazu        Boolean  @default(true)
+  zestawienieDzienne Boolean  @default(false) // jeden mail o 7:30
+  smsPilne           Boolean  @default(false) // pakiety Premium i Biznes
+  przypomnienie      Boolean  @default(true)  // mail i SMS dzień przed terminem, 18:00
+  ostatnieZestawienieAt DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

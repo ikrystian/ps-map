@@ -62,6 +62,10 @@ export const lawFirmSchema = z.object({
   oraMiasto: z.string().optional(),
   oraWpis: z.string().optional(),
   oraStatus: z.boolean(),
+  // Aplikacja — data rozpoczęcia sprawdzana przy weryfikacji (zastępstwa procesowe)
+  aplikantRodzaj: z.string().optional(),
+  aplikantIzba: z.string().optional(),
+  aplikacjaOd: z.string().optional(),
 
   // Services
   unikatowyOpisUslugi: z.string().optional(),

@@ -7,7 +7,7 @@ import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { triggerBadgeCheck } from "@/app/actions/badges"
 import { ExpertTourManager } from "@/components/expert-panel/ExpertTourManager"
@@ -29,6 +29,8 @@ import { usePermissions } from "@/hooks/usePermissions"
 import { useRealtimeMessages } from "@/hooks/useRealtimeMessages"
 import { expertAvatar } from "@/lib/expert-avatar"
 import { expertisePathSegments } from "@/lib/expertise-category"
+import { SUBSTITUTIONS_CHANGED_EVENT } from "@/lib/substitutions/client"
+import type { AccessResponse } from "@/lib/substitutions/types"
 import {
   Award,
   BarChart3,
@@ -37,22 +39,28 @@ import {
   CalendarClock,
   ChevronLeft,
   ChevronRight,
+  CircleCheck,
   Coins,
   CreditCard,
   ExternalLink,
   FileStack,
   FileText,
+  FolderOpen,
   LayoutDashboard,
+  List,
   LogOut,
   Menu,
   MessageSquare,
   Package,
+  Plus,
   Settings,
   Share2,
+  SlidersHorizontal,
   Star,
   TrendingUp,
   Trophy,
   User,
+  Wallet,
   Wrench,
 } from "lucide-react"
 
@@ -107,8 +115,34 @@ const navigationGroups = [
   },
 ]
 
-// Spłaszczona lista — zachowuje zgodność z indeksami używanymi przez efekty hover.
-const navigation = navigationGroups.flatMap((group) => group.items)
+type NavItem = (typeof navigationGroups)[number]["items"][number]
+type NavGroup = { label: string | null; badge?: string; items: NavItem[] }
+
+const SUBSTITUTIONS_HREF = "/panel-eksperta/zastepstwa"
+
+// Zastępstwa procesowe — tylko dla zweryfikowanych adwokatów, radców i aplikantów
+// (aplikant nie zleca, więc nie widzi „Dodaj zlecenie” ani „Moje zlecenia”).
+function withSubstitutions(groups: NavGroup[], access: AccessResponse | null): NavGroup[] {
+  if (!access?.dostep) return groups
+  const group: NavGroup = {
+    label: "Zastępstwa procesowe",
+    badge: "Nowe",
+    items: [
+      { name: "Giełda zastępstw", href: SUBSTITUTIONS_HREF, icon: List },
+      ...(access.mozeZlecac
+        ? [
+            { name: "Dodaj zlecenie", href: `${SUBSTITUTIONS_HREF}/dodaj`, icon: Plus },
+            { name: "Moje zlecenia", href: `${SUBSTITUTIONS_HREF}/moje`, icon: FolderOpen },
+          ]
+        : []),
+      { name: "Przyjęte", href: `${SUBSTITUTIONS_HREF}/przyjete`, icon: CircleCheck },
+      { name: "Rozliczenia", href: `${SUBSTITUTIONS_HREF}/rozliczenia`, icon: Wallet },
+      { name: "Ustawienia zastępstw", href: `${SUBSTITUTIONS_HREF}/ustawienia`, icon: SlidersHorizontal },
+    ],
+  }
+  // Zaraz po „Obsługa spraw”
+  return [...groups.slice(0, 2), group, ...groups.slice(2)]
+}
 
 export default function LawFirmPanelLayout({
   children,
@@ -130,6 +164,11 @@ export default function LawFirmPanelLayout({
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [substitutionAccess, setSubstitutionAccess] = useState<AccessResponse | null>(null)
+
+  const groups = useMemo(() => withSubstitutions(navigationGroups, substitutionAccess), [substitutionAccess])
+  // Spłaszczona lista — zachowuje zgodność z indeksami używanymi przez efekty hover.
+  const navigation = useMemo(() => groups.flatMap((group) => group.items), [groups])
 
   // Real-time unread messages count
   const { unreadCount } = useRealtimeMessages({
@@ -159,6 +198,27 @@ export default function LawFirmPanelLayout({
     if (session?.user) {
       fetchMenuCounts()
     }
+  }, [session, pathname])
+
+  // Dostęp do zastępstw procesowych i liczniki w menu (odświeżane też po akcjach w module)
+  useEffect(() => {
+    if (session?.user?.role !== "LAW_FIRM") return
+    const fetchSubstitutionAccess = async () => {
+      try {
+        const response = await fetch("/api/substitutions/access")
+        if (response.ok) {
+          const access: AccessResponse = await response.json()
+          setSubstitutionAccess(access)
+          // „Pilne” pobiera punkty — saldo w nagłówku odświeżamy razem z licznikami
+          setPunktySaldo(access.punkty)
+        }
+      } catch (error) {
+        console.error("Error fetching substitutions access:", error)
+      }
+    }
+    fetchSubstitutionAccess()
+    window.addEventListener(SUBSTITUTIONS_CHANGED_EVENT, fetchSubstitutionAccess)
+    return () => window.removeEventListener(SUBSTITUTIONS_CHANGED_EVENT, fetchSubstitutionAccess)
   }, [session, pathname])
 
   // Hook do sprawdzania uprawnień
@@ -292,12 +352,17 @@ export default function LawFirmPanelLayout({
         </div>
       )}
 
-      {navigationGroups.map((group, groupIndex) => (
+      {groups.map((group, groupIndex) => (
         <div key={group.label ?? `group-${groupIndex}`} className={cn("space-y-1", groupIndex > 0 && "pt-2")}>
           {/* Section header — hidden when collapsed so only icons remain */}
           {group.label && (inSheet || !isCollapsed) && (
-            <p className="px-4 pt-2 pb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
+            <p className="flex items-center gap-2 px-4 pt-2 pb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
               {group.label}
+              {group.badge && (
+                <span className="rounded bg-secondary px-1.5 py-px text-[9.5px] font-bold tracking-wide text-secondary-foreground">
+                  {group.badge}
+                </span>
+              )}
             </p>
           )}
           {/* Subtle divider replaces the header when the sidebar is collapsed */}
@@ -314,7 +379,15 @@ export default function LawFirmPanelLayout({
             const isSprawy = href === "/panel-eksperta/sprawy"
             const isOferty = href === "/panel-eksperta/oferty"
             const isKonsultacje = href === "/panel-eksperta/konsultacje"
-            const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : undefined
+            // Zastępstwa: licznik tylko wtedy, gdy coś czeka na reakcję
+            const substitutionCount = substitutionAccess
+              ? {
+                  [SUBSTITUTIONS_HREF]: substitutionAccess.liczniki.gielda,
+                  [`${SUBSTITUTIONS_HREF}/moje`]: substitutionAccess.liczniki.moje,
+                  [`${SUBSTITUTIONS_HREF}/przyjete`]: substitutionAccess.liczniki.przyjete,
+                }[href] || undefined
+              : undefined
+            const count = isSprawy ? menuCounts.sprawy : isOferty ? menuCounts.oferty : isKonsultacje ? menuCounts.konsultacje : substitutionCount
             const showCountBadge = count !== undefined
 
             const isProfilePreview = item.href.includes("[slug]")

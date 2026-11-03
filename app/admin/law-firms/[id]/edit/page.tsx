@@ -191,6 +191,9 @@ export default function EditLawFirmPage() {
       oraMiasto: "",
       oraWpis: "",
       oraStatus: false,
+      aplikantRodzaj: "",
+      aplikantIzba: "",
+      aplikacjaOd: "",
       unikatowyOpisUslugi: "",
       slowaKluczowe: "",
       categoryIds: [],
@@ -504,6 +507,9 @@ export default function EditLawFirmPage() {
             oraMiasto: lawFirm.oraMiasto || "",
             oraWpis: lawFirm.oraWpis || "",
             oraStatus: lawFirm.oraStatus || false,
+            aplikantRodzaj: lawFirm.aplikantRodzaj || "",
+            aplikantIzba: lawFirm.aplikantIzba || "",
+            aplikacjaOd: lawFirm.aplikacjaOd ? String(lawFirm.aplikacjaOd).slice(0, 10) : "",
             unikatowyOpisUslugi: lawFirm.unikatowyOpisUslugi || "",
             slowaKluczowe: lawFirm.slowaKluczowe || "",
             categoryIds: (lawFirm.categories || []).map((c: any) => c.categoryId ?? c.category?.id),
@@ -663,6 +669,9 @@ export default function EditLawFirmPage() {
         "oraStatus",
         "oraMiasto",
         "oraWpis",
+        "aplikantRodzaj",
+        "aplikantIzba",
+        "aplikacjaOd",
         "bieglySadowy",
         "bieglySadowyNazwaSadu",
         "edukacja",
@@ -2028,6 +2037,81 @@ export default function EditLawFirmPage() {
                                     </FormItem>
                                   )}
                                 />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Aplikacja — aplikant przyjmuje zastępstwa na upoważnienie po 6 miesiącach */}
+                          <div className="space-y-4 p-4 border rounded-lg bg-muted/5">
+                            <div className="flex items-center gap-2 pb-2 border-b">
+                              <Checkbox
+                                id="chk-aplikant"
+                                checked={!!form.watch("aplikantRodzaj")}
+                                onCheckedChange={(checked) => {
+                                  form.setValue("aplikantRodzaj", checked ? "ADWOKACKA" : "", { shouldDirty: true })
+                                  if (!checked) {
+                                    form.setValue("aplikantIzba", "", { shouldDirty: true })
+                                    form.setValue("aplikacjaOd", "", { shouldDirty: true })
+                                  }
+                                }}
+                              />
+                              <label htmlFor="chk-aplikant" className="text-sm font-semibold cursor-pointer">
+                                Aplikant adwokacki / radcowski
+                              </label>
+                            </div>
+
+                            {form.watch("aplikantRodzaj") && (
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                                <FormField
+                                  control={form.control}
+                                  name="aplikantRodzaj"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Aplikacja</FormLabel>
+                                      <Select value={field.value} onValueChange={field.onChange}>
+                                        <FormControl>
+                                          <SelectTrigger>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                          <SelectItem value="ADWOKACKA">Adwokacka</SelectItem>
+                                          <SelectItem value="RADCOWSKA">Radcowska</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="aplikantIzba"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Izba</FormLabel>
+                                      <FormControl>
+                                        <Input placeholder="np. Warszawa" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="aplikacjaOd"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Początek aplikacji</FormLabel>
+                                      <FormControl>
+                                        <Input type="date" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <p className="text-xs text-muted-foreground sm:col-span-3">
+                                  Sprawdź datę przy weryfikacji — po 6 miesiącach aplikacji ekspert przyjmuje zastępstwa procesowe na upoważnienie.
+                                </p>
                               </div>
                             )}
                           </div>

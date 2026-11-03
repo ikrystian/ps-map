@@ -40,6 +40,9 @@ interface BasicTabProps {
     oraStatus: boolean
     oraMiasto: string
     oraWpis: string
+    aplikantRodzaj: string
+    aplikantIzba: string
+    aplikacjaOd: string
     expertiseCategoryId: string
   }
   handleInputChange: (field: string, value: any) => void
@@ -700,6 +703,71 @@ export function BasicTab({
                   <p className="text-xs text-muted-foreground italic pt-2">Zaznacz przełącznik, aby dodać wpis adwokacki.</p>
                 )}
               </div>
+            </div>
+
+            {/* Aplikacja — aplikant przyjmuje zastępstwa na upoważnienie po 6 miesiącach (data sprawdzana przy weryfikacji) */}
+            <div className="space-y-4 p-4 rounded-2xl border border-border/20 bg-background/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Switch
+                    id="aplikantStatus"
+                    checked={!!formData.aplikantRodzaj}
+                    onCheckedChange={(checked) => {
+                      handleInputChange("aplikantRodzaj", checked ? "ADWOKACKA" : "")
+                      if (!checked) {
+                        handleInputChange("aplikantIzba", "")
+                        handleInputChange("aplikacjaOd", "")
+                      }
+                    }}
+                  />
+                  <Label htmlFor="aplikantStatus" className="text-foreground cursor-pointer font-semibold text-sm">
+                    Aplikant (adwokacki lub radcowski)
+                  </Label>
+                </div>
+                <span className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${formData.aplikantRodzaj ? "bg-primary shadow-[0_0_8px_var(--primary)]" : "bg-muted"}`} />
+              </div>
+
+              {formData.aplikantRodzaj ? (
+                <div className="grid gap-3 pt-3 border-t border-border/15 sm:grid-cols-3 animate-in slide-in-from-top-1 duration-200">
+                  <div className="grid gap-1.5">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Aplikacja</Label>
+                    <Select value={formData.aplikantRodzaj} onValueChange={(value) => handleInputChange("aplikantRodzaj", value)}>
+                      <SelectTrigger className="bg-background/20 border-border/30 text-foreground rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ADWOKACKA">Adwokacka</SelectItem>
+                        <SelectItem value="RADCOWSKA">Radcowska</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="aplikantIzba" className="text-xs text-muted-foreground uppercase tracking-wider">Izba</Label>
+                    <Input
+                      id="aplikantIzba"
+                      placeholder="np. Warszawa"
+                      value={formData.aplikantIzba}
+                      onChange={(e) => handleInputChange("aplikantIzba", e.target.value)}
+                      className="bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="aplikacjaOd" className="text-xs text-muted-foreground uppercase tracking-wider">Początek aplikacji</Label>
+                    <Input
+                      id="aplikacjaOd"
+                      type="date"
+                      value={formData.aplikacjaOd}
+                      onChange={(e) => handleInputChange("aplikacjaOd", e.target.value)}
+                      className="bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground sm:col-span-3">
+                    Po 6 miesiącach aplikacji przyjmiesz zastępstwa procesowe na upoważnienie zlecającego. Datę sprawdzamy przy weryfikacji profilu.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">Zaznacz przełącznik, jeśli jesteś aplikantem — odblokuje to zastępstwa procesowe.</p>
+              )}
             </div>
           </CardContent>
         </Card>

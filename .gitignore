@@ -50,6 +50,8 @@ next-env.d.ts
 *.db
 *.db-journal
 .uploads/
+# Pliki zleceń zastępstw (tajemnica zawodowa) — serwowane tylko przez /api/substitutions/[id]/files
+.substitutions/
 .invoices/
 files/
 public/uploads/
