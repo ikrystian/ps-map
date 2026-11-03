@@ -63,7 +63,7 @@ export function AboutTab({
             </CardHeader>
             <CardContent className="p-6 space-y-5">
               {lawFirm.unikatowyOpisUslugi && (
-                <p className="whitespace-pre-wrap text-smbase text-foreground/80 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
+                <p className="whitespace-pre-wrap text-sm text-foreground/80 leading-relaxed">{lawFirm.unikatowyOpisUslugi}</p>
               )}
 
               {lawFirm.categories.length > 0 && (
