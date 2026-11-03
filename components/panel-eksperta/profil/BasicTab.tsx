@@ -14,6 +14,8 @@ import dynamic from "next/dynamic"
 import { useEffect, useRef, useState } from "react"
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog"
 import { BorderBeam } from "@/components/ui/border-beam"
+import { CoverBannerEditor } from "@/components/panel-eksperta/profil/CoverBannerEditor"
+import { IMAGE_VARIANTS } from "@/lib/image-variants"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const RichTextEditor = dynamic(
@@ -48,7 +50,10 @@ interface BasicTabProps {
   handleInputChange: (field: string, value: any) => void
   isUploading: boolean
   handleLogoFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleMainImageFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleMainImageFile: (file: File) => void
+  pendingMainImageFile: File | null
+  handleMainImageSave: (blob: Blob) => Promise<void>
+  handleMainImageCancel: () => void
   handleRemoveSingleImage: (field: "logo" | "zdjecieGlowne") => void
   expertiseCategories: any[]
 }
@@ -58,12 +63,16 @@ export function BasicTab({
   handleInputChange,
   isUploading,
   handleLogoFileSelect,
-  handleMainImageFileSelect,
+  handleMainImageFile,
+  pendingMainImageFile,
+  handleMainImageSave,
+  handleMainImageCancel,
   handleRemoveSingleImage,
   expertiseCategories,
 }: BasicTabProps) {
   const [showLogoConfirm, setShowLogoConfirm] = useState(false)
   const [showCoverConfirm, setShowCoverConfirm] = useState(false)
+  const [isCoverDragOver, setIsCoverDragOver] = useState(false)
   const [showDescTips, setShowDescTips] = useState(false)
   const descTipsRef = useRef<HTMLDivElement>(null)
 
@@ -141,6 +150,27 @@ export function BasicTab({
 
   const { hasFeature, loading: permissionsLoading } = usePermissions()
   const canUploadCover = permissionsLoading ? true : hasFeature("canUploadCoverBanner")
+
+  const handleCoverInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    // Reset, żeby ponowny wybór tego samego pliku po „Anuluj” też otwierał edytor
+    e.target.value = ""
+    if (file) handleMainImageFile(file)
+  }
+
+  const handleCoverDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    if (!canUploadCover || isUploading) return
+    e.preventDefault()
+    setIsCoverDragOver(true)
+  }
+
+  const handleCoverDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsCoverDragOver(false)
+    if (!canUploadCover || isUploading) return
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleMainImageFile(file)
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -491,85 +521,88 @@ export function BasicTab({
                     </div>
                   )}
 
-                  {formData.zdjecieGlowne ? (
-                    <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-background/10">
-                      <div className="relative w-full min-h-32 rounded-xl overflow-hidden border border-border/30">
-                        <Image
-                          src={formData.zdjecieGlowne}
-                          alt="Zdjęcie główne"
-                          fill
-                          className="object-contain relative!"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <label
-                          htmlFor="main-image-upload"
-                          className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-muted hover:bg-muted text-foreground h-10 px-4 py-2 cursor-pointer shadow-sm"
-                        >
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
-                              Przesyłanie...
-                            </>
-                          ) : (
-                            <>
+                  {pendingMainImageFile ? (
+                    <CoverBannerEditor
+                      file={pendingMainImageFile}
+                      onSave={handleMainImageSave}
+                      onCancel={handleMainImageCancel}
+                      isSaving={isUploading}
+                      minRecommendedWidth={IMAGE_VARIANTS.cover.minRecommendedWidth}
+                      maxOutputWidth={IMAGE_VARIANTS.cover.maxWidth}
+                    />
+                  ) : (
+                    <div
+                      onDragOver={handleCoverDragOver}
+                      onDragLeave={() => setIsCoverDragOver(false)}
+                      onDrop={handleCoverDrop}
+                    >
+                      {formData.zdjecieGlowne ? (
+                        <div className="space-y-4 p-4 border border-border/20 rounded-xl bg-background/10">
+                          <div
+                            className={`relative w-full aspect-[2/1] rounded-xl overflow-hidden border transition-colors ${
+                              isCoverDragOver ? "border-primary ring-2 ring-primary/40" : "border-border/30"
+                            }`}
+                          >
+                            <Image
+                              src={formData.zdjecieGlowne}
+                              alt="Zdjęcie główne"
+                              fill
+                              sizes="(min-width: 1024px) 50vw, 100vw"
+                              className="object-cover"
+                            />
+                            {isCoverDragOver && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-sm font-semibold text-primary">
+                                Upuść, aby zastąpić banner
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <label
+                              htmlFor="main-image-upload"
+                              className="inline-flex items-center justify-center rounded-xl text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border/30 bg-muted hover:bg-muted text-foreground h-10 px-4 py-2 cursor-pointer shadow-sm"
+                            >
                               <Upload className="mr-2 h-4 w-4 text-primary" />
                               Zmień zdjęcie
-                            </>
-                          )}
-                        </label>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setShowCoverConfirm(true)}
-                          disabled={isUploading}
-                          className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
-                        >
-                          <X className="mr-2 h-4 w-4" />
-                          Usuń banner
-                        </Button>
-                      </div>
-                      <input
-                        id="main-image-upload"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                        className="hidden"
-                        onChange={handleMainImageFileSelect}
-                        disabled={isUploading}
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label
-                        htmlFor="main-image-upload"
-                        className="flex flex-col items-center justify-center w-full h-40 border border-dashed border-border/30 rounded-xl cursor-pointer hover:bg-muted/10 hover:border-primary/40 transition-colors"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="h-10 w-10 mb-3 text-primary animate-spin" />
-                              <p className="text-sm text-muted-foreground">Przesyłanie...</p>
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
-                              <p className="mb-1 text-sm text-foreground/80">
-                                <span className="font-semibold text-primary">Kliknij aby przesłać</span> banner
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                PNG, JPG, WEBP (max 20MB)
-                              </p>
-                            </>
-                          )}
+                            </label>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setShowCoverConfirm(true)}
+                              disabled={isUploading}
+                              className="rounded-xl border-border/30 hover:bg-rose-500/10 hover:text-rose-400 text-white"
+                            >
+                              <X className="mr-2 h-4 w-4" />
+                              Usuń banner
+                            </Button>
+                          </div>
                         </div>
-                      </label>
+                      ) : (
+                        <label
+                          htmlFor="main-image-upload"
+                          className={`flex flex-col items-center justify-center w-full aspect-[2/1] max-h-64 border border-dashed rounded-xl cursor-pointer transition-colors ${
+                            isCoverDragOver
+                              ? "border-primary bg-primary/5"
+                              : "border-border/30 hover:bg-muted/10 hover:border-primary/40"
+                          }`}
+                        >
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                            <ImageIcon className="h-10 w-10 mb-3 text-muted-foreground" />
+                            <p className="mb-1 text-sm text-foreground/80">
+                              <span className="font-semibold text-primary">Kliknij</span> lub przeciągnij tu zdjęcie banneru
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              PNG, JPG, WEBP (max 20MB) — kadr ustawisz w podglądzie
+                            </p>
+                          </div>
+                        </label>
+                      )}
                       <input
                         id="main-image-upload"
                         type="file"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                         className="hidden"
-                        onChange={handleMainImageFileSelect}
-                        disabled={isUploading}
+                        onChange={handleCoverInputChange}
+                        disabled={isUploading || !canUploadCover}
                       />
                     </div>
                   )}

@@ -58,7 +58,6 @@ function LawFirmProfilePageContent() {
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null)
   const [showLogoCropper, setShowLogoCropper] = useState(false)
   const [selectedMainImageFile, setSelectedMainImageFile] = useState<File | null>(null)
-  const [showMainImageCropper, setShowMainImageCropper] = useState(false)
   const [limitSlowKluczowych, setLimitSlowKluczowych] = useState(5)
   const [citiesByVoivodeship, setCitiesByVoivodeship] = useState<Record<string, City[]>>({})
   const [loadingCities, setLoadingCities] = useState<Record<string, boolean>>({})
@@ -537,10 +536,7 @@ function LawFirmProfilePageContent() {
     setSelectedLogoFile(null)
   }
 
-  const handleMainImageFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
+  const handleMainImageFile = (file: File) => {
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
     if (!allowedTypes.includes(file.type)) {
@@ -555,13 +551,11 @@ function LawFirmProfilePageContent() {
       return
     }
 
-    // Show cropper
+    // Kadr ustawiany inline w podglądzie banneru (CoverBannerEditor)
     setSelectedMainImageFile(file)
-    setShowMainImageCropper(true)
   }
 
   const handleMainImageCropComplete = async (croppedBlob: Blob) => {
-    setShowMainImageCropper(false)
     setIsUploading(true)
 
     try {
@@ -594,18 +588,18 @@ function LawFirmProfilePageContent() {
       if (uploadUrl) {
         handleInputChange("zdjecieGlowne", uploadUrl)
         toast.success("Zdjęcie główne zostało przesłane")
+        setSelectedMainImageFile(null)
       }
     } catch (error) {
       console.error("Error uploading image:", error)
       toast.error(error instanceof Error ? error.message : "Nie udało się przesłać zdjęcia")
     } finally {
+      // Po błędzie edytor zostaje otwarty, żeby można było ponowić zapis
       setIsUploading(false)
-      setSelectedMainImageFile(null)
     }
   }
 
   const handleMainImageCropCancel = () => {
-    setShowMainImageCropper(false)
     setSelectedMainImageFile(null)
   }
 
@@ -688,7 +682,10 @@ function LawFirmProfilePageContent() {
                 handleInputChange={handleInputChange}
                 isUploading={isUploading}
                 handleLogoFileSelect={handleLogoFileSelect}
-                handleMainImageFileSelect={handleMainImageFileSelect}
+                handleMainImageFile={handleMainImageFile}
+                pendingMainImageFile={selectedMainImageFile}
+                handleMainImageSave={handleMainImageCropComplete}
+                handleMainImageCancel={handleMainImageCropCancel}
                 handleRemoveSingleImage={handleRemoveSingleImage}
                 expertiseCategories={expertiseCategories}
               />
@@ -777,18 +774,6 @@ function LawFirmProfilePageContent() {
           maxOutputWidth={IMAGE_VARIANTS.logo.maxWidth}
           onCancel={handleLogoCropCancel}
           open={showLogoCropper}
-        />
-      )}
-
-      {selectedMainImageFile && (
-        <ImageCropper
-          image={selectedMainImageFile}
-          aspectRatio={2}
-          onCropComplete={handleMainImageCropComplete}
-          minRecommendedWidth={IMAGE_VARIANTS.cover.minRecommendedWidth}
-          maxOutputWidth={IMAGE_VARIANTS.cover.maxWidth}
-          onCancel={handleMainImageCropCancel}
-          open={showMainImageCropper}
         />
       )}
     </form>

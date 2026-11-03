@@ -69,12 +69,36 @@ const getCroppedImage = (
   maxImageSize: number,
   sourceType: string
 ): string => {
-  const sx = (crop.x / 100) * image.naturalWidth;
-  const sy = (crop.y / 100) * image.naturalHeight;
   const source = getCropSourceSize(
     { width: image.naturalWidth, height: image.naturalHeight },
     crop
   );
+
+  return renderCroppedImage(
+    image,
+    {
+      x: (crop.x / 100) * image.naturalWidth,
+      y: (crop.y / 100) * image.naturalHeight,
+      ...source,
+    },
+    maxOutputWidth,
+    maxImageSize,
+    sourceType
+  );
+};
+
+// Rysuje fragment oryginału (prostokąt w pikselach naturalnych) do data URL,
+// mieszcząc się w maxImageSize — wspólne dla ImageCrop i edytora okładki inline.
+export const renderCroppedImage = (
+  image: HTMLImageElement,
+  rect: { x: number; y: number; width: number; height: number },
+  maxOutputWidth: number,
+  maxImageSize: number,
+  sourceType: string
+): string => {
+  const sx = rect.x;
+  const sy = rect.y;
+  const source = { width: rect.width, height: rect.height };
 
   // Bez powiększania — co najwyżej zmniejszamy do maxOutputWidth
   let scale = Math.min(1, maxOutputWidth / source.width);
