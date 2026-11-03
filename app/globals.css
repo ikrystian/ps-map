@@ -1428,8 +1428,8 @@ a .bg-card {
 .blog-prose {
   font-family: var(--font-poppins), sans-serif;
   color: color-mix(in srgb, var(--foreground) 90%, transparent);
-  line-height: 1.75;
-  font-size: 1.0625rem;
+  line-height: 22px;
+  font-size: 0.875rem;
   word-break: break-word;
 }
 
