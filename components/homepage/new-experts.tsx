@@ -2,21 +2,13 @@
 
 import type { LawFirm } from "@/types/lawfirms"
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
-import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
+import { expertAvatar } from "@/lib/expert-avatar"
 import { OraBadge } from "@/components/ora-badge"
 import Link from "next/link"
 import { useRef } from "react"
 
 interface NewExpertsProps {
   newLawFirms: LawFirm[]
-}
-
-
-
-const getFirmImage = (firm: LawFirm, index: number) => {
-  if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
-    return firm.logo
-  }
 }
 
 export function NewExperts({ newLawFirms }: NewExpertsProps) {
@@ -103,7 +95,7 @@ export function NewExperts({ newLawFirms }: NewExpertsProps) {
 
                     {/* Expert Portrait */}
                     <img
-                      src={getFirmImage(firm as LawFirm, index) || EXPERT_AVATAR_FALLBACK}
+                      src={expertAvatar((firm as LawFirm).logo)}
                       alt={firm.nazwa}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { OraBadge } from "@/components/ora-badge"
-import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
+import { expertAvatar } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
@@ -184,17 +184,6 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
 
   const getCategoryFirms = (catIdx: number) => tabs[catIdx]?.firms ?? []
 
-  // Returns a premium image for the lawyer, falling back to unsplash headshots if missing or placeholder
-  const getFirmImage = (firm: LawFirm, index: number) => {
-    if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
-      return firm.logo
-    }
-    if (firm.zdjecieGlowne && (firm.zdjecieGlowne.startsWith("http") || firm.zdjecieGlowne.startsWith("/uploads") || firm.zdjecieGlowne.startsWith("/generate") || firm.zdjecieGlowne.startsWith("/api/files"))) {
-      return firm.zdjecieGlowne
-    }
-    return EXPERT_AVATAR_FALLBACK
-  }
-
   return (
     <section className="py-8 xl:py-24 text-foreground overflow-hidden bg-darker">
       {/* Top Header Row is wrapped in its own container to align perfectly */}
@@ -339,7 +328,7 @@ export function RecommendedLawyers({ recommendedData, recommendedCategories, law
                   {/* Image Container with Rating Overlay */}
                   <div className="relative w-full overflow-hidden aspect-[1/1] bg-card">
                     <img
-                      src={getFirmImage(firm, index)}
+                      src={expertAvatar(firm.logo)}
                       alt={firm.nazwa}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

@@ -3,17 +3,11 @@
 import type { LawFirm } from "@/types/lawfirms"
 import { cn } from "@/lib/utils"
 import { ArrowUpRight } from "lucide-react"
-import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar"
+import { expertAvatar } from "@/lib/expert-avatar"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
 const EXPERTS_COUNT = 24
-
-const getFirmImage = (firm: LawFirm) => {
-  if (firm.logo && (firm.logo.startsWith("http") || firm.logo.startsWith("/uploads") || firm.logo.startsWith("/generate") || firm.logo.startsWith("/api/files"))) {
-    return firm.logo
-  }
-}
 
 // Fisher-Yates — losowa kolejność ekspertów przy każdym wejściu na stronę
 const shuffle = <T,>(items: T[]) => {
@@ -144,7 +138,7 @@ export function ExpertsShowcase() {
               >
                 <div className="relative w-full aspect-[4/5] overflow-hidden bg-background">
                   <img
-                    src={getFirmImage(firm) || EXPERT_AVATAR_FALLBACK}
+                    src={expertAvatar(firm.logo)}
                     alt={firm.nazwa}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

@@ -22,7 +22,7 @@ import {
 import { CategoryIcon } from "@/components/category-icon";
 import { OraBadge } from "@/components/ora-badge";
 import { useSession } from "next-auth/react";
-import { EXPERT_AVATAR_FALLBACK } from "@/lib/expert-avatar";
+import { expertAvatar } from "@/lib/expert-avatar";
 import Link from "next/link";
 import { useState, useMemo, useRef } from "react";
 
@@ -146,28 +146,6 @@ export function MostConsultedCategories({
     });
 
     return list.slice(0, 5);
-  };
-
-  const getFirmImage = (firm: LawFirm) => {
-    if (
-      firm.logo &&
-      (firm.logo.startsWith("http") ||
-        firm.logo.startsWith("/uploads") ||
-        firm.logo.startsWith("/generate") ||
-        firm.logo.startsWith("/api/files"))
-    ) {
-      return firm.logo;
-    }
-    if (
-      firm.zdjecieGlowne &&
-      (firm.zdjecieGlowne.startsWith("http") ||
-        firm.zdjecieGlowne.startsWith("/uploads") ||
-        firm.zdjecieGlowne.startsWith("/generate") ||
-        firm.zdjecieGlowne.startsWith("/api/files"))
-    ) {
-      return firm.zdjecieGlowne;
-    }
-    return EXPERT_AVATAR_FALLBACK;
   };
 
   // Zmienione zgodnie z instrukcją - pobieramy expertiseCategory zamiast getProfessionTitle
@@ -323,7 +301,7 @@ export function MostConsultedCategories({
                     <div className="relative aspect-[3/2] md:aspect-square w-full overflow-hidden bg-card">
                       <div className="absolute inset-0 z-100  bg-gradient-to-t from-card via-card/20 to-transparent to-[96%]" />
                       <img
-                        src={getFirmImage(firm)}
+                        src={expertAvatar(firm.logo)}
                         alt={firm.nazwa}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
