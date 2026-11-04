@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { paymentReturnUrls } from "@/lib/payment-return"
 import { prisma } from "@/lib/prisma"
 import { tpayClient } from "@/lib/tpay"
 import { NextRequest } from "next/server"
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { orderId } = body
+    const { orderId, mobile } = body
 
     if (!orderId) {
       return Response.json(
@@ -65,8 +66,7 @@ export async function POST(request: NextRequest) {
       : `Aktywacja subskrypcji pakietu`
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
-    const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
-    const urlError = `${baseUrl}/panel-eksperta/checkout/failure?orderId=${order.id}`
+    const { success: urlReturn, failure: urlError } = paymentReturnUrls(baseUrl, order.id, mobile)
     const urlStatus = `${baseUrl}/api/payments/tpay/notify`
 
     // Check if Tpay credentials are placeholders or missing (mock simulation mode)
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
 
       return Response.json({
         success: true,
-        redirectUrl: `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}&mock=true`,
+        redirectUrl: `${urlReturn}&mock=true`,
       })
     }
 

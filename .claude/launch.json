@@ -6,6 +6,12 @@
       "runtimeExecutable": "bun",
       "runtimeArgs": ["server.ts"],
       "port": 3000
+    },
+    {
+      "name": "ekspert-spa",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "--cwd", "ekspert-spa", "dev"],
+      "port": 5173
     }
   ]
 }

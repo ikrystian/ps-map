@@ -287,7 +287,7 @@ export function ProfileScoreCard({ formData, onNavigate }: ProfileScoreCardProps
           description:
             "Opis wyróżniający Twoją ofertę (min. 30 znaków), prezentowany w sekcji „Zakres usług” na profilu publicznym.",
           weight: 6,
-          done: (formData.unikatowyOpisUslugi || "").trim().length >= 30,
+          done: plainText(formData.unikatowyOpisUslugi).length >= 30,
         },
         {
           id: "slowaKluczowe",

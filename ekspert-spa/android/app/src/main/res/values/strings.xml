@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Prosta Sprawa Ekspert</string>
+    <string name="title_activity_main">Prosta Sprawa Ekspert</string>
+    <string name="package_name">pl.prostasprawa.ekspert</string>
+    <string name="custom_url_scheme">pl.prostasprawa.ekspert</string>
+</resources>

@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { paymentReturnUrls } from "@/lib/payment-return"
 import { payuClient } from "@/lib/payu"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json()
-        const { orderId } = body
+        const { orderId, mobile } = body
 
         if (!orderId) {
             return Response.json({ error: "Order ID is required" }, { status: 400 })
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:4000"
         const notifyUrl = `${appUrl}/api/payments/payu/notify`
-        const continueUrl = `${appUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
+        const continueUrl = paymentReturnUrls(appUrl, order.id, mobile).success
 
         // Amount in grosz
         const totalAmount = Math.round(order.kwota * 100).toString()

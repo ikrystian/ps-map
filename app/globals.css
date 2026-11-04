@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Aplikacja mobilna ma własną konfigurację Tailwinda — jej klasy nie należą do tego arkusza. */
+@source not "../ekspert-spa";
+
 /* Tailwind v4 nie czyta `tailwind.config.ts` bez dyrektywy `@config`, więc
    ustawione tam `darkMode: "class"` nie działało — wszystkie warianty `dark:`
    kompilowały się do `@media (prefers-color-scheme: dark)` i reagowały na

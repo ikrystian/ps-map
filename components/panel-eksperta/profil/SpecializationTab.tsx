@@ -5,11 +5,23 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Wrench, Award, Plus, X, Tag, Scale } from "lucide-react"
 import Link from "next/link"
+import dynamic from "next/dynamic"
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-40 w-full flex items-center justify-center bg-background/40 border border-border/30 rounded-xl text-sm text-muted-foreground">
+        Ładowanie edytora...
+      </div>
+    )
+  }
+)
 import { Category } from "@/types"
 import { BorderBeam } from "@/components/ui/border-beam"
 
@@ -98,14 +110,13 @@ export function SpecializationTab({
           {/* Unikalny opis */}
           <div className="grid gap-2" data-score-target="unikatowyOpis">
             <Label htmlFor="unikatowyOpisUslugi" className="text-foreground/80 font-medium">Unikalny opis usługi</Label>
-            <Textarea
-              id="unikatowyOpisUslugi"
-              value={formData.unikatowyOpisUslugi}
-              onChange={(e) => handleInputChange("unikatowyOpisUslugi", e.target.value)}
-              rows={5}
-              placeholder="Opisz swoje unikalne podejście do świadczenia usług, zalety i warunki współpracy..."
-              className="bg-background/20 border-border/30 text-foreground rounded-xl focus:border-primary"
-            />
+            <div className="rounded-xl overflow-hidden border border-border/30 bg-background/20">
+              <RichTextEditor
+                value={formData.unikatowyOpisUslugi}
+                onChange={(value) => handleInputChange("unikatowyOpisUslugi", value)}
+                placeholder="Opisz swoje unikalne podejście do świadczenia usług, zalety i warunki współpracy..."
+              />
+            </div>
             <p className="text-xs text-muted-foreground font-light">
               Ten opis będzie widoczny na Twoim publicznym profilu w sekcji "Zakres usług".
             </p>

@@ -65,3 +65,15 @@ files/
 .env.sentry-build-plugin
 dev.db-shm
 dev.db-wal
+
+# ekspert-spa (Vite + Capacitor) — Tailwind v4 skanuje wszystko, czego nie ma w .gitignore,
+# a korzeniowe /node_modules nie obejmuje zagnieżdżonego katalogu
+/ekspert-spa/node_modules/
+/ekspert-spa/dist/
+/ekspert-spa/android/.gradle/
+/ekspert-spa/android/build/
+/ekspert-spa/android/app/build/
+/ekspert-spa/android/app/src/main/assets/public/
+/ekspert-spa/ios/App/App/public/
+/ekspert-spa/ios/App/build/
+/ekspert-spa/ios/DerivedData/

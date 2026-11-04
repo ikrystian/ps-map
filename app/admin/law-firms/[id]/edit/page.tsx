@@ -52,6 +52,7 @@ import { ImageCropper } from "@/components/ui/image-cropper"
 import { CROP_SOURCE_MAX_BYTES, IMAGE_VARIANTS } from "@/lib/image-variants"
 import Image from "next/image"
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -97,6 +98,18 @@ import {
 } from "./components/InteractiveEditors"
 import { CategoriesSelector, CoverageAreaSelector } from "./components/RelationEditors"
 import { formatDate, formatDateTime } from "@/lib/format"
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-40 w-full flex items-center justify-center bg-background/40 border border-border/30 rounded-xl text-sm text-muted-foreground">
+        Ładowanie edytora...
+      </div>
+    )
+  }
+)
 
 export default function EditLawFirmPage() {
   const params = useParams()
@@ -1054,7 +1067,13 @@ export default function EditLawFirmPage() {
                               <FormItem>
                                 <FormLabel>Opis eksperta</FormLabel>
                                 <FormControl>
-                                  <Textarea placeholder="Opis eksperta..." className="min-h-32" {...field} />
+                                  <div className="rounded-xl overflow-hidden border bg-background">
+                                    <RichTextEditor
+                                      value={field.value ?? ""}
+                                      onChange={field.onChange}
+                                      placeholder="Opis eksperta..."
+                                    />
+                                  </div>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -2240,7 +2259,13 @@ export default function EditLawFirmPage() {
                               <FormItem>
                                 <FormLabel className="text-sm font-semibold">Unikalny opis usług i wyróżniki</FormLabel>
                                 <FormControl>
-                                  <Textarea placeholder="Opisz co wyróżnia eksperta na tle konkurencji..." className="min-h-24" {...field} />
+                                  <div className="rounded-xl overflow-hidden border bg-background">
+                                    <RichTextEditor
+                                      value={field.value ?? ""}
+                                      onChange={field.onChange}
+                                      placeholder="Opisz co wyróżnia eksperta na tle konkurencji..."
+                                    />
+                                  </div>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>

@@ -1,1 +1,1 @@
-{ "extends": "./tsconfig.json", "exclude": ["node_modules", "scripts/test-gcs-backup.ts", ".next*"] }
+{ "extends": "./tsconfig.json", "exclude": ["node_modules", "ekspert-spa", "scripts/test-gcs-backup.ts", ".next*"] }

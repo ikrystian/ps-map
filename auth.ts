@@ -1,9 +1,8 @@
+import { verifyCredentials } from "@/lib/credentials-login"
 import { verifyImpersonationToken } from "@/lib/impersonation"
 import { logLoginAttempt } from "@/lib/login-history"
 import { prisma } from "@/lib/prisma"
-import { getClientIp, rateLimit } from "@/lib/rate-limit"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import bcrypt from "bcryptjs"
 import type { NextAuthConfig, Session, User } from "next-auth"
 import NextAuth from "next-auth"
 import type { JWT } from "next-auth/jwt"
@@ -56,72 +55,11 @@ export const authOptions: NextAuthConfig = {
           throw new Error("Brak wymaganych danych")
         }
 
-        const normalizedEmail = (credentials.email as string).toLowerCase().trim()
-
-        // Ograniczenie prób logowania (ochrona przed brute-force): per IP + email.
-        const ip = request instanceof Request ? getClientIp(request) : "unknown"
-        const rl = rateLimit(`login:${ip}:${normalizedEmail}`, {
-          limit: 10,
-          windowMs: 15 * 60 * 1000, // 10 prób na 15 minut
-        })
-        if (!rl.success) {
-          throw new Error("Zbyt wiele prób logowania. Spróbuj ponownie za kilka minut.")
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: normalizedEmail,
-          },
-        })
-
-        if (!user || !user.password) {
-          throw new Error("Nieprawidłowy email lub hasło")
-        }
-
-        // Konto usunięte (dane zanonimizowane) — logowanie niemożliwe.
-        if (user.deletedAt) {
-          throw new Error("To konto zostało usunięte. Załóż nowe konto, aby korzystać z serwisu.")
-        }
-
-        const isPasswordValid = await bcrypt.compare(
+        const user = await verifyCredentials(
+          credentials.email as string,
           credentials.password as string,
-          user.password
+          request
         )
-
-        if (!isPasswordValid) {
-          await logLoginAttempt({ userId: user.id, success: false })
-          throw new Error("Nieprawidłowy email lub hasło")
-        }
-
-        // Sprawdź czy konto jest zablokowane lub zawieszone
-        if (user.status === "BLOCKED" || user.status === "SUSPENDED") {
-          await logLoginAttempt({ userId: user.id, success: false })
-          throw new Error("Twoje konto zostało zablokowane. Skontaktuj się z administratorem.")
-        }
-
-        // Sprawdź czy konto oczekuje na zatwierdzenie
-        if (user.status === "PENDING") {
-          await logLoginAttempt({ userId: user.id, success: false })
-          throw new Error("Twoje konto oczekuje na zatwierdzenie. Skontaktuj się z administratorem.")
-        }
-
-        // Sprawdź czy konto jest nieaktywne
-        if (user.status === "INACTIVE") {
-          await logLoginAttempt({ userId: user.id, success: false })
-          throw new Error("Twoje konto jest nieaktywne. Skontaktuj się z administratorem.")
-        }
-
-        // Sprawdź czy email został zweryfikowany
-        if (!user.emailVerified) {
-          await logLoginAttempt({ userId: user.id, success: false })
-          throw new Error("Email nie został zweryfikowany. Sprawdź swoją skrzynkę pocztową i kliknij link weryfikacyjny.")
-        }
-
-        // Update last login
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLogin: new Date() },
-        })
 
         return {
           id: user.id,

@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
+import { isMobileOrigin, mobileCorsHeaders, readBearerToken, sessionCookieName } from "@/lib/mobile-auth"
 import { adminHomePath, canAccessAdminPanel, isModeratorAdminPath } from "@/lib/roles"
 
 // CORS dla statycznego landing page (katalog ps-landing), który żyje na innym
@@ -35,6 +36,31 @@ export default auth((req) => {
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set("x-pathname", nextUrl.pathname)
   const nextWithPathname = () => NextResponse.next({ request: { headers: requestHeaders } })
+
+  // Aplikacja mobilna eksperta: token Bearer staje się ciasteczkiem sesji, więc
+  // `auth()` w route'ach działa bez zmian (patrz lib/mobile-auth.ts).
+  if (nextUrl.pathname.startsWith("/api/")) {
+    const bearerToken = readBearerToken(req.headers)
+    if (bearerToken) {
+      requestHeaders.set("cookie", `${sessionCookieName(req.headers)}=${bearerToken}`)
+    }
+
+    const origin = req.headers.get("origin")
+    if (isMobileOrigin(origin)) {
+      if (req.method === "OPTIONS") {
+        return new NextResponse(null, { status: 204, headers: mobileCorsHeaders(origin) })
+      }
+      const response = nextWithPathname()
+      for (const [key, value] of Object.entries(mobileCorsHeaders(origin))) {
+        response.headers.set(key, value)
+      }
+      return response
+    }
+
+    if (bearerToken) {
+      return nextWithPathname()
+    }
+  }
 
   // CORS dla publicznych endpointów słownikowych wykorzystywanych przez landing page.
   // Obsługujemy preflight i nagłówki zanim wejdzie logika autoryzacji.

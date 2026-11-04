@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { paymentReturnUrls } from "@/lib/payment-return"
 import { prisma } from "@/lib/prisma"
 import { p24Client, P24Channel } from "@/lib/przelewy24"
 import { NextRequest } from "next/server"
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { orderId } = body
+    const { orderId, mobile } = body
 
     if (!orderId) {
       return Response.json(
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     const description = `Zakup punktów: ${order.pakietPunktow} (${order.liczbaPunktow} pkt)`
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:4000"
-    const urlReturn = `${baseUrl}/panel-eksperta/checkout/success?orderId=${order.id}`
+    const urlReturn = paymentReturnUrls(baseUrl, order.id, mobile).success
     const urlStatus = `${baseUrl}/api/payments/przelewy24/notify`
 
     // Zarejestruj transakcję w Przelewy24 z kanałem "wszystkie 24/7" — wybór
