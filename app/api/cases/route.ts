@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 import { isReferralUsable } from "@/lib/case-referrals"
 import { generateCaseNumber } from "@/lib/case-number"
 import { notifyMatchingLawFirmsForCase } from "@/lib/case-notifications"
-import { buildLawFirmCaseWhereInput } from "@/lib/cases"
+import { buildLawFirmCaseWhereInput, canSeeClientContact, hideClientContact } from "@/lib/cases"
 import { generateCaseOtpEmail, sendEmail, sendEmailWithTemplate } from "@/lib/email"
 import { sendSystemNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
@@ -158,18 +158,24 @@ export async function GET(request: NextRequest) {
       })
 
       // Usuń lawFirmId z ofert przed zwróceniem (dane wrażliwe)
-      const cases = filteredCases.map(({ referral, ...caseItem }: any) => ({
-        ...caseItem,
-        // Nie ujawniamy, KTÓRY ekspert polecił sprawę — tylko czy zrobił to ten zalogowany
-        zTwojegoPolecenia: referral?.lawFirmId === lawFirm.id,
-        // Miasto klienta przeniesione do modelu User — spłaszcz dla zgodności
-        client: caseItem.client
-          ? { ...caseItem.client, miasto: caseItem.client.user?.miasto ?? null }
-          : caseItem.client,
-        offers: caseItem.offers
-          .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tego eksperta
-          .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
-      }))
+      const cases = filteredCases.map(({ referral, ...caseItem }: any) => {
+        const visibleCase = canSeeClientContact(caseItem.offers, lawFirm.id)
+          ? caseItem
+          : hideClientContact(caseItem)
+
+        return {
+          ...visibleCase,
+          // Nie ujawniamy, KTÓRY ekspert polecił sprawę — tylko czy zrobił to ten zalogowany
+          zTwojegoPolecenia: referral?.lawFirmId === lawFirm.id,
+          // Miasto klienta przeniesione do modelu User — spłaszcz dla zgodności
+          client: visibleCase.client
+            ? { ...visibleCase.client, miasto: caseItem.client?.user?.miasto ?? null }
+            : visibleCase.client,
+          offers: caseItem.offers
+            .filter((offer: any) => offer.lawFirmId === lawFirm.id) // Pokaż tylko oferty tego eksperta
+            .map(({ lawFirmId, ...offer }: any) => offer) // Usuń lawFirmId
+        }
+      })
 
       return NextResponse.json(cases)
     }

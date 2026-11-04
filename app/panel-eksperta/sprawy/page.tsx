@@ -41,7 +41,8 @@ import {
   XCircle,
   Clock,
   Archive,
-  AlertCircle
+  AlertCircle,
+  User
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -873,12 +874,12 @@ const SprawyPage = () => {
                             {/* Klient Avatar and Details */}
                             <div className="flex items-center text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/30">
                               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary/15 text-secondary border border-secondary/20 text-xs font-semibold mr-2.5 flex-shrink-0">
-                                {sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}
+                                {sprawa.client.imie ? <>{sprawa.client.imie[0]}{sprawa.client.nazwisko[0]}</> : <User className="h-3.5 w-3.5" />}
                               </div>
                               <div className="flex flex-col min-w-0">
                                 <span className="text-base text-muted-foreground/75 leading-none mb-0.5">Klient</span>
                                 <span className="font-medium text-foreground text-sm leading-none truncate">
-                                  {sprawa.client.imie} {sprawa.client.nazwisko}
+                                  {sprawa.client.imie ? `${sprawa.client.imie} ${sprawa.client.nazwisko}` : "Dane ukryte"}
                                 </span>
                               </div>
                             </div>

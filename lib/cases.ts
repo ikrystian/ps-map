@@ -8,6 +8,29 @@ export interface LawFirmCaseScopeInput {
   cities?: { cityId: string }[]
 }
 
+/** Pola sprawy z danymi kontaktowymi klienta — do `omit` w zapytaniach, które ich nie potrzebują. */
+export const CASE_CONTACT_OMIT = { imieNazwisko: true, telefonKontakt: true } as const
+
+/**
+ * Dane kontaktowe klienta (imię, nazwisko, telefon) ekspert dostaje dopiero po akceptacji
+ * swojej oferty — wcześniej klient mógł jeszcze wybrać „Preferowany kontakt: e-mail” (F-080).
+ */
+export function canSeeClientContact(
+  offers: { status: string; lawFirmId: string }[],
+  lawFirmId: string
+): boolean {
+  return offers.some((offer) => offer.status === "ZAAKCEPTOWANA" && offer.lawFirmId === lawFirmId)
+}
+
+/**
+ * Usuwa ze sprawy dane kontaktowe klienta (patrz `canSeeClientContact`). Pola zostają jako puste
+ * napisy, bo panel i aplikacja czytają je bez sprawdzania. Relację `client` podmieniamy w całości
+ * zamiast czyścić pole po polu — e-mail, NIP czy `userId` nie mogą przejść domyślnie.
+ */
+export function hideClientContact<T extends object>(caseData: T) {
+  return { ...caseData, imieNazwisko: "", telefonKontakt: "", client: { imie: "", nazwisko: "" } }
+}
+
 /**
  * Buduje warunek Prisma `where` dla spraw dostępnych dla danej kancelarii / eksperta
  * na podstawie zadeklarowanego zakresu usług (kategorie, województwa, miasta, cała Polska)
