@@ -2232,6 +2232,16 @@ a .bg-card {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Dziedziczone word-break: break-word pozwala zwęzić kolumny do szerokości
+     ekranu, łamiąc słowa — wtedy tabela nigdy nie ma czego przewijać. */
+  #post-content .prose table td,
+  #post-content .prose table th,
+  .blog-prose table td,
+  .blog-prose table th {
+    min-width: 8.5rem;
+    word-break: normal;
+  }
 }
 
 /* ─── 9. Multimedia, Figures & Embeds ──────────────────────── */
