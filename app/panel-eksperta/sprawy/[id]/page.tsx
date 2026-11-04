@@ -804,11 +804,11 @@ export default function LawFirmCaseDetailsPage() {
             </CardHeader>
             <CardContent className="p-6 flex items-center gap-4">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary/10 text-secondary border border-secondary/20 text-sm font-bold flex-shrink-0">
-                {caseData.client.imie[0]}{caseData.client.nazwisko[0]}
+                {caseData.client.imie ? <>{caseData.client.imie[0]}{caseData.client.nazwisko[0]}</> : <User className="h-4.5 w-4.5" />}
               </div>
               <div className="min-w-0">
                 <h4 className="font-bold text-foreground text-sm truncate">
-                  {caseData.client.imie} {caseData.client.nazwisko}
+                  {caseData.client.imie ? `${caseData.client.imie} ${caseData.client.nazwisko}` : "Dane po akceptacji oferty"}
                 </h4>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {getCaseTypeLabel(caseData.typSprawy)}

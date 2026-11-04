@@ -3,7 +3,7 @@ import { checkAndUpdatePackageExpiry } from "@/lib/api-permissions"
 import { PUBLIC_REVIEW_WHERE } from "@/lib/review-stats"
 import { computeLiveRanking, positionWithin } from "@/lib/ranking-positions"
 import { auth } from "@/lib/auth"
-import { buildLawFirmCaseWhereInput } from "@/lib/cases"
+import { buildLawFirmCaseWhereInput, CASE_CONTACT_OMIT } from "@/lib/cases"
 import { prisma } from "@/lib/prisma"
 import { NextRequest } from "next/server"
 
@@ -60,6 +60,8 @@ export async function GET(request: NextRequest) {
 
     const recentCases = await prisma.case.findMany({
       where: recentCasesWhere,
+      // Dashboard nie pokazuje danych kontaktowych klienta, więc w ogóle ich nie pobiera (F-080)
+      omit: CASE_CONTACT_OMIT,
       include: {
         category: {
           select: {

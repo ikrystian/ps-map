@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { canSeeClientContact, hideClientContact } from "@/lib/cases"
 import { USER_CONTACT_SELECT, flattenLawFirmUser } from "@/lib/law-firm-user"
 import { prisma } from "@/lib/prisma"
 import fs from "fs"
@@ -173,10 +174,9 @@ export async function GET(
         return NextResponse.json({ error: "Forbidden" }, { status: 403 })
       }
 
-      // Dane kontaktowe klienta (imię, nazwisko, telefon) ekspert dostaje dopiero po akceptacji
-      // swojej oferty — wcześniej klient mógł jeszcze wybrać „Preferowany kontakt: e-mail” (F-080)
-      if (!(acceptedOffer && acceptedOffer.lawFirmId === lawFirm.id)) {
-        caseDataWithCount = { ...caseDataWithCount, imieNazwisko: "", telefonKontakt: "" }
+      // Wiadomości też odpadają — niosą e-mail i nazwę nadawcy oraz odbiorcy
+      if (!canSeeClientContact(caseData.offers, lawFirm.id)) {
+        caseDataWithCount = { ...hideClientContact(caseDataWithCount), messages: [] }
       }
 
       // Nie ujawniamy konkurentowi, który ekspert polecił sprawę — tylko własne polecenie
