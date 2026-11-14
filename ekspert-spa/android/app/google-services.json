@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "163061762133",
+    "project_id": "prostasprawa-eb892",
+    "storage_bucket": "prostasprawa-eb892.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163061762133:android:c55033c10306b4a40eacdc",
+        "android_client_info": {
+          "package_name": "com.prostasprawa.ekspert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAHZjkkyQGF-DZ1zdtn5Wl-w1p5_BAe_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163061762133:android:6b0296fa596e611a0eacdc",
+        "android_client_info": {
+          "package_name": "pl.prostasprawa.ekspert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAHZjkkyQGF-DZ1zdtn5Wl-w1p5_BAe_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

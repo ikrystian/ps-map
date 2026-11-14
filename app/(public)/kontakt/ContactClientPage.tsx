@@ -67,7 +67,7 @@ const quickLinks = [
     icon: MessageSquare,
     title: "Jak to działa",
     desc: "Poznaj krok po kroku, jak znaleźć specjalistę.",
-    href: "/jak-to-dziala",
+    href: "",
   },
   {
     icon: ShieldCheck,
