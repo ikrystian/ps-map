@@ -94,6 +94,11 @@ const nextConfig: NextConfig = {
         destination: "/pomoc",
         permanent: true,
       },
+      {
+        source: "/jak-to-dziala",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
   serverExternalPackages: ["socket.io", "@libsql/client", "@prisma/adapter-libsql"],

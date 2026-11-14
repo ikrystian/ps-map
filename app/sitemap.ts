@@ -19,7 +19,6 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: ChangeFr
   { path: "/ranking", priority: 0.6, changeFrequency: "weekly" },
   { path: "/mapa", priority: 0.6, changeFrequency: "weekly" },
   { path: "/mapa-strony", priority: 0.3, changeFrequency: "weekly" },
-  { path: "/jak-to-dziala", priority: 0.5, changeFrequency: "monthly" },
   { path: "/dla-prawnika", priority: 0.5, changeFrequency: "monthly" },
   { path: "/dla-eksperta", priority: 0.5, changeFrequency: "monthly" },
   { path: "/pomoc", priority: 0.4, changeFrequency: "monthly" },
