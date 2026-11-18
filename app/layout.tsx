@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
-import { BugReportWidget } from "@/components/BugReportWidget";
-import { ChatAssistant } from "@/components/ChatAssistant";
+import { LazyBugReportWidget, LazyChatAssistant } from "@/components/lazy-widgets";
 import CookieConsentBanner from "@/components/CookieConsent";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HotjarAnalytics } from "@/components/Hotjar";
@@ -249,8 +248,8 @@ export default async function RootLayout({
           {children}
           <Toaster />
           <Sonner />
-          {showChat && <ChatAssistant />}
-          <BugReportWidget />
+          {showChat && <LazyChatAssistant />}
+          <LazyBugReportWidget />
           <CookieConsentBanner />
           <HotjarAnalytics />
           <MarketingPixels

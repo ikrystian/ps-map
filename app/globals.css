@@ -2855,3 +2855,18 @@ a .bg-card {
   color: var(--primary);
   border-color: color-mix(in srgb, var(--primary) 30%, transparent);
 }
+/* Wejście sekcji hero — tylko CSS (bez JS), żeby treść była widoczna od pierwszego renderu. */
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hero-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-hero-fade-up {
+  animation: hero-fade-up 0.8s ease-out both;
+}
+.animate-hero-fade-in {
+  animation: hero-fade-in 1.5s ease-out both;
+}

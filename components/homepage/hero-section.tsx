@@ -1,10 +1,13 @@
 "use client"
 
-import ParticlesBackground from "@/components/ParticlesBackground"
 import { Badge } from "@/components/ui/badge"
-import { motion } from "framer-motion"
 import { ArrowRight, ShieldCheck, Users } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
+
+// Cząsteczki są dekoracją w tle — ładujemy je po stronie klienta, żeby nie blokowały hydracji
+// ani renderowania LCP (nagłówka).
+const ParticlesBackground = dynamic(() => import("@/components/ParticlesBackground"), { ssr: false })
 
 const TYPED_PHRASES = [
   "problemy prawne",
@@ -74,34 +77,22 @@ export function HeroSection() {
       <div className="container mx-auto px-4 relative z-11 relative py-12">
         <div className="max-w-5xl mx-auto text-center">
           {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8 flex justify-center"
-          >
+          <div className="mb-8 flex justify-center animate-hero-fade-up">
             <Badge variant="outline" className="font-light px-5 py-2 border-primary/40 text-foreground bg-primary/5 backdrop-blur-md rounded-full text-xs tracking-widest uppercase text-center">
               Opisz sprawę. <span className="font-bold mx-1"> Specjaliści </span>  zgłoszą się sami.
             </Badge>
-          </motion.div>
+          </div>
 
           {/* Main Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+          {/* Nagłówek jest elementem LCP — nie animujemy go z opacity 0, tylko renderujemy od razu */}
+          <h1
             className="text-5xl sm:text-7xl md:text-9xl tracking-tight mb-8 font-playfair text-foreground drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
           >
             Prosta Sprawa
-          </motion.h1>
+          </h1>
 
           {/* Subtitle & Description */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="mb-12"
-          >
+          <div className="mb-12 animate-hero-fade-up" style={{ animationDelay: "0.2s" }}>
             <h2 className="text-2xl md:text-4xl font-light mb-6 font-playfair text-foreground">
               Rozwiązujemy Twoje <TypedPhrases /> w kilku krokach.
             </h2>
@@ -109,14 +100,12 @@ export function HeroSection() {
               Dodaj sprawę i otrzymaj oferty od zweryfikowanych prawników i ekspertów.
               Szybko, bezpiecznie i na Twoich zasadach.
             </p>
-          </motion.div>
+          </div>
 
           {/* Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-6 mb-14 sm:mb-20 justify-center items-center px-4"
+          <div
+            className="animate-hero-fade-up flex flex-col sm:flex-row gap-3 sm:gap-6 mb-14 sm:mb-20 justify-center items-center px-4"
+            style={{ animationDelay: "0.4s" }}
           >
             <button
               onClick={() => document.getElementById("categories-private")?.scrollIntoView({ behavior: "smooth" })}
@@ -133,14 +122,12 @@ export function HeroSection() {
               Sprawy firmowe
               <ArrowRight className="ml-3 h-5 w-5 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </button>
-          </motion.div>
+          </div>
 
           {/* Indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 1 }}
-            className="flex flex-wrap justify-center gap-x-12 gap-y-6 pt-12 border-t border-border"
+          <div
+            className="animate-hero-fade-in flex flex-wrap justify-center gap-x-12 gap-y-6 pt-12 border-t border-border"
+            style={{ animationDelay: "1s" }}
           >
             <div className="flex items-center gap-3 group">
               <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors">
@@ -161,7 +148,7 @@ export function HeroSection() {
                 <p className="text-xs text-foreground/90 uppercase tracking-widest mt-1">Prowizji od Twojej sprawy</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

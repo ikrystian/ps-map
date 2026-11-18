@@ -7,7 +7,10 @@ export async function GET() {
   try {
     const categories = await getCategoriesList()
 
-    return NextResponse.json(categories)
+    // Publiczne, rzadko zmieniane dane — cache na CDN/proxy (przeglądarka zawsze pyta o świeżość).
+    return NextResponse.json(categories, {
+      headers: { "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=600" },
+    })
   } catch (error) {
     console.error("Error fetching categories:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

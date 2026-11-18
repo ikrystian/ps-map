@@ -4,7 +4,8 @@ import { initScheduler } from "./lib/scheduler"
 import { initSocket } from "./lib/socket"
 
 const dev = process.env.NODE_ENV !== "production"
-const hostname = "localhost"
+// 0.0.0.0 = nasłuchuj na wszystkich interfejsach, żeby serwer był widoczny w sieci lokalnej
+const hostname = "0.0.0.0"
 const port = parseInt(process.env.PORT || "3000", 10)
 
 const app = next({ dev, hostname, port })
@@ -33,7 +34,7 @@ app.prepare().then(async () => {
   // Przechwytuje żądania na ścieżce /socket.io zanim trafią do Next.js.
   initSocket(server)
 
-  server.listen(port, () => {
+  server.listen(port, hostname, () => {
     console.log(`> Ready on http://${hostname}:${port}`)
   })
 })

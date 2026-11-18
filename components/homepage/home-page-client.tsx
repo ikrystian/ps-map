@@ -9,24 +9,27 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 import { BenefitsSection } from "@/components/homepage/benefits-section";
-import { BusinessCategoriesGrid } from "@/components/homepage/business-categories-grid";
 import { CategoriesGrid } from "@/components/homepage/categories-grid";
-import { CitiesList } from "@/components/homepage/cities-list";
-import { VoivodeshipsList } from "@/components/homepage/voivodeships-list";
-import { ExpertCTA } from "@/components/homepage/expert-cta";
 import { HeroSection } from "@/components/homepage/hero-section";
-import { HowItWorksSection } from "@/components/homepage/how-it-works-section";
-import { LatestArticles } from "@/components/homepage/latest-articles";
-import { MostConsultedCategories } from "@/components/homepage/most-consulted-categories";
-import { NewExperts } from "@/components/homepage/new-experts";
-import { NewsletterSection } from "@/components/homepage/newsletter-section";
-import { RecommendedLawyers } from "@/components/homepage/recommended-lawyers";
 import { SearchHelpSection } from "@/components/homepage/search-help-section";
-import { LocalSeoLinks } from "@/components/seo/local-seo-links";
-import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
-import { SurveySection } from "@/components/homepage/survey-section";
-import { VideoConsultationSection } from "@/components/homepage/video-consultation-section";
 import { fetchShared } from "@/lib/shared-fetch";
+import dynamic from "next/dynamic";
+
+// Sekcje poniżej pierwszego ekranu ładujemy osobnymi chunkami — mniej JS na starcie strony.
+const BusinessCategoriesGrid = dynamic(() => import("@/components/homepage/business-categories-grid").then((m) => m.BusinessCategoriesGrid));
+const CitiesList = dynamic(() => import("@/components/homepage/cities-list").then((m) => m.CitiesList));
+const VoivodeshipsList = dynamic(() => import("@/components/homepage/voivodeships-list").then((m) => m.VoivodeshipsList));
+const ExpertCTA = dynamic(() => import("@/components/homepage/expert-cta").then((m) => m.ExpertCTA));
+const HowItWorksSection = dynamic(() => import("@/components/homepage/how-it-works-section").then((m) => m.HowItWorksSection));
+const LatestArticles = dynamic(() => import("@/components/homepage/latest-articles").then((m) => m.LatestArticles));
+const MostConsultedCategories = dynamic(() => import("@/components/homepage/most-consulted-categories").then((m) => m.MostConsultedCategories));
+const NewExperts = dynamic(() => import("@/components/homepage/new-experts").then((m) => m.NewExperts));
+const NewsletterSection = dynamic(() => import("@/components/homepage/newsletter-section").then((m) => m.NewsletterSection));
+const RecommendedLawyers = dynamic(() => import("@/components/homepage/recommended-lawyers").then((m) => m.RecommendedLawyers));
+const VideoConsultationSection = dynamic(() => import("@/components/homepage/video-consultation-section").then((m) => m.VideoConsultationSection));
+const SurveySection = dynamic(() => import("@/components/homepage/survey-section").then((m) => m.SurveySection));
+const LocalSeoLinks = dynamic(() => import("@/components/seo/local-seo-links").then((m) => m.LocalSeoLinks));
+const AnimatedTestimonials = dynamic(() => import("@/components/ui/animated-testimonials").then((m) => m.AnimatedTestimonials));
 
 export default function HomePageClient() {
   const { data: session } = useSession();
@@ -44,59 +47,29 @@ export default function HomePageClient() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Wszystkie żądania startują równolegle (wcześniej szły jedno po drugim — wodospad).
+    // Każde dane renderujemy od razu po przyjściu, a błąd jednego źródła nie blokuje reszty.
+    const load = async <T,>(url: string, apply: (data: T) => void, shared = false) => {
       try {
-        // Fetch featured law firms
-        const firmsResponse = await fetch(
-          "/api/law-firms?limit=15&verifiedOnly=true",
-        );
-        if (firmsResponse.ok) {
-          const firmsData = await firmsResponse.json();
-          setLawFirms(firmsData.lawFirms);
-        }
-
-        // Fetch new law firms
-        const newFirmsResponse = await fetch("/api/law-firms?limit=8");
-        if (newFirmsResponse.ok) {
-          const newFirmsData = await newFirmsResponse.json();
-          setNewLawFirms(newFirmsData.lawFirms);
-        }
-
-        // Fetch categories
-        const categoriesResponse = await fetchShared("/api/categories");
-        if (categoriesResponse.ok) {
-          const categoriesData = await categoriesResponse.json();
-          setCategories(categoriesData.filter((cat: Category) => cat.aktywna));
-        }
-
-        // Fetch recent blog posts
-        const blogResponse = await fetch("/api/blog/posts?limit=4");
-        if (blogResponse.ok) {
-          const blogData = await blogResponse.json();
-          setBlogPosts(blogData.posts || []);
-        }
-
-        // Fetch homepage promotions
-        const promotionsResponse = await fetch("/api/homepage-promotions");
-        if (promotionsResponse.ok) {
-          const promotionsData = await promotionsResponse.json();
-          setHomepagePromotions(promotionsData);
-        }
-
-        // Fetch public testimonials
-        const testimonialsResponse = await fetch("/api/testimonials");
-        if (testimonialsResponse.ok) {
-          const testimonialsData = await testimonialsResponse.json();
-          setTestimonials(testimonialsData);
-        }
+        const response = shared ? await fetchShared(url) : await fetch(url);
+        if (response.ok) apply((await response.json()) as T);
       } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
+        console.error(`Error fetching ${url}:`, error);
       }
     };
 
-    fetchData();
+    Promise.all([
+      load<{ lawFirms: LawFirm[] }>("/api/law-firms?limit=15&verifiedOnly=true", (d) => setLawFirms(d.lawFirms)),
+      load<{ lawFirms: LawFirm[] }>("/api/law-firms?limit=8", (d) => setNewLawFirms(d.lawFirms)),
+      load<Category[]>(
+        "/api/categories",
+        (d) => setCategories(d.filter((cat: Category) => cat.aktywna)),
+        true,
+      ),
+      load<{ posts?: any[] }>("/api/blog/posts?limit=4", (d) => setBlogPosts(d.posts || [])),
+      load<any>("/api/homepage-promotions", (d) => setHomepagePromotions(d)),
+      load<any[]>("/api/testimonials", (d) => setTestimonials(d)),
+    ]).finally(() => setIsLoading(false));
   }, []);
 
   return (
