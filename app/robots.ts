@@ -16,7 +16,9 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
+      // /api/files/ (obrazki, dokumenty) musi być dostępne dla crawlerów — Google
+      // dopasowuje najdłuższą regułę, więc ten Allow wygrywa z Disallow: /api/.
+      allow: ["/", "/api/files/"],
       disallow: ["/api/", "/admin/", "/panel-eksperta/", "/panel-klienta/", "/auth/"],
     },
     sitemap: baseUrl ? `${baseUrl}/sitemap.xml` : undefined,
