@@ -127,3 +127,17 @@ export function breadcrumbListJsonLd(items: Array<{ name: string; path: string }
     })),
   }
 }
+
+/** FAQPage dla sekcji „najczęstsze pytania“ wpisu — pytania i odpowiedzi jak widoczne na stronie. */
+export function faqPageJsonLd(url: string, items: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${url}#faq`,
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  }
+}

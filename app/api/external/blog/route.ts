@@ -1,20 +1,10 @@
 import { verifyBlogApiAuth } from "@/lib/blog-api-auth"
 import { blogEditStamp } from "@/lib/blog-posts"
+import { MAX_TITLE_LENGTH, SLUG_PATTERN, badRequest, optionalString } from "@/lib/external-blog-input"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
-
-const MAX_TITLE_LENGTH = 300
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-
-const badRequest = (error: string) => NextResponse.json({ error }, { status: 400 })
-
-/** Pole opcjonalne: pominięte/null/"" → null, w przeciwnym razie musi być niepustym tekstem. */
-function optionalString(value: unknown): string | null | undefined {
-  if (value === undefined || value === null || value === "") return null
-  return typeof value === "string" ? value.trim() || null : undefined
-}
 
 // POST /api/external/blog - Dodaje wpis bloga przez API (autoryzacja sekretem z Ustawień admina)
 // Autorem wpisu jest moderator wskazany w body (`authorId`) — zapisywany jak edytujący w historii wpisu.

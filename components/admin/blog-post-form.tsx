@@ -42,6 +42,7 @@ import { flattenCategoryTree } from "@/lib/blog-category-tree"
 import { BlogCategoryPicker } from "@/components/admin/blog-category-picker"
 import { BlogRelatedPostsPicker } from "@/components/admin/blog-related-posts-picker"
 import { MAX_RELATED_BLOG_POSTS } from "@/lib/blog-related"
+import { BLOG_SLUG_MAX_LENGTH, isValidBlogSlug, suggestBlogSlug } from "@/lib/blog-slug"
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -53,6 +54,7 @@ const RichTextEditor = dynamic(
 
 const postFormSchema = z.object({
   tytul: z.string().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
+  slug: z.string().max(BLOG_SLUG_MAX_LENGTH, "Slug może mieć maksymalnie 200 znaków").optional(),
   tresc: z.string().min(1, "Treść jest wymagana"),
   categoryId: z.string().optional(),
   obrazekWyrozniajacy: z.string().optional().or(z.literal("")),
@@ -71,14 +73,37 @@ type PostFormValues = z.infer<typeof postFormSchema>
 
 import type { BlogCategory } from "@/types"
 
-const postSchema = postFormSchema.refine((data) => {
-  if (data.zaplanowany && !data.dataPublikacji) {
-    return false
-  }
-  return true
-}, {
-  message: "Podaj datę i godzinę publikacji",
-  path: ["dataPublikacji"],
+const postSchema = postFormSchema
+  .refine((data) => {
+    if (data.zaplanowany && !data.dataPublikacji) {
+      return false
+    }
+    return true
+  }, {
+    message: "Podaj datę i godzinę publikacji",
+    path: ["dataPublikacji"],
+  })
+  .refine((data) => !data.slug?.trim() || isValidBlogSlug(data.slug.trim()), {
+    message: "Slug może zawierać tylko małe litery a-z, cyfry i pojedyncze myślniki",
+    path: ["slug"],
+  })
+
+// Ciało żądania zapisu/podglądu. Slug: w panelu admina wysyłamy go zawsze (także przy edycji),
+// w panelu eksperta pomijamy — tam slug nadal generuje się z tytułu.
+const buildPostRequestBody = (values: PostFormValues, isExpert: boolean) => ({
+  ...values,
+  slug: isExpert ? undefined : values.slug?.trim() || undefined,
+  categoryId: values.categoryId || null,
+  obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
+  tagi: values.tagi,
+  metaTitle: values.metaTitle || null,
+  metaDescription: values.metaDescription || null,
+  opublikowany: values.opublikowany || values.zaplanowany,
+  dataPublikacji: values.zaplanowany && values.dataPublikacji
+    ? new Date(values.dataPublikacji).toISOString()
+    : null,
+  sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
+  powiazaneWpisy: values.powiazaneWpisy.map((post) => post.id),
 })
 
 // Rozbija jednolinijkowy HTML na linie między sąsiadującymi tagami — czytelniejsza edycja kodu.
@@ -145,6 +170,8 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   const [generatingSeo, setGeneratingSeo] = useState(false)
   const [lastEdit, setLastEdit] = useState<LastEdit | null>(null)
   const [postCreatedAt, setPostCreatedAt] = useState<string | null>(null)
+  // Slug nowego wpisu podąża za tytułem, dopóki admin nie wpisze własnego
+  const [slugTouched, setSlugTouched] = useState(false)
 
   // Tryb edycji treści: wizualny (Editor.js) lub kod HTML
   const [editorMode, setEditorMode] = useState<"visual" | "html">("visual")
@@ -155,6 +182,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
     resolver: zodResolver(postSchema) as any,
     defaultValues: {
       tytul: "",
+      slug: "",
       tresc: "",
       categoryId: "",
       obrazekWyrozniajacy: "",
@@ -244,6 +272,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
 
         form.reset({
           tytul: post.tytul || "",
+          slug: post.slug || "",
           tresc: post.tresc || "",
           categoryId: post.categoryId || "",
           obrazekWyrozniajacy: post.obrazekWyrozniajacy || "",
@@ -320,9 +349,13 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   }
 
   const handlePreview = async () => {
-    const isValid = await form.trigger(["tytul", "tresc"])
+    const isValid = await form.trigger(["tytul", "tresc", "slug"])
     if (!isValid) {
       toast.error("Wypełnij tytuł i treść artykułu, aby otworzyć podgląd")
+      return
+    }
+    if (!isExpert && (currentPostId || postId) && !form.getValues("slug")?.trim()) {
+      toast.error("Slug wpisu nie może być pusty")
       return
     }
 
@@ -344,20 +377,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...values,
-          categoryId: values.categoryId || null,
-          obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
-          tagi: values.tagi,
-          metaTitle: values.metaTitle || null,
-          metaDescription: values.metaDescription || null,
-          opublikowany: values.opublikowany || values.zaplanowany,
-          dataPublikacji: values.zaplanowany && values.dataPublikacji
-            ? new Date(values.dataPublikacji).toISOString()
-            : null,
-          sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
-          powiazaneWpisy: values.powiazaneWpisy.map((post) => post.id),
-        }),
+        body: JSON.stringify(buildPostRequestBody(values, isExpert)),
       })
 
       if (response.ok) {
@@ -391,8 +411,12 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
   }
 
   const handleSubmit = async (values: PostFormValues) => {
-    setLoading(true)
     const activeId = currentPostId || postId
+    if (!isExpert && activeId && !values.slug?.trim()) {
+      toast.error("Slug wpisu nie może być pusty")
+      return
+    }
+    setLoading(true)
     const url = isExpert
       ? (activeId ? `/api/law-firms/me/blog/${activeId}` : "/api/law-firms/me/blog")
       : (activeId ? `/api/admin/blog/${activeId}` : "/api/admin/blog")
@@ -406,20 +430,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...values,
-          categoryId: values.categoryId || null,
-          obrazekWyrozniajacy: values.obrazekWyrozniajacy || null,
-          tagi: values.tagi,
-          metaTitle: values.metaTitle || null,
-          metaDescription: values.metaDescription || null,
-          opublikowany: values.opublikowany || values.zaplanowany,
-          dataPublikacji: values.zaplanowany && values.dataPublikacji
-            ? new Date(values.dataPublikacji).toISOString()
-            : null,
-          sponsoredLawFirmId: values.isSponsored ? (values.sponsoredLawFirmId || null) : null,
-          powiazaneWpisy: values.powiazaneWpisy.map((post) => post.id),
-        }),
+        body: JSON.stringify(buildPostRequestBody(values, isExpert)),
       })
 
       if (response.ok) {
@@ -535,12 +546,49 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                               placeholder="np. Jak przygotować się do sprawy rozwodowej?"
                               className="h-11"
                               {...field}
+                              onChange={(event) => {
+                                field.onChange(event)
+                                // Nowy wpis: slug podąża za tytułem, dopóki nie zostanie ręcznie zmieniony
+                                if (!isExpert && !slugTouched && !(currentPostId || postId)) {
+                                  form.setValue("slug", suggestBlogSlug(event.target.value), { shouldValidate: true })
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
+                    {!isExpert && (
+                      <FormField
+                        control={form.control}
+                        name="slug"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs font-semibold">Slug (adres wpisu)</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="np. jak-przygotowac-sie-do-rozwodu"
+                                className="h-11 font-mono text-sm"
+                                maxLength={BLOG_SLUG_MAX_LENGTH}
+                                {...field}
+                                onChange={(event) => {
+                                  setSlugTouched(true)
+                                  field.onChange(event)
+                                }}
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                              {(currentPostId || postId)
+                                ? "Zmiana sluga zmienia adres wpisu — stare linki przestaną prowadzić do artykułu."
+                                : "Adres: /blog/" + (field.value || "…") + ". Uzupełnia się z tytułu, możesz go zmienić."}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
                     <FormField
                       control={form.control}

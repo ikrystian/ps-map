@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth"
+import { verifyBlogApiAuth } from "@/lib/blog-api-auth"
 import { validateUploadedFile, ADMIN_ALLOWED_EXTENSIONS } from "@/lib/file-validation"
 import { existsSync } from "fs"
 import { mkdir, writeFile } from "fs/promises"
@@ -11,10 +12,14 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
 
-    // Check authorization
+    // Autoryzacja: sesja zalogowanego użytkownika albo sekret API bloga
+    // (Authorization: Bearer / x-api-key), tak jak w /api/external/blog.
     const session = await auth()
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      const apiAuthError = await verifyBlogApiAuth(request)
+      if (apiAuthError) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      }
     }
     const file = formData.get("file") as File
 
@@ -35,7 +40,7 @@ export async function POST(request: NextRequest) {
     const originalBuffer = Buffer.from(bytes)
 
     // Walidacja typu pliku: whitelist rozszerzeń + weryfikacja sygnatury (magic bytes).
-    const isAdmin = (session.user as any).role === "ADMIN"
+    const isAdmin = session?.user ? (session.user as any).role === "ADMIN" : false
     const allowedExtensions = isAdmin ? ADMIN_ALLOWED_EXTENSIONS : undefined
     const validation = validateUploadedFile(originalBuffer, file.name, allowedExtensions)
     if (!validation.ok) {

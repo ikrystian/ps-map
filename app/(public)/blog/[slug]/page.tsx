@@ -4,8 +4,10 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import BlogPostView from "./BlogPostView"
 import { pageTitle } from "@/lib/page-title"
-import { articleJsonLd } from "@/lib/structured-data"
+import { articleJsonLd, breadcrumbListJsonLd, faqPageJsonLd, absoluteUrl } from "@/lib/structured-data"
 import { JsonLd } from "@/components/JsonLd"
+import { extractFaqItems } from "@/lib/blog-faq"
+import { blogCategoryPath } from "@/lib/blog-category-url"
 
 interface PageProps {
   params: Promise<{
@@ -99,6 +101,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const relatedPosts = await relatedPostsPromise
 
+  // Ścieżka kategorii od najwyższego poziomu (jak okruszek na stronie wpisu)
+  const categoryChain = post.category
+    ? [post.category.parent?.parent, post.category.parent, post.category].filter(
+        (cat): cat is NonNullable<typeof post.category> => Boolean(cat)
+      )
+    : []
+  const faqItems = extractFaqItems(post.tresc ?? "")
+
   return (
     <>
       {/* Podglądu szkicu nie opisujemy dla wyszukiwarek */}
@@ -116,6 +126,19 @@ export default async function BlogPostPage({ params }: PageProps) {
             author: post.lawFirm ? { nazwa: post.lawFirm.nazwa, slug: post.lawFirm.slug } : null,
           })}
         />
+      )}
+      {!post.isUnpublished && (
+        <JsonLd
+          data={breadcrumbListJsonLd([
+            { name: "Strona główna", path: "/" },
+            { name: "Blog", path: "/blog" },
+            ...categoryChain.flatMap((cat) => (cat.slug ? [{ name: cat.nazwa, path: blogCategoryPath(cat.slug) }] : [])),
+            { name: post.tytul, path: `/blog/${post.slug}` },
+          ])}
+        />
+      )}
+      {!post.isUnpublished && faqItems.length > 0 && (
+        <JsonLd data={faqPageJsonLd(absoluteUrl(`/blog/${post.slug}`), faqItems)} />
       )}
       <BlogPostView post={post} adsense={adsense} relatedPosts={relatedPosts} />
     </>

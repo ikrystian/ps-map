@@ -1,9 +1,9 @@
+import { isValidBlogSlug, suggestBlogSlug } from "@/lib/blog-slug"
 import { auth } from "@/lib/auth"
 import { canManageBlog } from "@/lib/roles"
 import { BLOG_LIKE_COUNT_INCLUDE, withLikeCount } from "@/lib/blog-likes"
 import { resolveRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
-import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/blog - Pobiera wszystkie wpisy (ADMIN i MODERATOR) z filtrami i statystykami
@@ -164,7 +164,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Generuj slug lub użyj podanego
-    const slug = customSlug || generateSlug(tytul)
+    const hasCustomSlug = typeof customSlug === "string" && customSlug.trim() !== ""
+    if (hasCustomSlug && !isValidBlogSlug(customSlug.trim())) {
+      return NextResponse.json(
+        { error: "slug może zawierać tylko małe litery a-z, cyfry i pojedyncze myślniki (maks. 200 znaków)" },
+        { status: 400 }
+      )
+    }
+    const slug = hasCustomSlug ? customSlug.trim() : suggestBlogSlug(tytul)
 
     // Sprawdź czy slug jest unikalny
     const existingPost = await prisma.blogPost.findUnique({

@@ -9,7 +9,7 @@ import {
   resolveRelatedBlogPosts,
 } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
-import { generateSlug } from "@/lib/utils"
+import { isValidBlogSlug, suggestBlogSlug } from "@/lib/blog-slug"
 import { NextRequest, NextResponse } from "next/server"
 
 // GET /api/admin/blog/[id] - Pobiera konkretny wpis (ADMIN i MODERATOR)
@@ -157,15 +157,25 @@ export async function PATCH(
 
     const data: any = { ...blogEditStamp(session.user) }
 
+    // Pusty slug = brak zmiany (adres wpisu zostaje). Zmiana tytułu bez pola slug
+    // nadal odświeża slug z tytułu, jak dotąd.
+    const hasCustomSlug = typeof customSlug === "string" && customSlug.trim() !== ""
+    if (hasCustomSlug && !isValidBlogSlug(customSlug.trim())) {
+      return NextResponse.json(
+        { error: "slug może zawierać tylko małe litery a-z, cyfry i pojedyncze myślniki (maks. 200 znaków)" },
+        { status: 400 }
+      )
+    }
+
     if (tytul !== undefined) {
       data.tytul = tytul
       if (customSlug === undefined) {
-        data.slug = generateSlug(tytul)
+        data.slug = suggestBlogSlug(tytul)
       }
     }
 
-    if (customSlug !== undefined) {
-      data.slug = customSlug
+    if (hasCustomSlug) {
+      data.slug = customSlug.trim()
     }
 
     // Sprawdź czy slug jest unikalny (jeśli został zmieniony)

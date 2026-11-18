@@ -17,7 +17,7 @@ const ENTITIES: Record<string, string> = {
   "&gt;": ">",
 }
 
-function headingText(innerHtml: string) {
+export function headingText(innerHtml: string) {
   return innerHtml
     .replace(/<[^>]*>/g, "")
     .replace(/&(nbsp|amp|quot|#39|apos|lt|gt);/g, (entity) => ENTITIES[entity] ?? entity)
