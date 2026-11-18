@@ -18,6 +18,29 @@ export function publishedBlogPostWhere() {
   }
 }
 
+/**
+ * Status wpisu wyliczany z pól `opublikowany` i `dataPublikacji`:
+ * - draft: nieopublikowany (opublikowany = false)
+ * - scheduled: opublikowany, ale z datą publikacji w przyszłości
+ * - published: opublikowany i bez daty albo z datą, która już minęła
+ */
+export const BLOG_POST_STATUSES = ["published", "scheduled", "draft"] as const
+export type BlogPostStatus = (typeof BLOG_POST_STATUSES)[number]
+
+export function blogPostStatusWhere(status: BlogPostStatus, now: Date = new Date()) {
+  switch (status) {
+    case "draft":
+      return { opublikowany: false }
+    case "scheduled":
+      return { opublikowany: true, dataPublikacji: { gt: now } }
+    case "published":
+      return {
+        opublikowany: true,
+        OR: [{ dataPublikacji: null }, { dataPublikacji: { lte: now } }],
+      }
+  }
+}
+
 interface GetPublicBlogPostsOptions {
   page?: number
   limit?: number
@@ -27,11 +50,16 @@ interface GetPublicBlogPostsOptions {
   sponsored?: boolean
   tag?: string | null
   sort?: "popular" | null
+  /** Domyślnie ["published"]. Inne statusy wymagają autoryzacji — sprawdza to wywołujący. */
+  statuses?: BlogPostStatus[]
+  /** Dodatkowy filtr po fladze `opublikowany`; `undefined` = bez filtra. */
+  opublikowany?: boolean
 }
 
 /**
- * Pobiera opublikowane wpisy bloga wraz z paginacją — wspólna logika używana
+ * Pobiera wpisy bloga wraz z paginacją — wspólna logika używana
  * zarówno przez /api/blog/posts, jak i przez server-side render strony /blog.
+ * Bez podanych `statuses` zwraca wyłącznie opublikowane wpisy.
  */
 export async function getPublicBlogPosts(
   options: GetPublicBlogPostsOptions = {}
@@ -45,19 +73,18 @@ export async function getPublicBlogPosts(
     sponsored,
     tag,
     sort,
+    statuses = ["published"],
+    opublikowany,
   } = options
   const skip = (page - 1) * limit
 
+  const now = new Date()
   const where: any = {
-    opublikowany: true,
-    AND: [
-      {
-        OR: [
-          { dataPublikacji: null },
-          { dataPublikacji: { lte: new Date() } },
-        ],
-      },
-    ],
+    AND: [{ OR: statuses.map((status) => blogPostStatusWhere(status, now)) }],
+  }
+
+  if (opublikowany !== undefined) {
+    where.AND.push({ opublikowany })
   }
 
   if (sponsored) {

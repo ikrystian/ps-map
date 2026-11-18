@@ -1,23 +1,111 @@
-import { getPublicBlogPosts } from "@/lib/blog-posts"
+import { auth } from "@/auth"
+import { BLOG_POST_STATUSES, BlogPostStatus, getPublicBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
 import { getClientIp, rateLimit, tooManyRequestsResponse } from "@/lib/rate-limit"
+import { canManageBlog } from "@/lib/roles"
 import { generateSlug } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
 
-// GET /api/blog/posts - Pobiera wszystkie opublikowane wpisy (publiczne)
+const badRequest = (error: string) => NextResponse.json({ error }, { status: 400 })
+
+/** `true`/`false` → boolean, pominięte → undefined, cokolwiek innego → null (błąd). */
+function parseBooleanParam(value: string | null): boolean | undefined | null {
+  if (value === null || value === "") return undefined
+  if (value === "true") return true
+  if (value === "false") return false
+  return null
+}
+
+/**
+ * Parametr `status` przyjmuje jeden lub kilka statusów po przecinku
+ * (np. `status=draft,scheduled`) albo `all`. Pominięty = ["published"].
+ */
+function parseStatusParam(value: string | null): BlogPostStatus[] | null {
+  if (value === null || value.trim() === "") return null
+  const parts = value.split(",").map((part) => part.trim().toLowerCase()).filter(Boolean)
+  if (parts.length === 0) return null
+  if (parts.includes("all")) return [...BLOG_POST_STATUSES]
+  const valid = parts.every((part): part is BlogPostStatus =>
+    (BLOG_POST_STATUSES as readonly string[]).includes(part)
+  )
+  if (!valid) return null
+  return Array.from(new Set(parts as BlogPostStatus[]))
+}
+
+// GET /api/blog/posts - Lista wpisów bloga.
+// Parametry:
+//   opublikowany=true|false  — filtr po fladze opublikowany
+//   status=published|scheduled|draft|all (lub lista po przecinku) — filtr po statusie
+//   includeDrafts=true|false — dodaje szkice (draft) do wyników
+// Domyślnie zwracane są wyłącznie opublikowane wpisy. Szkice i zaplanowane wpisy
+// wymagają zalogowania: admin/moderator widzi wszystkie, ekspert tylko swoje.
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
+
+    const opublikowany = parseBooleanParam(searchParams.get("opublikowany"))
+    if (opublikowany === null) {
+      return badRequest("Parametr 'opublikowany' przyjmuje wartości true lub false.")
+    }
+
+    const includeDrafts = parseBooleanParam(searchParams.get("includeDrafts"))
+    if (includeDrafts === null) {
+      return badRequest("Parametr 'includeDrafts' przyjmuje wartości true lub false.")
+    }
+
+    const statusParam = searchParams.get("status")
+    const parsedStatuses = parseStatusParam(statusParam)
+    if (statusParam !== null && parsedStatuses === null) {
+      return badRequest(
+        `Parametr 'status' przyjmuje: ${[...BLOG_POST_STATUSES, "all"].join(", ")} (lub listę po przecinku).`
+      )
+    }
+
+    const statuses: BlogPostStatus[] = [...(parsedStatuses ?? ["published"])]
+    if (includeDrafts && !statuses.includes("draft")) {
+      statuses.push("draft")
+    }
+
+    let lawFirmId = searchParams.get("lawFirmId")
+
+    // Wszystko poza opublikowanymi wpisami wymaga zalogowanego autora lub admina.
+    const needsAuth = opublikowany === false || statuses.some((status) => status !== "published")
+    if (needsAuth) {
+      const session = await auth()
+      if (!session?.user) {
+        return NextResponse.json({ error: "Brak autoryzacji." }, { status: 401 })
+      }
+
+      if (!canManageBlog(session.user.role)) {
+        if (session.user.role !== "LAW_FIRM") {
+          return NextResponse.json({ error: "Brak uprawnień do szkiców wpisów." }, { status: 403 })
+        }
+        const ownLawFirm = await prisma.lawFirm.findUnique({
+          where: { userId: session.user.id },
+          select: { id: true },
+        })
+        if (!ownLawFirm) {
+          return NextResponse.json({ error: "Brak uprawnień do szkiców wpisów." }, { status: 403 })
+        }
+        if (lawFirmId && lawFirmId !== ownLawFirm.id) {
+          return NextResponse.json({ error: "Brak uprawnień do wpisów tej kancelarii." }, { status: 403 })
+        }
+        // Ekspert widzi szkice i zaplanowane wpisy wyłącznie swojej kancelarii.
+        lawFirmId = ownLawFirm.id
+      }
+    }
 
     const result = await getPublicBlogPosts({
       page: parseInt(searchParams.get("page") || "1"),
       limit: parseInt(searchParams.get("limit") || "12"),
       categoryId: searchParams.get("categoryId"),
-      lawFirmId: searchParams.get("lawFirmId"),
+      lawFirmId,
       search: searchParams.get("search"),
       sponsored: searchParams.get("sponsored") === "true",
       tag: searchParams.get("tag"),
       sort: searchParams.get("sort") === "popular" ? "popular" : null,
+      statuses,
+      opublikowany,
     })
 
     return NextResponse.json(result)
