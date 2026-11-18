@@ -85,6 +85,14 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
+      {
+        // Obrazki z public/images nie mają hasha w nazwie, więc TTL to 1 dzień:
+        // podmiana pliku pod tą samą nazwą dotrze do użytkowników najpóźniej po dobie.
+        source: "/images/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
     ];
   },
   async redirects() {
