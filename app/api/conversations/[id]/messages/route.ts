@@ -261,6 +261,9 @@ export async function POST(
         session.user.role === "CLIENT"
           ? "/panel-eksperta/wiadomosci"
           : "/panel-klienta/wiadomosci",
+      pushData: {
+        conversationId: conversation.id,
+      },
     })
 
     // Emit real-time notification via Socket.IO

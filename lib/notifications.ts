@@ -1,4 +1,5 @@
 import { sendEmail, sendEmailWithTemplate, wrapInBrandLayoutIfNeeded } from "@/lib/email"
+import { sendPushNotificationToUser } from "@/lib/firebase-admin"
 import { prisma } from "@/lib/prisma"
 import { EmailType, NotificationType } from "@prisma/client"
 
@@ -20,6 +21,12 @@ export interface SendNotificationOptions {
 
   // Tylko powiadomienie in-app — bez e-maila (gdy e-mail idzie osobnym szablonem, np. potwierdzenie dodania sprawy)
   skipEmail?: boolean
+
+  // Opcjonalne wyłączenie powiadomienia push na urządzenia mobilne
+  skipPush?: boolean
+
+  // Dodatkowe metadane do przekazania w powiadomieniu push
+  pushData?: Record<string, string>
 
   // Wymuś wysłanie pomimo ustawień (np. powiadomienia kluczowe/systemowe)
   force?: boolean
@@ -153,10 +160,34 @@ export async function sendSystemNotification(options: SendNotificationOptions) {
     }
   }
 
+  // 3. Wysłanie powiadomienia Push (Firebase Cloud Messaging / Capacitor)
+  let pushSent = false
+  if (!options.skipPush) {
+    const shouldSendPush = force || (!settings?.urlop || typ === "SYSTEM")
+    if (shouldSendPush) {
+      sendPushNotificationToUser(userId, {
+        title: tytul,
+        body: tresc,
+        linkUrl: linkUrl || null,
+        typ,
+        data: {
+          notificationId: notificationRecord?.id || "",
+          linkUrl: linkUrl || "",
+          typ,
+          ...(options.pushData || {}),
+        },
+      }).catch((err) => {
+        console.error(`[Push] Failed to send push notification to user ${userId}:`, err)
+      })
+      pushSent = true
+    }
+  }
+
   return {
     success: true,
     notification: notificationRecord,
     emailSent,
+    pushSent,
     shouldSendEmail,
     shouldSendSMS,
   }

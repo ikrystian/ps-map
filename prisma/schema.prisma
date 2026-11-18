@@ -59,6 +59,7 @@ model User {
   sentMessages  Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   notifications Notification[]
+  pushDeviceTokens PushDeviceToken[]
   blogPostEdits BlogPostEdit[] @relation("BlogPostEditor")
   blogPostLikes BlogPostLike[] @relation("BlogPostLikes")
   notificationSettings NotificationSettings?
@@ -1641,6 +1642,24 @@ model Notification {
   @@index([userId])
   @@index([przeczytane])
   @@index([createdAt])
+}
+
+// ============================================================================
+// TOKENY URZĄDZEŃ DO POWIADOMIEŃ PUSH (FIREBASE / CAPACITOR)
+// ============================================================================
+
+model PushDeviceToken {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  platform    String   @default("android") // "android" | "ios" | "web"
+  deviceInfo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([token])
 }
 
 enum NotificationType {
