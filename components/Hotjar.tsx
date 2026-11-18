@@ -1,6 +1,7 @@
 "use client"
 
 import Hotjar from "@hotjar/browser"
+import { runWhenIdle } from "@/lib/run-when-idle"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import * as CookieConsent from "vanilla-cookieconsent"
@@ -27,19 +28,25 @@ export function HotjarAnalytics() {
   useEffect(() => {
     if (!SITE_ID || Number.isNaN(SITE_ID) || isInitialized) return
 
+    let scheduled = false
     const initIfConsented = () => {
       if (!CookieConsent.acceptedCategory("analytics")) return
       if (Hotjar.isReady()) {
         setIsInitialized(true)
         return
       }
+      if (scheduled) return
 
-      try {
-        Hotjar.init(SITE_ID, HOTJAR_VERSION)
-        setIsInitialized(true)
-      } catch (error) {
-        console.error("Hotjar init error:", error)
-      }
+      // Skrypt Hotjara dopiero po narysowaniu strony — nie blokuje pierwszego renderu.
+      scheduled = true
+      runWhenIdle(() => {
+        try {
+          Hotjar.init(SITE_ID, HOTJAR_VERSION)
+          setIsInitialized(true)
+        } catch (error) {
+          console.error("Hotjar init error:", error)
+        }
+      })
     }
 
     // Zgoda zapisana w poprzedniej wizycie jest dostępna od razu; dla nowej

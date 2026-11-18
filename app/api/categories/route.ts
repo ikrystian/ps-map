@@ -1,11 +1,16 @@
 import { serverCache } from "@/lib/cache"
-import { getCategoriesList, parseExpertiseCategoryIds } from "@/lib/categories"
+import { getCategoriesList, parseExpertiseCategoryIds, toCompactCategory } from "@/lib/categories"
 import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
-export async function GET() {
+// `?compact=1` — bez długich opisów i metadanych SEO (nagłówek serwisu, strona główna).
+// Pełna lista zostaje dla rejestracji, kategorii i wyszukiwarki.
+export async function GET(request: NextRequest) {
   try {
-    const categories = await getCategoriesList()
+    const all = await getCategoriesList()
+    const categories = request.nextUrl.searchParams.get("compact") === "1"
+      ? all.map(toCompactCategory)
+      : all
 
     // Publiczne, rzadko zmieniane dane — cache na CDN/proxy (przeglądarka zawsze pyta o świeżość).
     return NextResponse.json(categories, {

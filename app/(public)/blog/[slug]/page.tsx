@@ -8,6 +8,7 @@ import { articleJsonLd, breadcrumbListJsonLd, faqPageJsonLd, absoluteUrl } from 
 import { JsonLd } from "@/components/JsonLd"
 import { extractFaqItems } from "@/lib/blog-faq"
 import { blogCategoryPath } from "@/lib/blog-category-url"
+import { getImageDimensions } from "@/lib/image-dimensions"
 
 interface PageProps {
   params: Promise<{
@@ -51,7 +52,10 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
   // Obrazek wyróżniający wpisu; bez niego zostaje domyślny obrazek OG z ustawień (layout).
   const parentMetadata = await parent
   const image = post.obrazekWyrozniajacy || undefined
-  const ogImages = image ? [{ url: image, alt: ogTitle }] : parentMetadata.openGraph?.images
+  const imageSize = image ? await getImageDimensions(image) : null
+  const ogImages = image
+    ? [{ url: image, alt: ogTitle, ...(imageSize ?? {}) }]
+    : parentMetadata.openGraph?.images
   const twitterImages = image ? [image] : parentMetadata.twitter?.images
 
   return {

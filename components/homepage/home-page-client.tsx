@@ -6,13 +6,11 @@ import TeamExpertsSection from "@/components/TeamExpertsSection";
 import type { Category } from "@/types/categories";
 import type { LawFirm } from "@/types/lawfirms";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 
 import { BenefitsSection } from "@/components/homepage/benefits-section";
 import { CategoriesGrid } from "@/components/homepage/categories-grid";
 import { HeroSection } from "@/components/homepage/hero-section";
 import { SearchHelpSection } from "@/components/homepage/search-help-section";
-import { fetchShared } from "@/lib/shared-fetch";
 import dynamic from "next/dynamic";
 
 // Sekcje poniżej pierwszego ekranu ładujemy osobnymi chunkami — mniej JS na starcie strony.
@@ -31,46 +29,33 @@ const SurveySection = dynamic(() => import("@/components/homepage/survey-section
 const LocalSeoLinks = dynamic(() => import("@/components/seo/local-seo-links").then((m) => m.LocalSeoLinks));
 const AnimatedTestimonials = dynamic(() => import("@/components/ui/animated-testimonials").then((m) => m.AnimatedTestimonials));
 
-export default function HomePageClient() {
+/** Odpowiedź /api/homepage-promotions — dane sekcji "Polecani" i "Najczęściej konsultowane". */
+export type HomepagePromotions = {
+  recommended: Record<string, LawFirm[]>;
+  recommendedCategories?: { id: string; nazwa: string; descendantIds?: string[] }[];
+  consulted: Record<string, LawFirm[]>;
+  consultedCategoryIds?: string[];
+};
+
+export interface HomePageClientProps {
+  categories: Category[];
+  lawFirms: LawFirm[];
+  newLawFirms: LawFirm[];
+  blogPosts: any[];
+  testimonials: any[];
+  homepagePromotions: HomepagePromotions | null;
+}
+
+// Dane przychodzą z serwera (app/page.tsx), więc komponent nie wysyła żadnych żądań po starcie.
+export default function HomePageClient({
+  categories,
+  lawFirms,
+  newLawFirms,
+  blogPosts,
+  testimonials,
+  homepagePromotions,
+}: HomePageClientProps) {
   const { data: session } = useSession();
-  const [lawFirms, setLawFirms] = useState<LawFirm[]>([]);
-  const [newLawFirms, setNewLawFirms] = useState<LawFirm[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [blogPosts, setBlogPosts] = useState<any[]>([]);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
-  const [homepagePromotions, setHomepagePromotions] = useState<{
-    recommended: Record<string, LawFirm[]>;
-    recommendedCategories?: { id: string; nazwa: string; descendantIds?: string[] }[];
-    consulted: Record<string, LawFirm[]>;
-    consultedCategoryIds?: string[];
-  } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Wszystkie żądania startują równolegle (wcześniej szły jedno po drugim — wodospad).
-    // Każde dane renderujemy od razu po przyjściu, a błąd jednego źródła nie blokuje reszty.
-    const load = async <T,>(url: string, apply: (data: T) => void, shared = false) => {
-      try {
-        const response = shared ? await fetchShared(url) : await fetch(url);
-        if (response.ok) apply((await response.json()) as T);
-      } catch (error) {
-        console.error(`Error fetching ${url}:`, error);
-      }
-    };
-
-    Promise.all([
-      load<{ lawFirms: LawFirm[] }>("/api/law-firms?limit=15&verifiedOnly=true", (d) => setLawFirms(d.lawFirms)),
-      load<{ lawFirms: LawFirm[] }>("/api/law-firms?limit=8", (d) => setNewLawFirms(d.lawFirms)),
-      load<Category[]>(
-        "/api/categories",
-        (d) => setCategories(d.filter((cat: Category) => cat.aktywna)),
-        true,
-      ),
-      load<{ posts?: any[] }>("/api/blog/posts?limit=4", (d) => setBlogPosts(d.posts || [])),
-      load<any>("/api/homepage-promotions", (d) => setHomepagePromotions(d)),
-      load<any[]>("/api/testimonials", (d) => setTestimonials(d)),
-    ]).finally(() => setIsLoading(false));
-  }, []);
 
   return (
     <div className="min-h-screen">

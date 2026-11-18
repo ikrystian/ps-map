@@ -123,7 +123,7 @@ export default function PublicHeader({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetchShared("/api/categories")
+        const response = await fetchShared("/api/categories?compact=1")
         if (response.ok) {
           const data = await response.json()
           setCategories(data.filter((cat: CategoryWithChildren) => !cat.parentId))

@@ -80,6 +80,25 @@ export async function getCategoriesList(): Promise<Category[]> {
   )
 }
 
+/**
+ * Wersja kategorii do list i nawigacji: bez długich opisów (`opis`, `opisDodatkowy`),
+ * metadanych SEO i znaczników czasu. Te pola stanowią większość odpowiedzi
+ * /api/categories (~150 KB z ~280 KB), a listy ich nie wyświetlają.
+ */
+export function toCompactCategory(category: Category): Category {
+  const {
+    opis: _opis,
+    opisDodatkowy: _opisDodatkowy,
+    metaTitle: _metaTitle,
+    metaDescription: _metaDescription,
+    createdAt: _createdAt,
+    updatedAt: _updatedAt,
+    expertiseCategoryIds: _expertiseCategoryIds,
+    ...compact
+  } = category
+  return compact
+}
+
 export type ExpertiseCategoryIdsResult =
   | { ok: true; ids: string[] | undefined }
   | { ok: false; error: string }

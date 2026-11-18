@@ -6,6 +6,7 @@ import {
   initLinkedInInsight,
   trackFacebookPageView,
 } from "@/lib/marketing-pixels"
+import { runWhenIdle } from "@/lib/run-when-idle"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 
@@ -31,6 +32,7 @@ export function MarketingPixels({
   const pathname = usePathname()
   const [isInitialized, setIsInitialized] = useState(false)
   const lastTrackedPath = useRef<string | null>(null)
+  const initScheduled = useRef(false)
   const isAdminArea = pathname?.startsWith("/admin") ?? false
 
   useEffect(() => {
@@ -38,15 +40,21 @@ export function MarketingPixels({
     if (!facebookPixelId && !linkedinPartnerId) return
 
     const initIfConsented = () => {
-      if (!hasMarketingConsent()) return
-      try {
-        if (facebookPixelId) initFacebookPixel(facebookPixelId)
-        if (linkedinPartnerId) initLinkedInInsight(linkedinPartnerId, linkedinRegistrationConversionId)
-        lastTrackedPath.current = window.location.pathname
-        setIsInitialized(true)
-      } catch (error) {
-        console.error("Marketing pixels init error:", error)
-      }
+      if (!hasMarketingConsent() || initScheduled.current) return
+      // Skrypty pikseli dopiero po narysowaniu strony — nie blokują pierwszego renderu.
+      initScheduled.current = true
+      runWhenIdle(() => {
+        try {
+          if (facebookPixelId) initFacebookPixel(facebookPixelId)
+          if (linkedinPartnerId) initLinkedInInsight(linkedinPartnerId, linkedinRegistrationConversionId)
+          lastTrackedPath.current = window.location.pathname
+          setIsInitialized(true)
+        } catch (error) {
+          console.error("Marketing pixels init error:", error)
+        } finally {
+          initScheduled.current = false
+        }
+      })
     }
 
     // Zgoda z poprzedniej wizyty jest dostępna od razu; na nową decyzję czekamy.
