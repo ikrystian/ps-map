@@ -1,9 +1,9 @@
 import { getPublicBlogPostBySlug, getPublishedBlogPostSlugs, getRelatedBlogPosts } from "@/lib/blog-posts"
 import { prisma } from "@/lib/prisma"
-import { Metadata } from "next"
+import { Metadata, ResolvingMetadata } from "next"
 import { notFound } from "next/navigation"
 import BlogPostView from "./BlogPostView"
-import { pageTitle } from "@/lib/page-title"
+import { pageTitle, stripSiteBrand } from "@/lib/page-title"
 import { articleJsonLd, breadcrumbListJsonLd, faqPageJsonLd, absoluteUrl } from "@/lib/structured-data"
 import { JsonLd } from "@/components/JsonLd"
 import { extractFaqItems } from "@/lib/blog-faq"
@@ -33,7 +33,7 @@ function getPlainDescription(post: { metaDescription?: string | null; tresc?: st
   return post.metaDescription || (post.tresc ?? "").replace(/<[^>]*>/g, "").substring(0, 160)
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata): Promise<Metadata> {
   const { slug } = await params
   const post = await getPublicBlogPostBySlug(slug)
 
@@ -43,12 +43,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
+  // Tytuł i opis z sekcji SEO wpisu (Meta tytuł / Meta opis), z fallbackiem jak dotąd.
   const rawTitle = post.metaTitle || `${post.tytul} | Blog`
-  const plainTextDescription = getPlainDescription(post)
+  const plainTextDescription = getPlainDescription(post).trim() || undefined
+  const ogTitle = stripSiteBrand(rawTitle)
+
+  // Obrazek wyróżniający wpisu; bez niego zostaje domyślny obrazek OG z ustawień (layout).
+  const parentMetadata = await parent
+  const image = post.obrazekWyrozniajacy || undefined
+  const ogImages = image ? [{ url: image, alt: ogTitle }] : parentMetadata.openGraph?.images
+  const twitterImages = image ? [image] : parentMetadata.twitter?.images
 
   return {
     title: pageTitle(rawTitle, post.isUnpublished ? "[Podgląd] " : ""),
-    description: plainTextDescription || undefined,
+    description: plainTextDescription,
+    openGraph: {
+      type: "article",
+      url: `/blog/${post.slug}`,
+      title: ogTitle,
+      description: plainTextDescription,
+      siteName: parentMetadata.openGraph?.siteName,
+      images: ogImages,
+      publishedTime: post.dataPublikacji ? new Date(post.dataPublikacji).toISOString() : undefined,
+      modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+      section: post.category?.nazwa ?? undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: plainTextDescription,
+      images: twitterImages,
+    },
   }
 }
 

@@ -686,7 +686,7 @@ export function BlogPostForm({ postId, mode = "admin" }: BlogPostFormProps) {
                       Obrazek wyróżniający
                     </CardTitle>
                     <CardDescription className="text-xs">
-                      Prześlij grafikę lub podaj bezpośredni link URL. Obrazek posłuży za miniaturę wpisu.
+                      Prześlij grafikę lub podaj bezpośredni link URL. Obrazek posłuży za miniaturę wpisu oraz jako og:image (podgląd linku w mediach społecznościowych).
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-6">
