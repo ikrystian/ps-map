@@ -228,6 +228,7 @@ export default function EditLawFirmPage() {
       zgodaPrzetwarzanie: false,
       zweryfikowana: false,
       aktywna: true,
+      uzytkownikTestowy: false,
       accountManagerId: "",
       expertiseCategoryId: "",
     },
@@ -546,6 +547,7 @@ export default function EditLawFirmPage() {
             zgodaPrzetwarzanie: lawFirm.zgodaPrzetwarzanie || false,
             zweryfikowana: lawFirm.zweryfikowana,
             aktywna: lawFirm.aktywna,
+            uzytkownikTestowy: lawFirm.uzytkownikTestowy === true,
             accountManagerId: lawFirm.accountManagerId || "",
             expertiseCategoryId: lawFirm.expertiseCategoryId || "",
           })
@@ -670,6 +672,7 @@ export default function EditLawFirmPage() {
         "punktySaldo",
         "zweryfikowana",
         "aktywna",
+        "uzytkownikTestowy",
         "accountManagerId",
         "dataPakietuOd",
         "dataPakietuDo",
@@ -1845,6 +1848,30 @@ export default function EditLawFirmPage() {
                               )}
                             />
                           </div>
+
+                          <FormField
+                            control={form.control}
+                            name="uzytkownikTestowy"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-lg">
+                                <FormControl>
+                                  <Checkbox
+                                    id="chk-uzytkownik-testowy"
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel htmlFor="chk-uzytkownik-testowy" className="cursor-pointer">
+                                    Użytkownik testowy
+                                  </FormLabel>
+                                  <FormDescription>
+                                    Profil nie jest pokazywany publicznie: nie pojawia się na listach ekspertów, w wyszukiwarce, na mapie, w rankingu, na stronie głównej, w sitemapie ani na stronie profilu. Konto i panel eksperta działają normalnie.
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
 
                           {verificationRejection && !form.watch("zweryfikowana") && (
                             <p className="text-sm text-muted-foreground">

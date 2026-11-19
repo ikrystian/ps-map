@@ -51,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     }),
     prisma.lawFirm.findMany({
-      where: { aktywna: true, zweryfikowana: true },
+      where: { aktywna: true, zweryfikowana: true, uzytkownikTestowy: false },
       select: { slug: true, updatedAt: true },
     }),
     getPublishedBlogPostSlugs(),

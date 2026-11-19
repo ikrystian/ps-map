@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
           deletedAt: null,
         },
         zweryfikowana: true,
+        uzytkownikTestowy: false,
       },
       select: {
         id: true,

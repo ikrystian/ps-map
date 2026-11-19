@@ -22,7 +22,8 @@ export interface RankedFirm {
 export async function computeLiveRanking(): Promise<RankedFirm[]> {
   const now = new Date()
   const firms = await prisma.lawFirm.findMany({
-    where: { aktywna: true, user: { deletedAt: null } },
+    // Użytkownicy testowi nie są rankingowani — nie wpływają na pozycje pozostałych
+    where: { aktywna: true, uzytkownikTestowy: false, user: { deletedAt: null } },
     select: {
       id: true,
       zweryfikowana: true,

@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import { serverCache } from "@/lib/cache"
 import { cleanCityName } from "@/lib/city-name"
 import {
   ACCOUNT_ALREADY_ANONYMIZED_MESSAGE,
@@ -535,6 +536,11 @@ export async function PUT(
     }
     if (body.aktywna !== undefined) lawFirmUpdateData.aktywna = body.aktywna
 
+    // Użytkownik testowy — profil znika z publicznych list, wyszukiwarki i profilu
+    if (body.uzytkownikTestowy !== undefined) {
+      lawFirmUpdateData.uzytkownikTestowy = body.uzytkownikTestowy === true
+    }
+
     // Account Manager
     if (body.accountManagerId !== undefined) {
       lawFirmUpdateData.accountManagerId = body.accountManagerId || null
@@ -679,6 +685,18 @@ export async function PUT(
 
       return updatedLawFirm
     })
+
+    // Publiczne listy (strona główna, kategorie, lokalizacje) są cache'owane —
+    // po zmianie flagi odświeżamy je od razu, zamiast czekać na wygaśnięcie TTL.
+    if (
+      lawFirmUpdateData.uzytkownikTestowy !== undefined &&
+      lawFirmUpdateData.uzytkownikTestowy !== existingLawFirm.uzytkownikTestowy
+    ) {
+      serverCache.invalidatePattern("categories")
+      serverCache.invalidatePattern("voivodeships")
+      serverCache.invalidatePattern("cities")
+      serverCache.delete("homepage:promotions")
+    }
 
     if (rejectionReason) {
       await sendLawFirmVerificationEmail(id, { accepted: false, powod: rejectionReason })

@@ -163,6 +163,8 @@ export async function GET(request: NextRequest) {
 
     const where: any = {
       aktywna: true,
+      // Użytkownik testowy nie jest pokazywany w katalogu
+      uzytkownikTestowy: false,
       // Tryb urlopowy ukrywa eksperta w katalogu (uwzględnia też firmy bez ustawień)
       NOT: {
         user: { notificationSettings: { urlop: true } },

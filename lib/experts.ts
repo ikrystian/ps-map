@@ -39,6 +39,7 @@ export async function getExpertsCatalog(
   const where: Prisma.LawFirmWhereInput = {
     aktywna: true,
     zweryfikowana: true,
+    uzytkownikTestowy: false,
     user: { deletedAt: null },
   }
 

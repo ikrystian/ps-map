@@ -238,6 +238,7 @@ export async function getFeaturedLawFirms(limit: number = 5) {
     where: {
       typPromocji: "STRONA_GLOWNA",
       aktywna: true,
+      lawFirm: { uzytkownikTestowy: false },
       startPromocji: {
         lte: now,
       },
@@ -277,6 +278,7 @@ export async function getTopLawFirms(limit: number = 10) {
     where: {
       typPromocji: "TOP_LISTA",
       aktywna: true,
+      lawFirm: { uzytkownikTestowy: false },
       startPromocji: {
         lte: now,
       },
@@ -317,6 +319,7 @@ export async function getCategoryPromotedLawFirms(categoryId: string, limit: num
       typPromocji: "PROMOCJA_KATEGORII",
       kategoriaPromocji: categoryId,
       aktywna: true,
+      lawFirm: { uzytkownikTestowy: false },
       startPromocji: {
         lte: now,
       },

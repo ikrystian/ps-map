@@ -24,6 +24,7 @@ export async function GET(
           { userId: id },
         ],
         aktywna: true,
+        uzytkownikTestowy: false,
       },
       include: {
         user: {

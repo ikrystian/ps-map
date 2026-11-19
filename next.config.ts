@@ -115,7 +115,6 @@ const nextConfig: NextConfig = {
     cpus: getOptimalBuildCPUs(),
     optimizePackageImports: [
       "lucide-react",
-      "react-icons/fa",
       "@tabler/icons-react",
       "date-fns",
       "goey-toast",

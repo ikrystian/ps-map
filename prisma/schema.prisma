@@ -418,6 +418,9 @@ model LawFirm {
   weryfikacjaOdrzuconaPowod String?
   weryfikacjaOdrzuconaAt    DateTime?
   aktywna               Boolean  @default(true)
+  // Użytkownik testowy: profil nie jest pokazywany publicznie (listy, wyszukiwarka,
+  // mapa, losowy ekspert, ranking, promowane, sitemapa, profil). Konto i panel działają dalej.
+  uzytkownikTestowy    Boolean  @default(false)
 
   // Opiekun eksperta
   accountManagerId      String?
@@ -467,6 +470,7 @@ model LawFirm {
   @@index([nip])
   @@index([zweryfikowana])
   @@index([aktywna])
+  @@index([uzytkownikTestowy])
   @@index([accountManagerId])
   @@index([mainCategoryId])
   @@index([expertiseCategoryId])

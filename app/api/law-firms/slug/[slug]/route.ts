@@ -6,7 +6,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   try {
     const { slug } = await params
     const lawFirm = await prisma.lawFirm.findUnique({
-      where: { slug },
+      where: { slug, uzytkownikTestowy: false },
       include: {
         user: {
           select: {

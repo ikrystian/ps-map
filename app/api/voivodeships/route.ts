@@ -13,8 +13,8 @@ export async function GET(request: Request) {
           where: hasExperts
             ? {
                 OR: [
-                  { users: { some: { lawFirm: { is: { aktywna: true } } } } },
-                  { lawFirmVoivodeships: { some: { lawFirm: { aktywna: true } } } },
+                  { users: { some: { lawFirm: { is: { aktywna: true, uzytkownikTestowy: false } } } } },
+                  { lawFirmVoivodeships: { some: { lawFirm: { aktywna: true, uzytkownikTestowy: false } } } },
                 ],
               }
             : undefined,

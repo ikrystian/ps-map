@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         ]
       }
       if (hasExperts) {
-        where.lawFirms = { some: { lawFirm: { aktywna: true } } }
+        where.lawFirms = { some: { lawFirm: { aktywna: true, uzytkownikTestowy: false } } }
       }
 
       const cities = await prisma.city.findMany({

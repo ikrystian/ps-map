@@ -96,6 +96,7 @@ export async function GET() {
     const competitors = await prisma.lawFirm.findMany({
       where: {
         mainCategoryId: lawFirm.mainCategoryId,
+        uzytkownikTestowy: false,
         NOT: { id: lawFirm.id },
       },
       select: {

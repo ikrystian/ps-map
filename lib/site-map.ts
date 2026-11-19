@@ -27,7 +27,7 @@ async function loadSiteMapData(): Promise<SiteMapData> {
   // wskazywać ten sam zestaw adresów.
   const [lawFirms, posts] = await Promise.all([
     prisma.lawFirm.findMany({
-      where: { aktywna: true, zweryfikowana: true },
+      where: { aktywna: true, zweryfikowana: true, uzytkownikTestowy: false },
       select: { nazwa: true, slug: true, user: { select: { miasto: true } } },
     }),
     prisma.blogPost.findMany({

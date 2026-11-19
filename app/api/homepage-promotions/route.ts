@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
           where: {
             typPromocji: "POLECANI_PRAWNICY",
             aktywna: true,
+            lawFirm: { uzytkownikTestowy: false },
             startPromocji: {
               lte: now,
             },
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest) {
           where: {
             typPromocji: "NAJCZESCIEJ_KONSULTOWANE",
             aktywna: true,
+            lawFirm: { uzytkownikTestowy: false },
             startPromocji: {
               lte: now,
             },

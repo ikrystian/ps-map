@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
 
     const where: any = {
       aktywna: true,
+      // Użytkownik testowy nie jest pokazywany w wyszukiwarce
+      uzytkownikTestowy: false,
       // Tryb urlopowy ukrywa eksperta w wyszukiwarce
       NOT: {
         user: { notificationSettings: { urlop: true } },

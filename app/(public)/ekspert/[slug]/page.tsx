@@ -19,6 +19,7 @@ const getPublicExpert = cache((slug: string) =>
     where: {
       OR: [{ id: slug }, { slug }, { nip: slug }, { userId: slug }],
       aktywna: true,
+      uzytkownikTestowy: false,
     },
     select: {
       nazwa: true,

@@ -50,7 +50,8 @@ export async function getCategoriesList(): Promise<Category[]> {
               ikonaUrl: true,
               _count: {
                 select: {
-                  lawFirms: true,
+                  // Licznik ekspertów bez użytkowników testowych (publiczny)
+                  lawFirms: { where: { lawFirm: { uzytkownikTestowy: false } } },
                   cases: true,
                 },
               },
@@ -58,7 +59,8 @@ export async function getCategoriesList(): Promise<Category[]> {
           },
           _count: {
             select: {
-              lawFirms: true,
+              // Licznik ekspertów bez użytkowników testowych (publiczny)
+              lawFirms: { where: { lawFirm: { uzytkownikTestowy: false } } },
               cases: true,
             },
           },

@@ -100,6 +100,7 @@ export const lawFirmSchema = z.object({
   // Status
   zweryfikowana: z.boolean(),
   aktywna: z.boolean(),
+  uzytkownikTestowy: z.boolean(),
 
   // Account Manager
   accountManagerId: z.string().optional(),

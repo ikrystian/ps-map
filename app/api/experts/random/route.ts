@@ -8,6 +8,7 @@ export async function GET() {
     const lawFirms = await prisma.lawFirm.findMany({
       where: {
         aktywna: true,
+        uzytkownikTestowy: false,
         user: { deletedAt: null },
       },
       select: {
