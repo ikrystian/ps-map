@@ -11,6 +11,7 @@ async function getLimits(userId: string) {
       pakietSubskrypcji: true,
       dataPakietuOd: true,
       dataPakietuDo: true,
+      pakietProbny: true,
     },
   })
 
@@ -45,6 +46,11 @@ async function getLimits(userId: string) {
       maxVoivodeships = plan.wojewodztwa
       maxCounties = plan.powiaty
       maxCities = plan.miasta
+    }
+
+    // Automatycznie przyznany pakiet Biznes obejmuje wszystkie województwa
+    if (lawFirm.pakietProbny && lawFirm.pakietSubskrypcji === "BIZNES") {
+      maxVoivodeships = Math.max(maxVoivodeships, await prisma.voivodeship.count())
     }
   }
 

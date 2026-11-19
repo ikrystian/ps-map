@@ -711,10 +711,14 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      // Dodaj województwa działania
-      if (body.voivodeshipsIds && Array.isArray(body.voivodeshipsIds) && body.voivodeshipsIds.length > 0) {
+      // Dodaj województwa działania — przy automatycznie przyznanym pakiecie Biznes
+      // zaznacz wszystkie województwa
+      const voivodeshipsIds = isAutoGrantActive
+        ? (await tx.voivodeship.findMany({ select: { id: true } })).map((v: { id: string }) => v.id)
+        : body.voivodeshipsIds
+      if (voivodeshipsIds && Array.isArray(voivodeshipsIds) && voivodeshipsIds.length > 0) {
         // Filtruj puste ID i duplikaty
-        const uniqueVoivodeshipIds = [...new Set(body.voivodeshipsIds.filter((id: string) => !!id))] as string[]
+        const uniqueVoivodeshipIds = [...new Set(voivodeshipsIds.filter((id: string) => !!id))] as string[]
 
         if (uniqueVoivodeshipIds.length > 0) {
           await tx.lawFirmVoivodeship.createMany({
