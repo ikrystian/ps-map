@@ -15,21 +15,18 @@ export async function GET() {
         id: true,
         slug: true,
         nazwa: true,
-        opis: true,
         logo: true,
-        zdjecieGlowne: true,
         user: {
           select: {
-            imie: true,
-            nazwisko: true,
             image: true,
             miasto: true,
-            voivodeship: { select: { nazwa: true } },
           },
         },
         mainCategory: { select: { nazwa: true } },
+        // Karta pokazuje tylko jedną kategorię (fallback, gdy brak głównej).
         categories: {
           orderBy: { kolejnosc: "asc" },
+          take: 1,
           select: { category: { select: { nazwa: true } } },
         },
       },

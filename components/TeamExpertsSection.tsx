@@ -1,43 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { expertAvatar } from "@/lib/expert-avatar";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { MapPin, ShieldCheck } from "lucide-react";
+import { expertAvatar } from "@/lib/expert-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Users,
-  MapPin,
-  ArrowRight,
-  ShieldCheck,
-  Mail,
-  Calendar,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Expert {
   id: string;
   slug: string;
   nazwa: string;
-  nazwa: string;
-  opis: string | null;
   logo: string | null;
-  zdjecieGlowne: string | null;
   user: {
-    imie: string | null;
-    nazwisko: string | null;
     image: string | null;
     miasto: string | null;
-    voivodeship: { nazwa: string } | null;
   } | null;
   mainCategory: { nazwa: string } | null;
   categories: Array<{ category: { nazwa: string } }>;
@@ -52,13 +30,51 @@ const AUTH_ROUTES = [
   "/wylogowano",
 ];
 
-// Mock experts pool for padding up to 24 if database is empty or has fewer entries
-const MOCK_POOL: Expert[] = [];
+// Ile kart widać na start i ile dokłada „Pokaż kolejnych specjalistów”:
+// poniżej lg (1 kolumna) po 5, od lg (2 kolumny) po 10.
+const STEP_MOBILE = 5;
+const STEP_DESKTOP = 10;
+
+/** Widoczność karty o indeksie `i` po `pages` kliknięciach (liczonych od 1). */
+function visibilityClass(i: number, pages: number) {
+  return cn(
+    i >= STEP_MOBILE * pages && "hidden",
+    i < STEP_DESKTOP * pages ? "lg:grid" : "lg:hidden",
+  );
+}
+
+/**
+ * Nazwa z ikoną weryfikacji przyklejoną do ostatniego słowa, żeby ikona
+ * nigdy nie spadała sama do nowej linii.
+ */
+function NameWithBadge({ name }: { name: string }) {
+  const trimmed = name.trim();
+  const i = trimmed.lastIndexOf(" ");
+  const head = i < 0 ? "" : trimmed.slice(0, i + 1);
+  const last = i < 0 ? trimmed : trimmed.slice(i + 1);
+
+  return (
+    <>
+      {head}
+      <span className="whitespace-nowrap">
+        {last}
+        <ShieldCheck
+          aria-hidden="true"
+          className="ml-1 inline-block size-3.5 align-[-2px] text-primary"
+        />
+      </span>
+    </>
+  );
+}
+
+const CARD_CLASS =
+  "grid grid-cols-[52px_minmax(0,1fr)] gap-x-4 gap-y-3 rounded-[14px] border border-border bg-white p-3.5 dark:bg-white/[0.025] sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:gap-4 sm:px-[18px] sm:py-4";
 
 export default function TeamExpertsSection() {
   const pathname = usePathname();
   const [experts, setExperts] = useState<Expert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pages, setPages] = useState(1);
 
   // Avoid rendering on authorization pages
   const isAuthPage = AUTH_ROUTES.some((route) => pathname?.startsWith(route));
@@ -71,26 +87,10 @@ export default function TeamExpertsSection() {
         const response = await fetch("/api/experts/random");
         if (!response.ok) throw new Error("Failed to fetch experts");
         const data: Expert[] = await response.json();
-
-        let finalExperts = [...data];
-
-        // Pad with mock experts if there are less than 24 experts in the DB
-        if (finalExperts.length < 24) {
-          const needed = 24 - finalExperts.length;
-          const shuffledMockPool = [...MOCK_POOL].sort(
-            () => 0.5 - Math.random(),
-          );
-          // Deduplicate based on slug/id to avoid identical mock cards if we pad heavily
-          const addedMocks = shuffledMockPool.slice(0, needed);
-          finalExperts = [...finalExperts, ...addedMocks];
-        }
-
-        setExperts(finalExperts);
+        setExperts(data);
       } catch (error) {
         console.error("Error in TeamExpertsSection:", error);
-        // Fallback to complete mock pool on error so the grid remains complete
-        const shuffledMocks = [...MOCK_POOL].sort(() => 0.5 - Math.random());
-        setExperts(shuffledMocks);
+        setExperts([]);
       } finally {
         setIsLoading(false);
       }
@@ -100,172 +100,117 @@ export default function TeamExpertsSection() {
   }, [isAuthPage]);
 
   if (isAuthPage) return null;
+  if (!isLoading && experts.length === 0) return null;
 
-  const getInitials = (
-    imie?: string | null,
-    nazwisko?: string | null,
-    nazwa?: string,
-  ) => {
-    if (imie && nazwisko) {
-      return `${imie.charAt(0)}${nazwisko.charAt(0)}`.toUpperCase();
-    }
-    if (imie) return imie.charAt(0).toUpperCase();
-    if (nazwisko) return nazwisko.charAt(0).toUpperCase();
-    if (nazwa) {
-      const parts = nazwa.split(" ").filter((p) => p.length > 0);
-      if (parts.length >= 2) {
-        return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
-      }
-      return nazwa.charAt(0).toUpperCase();
-    }
-    return "E";
-  };
-
-  // Animation variants for Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.03,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 15 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 260, damping: 22 } as const,
-    },
-  };
+  const moreOnMobile = experts.length > STEP_MOBILE * pages;
+  const moreOnDesktop = experts.length > STEP_DESKTOP * pages;
 
   return (
-    <section className="relative w-full border-t border-border/60 bg-background/20 py-16 md:py-24 lg:py-28 overflow-hidden select-none">
+    <section className="relative w-full overflow-hidden border-t border-border/60 bg-background/20 py-16 md:py-24 lg:py-28">
       {/* Decorative background grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#c7b56d_1px,transparent_1px),linear-gradient(to_bottom,#c7b57d_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-10 -z-10 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#c7b56d_1px,transparent_1px),linear-gradient(to_bottom,#c7b57d_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-10 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-      <div className="container mx-auto px-4 md:px-6 relative">
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 sm:px-6">
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-4 space-y-4 mb-4">
-          <Badge
-            variant="outline"
-            className="border-primary/20 text-primary bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full shadow-[0_0_15px_rgba(var(--primary-rgb),0.07)]"
-          >
-            <Users className="mr-2 h-3.5 w-3.5 inline text-primary animate-pulse" />{" "}
-            Nasi Eksperci
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-playfair font-light mb-4">
-            Poznaj naszych Specjalistów
-          </h2>
-          <p className="max-w-[750px] text-muted-foreground text-sm sm:text-base md:text-lg font-light leading-relaxed">
-            Prezentujemy losowych specjalistów z naszej
-            bazy. Za każdym razem dobieramy inny zestaw ekspertów prawnych
-            gotowych odpowiedzieć na Twoje potrzeby.
-          </p>
-        </div>
+        <h2 className="mb-3 text-center font-playfair text-[28px] font-normal leading-[1.2] sm:text-4xl">
+          Poznaj naszych Specjalistów
+        </h2>
+        <p className="mx-auto mb-[22px] max-w-[720px] text-center text-[15px] font-light leading-[1.6] text-muted-foreground sm:mb-8 sm:text-lg">
+          <span className="sm:hidden">
+            Losowi specjaliści z naszej bazy, przy każdej wizycie inni.
+          </span>
+          <span className="hidden sm:inline">
+            Prezentujemy losowych specjalistów z naszej bazy. Za każdym razem
+            dobieramy inny zestaw ekspertów prawnych gotowych odpowiedzieć na
+            Twoje potrzeby.
+          </span>
+        </p>
 
-        {/* Loading Skeletons */}
-        {isLoading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <Card
-                key={i}
-                className="bg-card/40 border-border/50 p-6 flex flex-col justify-between h-[280px]"
-              >
-                <div>
-                  <div className="flex items-center gap-4">
-                    <Skeleton className="h-14 w-14 rounded-full bg-muted/80" />
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-5 w-32 bg-muted/80" />
-                      <Skeleton className="h-4 w-24 bg-muted/80" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-full bg-muted/80" />
-                    <Skeleton className="h-4 w-5/6 bg-muted/80" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mt-4">
-                  <Skeleton className="h-5 w-16 bg-muted/80 rounded-md" />
-                  <Skeleton className="h-5 w-20 bg-muted/80 rounded-md" />
-                </div>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-          >
-            {experts.map((expert) => {
-              const imie = expert.user?.imie;
-              const nazwisko = expert.user?.nazwisko;
-              const imieNazwisko =
-                imie && nazwisko ? `${imie} ${nazwisko}` : null;
-              const displayName =
-                expert.nazwa;
-              const roleName =
-                expert.mainCategory?.nazwa ||
-                expert.categories?.[0]?.category?.nazwa ||
-                "Specjalista Prawny";
-              const location = expert.user?.miasto || "Polska";
-              const avatarSrc = expertAvatar(expert.logo || expert.user?.image);
-              const initials = getInitials(imie, nazwisko, displayName);
-              const skills =
-                expert.categories?.map((c) => c.category.nazwa) || [];
-              const shortBio = expert.opis
-                ? expert.opis.length > 130
-                  ? `${expert.opis.slice(0, 127)}...`
-                  : expert.opis
-                : "Doświadczony specjalista z profesjonalnym i indywidualnym podejściem do każdej sprawy klienta. Skontaktuj się, aby uzyskać pomoc.";
-
-              return (
-                <motion.div
-                  key={expert.id}
-                  variants={cardVariants}
-                  whileHover={{ y: -6, scale: 1.015 }}
-                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-border/60 bg-background/45 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
+        <div className="grid grid-cols-1 gap-2.5 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-3">
+          {isLoading
+            ? Array.from({ length: STEP_DESKTOP }).map((_, i) => (
+                <div
+                  key={i}
+                  aria-hidden="true"
+                  className={cn(CARD_CLASS, visibilityClass(i, 1))}
                 >
-                  <Link href={`/ekspert/${expert.slug}`}>
-                    {/* Header */}
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-14 w-14 border border-border/60 transition-transform duration-500 group-hover:scale-105">
-                        <AvatarImage src={avatarSrc} alt={displayName} />
-                        <AvatarFallback className="bg-gradient-to-br from-muted to-card text-primary font-medium text-lg uppercase">
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1">
-                          <h4 className="text-base font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-300">
-                            {displayName}
-                          </h4>
-                          {expert.id.startsWith("mock-") === false && (
-                            <span title="Zweryfikowany Ekspert">
-                              <ShieldCheck
-                                className="h-4.5 w-4.5 text-primary shrink-0"
-                              />
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground font-medium truncate">
-                          {roleName}
-                        </p>
+                  <Skeleton className="size-[52px] self-center rounded-full sm:size-16" />
+                  <div className="flex min-w-0 flex-col gap-2 py-1">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="mt-auto h-3 w-1/2" />
+                    <Skeleton className="h-3 w-1/3" />
+                  </div>
+                  <Skeleton className="col-span-2 h-[35px] w-full self-center rounded-lg sm:col-span-1 sm:w-[110px]" />
+                </div>
+              ))
+            : experts.map((expert, i) => {
+                const name = expert.nazwa.trim();
+                const category =
+                  expert.mainCategory?.nazwa ||
+                  expert.categories?.[0]?.category?.nazwa ||
+                  "Specjalista Prawny";
+                const location = expert.user?.miasto?.trim() || "Polska";
+                const avatarSrc = expertAvatar(
+                  expert.logo || expert.user?.image,
+                );
+
+                return (
+                  <Link
+                    key={expert.id}
+                    href={`/ekspert/${expert.slug}`}
+                    title={name}
+                    className={cn(
+                      CARD_CLASS,
+                      "group transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                      visibilityClass(i, pages),
+                    )}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={avatarSrc}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      width={64}
+                      height={64}
+                      className="size-[52px] shrink-0 self-center rounded-full bg-muted object-cover sm:size-16"
+                    />
+
+                    <div className="flex min-w-0 flex-col gap-1.5">
+                      <div className="line-clamp-3 font-playfair text-base font-normal leading-[1.3] text-foreground [overflow-wrap:anywhere] sm:line-clamp-2 sm:text-[17px]">
+                        <NameWithBadge name={name} />
+                      </div>
+                      <div className="mt-auto flex min-w-0 flex-col items-start gap-1">
+                        <span className="line-clamp-2 text-xs leading-[1.35] text-muted-foreground">
+                          {category}
+                        </span>
+                        <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs text-[#5f6b68] dark:text-[#8c8a80]">
+                          <MapPin aria-hidden="true" className="size-3 shrink-0" />
+                          {location}
+                        </span>
                       </div>
                     </div>
-                  </Link>
 
-                  {/* Decorative Hover Glow background (Matching Team 11) */}
-                  <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none" />
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none" />
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                    <span className="col-span-2 inline-flex w-full items-center justify-center self-center whitespace-nowrap rounded-lg border border-border px-4 py-2.5 text-[13px] font-semibold leading-none text-foreground transition-colors hover:border-primary sm:col-span-1 sm:w-auto">
+                      Zobacz profil
+                    </span>
+                  </Link>
+                );
+              })}
+        </div>
+
+        {!isLoading && (moreOnMobile || moreOnDesktop) && (
+          <button
+            type="button"
+            onClick={() => setPages((p) => p + 1)}
+            className={cn(
+              "mx-auto mt-[22px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-transparent px-5 py-[11px] text-sm font-semibold leading-none text-foreground transition-colors hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+              moreOnMobile ? "flex" : "hidden",
+              moreOnDesktop ? "lg:flex" : "lg:hidden",
+            )}
+          >
+            Pokaż kolejnych specjalistów
+          </button>
         )}
       </div>
     </section>
