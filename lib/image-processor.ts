@@ -41,7 +41,10 @@ export async function optimizeImage(
   }
 
   try {
-    let pipeline = sharp(buffer)
+    // Obrót wg EXIF (Orientation): zdjęcia zrobione telefonem w pionie mają poziome piksele
+    // i tag orientacji. sharp nie stosuje go sam z siebie, a przy konwersji do WebP metadane
+    // są usuwane — bez tego zdjęcie zostaje obrócone na bok.
+    let pipeline = sharp(buffer).rotate()
 
     // Resize image maintaining proportions:
     // - fit: "inside" ensures it fits within maxDimension x maxDimension box while maintaining aspect ratio
