@@ -2,18 +2,10 @@
 
 import { useRef } from "react"
 import Link from "next/link"
-import { Inter } from "next/font/google"
+import { inter } from "@/lib/landing-font"
 import { ResponsiveBreadcrumbs } from "@/components/ui/responsive-breadcrumbs"
 import { useLandingEffects } from "@/hooks/use-landing-effects"
 import "./dla-prawnika.css"
-
-// Landing korzysta z Intera — reszta aplikacji z Poppinsa, wiec ladujemy go lokalnie
-const inter = Inter({
-    subsets: ["latin", "latin-ext"],
-    weight: ["300", "400", "500", "600", "700"],
-    variable: "--font-inter",
-    display: "swap",
-})
 
 const REGISTER_HREF = "/rejestracja/ekspert"
 
