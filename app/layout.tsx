@@ -6,6 +6,7 @@ import { HotjarAnalytics } from "@/components/Hotjar";
 import { MarketingPixels } from "@/components/MarketingPixels";
 import { CUSTOM_CSS_SETTING_KEY, isCustomCssEnabledForPath, sanitizeCustomCss } from "@/lib/custom-css";
 import { sanitizePixelId } from "@/lib/marketing-pixels";
+import { SITE_OG_IMAGE, SITE_TWITTER_IMAGE } from "@/lib/og-image";
 import prisma from "@/lib/prisma";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -101,13 +102,12 @@ export async function generateMetadata(): Promise<Metadata> {
   let favicon = "/favicon.png"
   let ogTitle = "Prosta Sprawa - Platforma łącząca klientów z ekspertami prawnymi"
   let ogDescription = "Znajdź prawnika lub eksperta prawnego w Twojej okolicy. Porównaj oferty i ceny usług prawnych."
-  let ogImage = "/favicon.png"
 
   try {
     const settings = await prisma.settings.findMany({
       where: {
         key: {
-          in: ["siteName", "favicon", "ogTitle", "ogDescription", "ogImage"]
+          in: ["siteName", "favicon", "ogTitle", "ogDescription"]
         }
       }
     })
@@ -118,7 +118,6 @@ export async function generateMetadata(): Promise<Metadata> {
     if (settingsMap.has("favicon")) favicon = settingsMap.get("favicon")!
     if (settingsMap.has("ogTitle")) ogTitle = settingsMap.get("ogTitle")!
     if (settingsMap.has("ogDescription")) ogDescription = settingsMap.get("ogDescription")!
-    if (settingsMap.has("ogImage")) ogImage = settingsMap.get("ogImage")!
   } catch (error) {
     console.error("Error fetching settings for metadata:", error)
   }
@@ -131,13 +130,13 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase = new URL("https://prostasprawa.pl");
   }
 
-  const cleanOgImage = sanitizeImageUrl(ogImage, baseUrlStr);
   const cleanFavicon = sanitizeImageUrl(favicon, baseUrlStr);
 
   // Domyślny canonical wskazuje na bieżącą ścieżkę bez query stringa (nagłówek
   // ustawiany w proxy.ts). Strony, które tego potrzebują, mogą nadpisać
   // `alternates.canonical` we własnym generateMetadata — Next scala metadane
-  // od layoutu do strony po kluczach top-level.
+  // od layoutu do strony po kluczach top-level. Ta sama ścieżka trafia do og:url;
+  // strona, która definiuje własne `openGraph`, musi sama podać `url` i obrazek.
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "/";
 
@@ -160,14 +159,15 @@ export async function generateMetadata(): Promise<Metadata> {
       title: ogTitle,
       description: ogDescription,
       siteName: siteName,
-      images: cleanOgImage ? [{ url: cleanOgImage }] : [],
+      url: pathname,
+      images: [SITE_OG_IMAGE],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: cleanOgImage ? [cleanOgImage] : [],
+      images: [SITE_TWITTER_IMAGE],
     },
   }
 }

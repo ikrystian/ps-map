@@ -8,7 +8,7 @@ import { articleJsonLd, breadcrumbListJsonLd, faqPageJsonLd, absoluteUrl } from 
 import { JsonLd } from "@/components/JsonLd"
 import { extractFaqItems } from "@/lib/blog-faq"
 import { blogCategoryPath } from "@/lib/blog-category-url"
-import { getImageDimensions } from "@/lib/image-dimensions"
+import { SITE_OG_IMAGE, SITE_TWITTER_IMAGE } from "@/lib/og-image"
 
 interface PageProps {
   params: Promise<{
@@ -49,14 +49,9 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
   const plainTextDescription = getPlainDescription(post).trim() || undefined
   const ogTitle = stripSiteBrand(rawTitle)
 
-  // Obrazek wyróżniający wpisu; bez niego zostaje domyślny obrazek OG z ustawień (layout).
+  // Obrazek udostępniania jest wspólny dla całego serwisu — celowo nie używamy
+  // obrazka wyróżniającego wpisu.
   const parentMetadata = await parent
-  const image = post.obrazekWyrozniajacy || undefined
-  const imageSize = image ? await getImageDimensions(image) : null
-  const ogImages = image
-    ? [{ url: image, alt: ogTitle, ...(imageSize ?? {}) }]
-    : parentMetadata.openGraph?.images
-  const twitterImages = image ? [image] : parentMetadata.twitter?.images
 
   return {
     title: pageTitle(rawTitle, post.isUnpublished ? "[Podgląd] " : ""),
@@ -67,7 +62,7 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
       title: ogTitle,
       description: plainTextDescription,
       siteName: parentMetadata.openGraph?.siteName,
-      images: ogImages,
+      images: [SITE_OG_IMAGE],
       publishedTime: post.dataPublikacji ? new Date(post.dataPublikacji).toISOString() : undefined,
       modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
       section: post.category?.nazwa ?? undefined,
@@ -76,7 +71,7 @@ export async function generateMetadata({ params }: PageProps, parent: ResolvingM
       card: "summary_large_image",
       title: ogTitle,
       description: plainTextDescription,
-      images: twitterImages,
+      images: [SITE_TWITTER_IMAGE],
     },
   }
 }
